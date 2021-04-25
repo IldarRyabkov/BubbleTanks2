@@ -166,8 +166,8 @@ class Mob:
             new_bullets = homing_bullets if self.gun.shooting_homing_bullets else bullets
             self.gun.append_bullets(self.x, self.y, target, new_bullets, self.gamma)
 
-            if self.body_rect.colliderect(screen_rect):
-                self.update_body(dt, target)
+        if self.body_rect.colliderect(screen_rect):
+            self.update_body(dt, target)
 
         self.update_paralysed_state(dt)
         self.update_frozen_state(dt)

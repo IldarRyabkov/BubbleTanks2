@@ -384,8 +384,8 @@ class Player(Mob):
         elif abs(self.vel_y) > self.MAX_VEL:
             self.vel_y = copysign(1, self.vel_y) * self.MAX_VEL
 
-    def update_superpower(self, dt, mobs, top_effects, bottom_effects,
-                          camera):
+    def update_superpower(self, dt, mobs, top_effects,
+                          bottom_effects, camera, sound_player):
         params = list()
         if self.superpower.name == "Armor":
             params = self.armor_on, top_effects
@@ -394,7 +394,7 @@ class Player(Mob):
             params = self.pos, self.bullets
 
         elif self.superpower.name in ("ParalysingExplosion", "PowerfulExplosion"):
-            params = self.pos, mobs, top_effects, bottom_effects, camera
+            params = self.pos, mobs, top_effects, bottom_effects, camera, sound_player
 
         elif self.superpower.name == "Teleportation":
             params = self.pos, top_effects, camera
@@ -425,7 +425,8 @@ class Player(Mob):
             self.update_acc()
             self.update_pos(dt)
             self.update_vel(dt)
-        self.update_superpower(dt, mobs, top_effects, bottom_effects, camera)
+        self.update_superpower(dt, mobs, top_effects,
+                               bottom_effects, camera, sound_player)
         self.update_body(dt)
         if not transportation:
             self.update_bullets(dt, mobs, sound_player)

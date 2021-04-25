@@ -10,8 +10,8 @@ from special_effects import add_effect
 from data.bullets import (HOMING_MISSILE_BODY_1, BIG_BUL_BODY_1,
                           STICKY_BUL_BODY, BOMB_BUL_BODY_1, GIANT_BUL_BODY)
 from objects.body import Body
+from data.paths import THUNDER
 from utils import calculate_angle
-
 
 TWO_MISSILES_COORDS = (104, 0.43*pi), (104, -0.43*pi)
 THREE_MISSILES_COORDS = (106, 0.88*pi), (106, -0.88*pi), (101, 0)
@@ -116,7 +116,7 @@ class ParalysingExplosion(SuperPower):
         angle = calculate_angle(SCR_W2, SCR_H2, *mouse_pos)
         return pos + np.array([-self.dist * cos(angle), self.dist * sin(angle)])
 
-    def activate(self, pos, mobs, top_effects, bottom_effects, camera):
+    def activate(self, pos, mobs, top_effects, bottom_effects, camera, sound_player):
         self.time = 0
         explosion_pos = self.get_explosion_pos(pos)
         for mob in mobs:
@@ -127,6 +127,7 @@ class ParalysingExplosion(SuperPower):
         add_effect(explosion, bottom_effects, *explosion_pos)
         add_effect('Flash', top_effects)
         camera.start_shaking(250)
+        sound_player.play_sound(THUNDER)
 
 
 class PowerfulExplosion(SuperPower):
@@ -139,7 +140,7 @@ class PowerfulExplosion(SuperPower):
         alpha = calculate_angle(SCR_W2, SCR_H2, *mouse_pos)
         return pos + np.array([-78 * cos(alpha), 78 * sin(alpha)])
 
-    def activate(self, pos, mobs, top_effects, bottom_effects, camera):
+    def activate(self, pos, mobs, top_effects, bottom_effects, camera, sound_player):
         coords = self.get_explosion_pos(pos)
         self.time = 0
         for mob in mobs:
@@ -150,6 +151,7 @@ class PowerfulExplosion(SuperPower):
         add_effect('PowerfulExplosion', bottom_effects, *coords)
         add_effect('Flash', top_effects)
         camera.start_shaking(250)
+        sound_player.play_sound(THUNDER)
 
 
 class Teleportation(SuperPower):

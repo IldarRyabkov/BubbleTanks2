@@ -3,7 +3,7 @@ from data.paths import *
 
 
 sounds = (BUBBLE_DEATH, MOB_DEATH, PLAYER_BULLET_HIT,
-          PLAYER_BULLET_SHOT, PLAYER_INJURE)
+          PLAYER_BULLET_SHOT, PLAYER_INJURE, THUNDER)
 
 
 class SoundPlayer:

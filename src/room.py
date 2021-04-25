@@ -67,13 +67,13 @@ class Room:
         Method is called when a new game is started
         or a new room is visited. Resets all room data.
         """
-        self.bubbles = list()
-        self.bullets = list()
-        self.homing_bullets = list()
-        self.top_effects = list()
-        self.bottom_effects = list()
-        self.mobs = list() if new_game else self.new_mobs.copy()
-        self.new_mobs = list()
+        self.bubbles = []
+        self.bullets = []
+        self.homing_bullets = []
+        self.top_effects = []
+        self.bottom_effects = []
+        self.mobs = [] if new_game else self.new_mobs.copy()
+        self.new_mobs = []
         if new_game:
             self.boss_position_marker = 0
 

@@ -2,39 +2,46 @@ import pygame as pg
 
 from data.colors import WHITE
 from gui.long_button import LongButton
+from gui.slider import Slider
 import data.languages.english as eng
 import data.languages.russian as rus
 
 
-def create_buttons(texts):
-    buttons = list()
-    buttons.append(LongButton(208, 336, True, texts[0]))
-    buttons.append(LongButton(560, 336, False, texts[1]))
-    buttons.append(LongButton(208, 512, True, texts[0]))
-    buttons.append(LongButton(560, 512, False, texts[1]))
-    buttons.append(LongButton(944, 832, False, texts[2]))
-    return buttons
+TEXTS = {
+    'quit_button':
+        {
+            'English': eng.OPTIONSWINDOW_QUIT_BUTTON,
+            'Russian': rus.OPTIONSWINDOW_QUIT_BUTTON
+        },
+    'labels':
+        {
+            'Russian': (
+                rus.OPTIONSWINDOW_CAPTION,
+                rus.OPTIONSWINDOW_LABEL_MUSIC,
+                rus.OPTIONSWINDOW_LABEL_SOUND
+            ),
+            'English': (
+                eng.OPTIONSWINDOW_CAPTION,
+                eng.OPTIONSWINDOW_LABEL_MUSIC,
+                eng.OPTIONSWINDOW_LABEL_SOUND
+            )
+        }
+}
 
 
 class OptionsWindow:
     def __init__(self):
+        self.sound_slider = Slider(500, 600)
+        self.music_slider = Slider(500, 400)
         self.caption = None
         self.label_music = None
         self.label_sound = None
-        self.buttons = None
+        self.quit_button = None
         self.set_language("English")
 
     def set_language(self, language):
-        if language == 'English':
-            self.set_labels(eng.OPTIONSWINDOW_CAPTION,
-                            eng.OPTIONSWINDOW_LABEL_MUSIC,
-                            eng.OPTIONSWINDOW_LABEL_SOUND)
-            self.buttons = create_buttons(eng.OPTIONSWINDOW_BUTTONS_TEXTS)
-        else:
-            self.set_labels(rus.OPTIONSWINDOW_CAPTION,
-                            rus.OPTIONSWINDOW_LABEL_MUSIC,
-                            rus.OPTIONSWINDOW_LABEL_SOUND)
-            self.buttons = create_buttons(rus.OPTIONSWINDOW_BUTTONS_TEXTS)
+        self.set_labels(*TEXTS['labels'][language])
+        self.quit_button = LongButton(944, 832, False, TEXTS['quit_button'][language])
 
     def set_labels(self, caption, label_1, label_2):
         pg.font.init()
@@ -43,31 +50,33 @@ class OptionsWindow:
         self.label_music = font.render(label_1, True, WHITE)
         self.label_sound = font.render(label_2, True, WHITE)
 
-    def handle_mouse_click(self, pause_menu, pos, sound_player):
-        if self.buttons[0].can_be_clicked(pos) or self.buttons[1].can_be_clicked(pos):
-            self.buttons[0].clicked ^= 1
-            self.buttons[1].clicked ^= 1
+    def handle(self, e_type, sounds) -> bool:
+        game_running = True
+        self.sound_slider.handle(e_type)
+        self.music_slider.handle(e_type)
+        self.update_mixer(sounds)
+        if self.quit_button.cursor_on_button():
+            game_running = False
+        return game_running
 
-        if self.buttons[2].can_be_clicked(pos) or self.buttons[3].can_be_clicked(pos):
-            self.buttons[2].clicked ^= 1
-            self.buttons[3].clicked ^= 1
+    def update_mixer(self, sounds):
+        if self.sound_slider.clicked:
+            for sound in sounds.values():
+                sound.set_volume(self.sound_slider.value)
+        if self.music_slider.clicked:
+            pg.mixer.music.set_volume(self.music_slider.value)
 
-        elif self.buttons[4].cursor_on_button(pos):
-            pause_menu.running = False
-            pause_menu.quit_game = False
-
-        sound_player.update_data(self.buttons[0].clicked,
-                                 self.buttons[2].clicked)
-
-    def update(self, *args, **kwargs):
-        pos = pg.mouse.get_pos()
-        for button in self.buttons:
-            button.update_color(pos)
+    def update(self, sounds):
+        self.quit_button.update_color()
+        self.sound_slider.update()
+        self.music_slider.update()
+        self.update_mixer(sounds)
 
     def draw(self, screen):
         screen.blit(self.caption, (560, 176))
-        screen.blit(self.label_music, (216, 264))
-        screen.blit(self.label_sound, (216, 440))
+        screen.blit(self.label_music, (240, 375))
+        screen.blit(self.label_sound, (240, 575))
 
-        for button in self.buttons:
-            button.draw(screen)
+        self.quit_button.draw(screen)
+        self.sound_slider.draw(screen)
+        self.music_slider.draw(screen)

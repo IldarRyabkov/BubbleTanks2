@@ -26,7 +26,7 @@ class MapWindow:
     def set_language(self, language):
         self.caption = create_caption(language)
 
-    def reset_data(self):
+    def reset(self):
         self.game_map.reset()
 
     def update(self, dt):

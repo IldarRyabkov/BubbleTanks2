@@ -53,7 +53,7 @@ class StatsWindow:
                           TextBox(self.tank_data[player_state][4], FONT_2, 32, False, WHITE, (192, 741), False),
                           TextBox(self.tank_data[player_state][5], FONT_2, 32, False, WHITE, (688, 741), False))
 
-    def set(self, player_state=(0, 0)):
+    def set_player_stats(self, player_state):
         self.set_tank_name(player_state)
         self.set_tank_desc(player_state)
         self.tank_body = Body(PLAYER_BODIES[player_state])

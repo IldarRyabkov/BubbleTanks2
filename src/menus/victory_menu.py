@@ -63,7 +63,7 @@ class VictoryMenu:
             self.button = create_button(rus.VICTORYMENU_BUTTON)
 
     def handle_mouse_click(self):
-        if self.button.cursor_on_button(pg.mouse.get_pos()):
+        if self.button.cursor_on_button():
             self.running = False
 
     def show_fps(self):
@@ -93,7 +93,7 @@ class VictoryMenu:
         for bubble in self.bubbles:
             bubble.update_body(dt)
 
-        self.button.update_color(pg.mouse.get_pos())
+        self.button.update_color()
 
     def draw_bubbles(self, screen):
         for bubble in self.bubbles:
@@ -112,14 +112,9 @@ class VictoryMenu:
     def run(self, screen, player, bubbles, draw_foreground):
         self.running = True
         dt = 0
-
         while self.running:
             self.handle_events()
-
             self.update(player, bubbles, dt)
-
             self.draw(screen, draw_foreground)
-
             dt = self.clock.tick()
-
             self.show_fps()

@@ -442,8 +442,8 @@ class Game:
         self.pause_menu.run(self.screen, self.player,
                             self.room.bubbles, self.room.mobs,
                             self.room.bullets, self.draw_foreground,
-                            self.sound_player)
-        self.running = self.pause_menu.quit_game
+                            self.sound_player.sounds)
+        self.running = self.pause_menu.game_running
         self.clock.tick()
 
     def run_victory_menu(self):

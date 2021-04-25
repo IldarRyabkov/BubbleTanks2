@@ -30,7 +30,7 @@ class PauseMenu:
                              SideButton(65, 544, "options_button", False)]
         self.exit_button = ExitButton()
         self.running = True
-        self.quit_game = True
+        self.game_running = True
         self.clock = pg.time.Clock()
         self.set_language("English")
 
@@ -48,11 +48,11 @@ class PauseMenu:
         self.caption = font.render(text, True, WHITE)
 
     def reset(self):
-        self.windows[MAP_WINDOW].reset_data()
-        self.windows[STATS_WINDOW].set()
+        self.windows[MAP_WINDOW].reset()
+        self.windows[STATS_WINDOW].set_player_stats((0, 0))
 
     def set_stats_window(self, player_state):
-        self.windows[STATS_WINDOW].set(player_state=player_state)
+        self.windows[STATS_WINDOW].set_player_stats(player_state)
 
     def set_boss_location(self):
         self.windows[MAP_WINDOW].game_map.set_boss_location()
@@ -63,34 +63,36 @@ class PauseMenu:
     def show_fps(self):
         pg.display.set_caption('FPS: ' + str(int(self.clock.get_fps()/2)))
 
-    def handle_mouse_click(self, sound_player):
-        pos = pg.mouse.get_pos()
-        if self.exit_button.cursor_on_button(pos):
+    def handle_mouse_click(self, e_type, sounds):
+        if e_type == pg.MOUSEBUTTONDOWN and self.exit_button.cursor_on_button():
             self.running = False
             self.exit_button.color = self.exit_button.colors[0]
 
-        if self.current_window == OPTIONS_WINDOW:
-            self.windows[OPTIONS_WINDOW].handle_mouse_click(self, pos, sound_player)
+        elif self.current_window == OPTIONS_WINDOW:
+            running = self.windows[OPTIONS_WINDOW].handle(e_type, sounds)
+            self.running = self.game_running = running
 
-        for i in range(len(self.side_buttons)):
-            if self.side_buttons[i].cursor_on_button(pos):
-                for button in self.side_buttons:
-                    button.clicked = False
-                self.side_buttons[i].clicked = True
-                self.current_window = i
-                break
+        if e_type == pg.MOUSEBUTTONDOWN:
+            for i in range(len(self.side_buttons)):
+                if self.side_buttons[i].cursor_on_button():
+                    for button in self.side_buttons:
+                        button.clicked = False
+                    self.side_buttons[i].clicked = True
+                    self.current_window = i
+                    break
 
-    def handle_events(self, sound_player):
+    def handle_events(self, sounds):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
             elif event.type == pg.KEYDOWN and event.key in [pg.K_ESCAPE, pg.K_p]:
                 self.running = False
-            elif event.type == pg.MOUSEBUTTONDOWN and event.button == pg.BUTTON_LEFT:
-                self.handle_mouse_click(sound_player)
+            elif (event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP] and
+                          event.button == pg.BUTTON_LEFT):
+                self.handle_mouse_click(event.type, sounds)
 
-    def update(self, dt, player, bubbles, mobs, bullets):
+    def update(self, dt, player, bubbles, mobs, bullets, sounds):
         if player.superpower.name == "Ghost":
             player.superpower.update_body(player.body)
         player.update_body(dt)
@@ -105,7 +107,10 @@ class PauseMenu:
                 shuriken.update_polar_coords(*player.pos, dt)
         for bullet in bullets:
             bullet.update_body(dt)
-        self.windows[self.current_window].update(dt)
+        if self.current_window == OPTIONS_WINDOW:
+            self.windows[self.current_window].update(sounds)
+        else:
+            self.windows[self.current_window].update(dt)
         self.exit_button.update()
 
     def draw(self, screen, draw_foreground):
@@ -119,14 +124,14 @@ class PauseMenu:
         self.exit_button.draw(screen)
         pg.display.update()
 
-    def run(self, screen, player, bubbles, mobs, bullets, draw_foreground, sound_player):
+    def run(self, screen, player, bubbles, mobs, bullets, draw_foreground, sounds):
         self.running = True
-        self.quit_game = True
+        self.game_running = True
         dt = 0
         while self.running:
-            self.handle_events(sound_player)
+            self.handle_events(sounds)
             self.clock.tick()
-            self.update(dt, player, bubbles, mobs, bullets)
+            self.update(dt, player, bubbles, mobs, bullets, sounds)
             self.draw(screen, draw_foreground)
             dt = self.clock.tick()
             self.show_fps()

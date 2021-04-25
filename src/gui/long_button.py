@@ -7,7 +7,7 @@ HEIGHT = 64
 
 def create_text_surface(text: str) -> pg.Surface:
     pg.font.init()
-    font = pg.font.SysFont('Calibri', 32, True)
+    font = pg.font.SysFont('Calibri', 30, True)
     surface = font.render(text, True, WHITE)
     return surface
 
@@ -33,14 +33,14 @@ class LongButton:
         self.text_surface = create_text_surface(text)
         self.text_pos = get_text_pos(self.text_surface, x, y)
 
-    def cursor_on_button(self, pos: tuple) -> bool:
-        return bool(self.rect.collidepoint(pos))
+    def cursor_on_button(self) -> bool:
+        return bool(self.rect.collidepoint(pg.mouse.get_pos()))
 
-    def can_be_clicked(self, pos):
-        return self.cursor_on_button(pos) and not self.clicked
+    def can_be_clicked(self):
+        return self.cursor_on_button() and not self.clicked
 
-    def update_color(self, pos: tuple):
-        if self.cursor_on_button(pos):
+    def update_color(self):
+        if self.cursor_on_button():
             self.color = self.colors[0]
         elif not self.clicked:
             self.color = self.colors[1]

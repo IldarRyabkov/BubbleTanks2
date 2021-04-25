@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['__main__.py'],
-	     pathex=['D:\\Underwater Battles\\src'],
+	     pathex=['D:\\Underwater_Battles\\src'],
              binaries=[],
              datas=[('data\\images', 'images'), ('data\\music', 'music'), ('data\\sounds', 'sounds'), ('data\\fonts', 'fonts')],
              hiddenimports=[],

@@ -13,12 +13,12 @@ class ExitButton:
         self.colors = ((33, 51, 62), LIGHT_GREY)
         self.color = self.colors[0]
 
-    def cursor_on_button(self, pos):
-        return hypot(pos[0] - self.x, pos[1] - self.y) <= self.r
+    def cursor_on_button(self):
+        x, y = pg.mouse.get_pos()
+        return hypot(x - self.x, y - self.y) <= self.r
 
     def update(self):
-        pos = pg.mouse.get_pos()
-        self.color = self.colors[1] if self.cursor_on_button(pos) else self.colors[0]
+        self.color = self.colors[1] if self.cursor_on_button() else self.colors[0]
 
     def draw(self, surface):
         pg.draw.circle(surface, WHITE, (self.x, self.y), self.r)

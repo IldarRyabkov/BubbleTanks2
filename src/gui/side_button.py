@@ -49,8 +49,9 @@ class SideButton:
         self.text_pos = (self.x + (self.w - self.text.get_width()) // 2,
                          self.y + (self.h - self.text.get_height()) // 2)
 
-    def cursor_on_button(self, pos):
-        return abs(self.x - pos[0]) <= self.w and abs(self.y - pos[1]) <= self.h
+    def cursor_on_button(self):
+        x, y = pg.mouse.get_pos()
+        return abs(self.x - x) <= self.w and abs(self.y - y) <= self.h
 
     def draw(self, screen):
         screen.blit(self.bg[self.clicked], (self.x, self.y))

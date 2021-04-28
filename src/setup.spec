@@ -1,10 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
+import sys
+import os
+
+
+PATH = os.path.dirname(os.path.abspath("__file__"))
 
 block_cipher = None
 
 
+
 a = Analysis(['__main__.py'],
-	     pathex=['D:\\Underwater_Battles\\src'],
+	     pathex=[PATH],
              binaries=[],
              datas=[('data\\images', 'images'), ('data\\music', 'music'), ('data\\sounds', 'sounds'), ('data\\fonts', 'fonts')],
              hiddenimports=[],

@@ -1,9 +1,8 @@
 import pygame as pg
 from random import random
-from math import sin, cos, pi, copysign
+from math import pi, copysign, sin ,cos
 
 from data.colors import WHITE, GLARE_COLORS
-from data.config import *
 from utils import calculate_angle
 
 
@@ -19,9 +18,7 @@ def create_glares(color, angle):
 
 
 class Glare:
-    def __init__(self, color: tuple,
-                 angle: float,
-                 radius_coeff: float):
+    def __init__(self, color, angle, radius_coeff):
         self.x = 0
         self.y = 0
         self.radius = 0
@@ -43,6 +40,7 @@ class Glare:
                        self.color,
                        (int(self.x - dx), int(self.y - dy)),
                        int(self.radius))
+
 
 class Circle:
     def __init__(self,
@@ -162,6 +160,11 @@ class Circle:
         self.x += self.rotating_dist * cos(self.rotating_angle)
         self.y -= self.rotating_dist * sin(self.rotating_angle)
 
+    def aim(self, target):
+        aiming_angle = calculate_angle(self.x, self.y, target[0], target[1])
+        self.x += self.aiming_dist * cos(self.aiming_angle + aiming_angle)
+        self.y -= self.aiming_dist * sin(self.aiming_angle + aiming_angle)
+
     def update(self, x, y, dt, target=(0, 0), beta=0, gamma=0):
         if self.visible:
             if self.scaling:
@@ -172,19 +175,13 @@ class Circle:
             self.y = y - self.dist * sin(angle)
 
             if self.aiming:
-                aiming_angle = calculate_angle(self.x, self.y, target[0], target[1])
-                angle = self.aiming_angle + aiming_angle
-                self.x += self.aiming_dist * cos(angle)
-                self.y -= self.aiming_dist * sin(angle)
+                self.aim(target)
 
             if self.rotating:
                 self.rotate(dt)
 
             if self.swinging:
-                if self.aiming:
-                    self.swing(dt, beta)
-                else:
-                    self.swing(dt, gamma)
+                self.swing(dt, beta if self.aiming else gamma)
 
             self.x += self.dx
             self.y += self.dy
@@ -192,13 +189,8 @@ class Circle:
             if self.radius >= 8:
                 self.update_glares(angle)
 
-    def is_on_screen(self, dx, dy):
-        return self.visible and \
-               -self.radius <= self.x - dx <= self.radius + SCR_W and \
-               -self.radius <= self.y - dy <= self.radius + SCR_H
-
     def draw(self, surface, dx, dy):
-        if self.is_on_screen(dx, dy):
+        if self.visible:
             x, y, r = int(self.x - dx), int(self.y - dy), int(self.radius)
             if self.edge:
                 pg.draw.circle(surface, WHITE, (x, y), r)

@@ -59,7 +59,6 @@ class StartMenu:
                     self.language_changed = True
 
     def update(self, dt, animation_time=0, state=START_MENU_WAIT):
-        clock.tick()
         self.bubbles.update(dt)
         self.play_button.update(dt, animation_time, state)
         self.rus_button.update(dt, animation_time, state)
@@ -77,25 +76,29 @@ class StartMenu:
         self.eng_button.draw(screen)
         pg.display.update()
 
-    def run_animation(self, state, screen):
+    def run_animation(self, state, screen, fps_manager):
         self.play_button.set_pos(state)
 
         animation_time = dt = 0
         while animation_time <= START_MENU_ANIMATION_TIME:
             self.handle_events()
+            clock.tick()
             self.update(dt, animation_time, state)
             self.draw(screen)
             dt = clock.tick()
+            fps_manager.update(dt)
             animation_time += dt
 
-    def run(self, screen):
+    def run(self, screen, fps_manager):
         self.reset_data()
-        self.run_animation(START_MENU_SHOW, screen)
+        self.run_animation(START_MENU_SHOW, screen, fps_manager)
         dt = 0
         self.running = True
         while self.running:
             self.handle_events()
+            clock.tick()
             self.update(dt)
             self.draw(screen)
             dt = clock.tick()
-        self.run_animation(START_MENU_HIDE, screen)
+            fps_manager.update(dt)
+        self.run_animation(START_MENU_HIDE, screen, fps_manager)

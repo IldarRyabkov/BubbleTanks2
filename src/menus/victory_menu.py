@@ -66,9 +66,6 @@ class VictoryMenu:
         if self.button.cursor_on_button():
             self.running = False
 
-    def show_fps(self):
-        pg.display.set_caption('FPS: ' + str(int(self.clock.get_fps()/2)))
-
     def handle_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -82,39 +79,19 @@ class VictoryMenu:
                 if event.button == 1:
                     self.handle_mouse_click()
 
-    def update(self, player, bubbles, dt):
-        self.clock.tick()
-        if player.superpower.name == "Ghost":
-            player.superpower.update_body(player.body)
-        player.update_body(dt)
-
-        for bubble in bubbles:
-            bubble.update_body(dt)
+    def update(self, dt):
         for bubble in self.bubbles:
             bubble.update_body(dt)
-
         self.button.update_color()
 
     def draw_bubbles(self, screen):
         for bubble in self.bubbles:
             bubble.draw(screen)
 
-    def draw(self, screen, draw_foreground):
-        screen.blit(self.bg_surface, (0, 0))
-        draw_foreground()
+    def draw(self, screen):
         screen.blit(self.mask_surface, (0, 0))
         screen.blit(self.caption, (SCR_W2 - self.caption.get_width()/2, 128))
         screen.blit(self.text,    (SCR_W2 - self.text.get_width()/2, 232))
         self.button.draw(screen)
         self.draw_bubbles(screen)
         pg.display.update()
-
-    def run(self, screen, player, bubbles, draw_foreground):
-        self.running = True
-        dt = 0
-        while self.running:
-            self.handle_events()
-            self.update(player, bubbles, dt)
-            self.draw(screen, draw_foreground)
-            dt = self.clock.tick()
-            self.show_fps()

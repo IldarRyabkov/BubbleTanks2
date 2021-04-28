@@ -15,12 +15,12 @@ class Gun00(GunSingle):
 
 class Gun10(GunSingle):
     def __init__(self):
-        super().__init__(26, 1.6, -1, 'SmallBullet_1', 75, 0)
+        super().__init__(26, 1.6, -1, 'SmallBullet_1', 100, 0)
 
 
 class Gun11(Gun):
     def __init__(self):
-        super().__init__(26, 1.6, -1, 'SmallBullet_1', 150, 0)
+        super().__init__(26, 1.6, -1, 'SmallBullet_1', 175, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
@@ -274,7 +274,7 @@ class Gun54(GunAutomatic):
         coords = ((243, 0.09 * pi), (243, -0.09 * pi),
                   (218, 0.29 * pi), (218, -0.29 * pi),
                   (218, 0.79 * pi), (218, -0.79 * pi))
-        super().__init__(0, 1.1, -5, 'BigBullet_1', 300, 0, 300, coords)
+        super().__init__(0, 1.1, -5, 'BigBullet_1', 200, 0, 200, coords)
         self.bullets_coords = ((192, 0.55 * pi), (192, -0.55 * pi), (200, pi))
 
     def generate_bullets(self, x, y, target, gamma):

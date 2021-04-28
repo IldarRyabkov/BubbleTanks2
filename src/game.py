@@ -12,7 +12,8 @@ from objects.player import Player
 from camera import Camera
 from room import Room
 from sound_player import SoundPlayer
-from level_generator import LevelGenerator
+from room_generator import RoomGenerator
+from fps_manager import FPSManager
 from menus.upgrade_menu import UpgradeMenu
 from menus.victory_menu import VictoryMenu
 from menus.start_menu import StartMenu
@@ -24,19 +25,20 @@ from utils import calculate_angle
 
 
 class Game:
-    def __init__(self, screen: pg.Surface):
-        self.screen = screen
+    def __init__(self):
+        self.screen = pg.display.set_mode(SCR_SIZE)
         self.sound_player = SoundPlayer()
         self.running = True
         self.transportation = False
         self.dt = 0
+        self.fps_manager = FPSManager()
         self.clock = pg.time.Clock()
         self.bg_environment = BackgroundEnvironment()
         self.player = Player()
         self.key_handlers = None
         self.camera = Camera()
         self.room = Room()
-        self.level_generator = LevelGenerator()
+        self.room_generator = RoomGenerator()
         self.start_menu = StartMenu()
         self.upgrade_menu = UpgradeMenu()
         self.victory_menu = VictoryMenu()
@@ -45,24 +47,28 @@ class Game:
         self.cooldown_window = CooldownWindow()
         self.init_key_handlers()
 
-    def show_fps(self):
-        fps = str(int(self.clock.get_fps() / 2))
-        pg.display.set_caption('FPS: %s' % fps)
-
     def reset_data(self):
         self.running = True
         self.transportation = False
         self.dt = 0
         self.player = Player()
-        self.level_generator.reset()
+        self.room_generator.reset()
         self.init_key_handlers()
         self.room.reset(new_game=True)
-        self.room.set_text(self.level_generator.get_room_text())
+        self.room.set_text(self.room_generator.get_room_text(0))
         self.bg_environment.set_player_halo(self.player.bg_radius)
         self.pause_menu.reset()
         self.cooldown_window.reset()
         self.health_window.reset()
         self.set_windows()
+
+    def set_language(self, language):
+        self.room_generator.set_language(language)
+        self.upgrade_menu.set_language(language)
+        self.victory_menu.set_language(language)
+        self.pause_menu.set_language(language)
+        self.health_window.set_language(language)
+        self.cooldown_window.set_language(language)
 
     def set_windows(self):
         self.health_window.set(self.player.state,
@@ -105,6 +111,11 @@ class Game:
         self.key_handlers[pg.K_ESCAPE].append(self.handle)
 
     def handle_events(self):
+        """Main events handler that handles pygame events
+        during the actual game.
+        """
+        old_time = pg.time.get_ticks()
+
         for event in pg.event.get():
             if event.type in [pg.KEYDOWN, pg.KEYUP]:
                 for handler in self.key_handlers[event.key]:
@@ -115,6 +126,13 @@ class Game:
             elif event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
+        # Usually handle_events method takes 0-2 milliseconds to execute,
+        # but if the execution time was more than 10 milliseconds, that means
+        # that most likely the display was inactive for some time.
+        # In that case we don't want this time to be taken into account for
+        # updating game objects, so additional clock.tick() method is called.
+        if pg.time.get_ticks() - old_time > 10:
+            self.clock.tick()
 
     def handle_bubble_eating(self):
         self.sound_player.reset()
@@ -285,20 +303,15 @@ class Game:
         self.cooldown_window.draw(self.screen)
 
     def run_transportation(self, dx, dy):
-        time, dt = 0, 0
+        time = dt = 0
         while time < TRANSPORTATION_TIME and self.running:
             self.handle_events()
-            self.clock.tick()
-
             self.update_transportation(dt)
-
             self.draw_transportation(time, dx, dy)
-
             pg.display.update()
-
             dt = self.clock.tick()
+            self.fps_manager.update(dt)
             time += dt
-            self.show_fps()
 
     def get_offset_and_destination(self, direction):
         """
@@ -326,9 +339,13 @@ class Game:
     def transport_player(self, direction):
         self.transportation = True
 
-        self.level_generator.update(self.room.encode_mobs(self.room.mobs),
-                                    direction, self.player, self.pause_menu)
-        self.level_generator.set_room(self.room)
+        self.room_generator.save(self.room.mobs)
+        self.room_generator.update(direction, self.player)
+
+        self.room.set_text(self.room_generator.get_room_text(self.player.level()))
+        self.room.set_new_mobs(self.room_generator.get_mobs())
+
+        self.pause_menu.update_game_map(self.room_generator.cur_room)
 
         offset, destination = self.get_offset_and_destination(direction)
         self.room.move_objects(offset)
@@ -420,38 +437,83 @@ class Game:
     def run_game(self):
         while self.running:
             self.handle_events()
-            self.clock.tick()
             self.update()
             self.draw()
             self.dt = self.clock.tick()
-            self.show_fps()
+            self.fps_manager.update(self.dt)
+
+    def update_pause_menu(self):
+        """Updates the background objects and all the pause menu items.
+        Since the objects in the background do not move or
+        interact with each other while the pause menu is running,
+        only their bodies are updated.
+        """
+        if self.player.superpower.name == "Ghost":
+            self.player.superpower.update_body(self.player.body)
+        self.player.update_body(self.dt)
+        for mob in self.room.mobs:
+            mob.update_body(self.dt, self.player.pos)
+        for bubble in self.room.bubbles:
+            bubble.update_body(self.dt)
+        for bullet in self.player.bullets:
+            bullet.update_body(self.dt)
+        for shuriken in self.player.shurikens:
+            if shuriken.is_orbiting:
+                shuriken.update_polar_coords(*self.player.pos, self.dt)
+        for bullet in self.room.bullets:
+            bullet.update_body(self.dt)
+        self.pause_menu.update(self.dt, self.sound_player.sounds)
+
+    def update_victory_menu(self):
+        if self.player.superpower.name == "Ghost":
+            self.player.superpower.update_body(self.player.body)
+            self.player.update_body(self.dt)
+        for bubble in self.room.bubbles:
+            bubble.update_body(self.dt)
+        self.victory_menu.update(self.dt)
+
+    def draw_pause_menu(self):
+        """Draws all objects in the background and pause menu items. """
+        self.screen.blit(self.pause_menu.bg_surface, (0, 0))
+        self.draw_foreground()
+        self.pause_menu.draw(self.screen)
+        pg.display.update()
+
+    def draw_victory_menu(self):
+        """Draws all objects in the background and victory menu items. """
+        self.screen.blit(self.victory_menu.bg_surface, (0, 0))
+        self.draw_foreground()
+        self.victory_menu.draw(self.screen)
 
     def run_start_menu(self):
-        self.start_menu.run(self.screen)
-        if self.start_menu.language_changed:
-            self.level_generator.set_language(self.start_menu.language)
-            self.upgrade_menu.set_language(self.start_menu.language)
-            self.victory_menu.set_language(self.start_menu.language)
-            self.pause_menu.set_language(self.start_menu.language)
-            self.health_window.set_language(self.start_menu.language)
-            self.cooldown_window.set_language(self.start_menu.language)
+        self.start_menu.run(self.screen, self.fps_manager)
+        self.set_language(self.start_menu.language)
 
     def run_pause_menu(self):
         self.draw_background(self.pause_menu.bg_surface)
         self.player.stop_moving()
-        self.pause_menu.run(self.screen, self.player,
-                            self.room.bubbles, self.room.mobs,
-                            self.room.bullets, self.draw_foreground,
-                            self.sound_player.sounds)
+        self.pause_menu.running = True
+        self.pause_menu.game_running = True
+        while self.pause_menu.running:
+            self.pause_menu.handle_events(self.sound_player.sounds)
+            self.clock.tick()
+            self.update_pause_menu()
+            self.draw_pause_menu()
+            self.dt = self.clock.tick()
+            self.fps_manager.update(self.dt)
         self.running = self.pause_menu.game_running
-        self.clock.tick()
 
     def run_victory_menu(self):
         self.draw_background(self.victory_menu.bg_surface)
-        self.victory_menu.run(self.screen, self.player,
-                                self.room.bubbles, self.draw_foreground)
+        self.victory_menu.running = True
+        while self.victory_menu.running:
+            self.victory_menu.handle_events()
+            self.clock.tick()
+            self.update_victory_menu()
+            self.draw_victory_menu()
+            self.dt = self.clock.tick()
+            self.fps_manager.update(self.dt)
         self.running = False
-        self.clock.tick()
 
     def run(self):
         while True:

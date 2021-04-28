@@ -595,6 +595,8 @@ def get_mob(name):
     if name == 'Scarab': return MobScarab()
     if name == 'Gull': return MobGull()
     if name == 'GullMother': return MobGullMother()
+    if name == 'ScarabMother': return MobScarabMother()
+    if name == 'BugMother': return MobBugMother()
     if name == 'Cockroach': return MobCockroach()
     if name == 'BenLaden': return MobBenLaden()
     if name == 'BomberShooter': return MobBomberShooter()

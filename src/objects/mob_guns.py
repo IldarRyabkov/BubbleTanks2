@@ -282,7 +282,7 @@ class GunSpider(Gun):
 
 class GunMachineGunner(Gun):
     def __init__(self):
-        super().__init__(0, 1.3, -4, 'SmallBullet_2', 3000, -2000)
+        super().__init__(0, 1.3, -2, 'SmallBullet_2', 3000, -2000)
 
         self.activated = False
         self.bullet_cooldown = 100

@@ -278,7 +278,7 @@ class GiantCannon(SuperPower):
 
     def activate(self, x, y, bullets, angle, camera):
         self.time -= self.cooldown_time
-        bullets.append(RegularBullet(x, y, 80, 1.0, angle, Body(GIANT_BUL_BODY)))
+        bullets.append(RegularBullet(x, y, -50, 1.0, angle, Body(GIANT_BUL_BODY)))
         camera.start_shaking(500)
 
 

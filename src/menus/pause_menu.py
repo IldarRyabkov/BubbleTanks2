@@ -31,7 +31,6 @@ class PauseMenu:
         self.exit_button = ExitButton()
         self.running = True
         self.game_running = True
-        self.clock = pg.time.Clock()
         self.set_language("English")
 
     def set_language(self, language):
@@ -59,9 +58,6 @@ class PauseMenu:
 
     def update_game_map(self, room_coords):
         self.windows[MAP_WINDOW].game_map.update_data(room_coords)
-
-    def show_fps(self):
-        pg.display.set_caption('FPS: ' + str(int(self.clock.get_fps()/2)))
 
     def handle_mouse_click(self, e_type, sounds):
         if e_type == pg.MOUSEBUTTONDOWN and self.exit_button.cursor_on_button():
@@ -92,46 +88,17 @@ class PauseMenu:
                           event.button == pg.BUTTON_LEFT):
                 self.handle_mouse_click(event.type, sounds)
 
-    def update(self, dt, player, bubbles, mobs, bullets, sounds):
-        if player.superpower.name == "Ghost":
-            player.superpower.update_body(player.body)
-        player.update_body(dt)
-        for mob in mobs:
-            mob.update_body(dt, (player.x, player.y))
-        for bubble in bubbles:
-            bubble.update_body(dt)
-        for bullet in player.bullets:
-            bullet.update_body(dt)
-        for shuriken in player.shurikens:
-            if shuriken.is_orbiting:
-                shuriken.update_polar_coords(*player.pos, dt)
-        for bullet in bullets:
-            bullet.update_body(dt)
+    def update(self, dt, sounds):
         if self.current_window == OPTIONS_WINDOW:
             self.windows[self.current_window].update(sounds)
         else:
             self.windows[self.current_window].update(dt)
         self.exit_button.update()
 
-    def draw(self, screen, draw_foreground):
-        screen.blit(self.bg_surface, (0, 0))
-        draw_foreground()
+    def draw(self, screen):
         screen.blit(self.mask, (0, 0))
         screen.blit(self.caption, (SCR_W2 - 112, 40))
         self.windows[self.current_window].draw(screen)
         for button in self.side_buttons:
             button.draw(screen)
         self.exit_button.draw(screen)
-        pg.display.update()
-
-    def run(self, screen, player, bubbles, mobs, bullets, draw_foreground, sounds):
-        self.running = True
-        self.game_running = True
-        dt = 0
-        while self.running:
-            self.handle_events(sounds)
-            self.clock.tick()
-            self.update(dt, player, bubbles, mobs, bullets, sounds)
-            self.draw(screen, draw_foreground)
-            dt = self.clock.tick()
-            self.show_fps()

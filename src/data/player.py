@@ -1981,8 +1981,8 @@ HEALTH_STATES_51 = ((0, ),)
 PARAMS_51 = [MAX_HEALTH_51, HEALTH_STATES_51, RADIUS_51, BODY_51, MAX_VEL_51,
              ACC_51, GUN_TYPE_51, BG_RADIUS_51, SUPERPOWER_51]
 ###############################################################################
-MAX_VEL_54 = 0.21
-ACC_54 = 0.0006
+MAX_VEL_54 = 0.3
+ACC_54 = 0.001
 GUN_TYPE_54 = 'Gun54'
 SUPERPOWER_54 = 'GiantCannon'
 MAX_HEALTH_54 = 1

@@ -1,5 +1,5 @@
 import pygame as pg
-from math import sqrt, hypot, sin, cos, pi
+from math import sqrt, hypot, sin, cos, pi, ceil
 
 from data.paths import *
 from data.config import *
@@ -19,13 +19,13 @@ def create_room_bg() -> list:
 
     for y in range(w, r, step):
         d1 = sqrt(r * r - (r - y - step) * (r - y - step))
-        d2 = sqrt((r - w) * (r - w) - (r - y) * (r - y))
+        d2 = ceil(sqrt((r - w) * (r - w) - (r - y) * (r - y)))
         room_bg.append(img.subsurface(pg.Rect(r - d1, y, d1 - d2, step)))
         room_bg.append(img.subsurface(pg.Rect(r + d2, y, d1 - d2, step)))
 
     for y in range(r, 2 * r - w, step):
         d1 = sqrt(r * r - (r - y) * (r - y))
-        d2 = sqrt((r - w) * (r - w) - (r - y - step) * (r - y - step))
+        d2 = ceil(sqrt((r - w) * (r - w) - (r - y - step) * (r - y - step)))
         room_bg.append(img.subsurface(pg.Rect(r - d1, y, d1 - d2, step)))
         room_bg.append(img.subsurface(pg.Rect(r + d2, y, d1 - d2, step)))
 
@@ -103,8 +103,8 @@ class DestinationCircle:
         self.y = y
 
     def draw(self, screen, dx, dy):
-        pg.draw.circle(screen, ROOM_COLOR, (self.x-dx, self.y-dy), 11)
-        pg.draw.circle(screen, WHITE,      (self.x-dx, self.y-dy), 7)
+        pg.draw.circle(screen, ROOM_COLOR, (self.x-dx, self.y-dy), 18)
+        pg.draw.circle(screen, WHITE,      (self.x-dx, self.y-dy), 12)
 
 
 class PlayerTrace:

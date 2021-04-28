@@ -35,7 +35,6 @@ class Player(Mob):
         self.vel_x, self.vel_y = 0, 0
         self.ACC = ACC
         self.acc_x, self.acc_y = 0, 0
-        self.MU = MU
         self.mu_x, self.mu_y = 0, 0
         self.moving_left = False
         self.moving_right = False
@@ -55,6 +54,9 @@ class Player(Mob):
         self.invisible = [False]
         self.state = (0, 0)
         self.states_history = [(0, 0)]
+
+    def level(self):
+        return self.state[0]
 
     def move(self, dx, dy):
         self.pos += np.array([dx, dy])
@@ -123,7 +125,7 @@ class Player(Mob):
         self.body.update(*self.pos, dt, mouse_pos)
 
     def setup(self, max_health, health_states, radius, body,
-         MAX_VEL, ACC, gun_type, bg_radius, superpower):
+              MAX_VEL, ACC, gun_type, bg_radius, superpower):
         self.gun = get_gun(gun_type)
         self.superpower = get_superpower(superpower)
         self.max_health = max_health
@@ -183,9 +185,9 @@ class Player(Mob):
             self.ACC *= 5
             self.make_body_unfrozen()
 
-    def set_transportation_vel(self, alpha, max_vel):
-        self.vel_x = max_vel * cos(alpha)
-        self.vel_y = -max_vel * sin(alpha)
+    def set_transportation_vel(self, angle, max_vel):
+        self.vel_x = max_vel * cos(angle)
+        self.vel_y = -max_vel * sin(angle)
 
     def clear_bullets(self):
         """
@@ -353,14 +355,14 @@ class Player(Mob):
 
     def update_acc(self):
         if not self.moving_right ^ self.moving_left:
-            self.acc_x = -copysign(1, self.vel_x)*self.MU if self.vel_x else 0
+            self.acc_x = -copysign(1, self.vel_x) * MU if self.vel_x else 0
         elif abs(self.vel_x) == self.MAX_VEL:
                 self.acc_x = 0
         else:
             self.acc_x = -self.ACC if self.moving_left else self.ACC
 
         if not self.moving_up ^ self.moving_down:
-            self.acc_y = -copysign(1, self.vel_y)*self.MU if self.vel_y else 0
+            self.acc_y = -copysign(1, self.vel_y) * MU if self.vel_y else 0
         elif abs(self.vel_y) == self.MAX_VEL:
                 self.acc_y = 0
         else:

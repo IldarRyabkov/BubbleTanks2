@@ -3,8 +3,7 @@ from math import pi, sin, cos
 from objects.gun import Gun, GunSingle, GunAutomatic
 from utils import calculate_angle
 from objects.bullets import RegularBullet
-from objects.bullets import EllipticBullet
-from objects.body import Body
+from objects.bullets import DrillingBullet
 from data.bullets import SMALL_BUL_BODY_1, BIG_BUL_BODY_1, STICKY_BUL_BODY
 
 
@@ -28,8 +27,8 @@ class Gun11(Gun):
         pos_0 = xo + 10 * sin(angle), yo + 10 * cos(angle)
         pos_1 = xo - 10 * sin(angle), yo - 10 * cos(angle)
 
-        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body)),
-                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body))]
+        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, self.bul_body),
+                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
 
 
 class Gun12(GunSingle):
@@ -48,9 +47,9 @@ class Gun20(Gun):
         pos_1 = (xo + 23 * sin(angle - 0.17*pi), yo + 23 * cos(angle - 0.17*pi))
         pos_2 = (xo - 23 * sin(angle + 0.17*pi), yo - 23 * cos(angle + 0.17*pi))
 
-        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle,             Body(self.bul_body)),
-                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle - 0.17 * pi, Body(self.bul_body)),
-                RegularBullet(*pos_2, self.bul_dmg, self.bul_vel, angle + 0.17 * pi, Body(self.bul_body))]
+        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle,             self.bul_body),
+                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle - 0.17 * pi, self.bul_body),
+                RegularBullet(*pos_2, self.bul_dmg, self.bul_vel, angle + 0.17 * pi, self.bul_body)]
 
 
 class Gun21(Gun):
@@ -64,9 +63,9 @@ class Gun21(Gun):
         pos_1 = (xo + 22 * sin(angle), yo + 22 * cos(angle))
         pos_2 = (xo - 22 * sin(angle), yo - 22 * cos(angle))
 
-        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body)),
-                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body)),
-                RegularBullet(*pos_2, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body))]
+        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, self.bul_body),
+                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, self.bul_body),
+                RegularBullet(*pos_2, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
 
 
 class Gun22(Gun21):
@@ -90,7 +89,7 @@ class Gun23(Gun):
 
         bullets = []
         for pos in coords:
-            bullets.append(RegularBullet(*pos, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body)))
+            bullets.append(RegularBullet(*pos, self.bul_dmg, self.bul_vel, angle, self.bul_body))
         return bullets
 
 
@@ -101,7 +100,7 @@ class Gun30(GunSingle):
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
         xo, yo = self.get_reference_point(x, y, angle)
-        return [EllipticBullet(xo, yo, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
+        return [DrillingBullet(xo, yo, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
 
 
 class Gun31(GunSingle):
@@ -133,7 +132,7 @@ class Gun32(Gun):
 
         bullets = []
         for i in range(5):
-            bullets.append(RegularBullet(*coords[i], self.bul_dmg, self.bul_vel, angles[i], Body(self.bul_body)))
+            bullets.append(RegularBullet(*coords[i], self.bul_dmg, self.bul_vel, angles[i], self.bul_body))
         return bullets
 
 
@@ -155,8 +154,8 @@ class Gun34(Gun):
         angle_1 = calculate_angle(xo, yo, *target)
         pos_1 = (xo + 64 * cos(angle_1), yo - 64 * sin(angle_1))
 
-        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle_0, Body(self.bul_body)),
-                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle_1, Body(self.bul_body))]
+        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle_0, self.bul_body),
+                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle_1, self.bul_body)]
 
 
 class Gun35(GunAutomatic):
@@ -172,7 +171,7 @@ class Gun40(Gun):
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
         xo, yo = self.get_reference_point(x, y, angle)
-        return [EllipticBullet(xo, yo, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
+        return [DrillingBullet(xo, yo, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
 
 
 class Gun41(Gun11):
@@ -192,9 +191,9 @@ class Gun42(Gun):
         pos_1 = (xo + 85 * cos(angle + 0.48*pi), yo - 85 * sin(angle + 0.48*pi))
         pos_2 = (xo + 85 * cos(angle - 0.48*pi), yo - 85 * sin(angle - 0.48*pi))
 
-        return [(RegularBullet(*pos_0, -5, 1.2, angle, Body(BIG_BUL_BODY_1))),
-                (RegularBullet(*pos_1, -1, 1.6,  angle, Body(SMALL_BUL_BODY_1))),
-                (RegularBullet(*pos_2, -1, 1.6,  angle, Body(SMALL_BUL_BODY_1)))]
+        return [(RegularBullet(*pos_0, -5, 1.2, angle, BIG_BUL_BODY_1)),
+                (RegularBullet(*pos_1, -1, 1.6,  angle, SMALL_BUL_BODY_1)),
+                (RegularBullet(*pos_2, -1, 1.6,  angle, SMALL_BUL_BODY_1))]
 
 
 class Gun43(Gun):
@@ -206,14 +205,14 @@ class Gun43(Gun):
         pos_0 = (x + 32 * cos(angle + 0.74*pi), y - 32 * sin(angle + 0.74*pi))
         pos_1 = (x + 32 * cos(angle - 0.74*pi), y - 32 * sin(angle - 0.74*pi))
 
-        return [(RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body))),
-                (RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body)))]
+        return [(RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, self.bul_body)),
+                (RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, self.bul_body))]
 
 
 class Gun44(GunAutomatic):
     def __init__(self):
         coords = ((154, 0.25 * pi), (154, -0.25 * pi))
-        super().__init__(48, 1.1, -5, 'BigBullet_1', 300, 0, 300, coords)
+        super().__init__(48, 1.1, -5, 'BigBullet_1', 300, 0, 200, coords)
 
     def generate_bullets(self, x, y, target, gamma):
         xo, yo = x + 144 * cos(gamma + 0.75*pi), y - 144 * sin(gamma + 0.75*pi)
@@ -224,8 +223,8 @@ class Gun44(GunAutomatic):
         angle_1 = calculate_angle(xo, yo, *target)
         pos_1 = (xo + 64 * cos(angle_1), yo - 64 * sin(angle_1))
 
-        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle_0, Body(self.bul_body)),
-                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle_1, Body(self.bul_body))]
+        return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle_0, self.bul_body),
+                RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle_1, self.bul_body)]
 
 
 class Gun45(GunAutomatic):
@@ -240,7 +239,7 @@ class Gun45(GunAutomatic):
             bullet_angle = calculate_angle(xo, yo, *target)
             bullet_pos = (xo + 64 * cos(bullet_angle), yo - 64 * sin(bullet_angle))
             bullets.append(RegularBullet(*bullet_pos, self.bul_dmg, self.bul_vel,
-                                         bullet_angle, Body(self.bul_body)))
+                                         bullet_angle, self.bul_body))
         return bullets
 
 
@@ -249,7 +248,7 @@ class Gun50(Gun40):
         super().__init__()
         self.cooldown_time = 500
         self.radius = 64
-        self.bul_dmg = -25
+        self.bul_dmg = -15
 
 
 class Gun51(Gun21):
@@ -287,7 +286,7 @@ class Gun54(GunAutomatic):
             bul_body = self.bul_body if radius != 200 else STICKY_BUL_BODY
             bul_dmg = self.bul_dmg if radius != 200 else 0
             bullets.append(RegularBullet(*bullet_pos, bul_dmg, self.bul_vel,
-                                         bullet_angle, Body(bul_body)))
+                                         bullet_angle, bul_body))
         return bullets
 
 

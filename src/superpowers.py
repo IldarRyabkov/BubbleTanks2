@@ -9,7 +9,6 @@ from data.config import *
 from special_effects import add_effect
 from data.bullets import (HOMING_MISSILE_BODY_1, BIG_BUL_BODY_1,
                           STICKY_BUL_BODY, BOMB_BUL_BODY_1, GIANT_BUL_BODY)
-from objects.body import Body
 from data.paths import THUNDER
 from utils import calculate_angle
 
@@ -23,7 +22,6 @@ class SuperPower:
         self.cooldown_time = cooldown_time
         self.time = cooldown_time
         self.on = False
-        self.name = type(self).__name__
 
     def update_time(self, dt):
         self.time = min([self.time + dt, self.cooldown_time])
@@ -31,10 +29,11 @@ class SuperPower:
     def activate(self, *args, **kwargs):
         pass
 
-    def update(self, *params):
-        self.update_time(params[0])
+    def update(self, dt, *args):
+        self.update_time(dt)
         if self.time == self.cooldown_time and self.on:
-            self.activate(*params[1::])
+            self.time = 0
+            self.activate(*args)
 
 
 class HomingMissiles(SuperPower):
@@ -52,11 +51,9 @@ class HomingMissiles(SuperPower):
         return coords
 
     def activate(self, pos, bullets, health, body_angle):
-        self.time = 0
         missiles_coords = self.get_missiles_coords(pos, body_angle)
         for pos in missiles_coords:
-            bullets.append(HomingMissile(*pos, 11, -5, 0.88,
-                                         Body(HOMING_MISSILE_BODY_1)))
+            bullets.append(HomingMissile(*pos, 11, -5, 0.88, HOMING_MISSILE_BODY_1))
 
 
 class NoneSuperPower(SuperPower):
@@ -73,15 +70,15 @@ class Armor(SuperPower):
 
     def activate(self, armor_on, top_effects):
         armor_on[0] = True
-        self.time = 0
         add_effect('Armor', top_effects, SCR_W2 - 160, SCR_H2 - 160, 160)
 
     def update_armor_state(self, armor_on):
         if self.time >= 0.5 * self.cooldown_time and armor_on[0]:
             armor_on[0] = False
 
-    def update(self, dt, armor_on, top_effects):
-        super().update(dt, armor_on, top_effects)
+    def update(self, dt, *args):
+        armor_on, _ = args
+        super().update(dt, *args)
         self.update_armor_state(armor_on)
 
 
@@ -96,9 +93,8 @@ class Bombs(SuperPower):
         return pos + np.array([-102 * cos(angle), 102 * sin(angle)])
 
     def activate(self, pos, bullets):
-        self.time = 0
         bullet_pos = self.get_bullet_pos(pos)
-        bullets.append(BombBullet(*bullet_pos, Body(BOMB_BUL_BODY_1)))
+        bullets.append(BombBullet(*bullet_pos, BOMB_BUL_BODY_1))
 
 
 class ParalysingExplosion(SuperPower):
@@ -117,7 +113,6 @@ class ParalysingExplosion(SuperPower):
         return pos + np.array([-self.dist * cos(angle), self.dist * sin(angle)])
 
     def activate(self, pos, mobs, top_effects, bottom_effects, camera, sound_player):
-        self.time = 0
         explosion_pos = self.get_explosion_pos(pos)
         for mob in mobs:
             if hypot(explosion_pos[0] - mob.x, explosion_pos[1] - mob.y) <= self.radius:
@@ -142,7 +137,6 @@ class PowerfulExplosion(SuperPower):
 
     def activate(self, pos, mobs, top_effects, bottom_effects, camera, sound_player):
         coords = self.get_explosion_pos(pos)
-        self.time = 0
         for mob in mobs:
             if hypot(coords[0] - mob.x, coords[1] - mob.y) <= 250:
                 mob.health -= 20
@@ -164,7 +158,6 @@ class Teleportation(SuperPower):
         return np.array(mouse_pos) - np.array([SCR_W2, SCR_H2])
 
     def activate(self, pos, top_effects, camera):
-        self.time = 0
         add_effect('TeleportationFlash', top_effects, *pos)
         pos += self.teleportation_offset()
         camera.update(*pos, 0)
@@ -202,7 +195,8 @@ class Ghost(SuperPower):
             body.circles[i].dx = self.offsets[i-1][0] * self.dist * cos(beta + self.offsets[i-1][1])
             body.circles[i].dy = -self.offsets[i-1][0] * self.dist * sin(beta + self.offsets[i-1][1])
 
-    def update(self, dt, invisible, body):
+    def update(self, dt, *args):
+        invisible, body = args
         if self.on:
             invisible[0] = True
             self.update_body(body)
@@ -218,22 +212,23 @@ class Ghost(SuperPower):
 
 class ExplosionStar(SuperPower):
     def __init__(self):
-        SuperPower.__init__(self, cooldown_time=2000)
+        SuperPower.__init__(self, cooldown_time=2500)
 
     def activate(self, pos, bullets):
-        self.time = 0
         beta = calculate_angle(SCR_W2, SCR_H2, *pg.mouse.get_pos())
         coords = pos + np.array([82 * cos(beta), -82 * sin(beta)])
-        bullets.append(FrangibleBullet(*coords, beta, Body(BIG_BUL_BODY_1)))
+        bullets.append(FrangibleBullet(*coords, beta, BIG_BUL_BODY_1))
 
 
 class Shurikens(SuperPower):
     def __init__(self):
-        SuperPower.__init__(self, cooldown_time=333)
+        SuperPower.__init__(self, cooldown_time=0)
+        self.shurikens_cooldown = 333
 
-    def update(self, dt, pos, shurikens):
-        self.time = min(self.cooldown_time, self.time + dt)
-        if len(shurikens) < 5 and self.time == self.cooldown_time:
+    def update(self, dt, *args):
+        pos, shurikens = args
+        self.time = min(self.shurikens_cooldown, self.time + dt)
+        if len(shurikens) < 5 and self.time == self.shurikens_cooldown:
             shurikens.append(Shuriken(*pos, uniform(0, 2*pi)))
             self.time = 0
 
@@ -243,11 +238,10 @@ class StickyCannon(SuperPower):
         SuperPower.__init__(self, cooldown_time=300)
 
     def activate(self, x, y, gamma, target, bullets):
-        self.time -= self.cooldown_time
         xo, yo = x + 128 * cos(gamma), y - 128 * sin(gamma)
         angle = calculate_angle(xo, yo, *target)
         pos = (xo + 54 * cos(angle), yo - 54 * sin(angle))
-        bullets.append(RegularBullet(*pos, 0, 1.1, angle, Body(STICKY_BUL_BODY)))
+        bullets.append(RegularBullet(*pos, 0, 1.1, angle, STICKY_BUL_BODY))
 
 
 class PowerfulCannon(SuperPower):
@@ -255,7 +249,6 @@ class PowerfulCannon(SuperPower):
         super().__init__(cooldown_time=1500)
 
     def activate(self, x, y, target, bullets):
-        self.time -= self.cooldown_time
         angle = calculate_angle(x, y, *target)
         pos = (x + 192 * cos(angle), y - 192 * sin(angle))
         bullets.append(ExplodingBullet(*pos, angle))
@@ -266,19 +259,18 @@ class StickyExplosion(SuperPower):
         super().__init__(cooldown_time=1750)
 
     def activate(self, pos, bullets):
-        self.time -= self.cooldown_time
         for i in range(36):
             angle = i * pi/18
-            bullets.append(RegularBullet(*pos, 0, 1.1, angle, Body(STICKY_BUL_BODY)))
+            bullets.append(RegularBullet(*pos, 0, 1.1, angle, STICKY_BUL_BODY))
 
 
 class GiantCannon(SuperPower):
     def __init__(self):
-        super().__init__(cooldown_time=5000)
+        super().__init__(cooldown_time=3000)
 
-    def activate(self, x, y, bullets, angle, camera):
-        self.time -= self.cooldown_time
-        bullets.append(RegularBullet(x, y, -50, 1.0, angle, Body(GIANT_BUL_BODY)))
+    def activate(self, x, y, bullets, camera):
+        angle = calculate_angle(SCR_W2, SCR_H2, *pg.mouse.get_pos())
+        bullets.append(RegularBullet(x, y, -50, 1.4, angle, GIANT_BUL_BODY))
         camera.start_shaking(500)
 
 

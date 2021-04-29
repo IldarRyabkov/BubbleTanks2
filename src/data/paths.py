@@ -23,6 +23,7 @@ TELEPORTATION = os.path.abspath(os.path.join(ROOT_DIR, "images/teleportation.png
 HEALTH_WINDOW_BG = os.path.abspath(os.path.join(ROOT_DIR, "images/health_window_bg.png"))
 COOLDOWN_WINDOW_BG = os.path.abspath(os.path.join(ROOT_DIR, "images/cooldown_window_bg.png"))
 BUBBLE_HALO = os.path.abspath(os.path.join(ROOT_DIR, "images/bubble_halo.png"))
+SNIPER_BULLET = os.path.abspath(os.path.join(ROOT_DIR, "images/sniper_bullet.png"))
 RUS_FLAG = os.path.abspath(os.path.join(ROOT_DIR, "images/russian_flag.png"))
 ENG_FLAG = os.path.abspath(os.path.join(ROOT_DIR, "images/english_flag.png"))
 

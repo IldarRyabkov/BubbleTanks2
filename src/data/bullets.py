@@ -14,7 +14,6 @@ def create_sniper_bullet():
     body.set_colorkey(COLOR_KEY)
     return body
 
-
 SNIPER_BULLET_BODY = create_sniper_bullet()
 
 SMALL_BUL_BODY_1 = [[13, 1, DARK_RED, 0, 0, False, 0, 0, 0, True, False]]

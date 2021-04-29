@@ -26,11 +26,11 @@ class MobBossHead(Mob):
                      body_rect=pg.Rect(0, 0, 464, 448))
 
     def update_pos(self, dt, generated_mobs=list()):
-        super().update_pos(dt, generated_mobs)
+        super().update_pos(dt)
         self.body_rect.y += 240
 
-    def collide_bullet(self, x, y):
-        return circle_collidepoint(self.x, self.y + 160, self.radius, x, y)
+    def collide_bullet(self, x, y, r):
+        return circle_collidepoint(self.x, self.y + 160, self.radius + r, x, y)
 
     def update_body(self, dt, player_pos=(0, 0)):
         for i, circle in enumerate(self.body.circles):
@@ -102,8 +102,7 @@ class MobBossSkeleton(Mob):
         for circle in self.body.circles:
             circle.angle += pi
 
-    def update(self, target, bullets, homing_bullets,
-               generated_mobs, screen_rect, dt):
+    def update(self, *args, **kwargs):
         pass
 
 
@@ -365,8 +364,7 @@ class MobMother(Mob):
         if self.name == 'ScarabMother':
             return MobScarab()
 
-    def generate_child(self, dt):
-        child = []
+    def generate_mob(self, dt):
         self.generation_time += dt
         if self.generation_time >= self.generation_cooldown:
             self.generation_time -= self.generation_cooldown
@@ -377,12 +375,8 @@ class MobMother(Mob):
             mob.y = self.y
             mob.time = self.time
             mob.body.update(mob.x, mob.y, 0)
-            child = [mob]
-        return child
-
-    def update_pos(self, dt, generated_mobs=list()):
-        super().update_pos(dt, generated_mobs)
-        generated_mobs.extend(self.generate_child(dt))
+            return [mob]
+        return []
 
 
 class MobGullMother(MobMother):
@@ -519,7 +513,7 @@ class MobSpider(Mob):
                      health=130,
                      health_states=SPIDER_HEALTH_STATES,
                      bubbles={"small": 12, "medium": 0, "big": 0},
-                     radius=152,
+                     radius=140,
                      body=SPIDER_BODY,
                      gun_type='GunSpider',
                      time=uniform(0, 1000),

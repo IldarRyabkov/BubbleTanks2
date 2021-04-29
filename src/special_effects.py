@@ -167,7 +167,7 @@ class PowerfulExplosion(SpecialEffect):
         super().__init__(x, y, duration=300)
         self.surface_0 = pg.image.load(POWERFUL_EXPLOSION).convert_alpha()
         self.surface = None
-        self.max_diam = 800
+        self.max_diam = 1000
         self.diam = None
 
     def update(self, dt):

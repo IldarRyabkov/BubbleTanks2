@@ -9,6 +9,7 @@ from data.paths import (GAME_MUSIC, START_MUSIC, PLAYER_BULLET_HIT,
 from data.config import *
 from background_environment import BackgroundEnvironment
 from objects.player import Player
+from objects.bullets import DrillingBullet, ExplodingBullet
 from camera import Camera
 from room import Room
 from sound_player import SoundPlayer
@@ -21,6 +22,7 @@ from menus.pause_menu import PauseMenu
 from gui.health_window import HealthWindow
 from gui.cooldown_window import CooldownWindow
 from special_effects import add_effect
+from superpowers import Ghost
 from utils import calculate_angle
 
 
@@ -79,7 +81,7 @@ class Game:
 
     def update_windows(self, dt):
         self.health_window.update(dt)
-        self.cooldown_window.update(dt, self.player)
+        self.cooldown_window.update(dt, self.player, self.transportation)
 
     def handle(self, e_type, e_key):
         if e_key == pg.K_a:
@@ -169,19 +171,24 @@ class Game:
         self.bg_environment.set_player_halo(self.player.bg_radius)
         self.room.set_gravity_radius(self.player.bg_radius)
 
-    def handle_mob_injure(self, mob, bullet):
+    def handle_enemy_injure(self, mob, bullet):
         """
-        Method updates bullet's hit-flag, updates mob's state according to damage,
-        Adds a hit-effect to the list of effects and plays an appropriate sound.
+        Method updates bullet's hit-flag, updates enemy's state according to damage,
+        adds a hit-effect to the list of effects and plays an appropriate sound.
 
         """
-        bullet.hit_the_target = True
+        if isinstance(bullet, DrillingBullet):
+            if mob in bullet.attacked_mobs:
+                return
+            bullet.attacked_mobs.append(mob)
+        else:
+            bullet.hit_the_target = True
 
         mob.handle_injure(bullet.damage)
 
         add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
 
-        if bullet.exploding:
+        if isinstance(bullet, ExplodingBullet):
             self.room.handle_bullet_explosion(bullet.x, bullet.y)
             self.camera.start_shaking(250)
 
@@ -201,26 +208,26 @@ class Game:
 
         for b in self.player.bullets:
             for mob in self.room.mobs:
-                if mob.collide_bullet(b.x, b.y) and mob.health > 0:
-                    self.handle_mob_injure(mob, b)
+                if mob.collide_bullet(b.x, b.y, b.radius) and mob.health > 0:
+                    self.handle_enemy_injure(mob, b)
                     break
 
             if not b.hit_the_target:
                 for h_b in self.room.homing_bullets:
-                    if h_b.collide_bullet(b.x, b.y) and h_b.health > 0:
-                        self.handle_mob_injure(h_b, b)
+                    if h_b.collide_bullet(b.x, b.y, b.radius) and h_b.health > 0:
+                        self.handle_enemy_injure(h_b, b)
                         break
 
         for s in self.player.shurikens:
             for mob in self.room.mobs:
-                if mob.collide_bullet(s.x, s.y) and mob.health > 0:
-                    self.handle_mob_injure(mob, s)
+                if mob.collide_bullet(s.x, s.y, s.radius) and mob.health > 0:
+                    self.handle_enemy_injure(mob, s)
                     break
 
         for b in self.player.homing_bullets:
             for mob in self.room.mobs:
-                if mob.collide_bullet(b.x, b.y) and mob.health > 0:
-                    self.handle_mob_injure(mob, b)
+                if mob.collide_bullet(b.x, b.y, b.radius) and mob.health > 0:
+                    self.handle_enemy_injure(mob, b)
                     break
 
     def handle_player_injure(self, bullet):
@@ -251,18 +258,20 @@ class Game:
         self.sound_player.reset()
 
         for b in self.room.bullets:
-            if not self.player.invisible[0] and self.player.collide_bullet(b.x, b.y):
+            if (not self.player.invisible[0] and
+                    self.player.collide_bullet(b.x, b.y, b.radius)):
                 self.handle_player_injure(b)
                 break
 
             if not b.hit_the_target:
                 for h_b in self.player.homing_bullets:
-                    if h_b.collide_bullet(b.x, b.y) and h_b.health > 0:
-                        self.handle_mob_injure(h_b, b)
+                    if h_b.collide_bullet(b.x, b.y, b.radius) and h_b.health > 0:
+                        self.handle_enemy_injure(h_b, b)
                         break
 
         for b in self.room.homing_bullets:
-            if not self.player.invisible[0] and self.player.collide_bullet(b.x, b.y):
+            if (not self.player.invisible[0] and
+                    self.player.collide_bullet(b.x, b.y, b.radius)):
                 self.handle_player_injure(b)
                 break
 
@@ -272,9 +281,11 @@ class Game:
     def update_transportation(self, dt):
         """ Update all objects during transportation. """
         self.player.move(self.player.vel_x * dt, self.player.vel_y * dt)
-        self.player.update(dt, self.room.mobs, self.room.top_effects,
-                           self.room.bottom_effects, self.camera,
-                           self.sound_player, transportation=True)
+        self.player.update_body(dt)
+        self.player.update_shurikens(dt, [])
+        self.player.update_frozen_state(dt)
+        self.player.gun.update_time(dt)
+        self.player.superpower.update_time(dt)
         self.camera.update(*self.player.pos, dt)
         self.room.set_screen_rect(self.player.pos)
         self.room.update_new_mobs(*self.player.pos, dt)
@@ -398,9 +409,9 @@ class Game:
         self.handle_bubble_eating()
         self.handle_mobs_collisions()
         self.handle_player_collisions()
-        self.player.update(self.dt, self.room.mobs, self.room.top_effects,
-                           self.room.bottom_effects, self.camera,
-                           self.sound_player)
+        self.player.update_all(self.dt, self.room.mobs, self.room.top_effects,
+                               self.room.bottom_effects, self.camera,
+                               self.sound_player)
         self.camera.update(*self.player.pos, self.dt)
         self.room.update(self.player.pos,  self.dt)
         if self.room.game_is_over():
@@ -448,7 +459,7 @@ class Game:
         interact with each other while the pause menu is running,
         only their bodies are updated.
         """
-        if self.player.superpower.name == "Ghost":
+        if isinstance(self.player.superpower, Ghost):
             self.player.superpower.update_body(self.player.body)
         self.player.update_body(self.dt)
         for mob in self.room.mobs:

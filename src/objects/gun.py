@@ -4,7 +4,6 @@ from data.bullets import BULLETS, SMALL_BUL_BODY_1
 from data.config import SCR_H
 from utils import calculate_angle
 from objects.bullets import RegularBullet
-from objects.body import Body
 
 
 class Gun:
@@ -15,13 +14,13 @@ class Gun:
                  bul_dmg: int,
                  bullet_name: str,
                  cooldown_time: int,
-                 time: int):
+                 time_delay: int):
         self.radius = radius
         self.bul_vel = bul_vel
         self.bul_dmg = bul_dmg
         self.bul_body = BULLETS[bullet_name]
         self.cooldown_time = cooldown_time
-        self.time = time
+        self.time = cooldown_time + time_delay
         self.automatic = False
         self.is_aiming = True
         self.shooting_homing_bullets = False
@@ -37,17 +36,17 @@ class Gun:
 
     def append_bullets(self, x, y, target, bullets, gamma=0):
         """ Appends new bullets to the given list of bullets. """
-        if self.time >= 0:
-            self.time -= self.cooldown_time
+        if self.time == self.cooldown_time:
+            self.time = 0
             bullets.extend(self.generate_bullets(x, y, target, gamma))
 
     def update_time(self, dt):
         """
-        Update the time counter. Time = 0 means
+        Update the time counter. time = cooldown_time means
         that gun is recharged and ready to shoot.
 
         """
-        self.time = min([self.time + dt, 0])
+        self.time = min([self.time + dt, self.cooldown_time])
 
 
 class GunSingle(Gun):
@@ -59,7 +58,7 @@ class GunSingle(Gun):
         angle = calculate_angle(x, y, *target)
         coords = self.get_reference_point(x, y, angle)
 
-        return [RegularBullet(*coords, self.bul_dmg, self.bul_vel, angle, Body(self.bul_body))]
+        return [RegularBullet(*coords, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
 
 
 class GunAutomatic(GunSingle):
@@ -70,9 +69,9 @@ class GunAutomatic(GunSingle):
         super().__init__(radius, bul_vel, bul_dmg, bul_type, cooldown_time, time)
 
         self.automatic = True
-        self.time_auto = 0
+        self.time_auto = cooldown_time_auto
         self.cooldown_time_auto = cooldown_time_auto
-        self.auto_bullets_coords=coords
+        self.auto_bullets_coords = coords
 
     def generate_bullets_auto(self, x, y, mob, gamma) -> list:
         bullets = list()
@@ -84,12 +83,12 @@ class GunAutomatic(GunSingle):
                 dt = hypot(pos[0] - mob.x, pos[1] - mob.y) / 2.4
                 target = mob.trajectory(mob.time + dt / 1000 * mob.w)
             bullet_angle = calculate_angle(*pos, *target)
-            bullets.append(RegularBullet(*pos, -1, 2.4, bullet_angle, Body(SMALL_BUL_BODY_1)))
+            bullets.append(RegularBullet(*pos, -1, 2.4, bullet_angle, SMALL_BUL_BODY_1))
         return bullets
 
     def append_bullets_auto(self, x, y, mobs, bullets, gamma=0):
-        if self.time_auto >= 0:
-            self.time_auto -= self.cooldown_time_auto
+        if self.time_auto == self.cooldown_time_auto:
+            self.time_auto = 0
             mob = -1
             distance = 9001
             for i in range(len(mobs)):
@@ -101,7 +100,7 @@ class GunAutomatic(GunSingle):
 
     def update_time(self, dt):
         super().update_time(dt)
-        self.time_auto = min([self.time_auto+dt, 0])
+        self.time_auto = min([self.time_auto + dt, self.cooldown_time_auto])
 
 
 class GunPeaceful:

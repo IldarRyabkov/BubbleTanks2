@@ -7,7 +7,6 @@ from objects.mobs import get_mob
 import data.languages.english as eng
 import data.languages.russian as rus
 
-PLAYER_EXTRA_HEALTH = {0: 0, 1: 75, 2: 200, 3: 400, 4: 800, 5: 1300}
 
 PEACEFUL_MOBS = ['Infusoria', 'Cell', 'Ameba', 'Baby']
 WEAK_SLOW_MOBS = ["Turtle", "Turtle_dmg", "Terrorist"]
@@ -87,7 +86,8 @@ def generate_level_6():
             mobs[random.choice(WEAK_FAST_MOBS)] += 1
     else:
         for _ in range(4):
-            mobs[random.choice(["Turtle", "Turtle_dmg", "Beetle", "BomberShooter"])] += 1
+            mobs[random.choice(["Turtle", "Turtle_dmg",
+                                "Beetle", "BomberShooter"])] += 1
         for _ in range(2):
             mobs[random.choice(WEAK_FAST_MOBS)] += 1
     return mobs

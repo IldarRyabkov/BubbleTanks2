@@ -1054,7 +1054,7 @@ TURRET_HEALTH_STATES = ((0, ),)
 ###############################################################################
 
 
-def align_body(body, name='', scale=1.0):
+def print_pretty(body, name='', scale=1.0):
     max_sizes = [0] * 20
     for j in range(len(body)):
         for i in range(len(body[j])):
@@ -1093,4 +1093,4 @@ def align_body(body, name='', scale=1.0):
 
 
 
-#align_body(TURRET_BODY, 'TURRET_BODY', scale=1/1.6)
+#print_pretty(TURRET_BODY, 'TURRET_BODY', scale=1/1.6)

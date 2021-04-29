@@ -1,5 +1,6 @@
 from math import pi
 from data.colors import *
+from data.mobs import print_pretty
 
 
 MAX_VEL_00 = 1.1
@@ -1988,96 +1989,96 @@ SUPERPOWER_54 = 'GiantCannon'
 MAX_HEALTH_54 = 1
 RADIUS_54 = 225
 BG_RADIUS_54 = 320
-BODY_54 = [[25,  3, BLUE,   120, pi,         True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.9 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.9 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.8 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.8 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.7 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.7 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.6 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.6 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.5 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.5 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.4 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.4 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.3 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.3 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.2 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.2 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.1 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, -0.1 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [25,  3, BLUE,   120, 0.0,        True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [112, 3, BLUE,   0,   0.0,        True,  0.046, 27, 0,   True,  False, 0,  0.0],
-           [64,  3, BLUE,   192, 0.55 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [64,  3, BLUE,   192, -0.55 * pi, True,  0.043, 25, 0,   True,  False, 0,  0.0],
-           [64,  3, BLUE,   200, pi,         True,  0.043, 25, 0,   True,  False, 0,  0.0],
+BODY_54 = [[25,  3, BLUE,   120, pi,         True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.9 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.9 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.8 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.8 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.7 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.7 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.6 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.6 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.5 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.5 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.4 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.4 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.3 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.3 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.2 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.2 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0.1 * pi,   True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, -0.1 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [25,  3, BLUE,   120, 0,          True,  0.043, 25, 0,   True,  False, 0,  0],
+           [112, 3, BLUE,   0,   0,          True,  0.046, 27, 0,   True,  False, 0,  0],
+           [64,  3, BLUE,   192, 0.55 * pi,  True,  0.043, 25, 0,   True,  False, 0,  0],
+           [64,  3, BLUE,   192, -0.55 * pi, True,  0.043, 25, 0,   True,  False, 0,  0],
+           [64,  3, BLUE,   200, pi,         True,  0.043, 25, 0,   True,  False, 0,  0],
            [17,  1, ORANGE, 192, 0.55 * pi,  True,  0.027, 16, 0,   True,  True,  51, 0.2 * pi],
            [17,  1, ORANGE, 192, 0.55 * pi,  True,  0.027, 16, 0.4, True,  True,  51, -0.2 * pi],
            [17,  1, ORANGE, 192, 0.55 * pi,  True,  0.027, 16, 0.7, True,  True,  76, 0.13 * pi],
            [17,  1, ORANGE, 192, 0.55 * pi,  True,  0.027, 16, 0.2, True,  True,  76, -0.13 * pi],
-           [44,  6, ORANGE, 192, 0.55 * pi,  True,  0.07,  41, 0,   True,  True,  0,  0.0],
+           [44,  6, ORANGE, 192, 0.55 * pi,  True,  0.07,  41, 0,   True,  True,  0,  0],
            [19,  1, ORANGE, 192, 0.55 * pi,  True,  0.03,  17, 0,   True,  True,  57, 0.77 * pi],
            [19,  1, ORANGE, 192, 0.55 * pi,  True,  0.03,  17, 0.4, True,  True,  57, -0.77 * pi],
            [17,  1, ORANGE, 192, -0.55 * pi, True,  0.027, 16, 0.3, True,  True,  51, 0.2 * pi],
            [17,  1, ORANGE, 192, -0.55 * pi, True,  0.027, 16, 0.7, True,  True,  51, -0.2 * pi],
            [17,  1, ORANGE, 192, -0.55 * pi, True,  0.027, 16, 0.0, True,  True,  76, 0.13 * pi],
            [17,  1, ORANGE, 192, -0.55 * pi, True,  0.027, 16, 0.5, True,  True,  76, -0.13 * pi],
-           [44,  6, ORANGE, 192, -0.55 * pi, True,  0.07,  41, 0.3, True,  True,  0,  0.0],
+           [44,  6, ORANGE, 192, -0.55 * pi, True,  0.07,  41, 0.3, True,  True,  0,  0],
            [19,  1, ORANGE, 192, -0.55 * pi, True,  0.03,  17, 0.3, True,  True,  57, 0.77 * pi],
            [19,  1, ORANGE, 192, -0.55 * pi, True,  0.03,  17, 0.7, True,  True,  57, -0.77 * pi],
            [17,  1, ORANGE, 200, pi,         True,  0.027, 16, 0.3, True,  True,  51, 0.2 * pi],
            [17,  1, ORANGE, 200, pi,         True,  0.027, 16, 0.7, True,  True,  51, -0.2 * pi],
            [17,  1, ORANGE, 200, pi,         True,  0.027, 16, 0.0, True,  True,  76, 0.13 * pi],
            [17,  1, ORANGE, 200, pi,         True,  0.027, 16, 0.5, True,  True,  76, -0.13 * pi],
-           [44,  6, ORANGE, 200, pi,         True,  0.07,  41, 0.3, True,  True,  0,  0.0],
+           [44,  6, ORANGE, 200, pi,         True,  0.07,  41, 0.3, True,  True,  0,  0],
            [19,  1, ORANGE, 200, pi,         True,  0.03,  17, 0.3, True,  True,  57, 0.77 * pi],
            [19,  1, ORANGE, 200, pi,         True,  0.03,  17, 0.7, True,  True,  57, -0.77 * pi],
-           [12,  1, ORANGE, 75,  0.26 * pi,  True,  0.021, 12, 0,   True,  False, 0,  0.0],
-           [12,  1, ORANGE, 75,  -0.26 * pi, True,  0.021, 12, 0.4, True,  False, 0,  0.0],
-           [16,  1, ORANGE, 70,  0.36 * pi,  True,  0.029, 16, 0,   True,  False, 0,  0.0],
-           [16,  1, ORANGE, 70,  -0.36 * pi, True,  0.029, 16, 0.4, True,  False, 0,  0.0],
-           [19,  1, ORANGE, 62,  0.48 * pi,  True,  0.032, 19, 0,   True,  False, 0,  0.0],
-           [19,  1, ORANGE, 62,  -0.48 * pi, True,  0.032, 19, 0.4, True,  False, 0,  0.0],
-           [22,  3, ORANGE, 56,  0.65 * pi,  True,  0.032, 19, 0,   True,  False, 0,  0.0],
-           [22,  3, ORANGE, 56,  -0.65 * pi, True,  0.032, 19, 0.4, True,  False, 0,  0.0],
-           [22,  4, ORANGE, 72,  pi,         True,  0.046, 27, 0.4, True,  False, 0,  0.0],
-           [32,  4, ORANGE, 51,  0.85 * pi,  True,  0.046, 27, 0,   True,  False, 0,  0.0],
-           [32,  4, ORANGE, 51,  -0.85 * pi, True,  0.046, 27, 0.4, True,  False, 0,  0.0],
-           [20,  3, BLUE,   150, 0.0,        True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [17,  1, BLUE,   179, 0.0,        True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [17,  1, BLUE,   195, 0.04 * pi,  True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [17,  1, BLUE,   195, -0.04 * pi, True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [38,  3, BLUE,   217, 0.09 * pi,  True,  0.048, 30, 0,   True,  False, 0,  0.0],
-           [22,  3, ORANGE, 217, 0.09 * pi,  True,  0.04,  20, 0.6, True,  False, 0,  0.0],
-           [11,  1, ORANGE, 243, 0.09 * pi,  True,  0.019, 11, 0.3, True,  False, 0,  0.0],
-           [38,  3, BLUE,   217, -0.09 * pi, True,  0.048, 30, 0,   True,  False, 0,  0.0],
-           [22,  3, ORANGE, 217, -0.09 * pi, True,  0.04,  20, 0.3, True,  False, 0,  0.0],
-           [11,  1, ORANGE, 243, -0.09 * pi, True,  0.019, 11, 0.3, True,  False, 0,  0.0],
-           [20,  1, BLUE,   150, 0.29 * pi,  True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [38,  3, BLUE,   192, 0.29 * pi,  True,  0.048, 30, 0,   True,  False, 0,  0.0],
-           [22,  3, ORANGE, 192, 0.29 * pi,  True,  0.04,  20, 0.6, True,  False, 0,  0.0],
-           [11,  1, ORANGE, 217, 0.29 * pi,  True,  0.019, 11, 0.3, True,  False, 0,  0.0],
-           [20,  1, BLUE,   150, -0.29 * pi, True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [38,  3, BLUE,   192, -0.29 * pi, True,  0.048, 30, 0,   True,  False, 0,  0.0],
-           [22,  3, ORANGE, 192, -0.29 * pi, True,  0.04,  20, 0.3, True,  False, 0,  0.0],
-           [11,  1, ORANGE, 217, -0.29 * pi, True,  0.019, 11, 0.3, True,  False, 0,  0.0],
-           [20,  1, BLUE,   150, 0.79 * pi,  True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [17,  1, BLUE,   174, 0.79 * pi,  True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [38,  3, BLUE,   217, 0.79 * pi,  True,  0.048, 30, 0,   True,  False, 0,  0.0],
-           [22,  3, ORANGE, 217, 0.79 * pi,  True,  0.04,  20, 0.6, True,  False, 0,  0.0],
-           [11,  1, ORANGE, 243, 0.79 * pi,  True,  0.019, 11, 0.3, True,  False, 0,  0.0],
-           [20,  1, BLUE,   150, -0.79 * pi, True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [17,  1, BLUE,   174, -0.79 * pi, True,  0.024, 14, 0,   True,  False, 0,  0.0],
-           [38,  3, BLUE,   217, -0.79 * pi, True,  0.048, 30, 0,   True,  False, 0,  0.0],
-           [22,  3, ORANGE, 217, -0.79 * pi, True,  0.04,  20, 0.3, True,  False, 0,  0.0],
-           [11,  1, ORANGE, 243, -0.79 * pi, True,  0.019, 11, 0.3, True,  False, 0,  0.0],
-           [27,  1, VIOLET, 40,  0.8 * pi,   False, 0.0,   0,  0,   False, False, 0,  0.0],
-           [12,  1, VIOLET, 36,  0.55 * pi,  False, 0.0,   0,  0,   False, False, 0,  0.0],
-           [12,  1, VIOLET, 41,  -0.45 * pi, False, 0.0,   0,  0,   False, False, 0,  0.0],
-           [12,  1, VIOLET, 43,  pi,         False, 0.0,   0,  0,   False, False, 0,  0.0],
-           [12,  1, VIOLET, 27,  -0.9 * pi,  False, 0.0,   0,  0,   False, False, 0,  0.0],
-           [16,  1, VIOLET, 46,  0.25 * pi,  False, 0.0,   0,  0,   False, False, 0,  0.0]]
+           [12,  1, ORANGE, 0,   0,          True,  0.021, 12, 0,   True,  True,  75, 0.26 * pi],
+           [12,  1, ORANGE, 0,   0,          True,  0.021, 12, 0.4, True,  True,  75, -0.26 * pi],
+           [16,  1, ORANGE, 0,   0,          True,  0.029, 16, 0,   True,  True,  70, 0.36 * pi],
+           [16,  1, ORANGE, 0,   0,          True,  0.029, 16, 0.4, True,  True,  70, -0.36 * pi],
+           [19,  1, ORANGE, 0,   0,          True,  0.032, 19, 0,   True,  True,  62, 0.48 * pi],
+           [19,  1, ORANGE, 0,   0,          True,  0.032, 19, 0.4, True,  True,  62, -0.48 * pi],
+           [22,  3, ORANGE, 0,   0,          True,  0.032, 19, 0,   True,  True,  56, 0.65 * pi],
+           [22,  3, ORANGE, 0,   0,          True,  0.032, 19, 0.4, True,  True,  56, -0.65 * pi],
+           [22,  4, ORANGE, 0,   0,          True,  0.046, 27, 0.4, True,  True,  72, pi],
+           [32,  4, ORANGE, 0,   0,          True,  0.046, 27, 0,   True,  True,  51, 0.85 * pi],
+           [32,  4, ORANGE, 0,   0,          True,  0.046, 27, 0.4, True,  True,  51, -0.85 * pi],
+           [20,  3, BLUE,   150, 0,          True,  0.024, 14, 0,   True,  False, 0,  0],
+           [17,  1, BLUE,   179, 0,          True,  0.024, 14, 0,   True,  False, 0,  0],
+           [17,  1, BLUE,   195, 0.04 * pi,  True,  0.024, 14, 0,   True,  False, 0,  0],
+           [17,  1, BLUE,   195, -0.04 * pi, True,  0.024, 14, 0,   True,  False, 0,  0],
+           [38,  3, BLUE,   217, 0.09 * pi,  True,  0.048, 30, 0,   True,  False, 0,  0],
+           [22,  3, ORANGE, 217, 0.09 * pi,  True,  0.04,  20, 0.6, True,  False, 0,  0],
+           [11,  1, ORANGE, 243, 0.09 * pi,  True,  0.019, 11, 0.3, True,  False, 0,  0],
+           [38,  3, BLUE,   217, -0.09 * pi, True,  0.048, 30, 0,   True,  False, 0,  0],
+           [22,  3, ORANGE, 217, -0.09 * pi, True,  0.04,  20, 0.3, True,  False, 0,  0],
+           [11,  1, ORANGE, 243, -0.09 * pi, True,  0.019, 11, 0.3, True,  False, 0,  0],
+           [20,  1, BLUE,   150, 0.29 * pi,  True,  0.024, 14, 0,   True,  False, 0,  0],
+           [38,  3, BLUE,   192, 0.29 * pi,  True,  0.048, 30, 0,   True,  False, 0,  0],
+           [22,  3, ORANGE, 192, 0.29 * pi,  True,  0.04,  20, 0.6, True,  False, 0,  0],
+           [11,  1, ORANGE, 217, 0.29 * pi,  True,  0.019, 11, 0.3, True,  False, 0,  0],
+           [20,  1, BLUE,   150, -0.29 * pi, True,  0.024, 14, 0,   True,  False, 0,  0],
+           [38,  3, BLUE,   192, -0.29 * pi, True,  0.048, 30, 0,   True,  False, 0,  0],
+           [22,  3, ORANGE, 192, -0.29 * pi, True,  0.04,  20, 0.3, True,  False, 0,  0],
+           [11,  1, ORANGE, 217, -0.29 * pi, True,  0.019, 11, 0.3, True,  False, 0,  0],
+           [20,  1, BLUE,   150, 0.79 * pi,  True,  0.024, 14, 0,   True,  False, 0,  0],
+           [17,  1, BLUE,   174, 0.79 * pi,  True,  0.024, 14, 0,   True,  False, 0,  0],
+           [38,  3, BLUE,   217, 0.79 * pi,  True,  0.048, 30, 0,   True,  False, 0,  0],
+           [22,  3, ORANGE, 217, 0.79 * pi,  True,  0.04,  20, 0.6, True,  False, 0,  0],
+           [11,  1, ORANGE, 243, 0.79 * pi,  True,  0.019, 11, 0.3, True,  False, 0,  0],
+           [20,  1, BLUE,   150, -0.79 * pi, True,  0.024, 14, 0,   True,  False, 0,  0],
+           [17,  1, BLUE,   174, -0.79 * pi, True,  0.024, 14, 0,   True,  False, 0,  0],
+           [38,  3, BLUE,   217, -0.79 * pi, True,  0.048, 30, 0,   True,  False, 0,  0],
+           [22,  3, ORANGE, 217, -0.79 * pi, True,  0.04,  20, 0.3, True,  False, 0,  0],
+           [11,  1, ORANGE, 243, -0.79 * pi, True,  0.019, 11, 0.3, True,  False, 0,  0],
+           [27,  1, VIOLET, 40,  0.8 * pi,   False, 0.0,   0,  0,   False, False, 0,  0],
+           [12,  1, VIOLET, 36,  0.55 * pi,  False, 0.0,   0,  0,   False, False, 0,  0],
+           [12,  1, VIOLET, 41,  -0.45 * pi, False, 0.0,   0,  0,   False, False, 0,  0],
+           [12,  1, VIOLET, 43,  pi,         False, 0.0,   0,  0,   False, False, 0,  0],
+           [12,  1, VIOLET, 27,  -0.9 * pi,  False, 0.0,   0,  0,   False, False, 0,  0],
+           [16,  1, VIOLET, 46,  0.25 * pi,  False, 0.0,   0,  0,   False, False, 0,  0]]
 
 HEALTH_STATES_54 = ((0, ),)
 
@@ -2112,51 +2113,4 @@ PLAYER_PARAMS = {(0, 0): PARAMS_00,
                  (5, 5): PARAMS_00}
 ###############################################################################
 
-
-def align_body(body, scale=1.0):
-    max_sizes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    for i in range(len(body[0])):
-        for j in range(len(body)):
-            #if i == 1:
-            #    body[j][i] = str(int(body[j][i] / scale * 0.8))
-            if i in [0, 1, 3, 7, 11]:
-                body[j][i] = str(int(body[j][i] / scale))
-            elif i == 2:
-                if body[j][i] == ORANGE:
-                    body[j][i] = 'ORANGE'
-                elif body[j][i] == BLUE:
-                    body[j][i] = 'BLUE'
-                elif body[j][i] == VIOLET:
-                    body[j][i] = 'VIOLET'
-            elif i == 6:
-                body[j][i] = str(round(body[j][i] / scale, 3))
-            elif i in [4, 12, 14]:
-                sign = '' if body[j][i] > 0 else '-'
-                if body[j][i] == 0:
-                    body[j][i] = '0.0'
-                elif body[j][i] == pi:
-                    body[j][i] = 'pi'
-                else:
-                    body[j][i] = sign + str(round(abs(body[j][i]/pi), 3)) + ' * pi'
-            else:
-                body[j][i] = str(body[j][i])
-            if len(body[j][i]) > max_sizes[i]:
-                max_sizes[i] = len(str(body[j][i]))
-
-    for i in range(len(body)):
-        print('           [' + body[i][0] + ', ' + ' '*(max_sizes[0]-len(body[i][0])) +
-              body[i][1] + ', ' + ' ' * (max_sizes[1] - len(body[i][1])) +
-              body[i][2] + ', ' + ' ' * (max_sizes[2] - len(body[i][2])) +
-              body[i][3] + ', ' + ' ' * (max_sizes[3] - len(body[i][3])) +
-              body[i][4] + ', ' + ' ' * (max_sizes[4] - len(body[i][4])) +
-              body[i][5] + ', ' + ' ' * (max_sizes[5] - len(body[i][5])) +
-              body[i][6] + ', ' + ' ' * (max_sizes[6] - len(body[i][6])) +
-              body[i][7] + ', ' + ' ' * (max_sizes[7] - len(body[i][7])) +
-              body[i][8] + ', ' + ' ' * (max_sizes[8] - len(body[i][8])) +
-              body[i][9] + ', ' + ' ' * (max_sizes[9] - len(body[i][9])) +
-              body[i][10] + ', ' + ' ' * (max_sizes[10] - len(body[i][10])) +
-              body[i][11] + ', ' + ' ' * (max_sizes[11] - len(body[i][11])) +
-              body[i][12] +'],')
-
-#convert_body(BODY_00)
-#align_body(BODY_00, scale=1.5)
+#print_pretty(BODY_54, 'BODY_54', scale=1)

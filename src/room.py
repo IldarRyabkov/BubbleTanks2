@@ -5,6 +5,7 @@ from random import uniform
 
 from objects.bubble import Bubble
 from objects.body import Body
+from objects.mobs import MobMother
 from gui.text_box import TextBox
 from special_effects import add_effect
 from data.config import SCR_H, SCR_W, SCR_H2, SCR_W2, ROOM_RADIUS
@@ -48,7 +49,7 @@ class Room:
     def reset(self, new_game=False):
         """
         Method is called when a new game is started
-        or a new room is visited_rooms. Resets all room data.
+        or a new room is visited. Resets all room data.
         """
         self.bubbles = []
         self.bullets = []
@@ -80,124 +81,49 @@ class Room:
         self.text = TextBox(text, FONT_1, int(47 * SCR_H/600), True,
                             WHITE, (2/3 * SCR_H, 11/60 * SCR_H))
 
-    def delete_needless_bullets(self):
-        """
-        Method removes those bullets from list, that hit a target or are outside the room,
-        and reduces the length of list to 100, if it is > 100.
-        So the size of list becomes limited to avoid
-        the situation of infinite filling the list.
-        """
-        tmp_bullets = []
-        for i, bullet in enumerate(self.bullets):
-            if bullet.is_outside() or bullet.hit_the_target:
-                tmp_bullets.append(i)
-
-        tmp_bullets.reverse()
-        for index in tmp_bullets:
-            self.bullets.pop(index)
-
-        while len(self.bullets) > 100:
-            self.bullets.pop(0)
-
-    def delete_dead_homing_bullets(self):
-        """
-        Method deletes homing bullets with not
-        positive health from list of homing bullets.
-        """
-        dead_bullets = []
-        for i, bullet in enumerate(self.homing_bullets):
-            if bullet.health <= 0 or bullet.hit_the_target:
-                dead_bullets.append(i)
-
-        dead_bullets.reverse()
-        for index in dead_bullets:
-            self.homing_bullets.pop(index)
-
-    def delete_needless_bubbles(self):
-        """
-        removes those bubbles from list, which are outside
-        the room, so that player can't eat them
-        """
-        tmp_bubbles = []
-        for index in range(len(self.bubbles)):
-            if self.bubbles[index].is_outside():
-                tmp_bubbles.append(index)
-                tmp_bubbles.reverse()
-        for index in tmp_bubbles:
-            self.bubbles.pop(index)
-
-    @staticmethod
-    def delete_needless_effects(effects):
-        """
-        removes those effects from the given
-        list, which have stopped running
-        """
-        tmp_effects = []
-        for index in range(len(effects)):
-            if not effects[index].running:
-                tmp_effects.append(index)
-        tmp_effects.reverse()
-        for index in tmp_effects:
-            effects.pop(index)
-
-    def delete_dead_mobs(self):
-        """
-        Method deletes mobs with not positive health from
-        list of mobs and replaces them with bubbles.
-        """
-        dead_mobs = []
-        index = 0
-        for mob in self.mobs:
-            if mob.health <= 0:
-                dead_mobs.append(index)
-                self.add_bubbles(mob.x, mob.y, mob.bubbles)
-            index += 1
-
-        dead_mobs.reverse()
-        for index in dead_mobs:
-            self.mobs.pop(index)
-
     def update_bullets(self, dt):
         for bullet in self.bullets:
             bullet.update(dt)
-
-        self.delete_needless_bullets()
+        # filter out bullets that hit the target or are outside the room and
+        # make sure there are not more than 100 bullets (for performance reasons)
+        self.bullets = list(filter(lambda b: not b.is_outside() and
+                                             not b.hit_the_target,
+                                   self.bullets))[:100]
 
     def update_homing_bullets(self, player_x, player_y, dt):
         for bullet in self.homing_bullets:
             bullet.update(dt, player_x, player_y)
-
-        self.delete_dead_homing_bullets()
+        # filter out homing bullets that hit the target or were shot down
+        self.homing_bullets = list(filter(lambda b: b.health > 0 and
+                                                    not b.hit_the_target,
+                                          self.homing_bullets))
 
     def update_bubbles(self, x, y, dt):
         for bubble in self.bubbles:
             bubble.update(x, y, dt)
-
-        self.delete_needless_bubbles()
+        # filter out bubbles that are outside the room
+        self.bubbles = list(filter(lambda b: not b.is_outside(), self.bubbles))
 
     def update_effects(self, dt):
         for effect in self.top_effects:
             effect.update(dt)
         for effect in self.bottom_effects:
             effect.update(dt)
+        # filter out effects that are not longer running
+        self.top_effects = list(filter(lambda e: e.running, self.top_effects))
+        self.bottom_effects = list(filter(lambda e: e.running, self.bottom_effects))
 
-        self.delete_needless_effects(self.top_effects)
-        self.delete_needless_effects(self.bottom_effects)
-
-    def handle_bullet_explosion(self, x, y):
+    def handle_bullet_explosion(self, bul_x, bul_y):
         """
         Changes mobs' states according to their positions relative
-        to the explosion, and adds appropriate effects.
-        :param x: x-coord of bullet
-        :param y: y-coord of bullet
-
+        to the explosion, and adds some special effects.
         """
         for mob in self.mobs:
-            if hypot(x - mob.x, y - mob.y) <= 200:
-                mob.health -= 20
-                mob.change_body()
+            if hypot(bul_x - mob.x, bul_y - mob.y) <= 500:
+                mob.health -= 25
+                mob.update_body_look()
                 add_effect('BigHitLines', self.top_effects, mob.x, mob.y)
-        add_effect('PowerfulExplosion', self.bottom_effects, x, y)
+        add_effect('PowerfulExplosion', self.bottom_effects, bul_x, bul_y)
         add_effect('Flash', self.top_effects)
 
     def move_objects(self, offset):
@@ -224,11 +150,7 @@ class Room:
             self.boss_skeleton.move(*offset)
 
     def set_gravity_radius(self, gravity_radius):
-        """
-        Sets the new radius of player's gravitational field
-        :param gravity_radius: radius of circle, in which
-               the player's gravity exists
-        """
+        """ Sets the new radius of player's gravitational field. """
         if self.mobs:
             self.gravity_radius = gravity_radius
 
@@ -248,15 +170,19 @@ class Room:
             bubble.gravity_r = 2 * ROOM_RADIUS
             bubble.maximize_vel()
 
-    def update_mobs(self, player_x, player_y, dt):
-        generated_mobs = list()
-        target = [player_x, player_y]
+    def update_mobs(self, target, dt):
+        generated_mobs = []
         for mob in self.mobs:
-            mob.update(target, self.bullets, self.homing_bullets,
-                       generated_mobs, self.screen_rect, dt)
-
+            mob.update(target, self.bullets, self.homing_bullets, self.screen_rect, dt)
+            if isinstance(mob, MobMother):
+                generated_mobs.extend(mob.generate_mob(dt))
         self.mobs.extend(generated_mobs)
-        self.delete_dead_mobs()
+
+        # filter out the mobs that are killed by player
+        for mob in self.mobs:
+            if mob.health <= 0:
+                self.add_bubbles(mob.x, mob.y, mob.bubbles)
+        self.mobs = list(filter(lambda x: x.health > 0, self.mobs))
 
     def update_new_mobs(self, player_x, player_y, dt):
         """
@@ -279,7 +205,7 @@ class Room:
     def update(self, player_pos, dt):
         self.set_screen_rect(player_pos)
 
-        self.update_mobs(*player_pos, dt)
+        self.update_mobs(player_pos, dt)
         self.update_bubbles(*player_pos, dt)
         self.update_bullets(dt)
         self.update_homing_bullets(*player_pos, dt)
@@ -288,16 +214,12 @@ class Room:
         if not self.mobs:
             self.maximize_gravity()
 
-    def add_bubbles(self, mob_x, mob_y, bubbles):
-        """
-        :param mob_x: x coord of dead mob
-        :param mob_y: y coord of dead mobs
-        :param bubbles: list of the number of bubbles of 3 types: small, medium, big
-        """
-        for bubble_type in bubbles:
-            for i in range(bubbles[bubble_type]):
-                angle = uniform(0, 2 * pi)
-                self.bubbles.append(Bubble(mob_x, mob_y, angle, self.gravity_radius, bubble_type))
+    def add_bubbles(self, mob_x, mob_y, mob_bubbles):
+        for name, n in mob_bubbles.items():
+            for i in range(n):
+                bubble = Bubble(mob_x, mob_y, uniform(0, 2 * pi),
+                                self.gravity_radius, name)
+                self.bubbles.append(bubble)
 
     def draw_text(self, surface, dx, dy):
         self.text.draw(surface, dx, dy)

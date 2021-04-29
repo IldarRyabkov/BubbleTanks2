@@ -6,6 +6,7 @@ from data.config import SCR_W
 from data.paths import COOLDOWN_WINDOW_BG
 import data.languages.english as eng
 import data.languages.russian as rus
+from superpowers import NoneSuperPower, Ghost, Shurikens
 
 
 class CooldownWindow(PopupWindow):
@@ -41,19 +42,16 @@ class CooldownWindow(PopupWindow):
         self.superpower_status_bar.set_max_value(cooldown_time_2)
         self.superpower_status_bar.set_value(0)
 
-    def update(self, dt, player):
+    def update(self, dt, player, transportation):
         self.update_state(dt)
         shooting_active = player.is_shooting and not player.invisible[0]
         superpower_active = (player.superpower.on and
-                             player.superpower.name not in
-                             ("NoneSuperPower", "Ghost", "Shurikens"))
-        if shooting_active or superpower_active:
+                             not isinstance(player.superpower, (NoneSuperPower, Ghost, Shurikens)))
+        if (shooting_active or superpower_active) and not transportation:
             self.activate()
-        self.shooting_status_bar.active = shooting_active
-        self.shooting_status_bar.update_value(dt)
+        self.shooting_status_bar.set_value(player.gun.time)
         self.shooting_status_bar.move_to(self.x + 56, self.y + 11)
-        self.superpower_status_bar.active = superpower_active
-        self.superpower_status_bar.update_value(dt)
+        self.superpower_status_bar.set_value(player.superpower.time)
         self.superpower_status_bar.move_to(self.x + 56, self.y + 53)
 
     def draw(self, screen):

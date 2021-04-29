@@ -11,18 +11,17 @@ from utils import circle_collidepoint, calculate_angle
 
 class Bullet:
     """ a parent class for all bullets classes """
-    def __init__(self, x, y, damage, vel, angle, body):
+    def __init__(self, x, y, radius, damage, vel, angle, body):
         self.x = x
         self.y = y
+        self.radius = radius
         self.vel = vel
         self.vel_x = vel * cos(angle)
         self.vel_y = -vel * sin(angle)
         self.damage = damage
         self.hit_effect = self.set_hit_effect(damage)
-        self.body = body
+        self.body = Body(body) if isinstance(body, list) else body
         self.hit_the_target = False
-        self.exploding = False
-        self.frangible = False
 
     @staticmethod
     def set_hit_effect(damage):
@@ -55,7 +54,7 @@ class Bullet:
 class RegularBullet(Bullet):
     """ A bullet with uniform rectilinear motion """
     def __init__(self, x, y, damage, vel, angle, body):
-        Bullet.__init__(self, x, y, damage, vel, angle, body)
+        Bullet.__init__(self, x, y, 0.8 * body[0][0], damage, vel, angle, body)
         self.body.update(self.x, self.y, 0)
 
     def update(self, dt):
@@ -70,10 +69,9 @@ class ExplodingBullet(RegularBullet):
 
     """
     def __init__(self, x, y, angle):
-        super().__init__(x, y, -20, 1.1, angle, Body(BIG_BUL_BODY_1))
+        super().__init__(x, y, -20, 1.1, angle, BIG_BUL_BODY_1)
 
         # bullet switches colors periodically
-        self.exploding = True
         self.colors = {1: DARK_RED, -1: LIGHT_RED}
         self.color_switch = 1
         self.T = 80
@@ -99,9 +97,11 @@ class ExplodingBullet(RegularBullet):
 class BombBullet(Bullet):
     """A bullet which is not moving and has a specific body update"""
     def __init__(self, x, y, body):
-        Bullet.__init__(self, x, y, -10, 0, 0, body)
+        Bullet.__init__(self, x, y, 20, -10, 0, 0, body)
 
-        self.rotate_body()
+        angle = uniform(0, 2 * pi)
+        for circle in self.body.circles:
+            circle.angle += angle
         self.body.update(self.x, self.y, 0)
 
         # bullet switches colors periodically
@@ -109,11 +109,6 @@ class BombBullet(Bullet):
         self.color_switch = 1
         self.T = 240
         self.color_time = uniform(0, self.T)
-
-    def rotate_body(self):
-        angle = uniform(0, 2*pi)
-        for circle in self.body.circles:
-            circle.angle += angle
 
     def change_color(self):
         self.color_switch *= -1
@@ -140,7 +135,7 @@ class Shuriken(Bullet):
 
     """
     def __init__(self, x, y, angle):
-        Bullet.__init__(self, x, y, -7, 1.6, 0, Body(SHURIKEN_BODY))
+        Bullet.__init__(self, x, y, 13, -7, 1.6, 0, SHURIKEN_BODY)
         self.dist = 144
         self.is_orbiting = True
         self.angle = angle
@@ -203,22 +198,17 @@ class HomingMissile(Bullet):
     """ A bullet which moves with constant velocity and follows a moving target.
         Therefore, the x- and y-components of velocity are changing. """
     def __init__(self, x, y, radius, damage, vel, body):
-        Bullet.__init__(self, x, y, damage, vel, 0, body)
+        Bullet.__init__(self, x, y, radius, damage, vel, 0, body)
 
         self.body.update(self.x, self.y, 0)
         self.health = 1
-        self.rect = pg.Rect(self.x - radius, self.y - radius, 2*radius, 2*radius)
         self.hit_effect = 'RedHitCircle'
 
-    def collide_bullet(self, x, y):
-        return self.rect.collidepoint(x, y)
+    def collide_bullet(self, x, y, r):
+        return circle_collidepoint(self.x, self.y, self.radius + r, x, y)
 
     def handle_injure(self, damage):
         self.health += damage
-
-    def update_pos(self, dt):
-        super().update_pos(dt)
-        self.rect.center = (self.x, self.y)
 
     def update_vel(self, angle):
         self.vel_x = self.vel * cos(angle)
@@ -231,19 +221,15 @@ class HomingMissile(Bullet):
         self.body.update(self.x, self.y, dt, [target_x, target_y])
 
 
-class EllipticBullet(Bullet):
-    """ A bullet with uniform rectilinear motion.
-        Its body is a text_surface with transparent background and
-        an ellipse drawn on it, so the 'draw' function is different
-        from RegularBullet.
-
-    """
+class DrillingBullet(Bullet):
+    """ A bullet that can pass through many enemies. """
     def __init__(self, x, y, damage, vel, angle, body):
-        Bullet.__init__(self, x, y, damage, vel, angle, body)
+        Bullet.__init__(self, x, y, 13, damage, vel, angle, body)
 
         self.body = pg.transform.rotate(body, angle * 180 / pi)
         self.x = x - self.body.get_width() / 2
         self.y = y - self.body.get_height() / 2
+        self.attacked_mobs = []
 
     def move(self, dx, dy):
         self.x += dx
@@ -265,15 +251,14 @@ class FrangibleBullet(Bullet):
 
     """
     def __init__(self, x, y, angle, body):
-        Bullet.__init__(self, x, y, -10, 0.8, angle, body)
+        Bullet.__init__(self, x, y, 22, -40, 0.8, angle, body)
         self.body.update(self.x, self.y, 0)
-        self.frangible = True
         self.timer = 0
         self.fragmentation_time = 1000
 
     def create_fragments(self, fragments):
-        for i in range(0, 360, 10):
-            fragments.append(EllipticBullet(self.x, self.y, -15, 2.1, i * pi/180, SNIPER_BULLET_BODY))
+        for i in range(0, 360, 12):
+            fragments.append(DrillingBullet(self.x, self.y, -8, 2.1, i * pi / 180, SNIPER_BULLET_BODY))
 
     def update(self, dt, fragments):
         self.update_pos(dt)

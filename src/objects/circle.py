@@ -160,11 +160,6 @@ class Circle:
         self.x += self.rotating_dist * cos(self.rotating_angle)
         self.y -= self.rotating_dist * sin(self.rotating_angle)
 
-    def aim(self, target):
-        aiming_angle = calculate_angle(self.x, self.y, target[0], target[1])
-        self.x += self.aiming_dist * cos(self.aiming_angle + aiming_angle)
-        self.y -= self.aiming_dist * sin(self.aiming_angle + aiming_angle)
-
     def update(self, x, y, dt, target=(0, 0), beta=0, gamma=0):
         if self.visible:
             if self.scaling:
@@ -175,7 +170,10 @@ class Circle:
             self.y = y - self.dist * sin(angle)
 
             if self.aiming:
-                self.aim(target)
+                aiming_angle = calculate_angle(self.x, self.y, target[0], target[1])
+                angle = self.aiming_angle + aiming_angle
+                self.x += self.aiming_dist * cos(angle)
+                self.y -= self.aiming_dist * sin(angle)
 
             if self.rotating:
                 self.rotate(dt)

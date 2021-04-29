@@ -77,8 +77,8 @@ class Mob:
         y = self.yo + dist * sin(t) + 20 * sin(5 * t)
         return x, y
 
-    def collide_bullet(self, x, y):
-        return circle_collidepoint(self.x, self.y, self.radius, x, y)
+    def collide_bullet(self, x, y, r):
+        return circle_collidepoint(self.x, self.y, self.radius + r, x, y)
 
     def update_body_look(self):
         for circle in self.body.circles:
@@ -112,7 +112,7 @@ class Mob:
         self.body.move(dx, dy)
         self.body_rect = self.body_rect.move(dx, dy)
 
-    def update_pos(self, dt, generated_mobs=list()):
+    def update_pos(self, dt):
         self.time += dt/1000 * self.w
         self.x, self.y = self.trajectory(self.time)
         self.body_rect.center = (self.x, self.y)
@@ -155,11 +155,10 @@ class Mob:
             if self.frost_time >= 3000:
                 self.make_unfrozen()
 
-    def update(self, target, bullets, homing_bullets,
-               generated_mobs, screen_rect, dt):
+    def update(self, target, bullets, homing_bullets, screen_rect, dt):
         if not self.is_paralysed:
             if not self.is_frozen:
-                self.update_pos(dt, generated_mobs)
+                self.update_pos(dt)
 
             self.gun.update_time(dt)
             self.gamma = self.count_gamma()

@@ -1,11 +1,11 @@
-
 from math import pi, hypot
 import pygame as pg
 from random import uniform
 
 from objects.bubble import Bubble
 from objects.body import Body
-from objects.mobs import MobMother
+from objects.mobs import Mother
+from objects.mob_guns import GunBossLeg
 from gui.text_box import TextBox
 from special_effects import add_effect
 from data.config import SCR_H, SCR_W, SCR_H2, SCR_W2, ROOM_RADIUS
@@ -65,7 +65,8 @@ class Room:
         if self.boss_position_marker in [1, 2]:
             self.boss_position_marker -= 1
         for mob in self.new_mobs:
-            if mob.name in ['BossLeg', 'BossHead', 'BossHand']:
+            if mob.name in ("BossLeg", "BossHead",
+                            "BossHandLeft", "BossHandRight"):
                 self.boss_position_marker = 2
                 break
 
@@ -119,10 +120,10 @@ class Room:
         to the explosion, and adds some special effects.
         """
         for mob in self.mobs:
-            if hypot(bul_x - mob.x, bul_y - mob.y) <= 500:
+            if hypot(bul_x - mob.pos[0], bul_y - mob.pos[1]) <= 500:
                 mob.health -= 25
                 mob.update_body_look()
-                add_effect('BigHitLines', self.top_effects, mob.x, mob.y)
+                add_effect('BigHitLines', self.top_effects, *mob.pos)
         add_effect('PowerfulExplosion', self.bottom_effects, bul_x, bul_y)
         add_effect('Flash', self.top_effects)
 
@@ -173,16 +174,20 @@ class Room:
     def update_mobs(self, target, dt):
         generated_mobs = []
         for mob in self.mobs:
-            mob.update(target, self.bullets, self.homing_bullets, self.screen_rect, dt)
-            if isinstance(mob, MobMother):
+            if isinstance(mob.gun, GunBossLeg):
+                updated_bullets = self.homing_bullets
+            else:
+                updated_bullets = self.bullets
+            mob.update(target, updated_bullets, self.screen_rect, dt)
+            if isinstance(mob, Mother):
                 generated_mobs.extend(mob.generate_mob(dt))
         self.mobs.extend(generated_mobs)
 
         # filter out the mobs that are killed by player
         for mob in self.mobs:
             if mob.health <= 0:
-                self.add_bubbles(mob.x, mob.y, mob.bubbles)
-        self.mobs = list(filter(lambda x: x.health > 0, self.mobs))
+                self.add_bubbles(mob.pos, mob.bubbles)
+        self.mobs = list(filter(lambda m: m.health > 0, self.mobs))
 
     def update_new_mobs(self, player_x, player_y, dt):
         """
@@ -214,10 +219,10 @@ class Room:
         if not self.mobs:
             self.maximize_gravity()
 
-    def add_bubbles(self, mob_x, mob_y, mob_bubbles):
+    def add_bubbles(self, mob_pos, mob_bubbles):
         for name, n in mob_bubbles.items():
             for i in range(n):
-                bubble = Bubble(mob_x, mob_y, uniform(0, 2 * pi),
+                bubble = Bubble(*mob_pos, uniform(0, 2 * pi),
                                 self.gravity_radius, name)
                 self.bubbles.append(bubble)
 

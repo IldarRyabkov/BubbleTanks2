@@ -1,6 +1,6 @@
 from math import pi
 from data.colors import *
-from data.mobs import print_pretty
+from utils import print_pretty
 
 
 MAX_VEL_00 = 1.1

@@ -4,56 +4,44 @@ import numpy as np
 
 from data.config import *
 
-from data.player import PLAYER_PARAMS
+from data.player import (MAX_HEALTH_00, HEALTH_STATES_00, RADIUS_00, GUN_TYPE_00, BODY_00,
+                         ACC_00, MAX_VEL_00, SUPERPOWER_00, BG_RADIUS_00, PLAYER_PARAMS)
 from data.paths import PLAYER_BULLET_SHOT
 from objects.player_guns import get_gun
 from objects.bullets import FrangibleBullet, DrillingBullet
+from objects.gun import GunAutomatic
 from superpowers import (get_superpower, Armor, Bombs, HomingMissiles,
                          ParalysingExplosion, PowerfulExplosion, Teleportation,
                          Ghost, ExplosionStar, Shurikens, StickyCannon,
                          PowerfulCannon, StickyExplosion, GiantCannon)
-from objects.mob import Mob
-from objects.body import Body
+from objects.base_mob import BaseMob
 from utils import circle_collidepoint
 from special_effects import add_effect
 
 
-class Player(Mob):
+class Player(BaseMob):
     def __init__(self):
-        (max_health, health_states, radius, body,
-         MAX_VEL, ACC, gun_type, bg_radius, superpower) = PLAYER_PARAMS[(0, 0)]
-
-        Mob.__init__(self,
-                     name='Player',
-                     x=SCR_W2,
-                     y=SCR_H2,
-                     health=0,
-                     health_states=health_states,
-                     bubbles=0,
-                     radius=radius,
-                     body=body,
-                     gun_type=gun_type)
-
-        self.pos = np.array([self.x, self.y], dtype=float)
-        self.MAX_VEL = MAX_VEL
-        self.vel_x, self.vel_y = 0, 0
-        self.ACC = ACC
-        self.acc_x, self.acc_y = 0, 0
-        self.mu_x, self.mu_y = 0, 0
+        BaseMob.__init__(self, 0, MAX_HEALTH_00, HEALTH_STATES_00, RADIUS_00, BODY_00)
+        self.pos = np.array([SCR_W2, SCR_H2], dtype=float)
+        self.max_vel = MAX_VEL_00
+        self.vel_x = self.vel_y = 0
+        self.max_acc = ACC_00
+        self.acc_x= self.acc_y = 0
         self.moving_left = False
         self.moving_right = False
         self.moving_up = False
         self.moving_down = False
-        self.superpower = get_superpower(superpower)
+        self.superpower = get_superpower(SUPERPOWER_00)
+        self.gun = get_gun(GUN_TYPE_00)
         self.is_shooting = False
         self.bullets = []
         self.homing_bullets = []
         self.shurikens = []
-        self.is_max_tank = False
-        self.max_health = max_health
-        self.bg_radius = bg_radius
+        self.max_health = MAX_HEALTH_00
+        self.bg_radius = BG_RADIUS_00
         self.delta_health = 0
         self.defeated = False
+        self.is_max_tank = False
         self.armor_on = [False]
         self.invisible = [False]
         self.state = (0, 0)
@@ -123,23 +111,19 @@ class Player(Mob):
         if dest_angle is not None:
             self.body.rotate(dest_angle, dt)
 
-    def update_body(self, dt, target=(0, 0)):
+    def update_body(self, dt):
         mouse_pos = self.get_mouse_pos()
         self.rotate_body(dt)
         self.body.update(*self.pos, dt, mouse_pos)
 
     def setup(self, max_health, health_states, radius, body,
-              MAX_VEL, ACC, gun_type, bg_radius, superpower):
+              max_vel, max_acc, gun_type, bg_radius, superpower):
+        BaseMob.__init__(self, 0, max_health, health_states, radius, body)
         self.gun = get_gun(gun_type)
         self.superpower = get_superpower(superpower)
-        self.max_health = max_health
-        self.health = 0
-        self.health_states = health_states
-        self.radius = radius
-        self.body = Body(body)
         self.bg_radius = bg_radius
-        self.MAX_VEL = MAX_VEL
-        self.ACC = ACC
+        self.max_vel = max_vel
+        self.max_acc = max_acc
         self.armor_on = [False]
         self.invisible = [False]
 
@@ -174,20 +158,16 @@ class Player(Mob):
             self.body.circles[i].visible = False
 
     def make_frozen(self):
-        self.frost_time = 0
         if not self.is_frozen:
-            self.is_frozen = True
-            self.MAX_VEL *= 0.2
-            self.ACC *= 0.2
-            self.make_body_frozen()
+            self.max_vel *= 0.2
+            self.max_acc *= 0.2
+        super().make_frozen()
 
     def make_unfrozen(self):
         if self.is_frozen:
-            self.is_frozen = False
-            self.frost_time = 0
-            self.MAX_VEL *= 5
-            self.ACC *= 5
-            self.make_body_unfrozen()
+            self.max_vel *= 5
+            self.max_acc *= 5
+        super().make_unfrozen()
 
     def set_transportation_vel(self, angle, max_vel):
         self.vel_x = max_vel * cos(angle)
@@ -224,8 +204,8 @@ class Player(Mob):
             self.is_max_tank = True
 
         if self.is_frozen:
-            self.MAX_VEL *= 0.2
-            self.ACC *= 0.2
+            self.max_vel *= 0.2
+            self.max_acc *= 0.2
             self.make_body_frozen()
         else:
             self.make_body_unfrozen()
@@ -240,8 +220,8 @@ class Player(Mob):
             self.update_body_look()
 
             if self.is_frozen:
-                self.MAX_VEL *= 0.2
-                self.ACC *= 0.2
+                self.max_vel *= 0.2
+                self.max_acc *= 0.2
                 self.make_body_frozen()
             else:
                 self.make_body_unfrozen()
@@ -281,10 +261,10 @@ class Player(Mob):
 
         if self.is_shooting and not self.invisible[0]:
             target = self.get_mouse_pos()
-            self.gun.append_bullets(*self.pos, target, self.bullets, self.body.angle)
+            self.gun.add_bullets(*self.pos, target, self.bullets, self.body.angle)
 
-        if self.gun.automatic and len(mobs):
-            self.gun.append_bullets_auto(*self.pos, mobs, self.bullets, self.body.angle)
+        if isinstance(self.gun, GunAutomatic) and mobs:
+            self.gun.add_bullets_auto(self.pos, mobs, self.bullets, self.body.angle)
 
         # play bullet sound only one time, regardless of the number of added bullets
         if len(self.bullets) > old_length:
@@ -306,9 +286,8 @@ class Player(Mob):
 
     def update_homing_bullets(self, dt, mobs, top_effects):
         if mobs:
-            target = mobs[-1].x, mobs[-1].y
             for bullet in self.homing_bullets:
-                bullet.update(dt, *target)
+                bullet.update(dt, *mobs[-1].pos)
 
         # add disappearing effects for needless homing bullets
         for b in self.homing_bullets:
@@ -333,23 +312,23 @@ class Player(Mob):
             # (or are pressed together), acceleration must be opposite
             # to speed in order to slow down the player's movement.
             self.acc_x = -np.sign(self.vel_x) * MU
-        elif abs(self.vel_x) == self.MAX_VEL:
+        elif abs(self.vel_x) == self.max_vel:
             # If the player has reached maximum speed, he must stop accelerating
             self.acc_x = 0
         else:
             # In normal case acceleration must be co-directional
             # with movement according to the pressed movement key.
-            self.acc_x = -self.ACC if self.moving_left else self.ACC
+            self.acc_x = -self.max_acc if self.moving_left else self.max_acc
 
         # Same thing with acc_y
         if not self.moving_up ^ self.moving_down:
             self.acc_y = -np.sign(self.vel_y) * MU
-        elif abs(self.vel_y) == self.MAX_VEL:
+        elif abs(self.vel_y) == self.max_vel:
                 self.acc_y = 0
         else:
-            self.acc_y = -self.ACC if self.moving_up else self.ACC
+            self.acc_y = -self.max_acc if self.moving_up else self.max_acc
 
-    def update_pos(self, dt, target=(0, 0)):
+    def update_pos(self, dt):
         self.update_acc()
         self.update_vel(dt)
         dx = self.vel_x * dt + self.acc_x * dt*dt/2
@@ -360,14 +339,14 @@ class Player(Mob):
         self.vel_x += self.acc_x * dt
         if self.vel_x * (self.vel_x - self.acc_x * dt) < 0:
             self.vel_x = 0
-        elif abs(self.vel_x) > self.MAX_VEL:
-            self.vel_x = np.sign(self.vel_x) * self.MAX_VEL
+        elif abs(self.vel_x) > self.max_vel:
+            self.vel_x = np.sign(self.vel_x) * self.max_vel
 
         self.vel_y += self.acc_y * dt
         if self.vel_y * (self.vel_y - self.acc_y * dt) < 0:
             self.vel_y = 0
-        elif abs(self.vel_y) > self.MAX_VEL:
-            self.vel_y = np.sign(self.vel_y) * self.MAX_VEL
+        elif abs(self.vel_y) > self.max_vel:
+            self.vel_y = np.sign(self.vel_y) * self.max_vel
 
     def update_superpower(self, dt, mobs, top_effects, bottom_effects, camera, sound_player):
         args = []
@@ -393,7 +372,7 @@ class Player(Mob):
             args = *self.pos, self.bullets, camera
         self.superpower.update(dt, *args)
 
-    def update_all(self, dt, mobs, top_effects, bottom_effects, camera, sound_player):
+    def update(self, dt, mobs, top_effects, bottom_effects, camera, sound_player):
         self.update_pos(dt)
         self.update_superpower(dt, mobs, top_effects, bottom_effects, camera, sound_player)
         self.update_body(dt)

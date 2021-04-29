@@ -139,7 +139,7 @@ class Shuriken(Bullet):
         self.dist = 144
         self.is_orbiting = True
         self.angle = angle
-        self.omega = -0.002 * pi
+        self.angular_vel = -0.002 * pi
         self.health = 1
         self.search_area_rect = pg.Rect(self.x - 250, self.y - 250, 500, 500)
         self.update_polar_coords(x, y)
@@ -149,7 +149,7 @@ class Shuriken(Bullet):
         return self.search_area_rect.colliderect(mob.body_rect)
 
     def update_polar_coords(self, x, y, dt=0):
-        self.angle += self.omega * dt
+        self.angle += self.angular_vel * dt
         while self.angle < 0:
             self.angle += 2 * pi
 
@@ -166,10 +166,10 @@ class Shuriken(Bullet):
         """
 
         if mob.is_paralysed or mob.is_frozen:
-            target = mob.x, mob.y
+            target = mob.pos
         else:
-            dt = hypot(self.x - mob.x, self.y - mob.y) / self.vel
-            target = mob.trajectory(mob.time + dt / 1000 * mob.w)
+            dt = hypot(self.x - mob.pos[0], self.y - mob.pos[1]) / self.vel
+            target = mob.trajectory(mob.pos_0, mob.polar_angle + mob.angular_vel * dt)
         angle = calculate_angle(self.x, self.y, *target)
         self.vel_x = self.vel * cos(angle)
         self.vel_y = -self.vel * sin(angle)

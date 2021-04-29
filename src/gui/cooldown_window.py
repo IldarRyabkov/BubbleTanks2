@@ -10,8 +10,8 @@ from superpowers import NoneSuperPower, Ghost, Shurikens
 
 
 class CooldownWindow(PopupWindow):
-    """Window that shows status bars for player
-    shooting cooldown and player superpower cooldown.
+    """Window that shows status bars for player's
+    shooting cooldown and player's superpower cooldown.
     """
     def __init__(self):
         super().__init__(SCR_W - 264, -96, 248, 96, 1.12, 1000, COOLDOWN_WINDOW_BG)

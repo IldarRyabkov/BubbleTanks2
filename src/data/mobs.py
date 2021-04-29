@@ -1,5 +1,8 @@
 from math import pi
 from data.colors import *
+from data.config import *
+from utils import (no_trajectory, rose_curve_1, rose_curve_2,
+                   rose_curve_3, rose_curve_4, epicycloid, print_pretty)
 
 
 BOSS_HEAD_BODY = [[76,  2, BLUE,   0,   0,           True,  0.048, 28, 0,   True,  False],
@@ -49,51 +52,75 @@ BOSS_HEAD_BODY = [[76,  2, BLUE,   0,   0,           True,  0.048, 28, 0,   True
                   [17,  1, VIOLET, 60,  0.6 * pi,    False, 0.0,   0,  0,   False, False, 0,  0],
                   [19,  1, VIOLET, 35,  0.65 * pi,   False, 0.0,   0,  0,   False, False, 0,  0]]
 
-BOSS_HEAD_HEALTH_STATES = ((0, ),)
-###############################################################################
-BOSS_LEG_BODY = [[65, 2, BLUE,   96,  0.25 * pi,   True,  0.046, 27, 0.3, True,  False],
-                 [65, 2, BLUE,   96,  -0.25 * pi,  True,  0.046, 27, 0.7, True,  False],
-                 [38, 3, BLUE,   160, 0.16 * pi,   True,  0.058, 35, 0.8, True,  False],
-                 [38, 3, BLUE,   160, -0.16 * pi,  True,  0.058, 35, 0.4, True,  False],
-                 [96, 3, BLUE,   32,  pi,          True,  0.064, 38, 0.1, True,  False],
-                 [38, 3, BLUE,   128, 0.66 * pi,   True,  0.058, 35, 0.3, True,  False],
-                 [38, 3, BLUE,   128, -0.66 * pi,  True,  0.058, 35, 0.7, True,  False],
-                 [28, 3, BLUE,   176, 0.66 * pi,   True,  0.043, 25, 0.5, True,  False],
-                 [28, 3, BLUE,   176, -0.66 * pi,  True,  0.043, 25, 0.9, True,  False],
-                 [22, 2, BLUE,   214, 0.66 * pi,   True,  0.032, 19, 0.1, True,  False],
-                 [22, 2, BLUE,   214, -0.66 * pi,  True,  0.032, 19, 0.4, True,  False],
-                 [9,  1, ORANGE, 196, 0.13 * pi,   True,  0.014, 8,  0.1, True,  False],
-                 [9,  1, ORANGE, 196, -0.13 * pi,  True,  0.014, 8,  0.4, True,  False],
-                 [9,  1, ORANGE, 235, 0.135 * pi,  True,  0.014, 8,  0.7, True,  False],
-                 [9,  1, ORANGE, 235, -0.135 * pi, True,  0.014, 8,  0.2, True,  False],
-                 [9,  1, ORANGE, 222, 0.085 * pi,  True,  0.014, 8,  0.5, True,  False],
-                 [9,  1, ORANGE, 222, -0.085 * pi, True,  0.014, 8,  0.8, True,  False],
-                 [9,  1, ORANGE, 276, 0.135 * pi,  True,  0.014, 8,  0.3, True,  False],
-                 [9,  1, ORANGE, 276, -0.135 * pi, True,  0.014, 8,  0.6, True,  False],
-                 [9,  1, ORANGE, 256, 0.054 * pi,  True,  0.014, 8,  0.0, True,  False],
-                 [9,  1, ORANGE, 256, -0.054 * pi, True,  0.014, 8,  0.5, True,  False],
-                 [16, 1, ORANGE, 256, 0.14 * pi,   True,  0.027, 16, 0.1, True,  False],
-                 [16, 1, ORANGE, 256, -0.14 * pi,  True,  0.027, 16, 0.4, True,  False],
-                 [16, 1, ORANGE, 235, 0.063 * pi,  True,  0.027, 16, 0.6, True,  False],
-                 [16, 1, ORANGE, 235, -0.063 * pi, True,  0.027, 16, 0.9, True,  False],
-                 [16, 1, ORANGE, 288, 0.117 * pi,  True,  0.027, 16, 0.3, True,  False],
-                 [16, 1, ORANGE, 288, -0.117 * pi, True,  0.027, 16, 0.7, True,  False],
-                 [16, 1, ORANGE, 273, 0.062 * pi,  True,  0.027, 16, 0.2, True,  False],
-                 [16, 1, ORANGE, 273, -0.062 * pi, True,  0.027, 16, 0.5, True,  False],
-                 [17, 1, ORANGE, 217, 0.115 * pi,  True,  0.027, 16, 0.1, True,  False],
-                 [17, 1, ORANGE, 217, -0.115 * pi, True,  0.027, 16, 0.4, True,  False],
-                 [22, 1, VIOLET, 22,  -0.15 * pi,  False, 0.0,   0,  0,   False, False, 0, 0],
-                 [17, 1, VIOLET, 35,  -0.35 * pi,  False, 0.0,   0,  0,   False, False, 0, 0],
-                 [17, 1, VIOLET, 51,  0.22 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
-                 [17, 1, VIOLET, 51,  -0.22 * pi,  False, 0.0,   0,  0,   False, False, 0, 0],
-                 [17, 1, VIOLET, 48,  -0.75 * pi,  False, 0.0,   0,  0,   False, False, 0, 0],
-                 [20, 1, VIOLET, 64,  -0.8 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
-                 [27, 1, VIOLET, 46,  0.82 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
-                 [17, 1, VIOLET, 12,  0.5 * pi,    False, 0.0,   0,  0,   False, False, 0, 0],
-                 [17, 1, VIOLET, 60,  0.6 * pi,    False, 0.0,   0,  0,   False, False, 0, 0],
-                 [19, 1, VIOLET, 35,  0.65 * pi,   False, 0.0,   0,  0,   False, False, 0, 0]]
+BOSS_HEAD_PARAMS = {"name": "BossHead",
+                    "x": SCR_W2,
+                    "y": SCR_H2 - 1000,
+                    "health": 150,
+                    "health_states": ((0, ),),
+                    "bubbles": {"small": 0, "medium": 5, "big": 3},
+                    "radius": 131,
+                    "body": BOSS_HEAD_BODY,
+                    "gun_type": 'GunBossHead',
+                    "angular_vel": 0,
+                    "body_size": 450,
+                    "trajectory": no_trajectory}
 
-BOSS_LEG_HEALTH_STATES = ((0, ),)
+###############################################################################
+BOSS_LEG_BODY = [[65, 2, BLUE,   96,  -0.75 * pi,  True,  0.046, 27, 0.3, True,  False],
+                 [65, 2, BLUE,   96,  0.75 * pi,   True,  0.046, 27, 0.7, True,  False],
+                 [38, 3, BLUE,   160, -0.84 * pi,  True,  0.058, 35, 0.8, True,  False],
+                 [38, 3, BLUE,   160, 0.84 * pi,   True,  0.058, 35, 0.4, True,  False],
+                 [96, 3, BLUE,   32,  0,           True,  0.064, 38, 0.1, True,  False],
+                 [38, 3, BLUE,   128, -0.34 * pi,  True,  0.058, 35, 0.3, True,  False],
+                 [38, 3, BLUE,   128, 0.34 * pi,   True,  0.058, 35, 0.7, True,  False],
+                 [28, 3, BLUE,   176, -0.34 * pi,  True,  0.043, 25, 0.5, True,  False],
+                 [28, 3, BLUE,   176, 0.34 * pi,   True,  0.043, 25, 0.9, True,  False],
+                 [22, 2, BLUE,   214, -0.34 * pi,  True,  0.032, 19, 0.1, True,  False],
+                 [22, 2, BLUE,   214, 0.34 * pi,   True,  0.032, 19, 0.4, True,  False],
+                 [9,  1, ORANGE, 196, -0.87 * pi,  True,  0.014, 8,  0.1, True,  False],
+                 [9,  1, ORANGE, 196, 0.87 * pi,   True,  0.014, 8,  0.4, True,  False],
+                 [9,  1, ORANGE, 235, -0.865 * pi, True,  0.014, 8,  0.7, True,  False],
+                 [9,  1, ORANGE, 235, 0.865 * pi,  True,  0.014, 8,  0.2, True,  False],
+                 [9,  1, ORANGE, 222, -0.915 * pi, True,  0.014, 8,  0.5, True,  False],
+                 [9,  1, ORANGE, 222, 0.915 * pi,  True,  0.014, 8,  0.8, True,  False],
+                 [9,  1, ORANGE, 276, -0.865 * pi, True,  0.014, 8,  0.3, True,  False],
+                 [9,  1, ORANGE, 276, 0.865 * pi,  True,  0.014, 8,  0.6, True,  False],
+                 [9,  1, ORANGE, 256, -0.946 * pi, True,  0.014, 8,  0.0, True,  False],
+                 [9,  1, ORANGE, 256, 0.946 * pi,  True,  0.014, 8,  0.5, True,  False],
+                 [16, 1, ORANGE, 256, -0.86 * pi,  True,  0.027, 16, 0.1, True,  False],
+                 [16, 1, ORANGE, 256, 0.86 * pi,   True,  0.027, 16, 0.4, True,  False],
+                 [16, 1, ORANGE, 235, -0.937 * pi, True,  0.027, 16, 0.6, True,  False],
+                 [16, 1, ORANGE, 235, 0.937 * pi,  True,  0.027, 16, 0.9, True,  False],
+                 [16, 1, ORANGE, 288, -0.883 * pi, True,  0.027, 16, 0.3, True,  False],
+                 [16, 1, ORANGE, 288, 0.883 * pi,  True,  0.027, 16, 0.7, True,  False],
+                 [16, 1, ORANGE, 273, -0.938 * pi, True,  0.027, 16, 0.2, True,  False],
+                 [16, 1, ORANGE, 273, 0.938 * pi,  True,  0.027, 16, 0.5, True,  False],
+                 [17, 1, ORANGE, 217, -0.885 * pi, True,  0.027, 16, 0.1, True,  False],
+                 [17, 1, ORANGE, 217, 0.885 * pi,  True,  0.027, 16, 0.4, True,  False],
+                 [22, 1, VIOLET, 22,  0.85 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
+                 [17, 1, VIOLET, 35,  0.65 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
+                 [17, 1, VIOLET, 51,  -0.78 * pi,  False, 0.0,   0,  0,   False, False, 0, 0],
+                 [17, 1, VIOLET, 51,  0.78 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
+                 [17, 1, VIOLET, 48,  0.25 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
+                 [20, 1, VIOLET, 64,  0.2 * pi,    False, 0.0,   0,  0,   False, False, 0, 0],
+                 [27, 1, VIOLET, 46,  -0.18 * pi,  False, 0.0,   0,  0,   False, False, 0, 0],
+                 [17, 1, VIOLET, 12,  -0.5 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
+                 [17, 1, VIOLET, 60,  -0.4 * pi,   False, 0.0,   0,  0,   False, False, 0, 0],
+                 [19, 1, VIOLET, 35,  -0.35 * pi,  False, 0.0,   0,  0,   False, False, 0, 0]]
+
+BOSS_LEG_PARAMS = {"name": "BossLeg",
+                   "x": SCR_W2,
+                   "y": SCR_H2 + 832,
+                   "health": 150,
+                   "health_states": ((0, ),),
+                   "bubbles": {"small": 0, "medium": 5, "big": 3},
+                   "radius": 120,
+                   "body": BOSS_LEG_BODY,
+                   "gun_type": 'GunBossLeg',
+                   "angular_vel": 0,
+                   "body_size": 480,
+                   "trajectory": no_trajectory}
+
 ###############################################################################
 BOSS_HAND_BODY = [[144, 6, BLUE,   0,   0,          True,  0.08,  48, 0,   True,  False],
                   [35,  3, BLUE,   160, 0.48 * pi,  True,  0.058, 35, 0.8, True,  False],
@@ -122,7 +149,25 @@ BOSS_HAND_BODY = [[144, 6, BLUE,   0,   0,          True,  0.08,  48, 0,   True,
                   [17,  1, VIOLET, 60,  0.6 * pi,   False, 0.0,   0,  0,   False, False, 0,  0],
                   [19,  1, VIOLET, 35,  0.65 * pi,  False, 0.0,   0,  0,   False, False, 0,  0]]
 
-BOSS_HAND_HEALTH_STATES = ((0, ),)
+BOSS_HAND_RIGHT_PARAMS = {"name": "BossHandRight",
+                          "x": SCR_W + 18,
+                          "y": -158,
+                          "health": 150,
+                          "health_states": ((0, ),),
+                          "bubbles": {"small": 0, "medium": 5, "big": 3},
+                          "radius": 120,
+                          "body": BOSS_HAND_BODY,
+                          "gun_type": 'GunBossHand',
+                          "angular_vel": 0,
+                          "body_size": 416,
+                          "trajectory": no_trajectory}
+
+BOSS_HAND_LEFT_PARAMS = BOSS_HAND_RIGHT_PARAMS.copy()
+BOSS_HAND_LEFT_PARAMS["name"] = "BossHandLeft"
+BOSS_HAND_LEFT_PARAMS["x"] = -18
+for row in BOSS_HAND_LEFT_PARAMS["body"]:
+    row[4] *= -1
+
 ###############################################################################
 BOSS_SKELETON_BODY = [[120, 3, PURPLE, 1008, 0.936 * pi,  False, 0.0, 0, 0, True, False],
                       [120, 3, PURPLE, 1008, -0.936 * pi, False, 0.0, 0, 0, True, False],
@@ -277,6 +322,20 @@ BOSS_SKELETON_BODY = [[120, 3, PURPLE, 1008, 0.936 * pi,  False, 0.0, 0, 0, True
                       [32,  2, BLUE,   1353, pi,          False, 0.0, 0, 0, True, False],
                       [28,  2, BLUE,   1396, pi,          False, 0.0, 0, 0, True, False],
                       [22,  1, RED,    1430, pi,          False, 0.0, 0, 0, True, False]]
+
+BOSS_SKELETON_PARAMS = {"name": "BossSkeleton",
+                        "x": SCR_W2,
+                        "y": SCR_H2,
+                        "health": 1,
+                        "health_states": tuple(),
+                        "bubbles": {"small": 0, "medium": 0, "big": 0},
+                        "radius": 0,
+                        "body": BOSS_SKELETON_BODY,
+                        "gun_type": 'GunPeaceful',
+                        "angular_vel": 0,
+                        "body_size": 2000,
+                        "trajectory": no_trajectory}
+
 ###############################################################################
 TURTLE_BODY =  [[35, 3, BLUE,   80,  pi,          True,  0.026, 24, 0.1, False, False],
                [35, 3, BLUE,   80,  0,           True,  0.026, 24, 0.1, False, False],
@@ -330,6 +389,28 @@ TURTLE_HEALTH_STATES = ((21, (0, 4), (10, 12)),
                         (4, (0, 2), (4, 14), (15, 18)),
                         (3, (1, 14), (15, 18)),
                         (2, (0, 14), (15, 18)))
+
+TURTLE_PARAMS = {"name": "Turtle",
+                 "x": SCR_W2,
+                 "y": SCR_H2,
+                 "health": 21,
+                 "health_states": TURTLE_HEALTH_STATES,
+                 "bubbles": {"small": 6, "medium": 0, "big": 0},
+                 "radius": 86,
+                 "body": TURTLE_BODY,
+                 "gun_type": 'GunTurtle',
+                 "angular_vel": 0.0005,
+                 "body_size": 240,
+                 "trajectory": epicycloid}
+
+TURTLE_DAMAGING_PARAMS = TURTLE_PARAMS.copy()
+TURTLE_DAMAGING_PARAMS["bubbles"] = {"small": 3, "medium": 1, "big": 0}
+TURTLE_DAMAGING_PARAMS["name"] = 'Turtle_dmg'
+TURTLE_DAMAGING_PARAMS["gun_type"] = 'GunTurtleDMG'
+TURTLE_DAMAGING_PARAMS["body"] = TURTLE_PARAMS["body"].copy()
+for i in range(-18, -14):
+    TURTLE_DAMAGING_PARAMS["body"].pop(i)
+
 ###############################################################################
 TERRORIST_BODY = [[64, 2, BLUE,         96,  0.5 * pi,   True,  0.035, 24, 0.1, True,  False],
                   [64, 2, BLUE,         96,  -0.5 * pi,  True,  0.032, 24, 0.5, True,  False],
@@ -374,6 +455,20 @@ TERRORIST_HEALTH_STATES = ((18,),
                            (14, (2, 6)),
                            (8, (2, 8)),
                            (4, (2, 23)))
+
+TERRORIST_PARAMS = {"name": "Terrorist",
+                    "x": SCR_W2,
+                    "y": SCR_H2,
+                    "health": 18,
+                    "health_states": TERRORIST_HEALTH_STATES,
+                    "bubbles": {"small": 9, "medium": 0, "big": 0},
+                    "radius": 112,
+                    "body": TERRORIST_BODY,
+                    "gun_type": 'GunTerrorist',
+                    "angular_vel": 0.00015,
+                    "body_size": 336,
+                    "trajectory": rose_curve_2}
+
 ###############################################################################
 BENLADEN_BODY = [[12,  1, ORANGE,       137, 0.572 * pi,  True,  0.011, 8,  0.1, True,  False],
                  [12,  1, ORANGE,       137, 0.428 * pi,  True,  0.011, 8,  0.3, True,  False],
@@ -490,7 +585,19 @@ BENLADEN_BODY = [[12,  1, ORANGE,       137, 0.572 * pi,  True,  0.011, 8,  0.1,
                  [17,  1, VIOLET,       60,  0.6 * pi,    False, 0.0,   0,  0,   False, False, 0, 0],
                  [19,  1, VIOLET,       35,  0.65 * pi,   False, 0.0,   0,  0,   False, False, 0, 0]]
 
-BENLADEN_HEALTH_STATES = ((0, ),)
+BENLADEN_PARAMS = {"name": "BenLaden",
+                   "x": SCR_W2,
+                   "y": SCR_H2,
+                   "health": 50,
+                   "health_states": ((0, ),),
+                   "bubbles": {"small": 20, "medium": 0, "big": 0},
+                   "radius": 144,
+                   "body": BENLADEN_BODY,
+                   "gun_type": 'GunBenLaden',
+                   "angular_vel": 0.00018,
+                   "body_size": 464,
+                   "trajectory": rose_curve_3}
+
 ###############################################################################
 ANT_BODY = [[27, 2, BLUE,   0,  0,          True,  0.032, 20, 0,   True,  True],
             [20, 2, BLUE,   43, 0.74 * pi,  True,  0.016, 9,  0.3, True,  False],
@@ -512,6 +619,20 @@ ANT_BODY = [[27, 2, BLUE,   0,  0,          True,  0.032, 20, 0,   True,  True],
             [19, 1, VIOLET, 35, 0.65 * pi,  False, 0.0,   0,  0,   False, False, 0,  0]]
 
 ANT_HEALTH_STATES = ((0, ),)
+
+ANT_PARAMS = {"name": "Ant",
+              "x": SCR_W2,
+              "y": SCR_H2,
+              "health": 4,
+              "health_states": ((0, ),),
+              "bubbles": {"small": 2, "medium": 0, "big": 0},
+              "radius": 40,
+              "body": ANT_BODY,
+              "gun_type": 'GunAnt',
+              "angular_vel": 0.0013,
+              "body_size": 152,
+              "trajectory": rose_curve_4}
+
 ###############################################################################
 SCARAB_BODY = [[44, 5, BLUE,   0,  0,          True,  0.048, 35, 0,   True,  False],
                [32, 2, ORANGE, 0,  0,          True,  0.045, 28, 0,   True,  True],
@@ -534,6 +655,20 @@ SCARAB_BODY = [[44, 5, BLUE,   0,  0,          True,  0.048, 35, 0,   True,  Fal
 
 SCARAB_HEALTH_STATES = ((6, ),
                         (3, (7, 8)),)
+
+SCARAB_PARAMS = {"name": "Scarab",
+                 "x": SCR_W2,
+                 "y": SCR_H2,
+                 "health": 6,
+                 "health_states": SCARAB_HEALTH_STATES,
+                 "bubbles": {"small": 6, "medium": 0, "big": 0},
+                 "radius": 42,
+                 "body": SCARAB_BODY,
+                 "gun_type": 'GunScarab',
+                 "angular_vel": 0.0007,
+                 "body_size": 144,
+                 "trajectory": rose_curve_1}
+
 ###############################################################################
 GULL_BODY = [[51, 5, BLUE,   9,   0,          True,  0.048, 32, 0,   True,  False],
              [25, 2, BLUE,   64,  0.72 * pi,  True,  0.037, 22, 0.1, True,  False],
@@ -558,6 +693,20 @@ GULL_HEALTH_STATES = ((5, (3, 4)),
                       (4, (3, 6)),
                       (2, (1, 3), (4, 6)),
                       (1, (1, 6)))
+
+GULL_PARAMS = {"name": "Gull",
+               "x": SCR_W2,
+               "y": SCR_H2,
+               "health": 5,
+               "health_states": GULL_HEALTH_STATES,
+               "bubbles": {"small": 6, "medium": 0, "big": 0},
+               "radius": 56,
+               "body": GULL_BODY,
+               "gun_type": 'GunGull',
+               "angular_vel": 0.0007,
+               "body_size": 192,
+               "trajectory": rose_curve_1}
+
 ###############################################################################
 MOTHER_BODY = [[19, 1, BLUE,         225, 0.95 * pi,  True,  0.032, 19, 0.2, True,  False],
                [22, 2, BLUE,         193, 0.95 * pi,  True,  0.037, 20, 0.5, True,  False],
@@ -603,6 +752,20 @@ MOTHER_BODY = [[19, 1, BLUE,         225, 0.95 * pi,  True,  0.032, 19, 0.2, Tru
 MOTHER_HEALTH_STATES = ((90, ),
                             (60, (0, 1), (3, 4), (6, 7), (9, 10), (12, 13)),
                             (30, (0, 2), (3, 5), (6, 8), (9, 11), (12, 14)),)
+
+MOTHER_PARAMS = {"name": "Mother",
+                 "x": SCR_W2,
+                 "y": SCR_H2,
+                 "health": 90,
+                 "health_states": MOTHER_HEALTH_STATES,
+                 "bubbles": {"small": 5, "medium": 0, "big": 1},
+                 "radius": 152,
+                 "body": MOTHER_BODY,
+                 "gun_type": 'GunPeaceful',
+                 "angular_vel": 0.00015,
+                 "body_size": 416,
+                 "trajectory": rose_curve_1}
+
 ###############################################################################
 COCKROACH_BODY = [[19, 1, BLUE,   35, 0.66 * pi,  True,  0.027, 16, 0.3, True,  False],
                   [19, 1, BLUE,   35, -0.66 * pi, True,  0.027, 16, 0.7, True,  False],
@@ -637,6 +800,20 @@ COCKROACH_HEALTH_STATES = ((10, ),
                            (7, (4, 6), (12, 14)),
                            (5, (4, 6), (10, 14)),
                            (3, (2, 14), (15, 17)))
+
+COCKROACH_PARAMS = {"name": "Cockroach",
+                    "x": SCR_W2,
+                    "y": SCR_H2,
+                    "health": 10,
+                    "health_states": COCKROACH_HEALTH_STATES,
+                    "bubbles": {"small": 5, "medium": 0, "big": 0},
+                    "radius": 72,
+                    "body": COCKROACH_BODY,
+                    "gun_type": 'GunCockroach',
+                    "angular_vel": 0.0013,
+                    "body_size": 176,
+                    "trajectory": rose_curve_4}
+
 ###############################################################################
 BOMBERSHOOTER_BODY = [[28, 2, BLUE,         60,  0.54 * pi,   True,  0.043, 25, 0.9, True,  False],
                       [28, 2, BLUE,         60,  -0.54 * pi,  True,  0.043, 25, 0.6, True,  False],
@@ -690,6 +867,20 @@ BOMBERSHOOTER_HEALTH_STATES = ((27, ),
                                (21, (12, 14), (16, 18)),
                                (18, (10, 18)),
                                (12, (2, 4), (10, 18)))
+
+BOMBERSHOOTER_PARAMS = {"name": "BomberShooter",
+                        "x": SCR_W2,
+                        "y": SCR_H2,
+                        "health": 27,
+                        "health_states": BOMBERSHOOTER_HEALTH_STATES,
+                        "bubbles": {"small": 11, "medium": 0, "big": 0},
+                        "radius": 120,
+                        "body": BOMBERSHOOTER_BODY,
+                        "gun_type": 'GunBomberShooter',
+                        "angular_vel": 0.00045,
+                        "body_size": 320,
+                        "trajectory": rose_curve_1}
+
 ###############################################################################
 BUG_BODY = [[24, 2, BLUE,   46, 0.5 * pi,   True,  0.029, 17, 0.3, True,  False],
             [24, 2, BLUE,   46, -0.5 * pi,  True,  0.029, 17, 0,   True,  False],
@@ -710,7 +901,19 @@ BUG_BODY = [[24, 2, BLUE,   46, 0.5 * pi,   True,  0.029, 17, 0.3, True,  False]
             [17, 1, VIOLET, 60, 0.6 * pi,   False, 0.0,   0,  0,   False, False, 0,  0],
             [19, 1, VIOLET, 35, 0.65 * pi,  False, 0.0,   0,  0,   False, False, 0,  0]]
 
-BUG_HEALTH_STATES = ((0, ),)
+BUG_PARAMS = {"name": "Bug",
+              "x": SCR_W2,
+              "y": SCR_H2,
+              "health": 5,
+              "health_states": ((0, ),),
+              "bubbles": {"small": 3, "medium": 0, "big": 0},
+              "radius": 32,
+              "body": BUG_BODY,
+              "gun_type": 'GunBug',
+              "angular_vel": 0.0007,
+              "body_size": 136,
+              "trajectory": rose_curve_1}
+
 ###############################################################################
 AMEBA_BODY = [[8,  1, BLUE,   41, 0.1 * pi,    False, 0.0,   0,  0,   True,  False],
               [8,  1, BLUE,   34, 0.2 * pi,    False, 0.0,   0,  0,   True,  False],
@@ -750,6 +953,20 @@ AMEBA_HEALTH_STATES = ((4,),
                        (3, (22, 23)),
                        (2, (21, 23)),
                        (1, (20, 23)))
+
+AMEBA_PARAMS = {"name": "Ameba",
+                "x": SCR_W2,
+                "y": SCR_H2,
+                "health": 4,
+                "health_states": AMEBA_HEALTH_STATES,
+                "bubbles": {"small": 2, "medium": 0, "big": 0},
+                "radius": 40,
+                "body": AMEBA_BODY,
+                "gun_type": 'GunPeaceful',
+                "angular_vel": 0.0002,
+                "body_size": 90,
+                "trajectory": rose_curve_1}
+
 ###############################################################################
 CELL_BODY = [[9,  1, BLUE,   32, 0.167 * pi, False, 0.0,   0,  0,   True,  False],
              [9,  1, BLUE,   32, 0.333 * pi, False, 0.0,   0,  0,   True,  False],
@@ -779,6 +996,20 @@ CELL_HEALTH_STATES = ((4,),
                       (3, (0, 1), (4, 5), (8, 9)),
                       (2, (0, 4), (5, 6), (7, 8), (9, 10), (11, 12)),
                       (1, (0, 4), (5, 6), (7, 11)))
+
+CELL_PARAMS = {"name": "Cell",
+               "x": SCR_W2,
+               "y": SCR_H2,
+               "health": 4,
+               "health_states": CELL_HEALTH_STATES,
+               "bubbles": {"small": 3, "medium": 0, "big": 0},
+               "radius": 24,
+               "body": CELL_BODY,
+               "gun_type": 'GunPeaceful',
+               "angular_vel": 0.00065,
+               "body_size": 80,
+               "trajectory": rose_curve_1}
+
 ###############################################################################
 INFUSORIA_BODY = [[16, 1, BLUE,   41, 0.833 * pi,  True,  0.019, 11, 0.3, True,  False],
                   [16, 1, BLUE,   41, -0.833 * pi, True,  0.019, 11, 0.7, True,  False],
@@ -797,6 +1028,20 @@ INFUSORIA_BODY = [[16, 1, BLUE,   41, 0.833 * pi,  True,  0.019, 11, 0.3, True, 
 
 INFUSORIA_HEALTH_STATES = ((2,),
                            (1, (3, 4)))
+
+INFUSORIA_PARAMS = {"name": "Infusoria",
+                    "x": SCR_W2,
+                    "y": SCR_H2,
+                    "health": 2,
+                    "health_states": INFUSORIA_HEALTH_STATES,
+                    "bubbles": {"small": 6, "medium": 0, "big": 0},
+                    "radius": 40,
+                    "body": INFUSORIA_BODY,
+                    "gun_type": 'GunPeaceful',
+                    "angular_vel": 0.00045,
+                    "body_size": 112,
+                    "trajectory": rose_curve_1}
+
 ###############################################################################
 BABY_BODY = [[12, 1, BLUE,   22, 0.8 * pi,   True,  0.016, 9,  0.7, True,  False],
              [17, 1, BLUE,   0,  0,          True,  0.021, 12, 0.3, True,  False],
@@ -813,6 +1058,20 @@ BABY_BODY = [[12, 1, BLUE,   22, 0.8 * pi,   True,  0.016, 9,  0.7, True,  False
              [19, 1, VIOLET, 35, 0.65 * pi,  False, 0.0,   0,  0,   False, False, 0, 0]]
 
 BABY_HEALTH_STATES = ((0, ),)
+
+BABY_PARAMS = {"name": "Baby",
+               "x": SCR_W2,
+               "y": SCR_H2,
+               "health": 1,
+               "health_states": ((0, ),),
+               "bubbles": {"small": 1, "medium": 0, "big": 0},
+               "radius": 24,
+               "body": BABY_BODY,
+               "gun_type": 'GunPeaceful',
+               "angular_vel": 0.0003,
+               "body_size": 64,
+               "trajectory": rose_curve_1}
+
 ###############################################################################
 BEETLE_BODY = [[19, 1, BLUE,   180, 0.075 * pi,  True,  0.032, 19, 0.1, True,  False],
                [19, 1, BLUE,   180, -0.075 * pi, True,  0.032, 19, 0.6, True,  False],
@@ -863,6 +1122,20 @@ BEETLE_HEALTH_STATES = ((30, ),
                         (12, (0, 14)),
                         (6, (0, 21), (25, 27)),
                         (3, (0, 21), (24, 27)))
+
+BEETLE_PARAMS = {"name": "Beetle",
+                 "x": SCR_W2,
+                 "y": SCR_H2,
+                 "health": 30,
+                 "health_states": BEETLE_HEALTH_STATES,
+                 "bubbles": {"small": 9, "medium": 0, "big": 0},
+                 "radius": 112,
+                 "body": BEETLE_BODY,
+                 "gun_type": 'GunBeetle',
+                 "angular_vel": 0.00045,
+                 "body_size": 368,
+                 "trajectory": rose_curve_1}
+
 ###############################################################################
 SPREADER_BODY = [[22, 2, BLUE,   72, 0.1 * pi,   False, 0.0,   0,  0,   True,  False],
                  [22, 2, BLUE,   72, 0.3 * pi,   False, 0.0,   0,  0,   True,  False],
@@ -913,6 +1186,20 @@ SPREADER_HEALTH_STATES = ((18, ),
                           (9, (0, 2), (4, 7), (9, 10)),
                           (6, (0, 3), (4, 8), (9, 10)),
                           (3, (0, 10)))
+
+SPREADER_PARAMS = {"name": "Spreader",
+                   "x": SCR_W2,
+                   "y": SCR_H2,
+                   "health": 118,
+                   "health_states": SPREADER_HEALTH_STATES,
+                   "bubbles": {"small": 15, "medium": 0, "big": 0},
+                   "radius": 83,
+                   "body": SPREADER_BODY,
+                   "gun_type": 'GunSpreader',
+                   "angular_vel": 0.00015,
+                   "body_size": 176,
+                   "trajectory": rose_curve_1}
+
 ###############################################################################
 BIGEGG_BODY = [[128, 6, RED,    0,  0,          True,  0.016, 9,  0,   True,  False],
                [68,  2, BLUE,   0,  0,          True,  0.045, 27, 0,   True,  True],
@@ -929,7 +1216,19 @@ BIGEGG_BODY = [[128, 6, RED,    0,  0,          True,  0.016, 9,  0,   True,  Fa
                [17,  1, VIOLET, 60, 0.6 * pi,   False, 0.0,   0,  0,   False, False, 0,  0],
                [19,  1, VIOLET, 35, 0.65 * pi,  False, 0.0,   0,  0,   False, False, 0,  0]]
 
-BIGEGG_HEALTH_STATES = ((0, ),)
+BIGEGG_PARAMS = {"name": "BigEgg",
+                 "x": SCR_W2,
+                 "y": SCR_H2,
+                 "health": 50,
+                 "health_states": ((0, ),),
+                 "bubbles": {"small": 15, "medium": 0, "big": 0},
+                 "radius": 120,
+                 "body": BIGEGG_BODY,
+                 "gun_type": 'GunBigEgg',
+                 "angular_vel": 0.0006,
+                 "body_size": 240,
+                 "trajectory": rose_curve_2}
+
 ###############################################################################
 SPIDER_BODY = [[36,  3, BLUE,   161, 0.5 * pi,   True,  0.051, 30, 0.0, True,  False],
                [36,  3, BLUE,   161, -0.5 * pi,  True,  0.051, 30, 0.3, True,  False],
@@ -978,6 +1277,20 @@ SPIDER_HEALTH_STATES = ((130, (19, 22)),
                         (50, (0, 6), (7, 9), (11, 19), (29, 31)),
                         (35, (0, 6), (7, 19), (29, 31)),
                         (20, (0, 19), (29, 31)),)
+
+SPIDER_PARAMS = {"name": "Spider",
+                 "x": SCR_W2,
+                 "y": SCR_H2,
+                 "health": 130,
+                 "health_states": SPIDER_HEALTH_STATES,
+                 "bubbles": {"small": 12, "medium": 0, "big": 0},
+                 "radius": 140,
+                 "body": SPIDER_BODY,
+                 "gun_type": 'GunSpider',
+                 "angular_vel": 0.00045,
+                 "body_size": 368,
+                 "trajectory": rose_curve_2}
+
 ###############################################################################
 MACHINEGUNNER_BODY = [[16, 1, BLUE,   100, 0.07 * pi,  True,  0.021, 12, 0.2, True,  False],
                       [16, 1, BLUE,   100, -0.07 * pi, True,  0.021, 12, 0.9, True,  False],
@@ -1008,6 +1321,20 @@ MACHINEGUNNER_HEALTH_STATES = ((50, ),
                                (25, (6, 8)),
                                (15, (6, 9)),
                                (5, (0, 2), (6, 9)))
+
+MACHINEGUNNER_PARAMS = {"name": "MachineGunner",
+                        "x": SCR_W2,
+                        "y": SCR_H2,
+                        "health": 50,
+                        "health_states": MACHINEGUNNER_HEALTH_STATES,
+                        "bubbles": {"small": 12, "medium": 0, "big": 0},
+                        "radius": 88,
+                        "body": MACHINEGUNNER_BODY,
+                        "gun_type": 'GunMachineGunner',
+                        "angular_vel": 0.0008,
+                        "body_size": 208,
+                        "trajectory": rose_curve_2}
+
 ###############################################################################
 TURRET_BODY = [[19,  2, BLUE,   179, 0.41 * pi,  False, 0.0,   0,  0,   True,  False],
                [19,  2, BLUE,   179, -0.41 * pi, False, 0.0,   0,  0,   True,  False],
@@ -1050,47 +1377,18 @@ TURRET_BODY = [[19,  2, BLUE,   179, 0.41 * pi,  False, 0.0,   0,  0,   True,  F
                [17,  1, VIOLET, 60,  0.6 * pi,   False, 0.0,   0,  0,   False, False, 0,  0],
                [19,  1, VIOLET, 35,  0.65 * pi,  False, 0.0,   0,  0,   False, False, 0,  0]]
 
-TURRET_HEALTH_STATES = ((0, ),)
+TURRET_PARAMS = {"name": "Turret",
+                 "x": SCR_W2,
+                 "y": SCR_H2,
+                 "health": 55,
+                 "health_states": ((0, ),),
+                 "bubbles": {"small": 18, "medium": 0, "big": 0},
+                 "radius": 115,
+                 "body": TURRET_BODY,
+                 "gun_type": 'GunTurret',
+                 "angular_vel": 0,
+                 "body_size": 368,
+                 "trajectory": no_trajectory}
+
 ###############################################################################
-
-
-def print_pretty(body, name='', scale=1.0):
-    max_sizes = [0] * 20
-    for j in range(len(body)):
-        for i in range(len(body[j])):
-            if i == 2:
-                if body[j][2] == ORANGE: body[j][2] = 'ORANGE'
-                elif body[j][2] == BLUE: body[j][2] = 'BLUE'
-                elif body[j][2] == VIOLET: body[j][2] = 'VIOLET'
-                elif body[j][2] == LIGHT_ORANGE: body[j][2] = 'LIGHT_ORANGE'
-                elif body[j][2] == RED: body[j][2] = 'RED'
-                elif body[j][2] == PURPLE: body[j][2] = 'PURPLE'
-            elif i == 6:
-                body[j][i] = str(round(body[j][i] / scale, 3))
-            elif i in (0, 3, 7, 11, 16):
-                body[j][i] = str(int(body[j][i] / scale))
-            elif i in (4, 12, 14, 17):
-                sign = '' if body[j][i] > 0 else '-'
-                if body[j][i] == 0:
-                    body[j][i] = '0'
-                elif body[j][i] == pi:
-                    body[j][i] = 'pi'
-                else:
-                    body[j][i] = sign + str(round(abs(body[j][i]/pi), 3)) + ' * pi'
-            else:
-                body[j][i] = str(body[j][i])
-            if len(body[j][i]) > max_sizes[i]:
-                max_sizes[i] = len(str(body[j][i]))
-
-    for i in range(len(body)):
-        row = ' ' * (len(name) + 4) + '['
-        for j in range(len(body[i])):
-            row += str(body[i][j])
-            if j != len(body[i]) - 1:
-                row += ', ' + ' '*(max_sizes[j]-len(str(body[i][j])))
-        row += '],'
-        print(row)
-
-
-
-#print_pretty(TURRET_BODY, 'TURRET_BODY', scale=1/1.6)
+#print_pretty(BOSS_LEG_BODY, 'BOSS_LEG_BODY', scale=1)

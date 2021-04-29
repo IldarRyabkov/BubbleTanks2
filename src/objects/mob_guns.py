@@ -1,15 +1,16 @@
 from math import pi, sin, cos
-from random import uniform, randint
+from random import uniform
 
 from objects.gun import Gun, GunSingle, GunPeaceful
 from objects.bullets import RegularBullet, BombBullet, HomingMissile
 from data.bullets import SMALL_BUL_BODY_2, BIG_BUL_BODY_2, BOMB_BUL_BODY_2
+from data.mob_guns import *
 from utils import calculate_angle
 
 
 class GunBossHead(Gun):
     def __init__(self):
-        super().__init__(72, 0.88, 0, 'StickyBullet', 900, -1000)
+        super().__init__(*GUN_BOSS_HEAD_PARAMS)
         self.activated = False
         self.bullet_cooldown = 50
         self.turret_shot_time = self.bullet_cooldown
@@ -33,7 +34,7 @@ class GunBossHead(Gun):
         self.target = self.get_target(x, y)
         bullets.append(RegularBullet(*self.target, -10, 1, self.target_angle, BIG_BUL_BODY_2))
 
-    def append_bullets(self, x, y, target, bullets, gamma=0):
+    def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.activated and self.turret_shot_time == self.bullet_cooldown:
             self.turret_shot_time = 0
             self.append_bullet(x, y, bullets)
@@ -60,7 +61,7 @@ class GunBossHead(Gun):
 
 class GunBossHand(Gun):
     def __init__(self):
-        super().__init__(72, 1.1, -3, 'SmallScalingBullet_2', 900, randint(-1400, -700))
+        super().__init__(*GUN_BOSS_HAND_PARAMS)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
@@ -76,8 +77,7 @@ class GunBossHand(Gun):
 
 class GunBossLeg(Gun):
     def __init__(self):
-        super().__init__(256, 0.56, -10, 'HomingMissile_2', 1500, -1000)
-        self.shooting_homing_bullets = True
+        super().__init__(*GUN_BOSS_LEG_PARAMS)
         self.missile_switch = 1
 
     def generate_bullets(self, x, y, target, gamma):
@@ -87,31 +87,16 @@ class GunBossLeg(Gun):
 
         return [HomingMissile(xo, yo, 32, self.bul_dmg, self.bul_vel, self.bul_body)]
 
-    def append_bullets(self, x, y, target, bullets, gamma=0):
+    def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time:
             self.time = 0
             self.missile_switch *= -1
             bullets.extend(self.generate_bullets(x, y, target, gamma))
 
 
-class GunTurtle(GunSingle):
-    def __init__(self):
-        super().__init__(64, 0.88, 0, 'StickyBullet', 1700, -2000)
-
-
-class GunTurtleDMG(GunSingle):
-    def __init__(self):
-        super().__init__(64, 0.88, -10, 'BigBullet_2', 1700, -2000)
-
-
-class GunTerrorist(GunSingle):
-    def __init__(self):
-        super().__init__(0, 0, -10, 'BombBullet_2', 3000, -2000)
-
-
 class GunBenLaden(Gun):
     def __init__(self):
-        super().__init__(0, 0, -10, 'BombBullet_2', 3000, -2000)
+        super().__init__(*GUN_BENLADEN_PARAMS)
 
     @staticmethod
     def get_bullets_coords(x, y, gamma):
@@ -131,34 +116,9 @@ class GunBenLaden(Gun):
         return bullets
 
 
-class GunBug(GunSingle):
-    def __init__(self):
-        super().__init__(19, 0.8, -2, 'SmallBullet_2', 900, -1000)
-
-
-class GunAnt(GunSingle):
-    def __init__(self):
-        super().__init__(16, 0.8, -2, 'SmallBullet_2', 900, -1000)
-
-
-class GunScarab(GunSingle):
-    def __init__(self):
-        super().__init__(16, 0.8, -2, 'SmallBullet_2', 900, -1000)
-
-
-class GunGull(GunSingle):
-    def __init__(self):
-        super().__init__(16, 0.8, -2, 'SmallBullet_2', 900, -1000)
-
-
-class GunCockroach(GunSingle):
-    def __init__(self):
-        super().__init__(16, 0.8, -2, 'SmallBullet_2', 900, -1000)
-
-
 class GunBomberShooter(Gun):
     def __init__(self):
-        super().__init__(19, 0.8, -2, 'SmallBullet_2', 900, -1000)
+        super().__init__(*GUN_BOMBERSHOOTER_PARAMS)
 
         self.time_bomb = -2000
         self.cooldown_time_bomb = 3000
@@ -178,7 +138,7 @@ class GunBomberShooter(Gun):
         xo, yo = x - 72*cos(gamma), y + 72*sin(gamma)
         bullets.append(BombBullet(xo, yo, BOMB_BUL_BODY_2))
 
-    def append_bullets(self, x, y, target, bullets, gamma=0):
+    def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time:
             self.append_small_bullet(x, y, bullets, target, gamma)
             self.time = 0
@@ -189,7 +149,7 @@ class GunBomberShooter(Gun):
 
 class GunBeetle(Gun):
     def __init__(self):
-        super().__init__(0, 0.88, -2, 'SmallScalingBullet_2', 450, -1000)
+        super().__init__(*GUN_BEETLE_PARAMS)
         self.gun_switch = -1
 
     def append_bullet_1(self, x, y, bullets, target, gamma):
@@ -206,7 +166,7 @@ class GunBeetle(Gun):
         pos[1] -= 56 * sin(angle)
         bullets.append(RegularBullet(*pos, self.bul_dmg, self.bul_vel, angle, self.bul_body))
 
-    def append_bullets(self, x, y, target, bullets, gamma=0):
+    def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time:
             self.time = 0
             self.gun_switch *= -1
@@ -216,16 +176,11 @@ class GunBeetle(Gun):
                 self.append_bullet_2(x, y, bullets, target, gamma)
 
 
-class GunBeetleReserve(GunSingle):
-    def __init__(self):
-        super().__init__(0, 0.88, -2, 'SmallScalingBullet_2', 900, -900)
-
-
 class GunSpreader(Gun):
     def __init__(self):
-        super().__init__(0, 0.44, -2, 'SmallBullet_2', 1500, -1000)
+        super().__init__(*GUN_SPREADER_PARAMS)
 
-    def append_bullets(self, x, y, target, bullets, gamma=0):
+    def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time:
             self.time = 0
             for i in range(10):
@@ -234,14 +189,9 @@ class GunSpreader(Gun):
                 bullets.append(RegularBullet(xo, yo, self.bul_dmg, self.bul_vel, angle, self.bul_body))
 
 
-class GunBigEgg(GunSingle):
-    def __init__(self):
-        super().__init__(104, 0.88, -2, 'SmallBullet_2', 900, -1000)
-
-
 class GunSpider(Gun):
     def __init__(self):
-        super().__init__(0, 0.88, -2, 'SmallBullet_2', 900, -1000)
+        super().__init__(*GUN_SPIDER_PARAMS)
 
         self.small_gun_is_alive = True
         self.cooldown_time_2 = 2000
@@ -265,7 +215,7 @@ class GunSpider(Gun):
         y -= 70 * sin(angle)
         bullets.append(RegularBullet(x, y, -15, 0.88, angle, BIG_BUL_BODY_2))
 
-    def append_bullets(self, x, y, target, bullets, gamma=0):
+    def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time and self.small_gun_is_alive:
             self.time = 0
             self.append_small_bullet(x, y, bullets, gamma, target)
@@ -280,7 +230,7 @@ class GunSpider(Gun):
 
 class GunMachineGunner(Gun):
     def __init__(self):
-        super().__init__(0, 1.3, -2, 'SmallBullet_2', 3000, -2000)
+        super().__init__(*GUN_MACHINEGUNNER_PARAMS)
 
         self.activated = False
         self.bullet_cooldown = 100
@@ -292,7 +242,7 @@ class GunMachineGunner(Gun):
         yo = y - 37 * sin(angle)
         bullets.append(RegularBullet(xo, yo, self.bul_dmg, self.bul_vel, angle, self.bul_body))
 
-    def append_bullets(self, x, y, target, bullets, gamma=0):
+    def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.activated and self.shot_time == self.bullet_cooldown:
             self.shot_time = 0
             self.append_bullet(x, y, bullets, target)
@@ -310,7 +260,7 @@ class GunMachineGunner(Gun):
 
 class GunTurret(Gun):
     def __init__(self):
-        super().__init__(0, 1.3, -4, 'SmallBullet_2', 2000, -2000)
+        super().__init__(*GUN_TURRET_PARAMS)
 
         self.activated = False
         self.target_angle_vel = -0.8 * pi / self.cooldown_time
@@ -326,7 +276,7 @@ class GunTurret(Gun):
         self.target = self.get_target(x, y)
         bullets.append(RegularBullet(*self.target, -4, 1.3, self.target_angle, self.bul_body))
 
-    def append_bullets(self, x, y, target, bullets, gamma=0):
+    def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.activated and self.shot_time == self.bullet_cooldown:
             self.shot_time = 0
             self.append_bullet(x, y, bullets)
@@ -346,24 +296,24 @@ class GunTurret(Gun):
 
 
 def get_gun(name):
-    if name == 'GunPeaceful': return GunPeaceful()
-    if name == 'GunBossHead': return GunBossHead()
-    if name == 'GunBossHand': return GunBossHand()
-    if name == 'GunBossLeg': return GunBossLeg()
-    if name == 'GunTurtle': return GunTurtle()
-    if name == 'GunTurtleDMG': return GunTurtleDMG()
-    if name == 'GunTerrorist': return GunTerrorist()
-    if name == 'GunBenLaden': return GunBenLaden()
-    if name == 'GunBug': return GunBug()
-    if name == 'GunAnt': return GunAnt()
-    if name == 'GunScarab': return GunScarab()
-    if name == 'GunGull': return GunGull()
-    if name == 'GunCockroach': return GunCockroach()
+    if name == 'GunPeaceful':      return GunPeaceful()
+    if name == 'GunBossHead':      return GunBossHead()
+    if name == 'GunBossHand':      return GunBossHand()
+    if name == 'GunBossLeg':       return GunBossLeg()
+    if name == 'GunBenLaden':      return GunBenLaden()
     if name == 'GunBomberShooter': return GunBomberShooter()
-    if name == 'GunBeetle': return GunBeetle()
-    if name == 'GunBeetleReserve': return GunBeetleReserve()
-    if name == 'GunSpreader': return GunSpreader()
-    if name == 'GunBigEgg': return GunBigEgg()
-    if name == 'GunSpider': return GunSpider()
+    if name == 'GunBeetle':        return GunBeetle()
+    if name == 'GunSpreader':      return GunSpreader()
+    if name == 'GunSpider':        return GunSpider()
     if name == 'GunMachineGunner': return GunMachineGunner()
-    if name == 'GunTurret': return GunTurret()
+    if name == 'GunTurret':        return GunTurret()
+    if name == 'GunBeetleReserve': return GunSingle(*GUN_BEETLE_REVERSE_PARAMS)
+    if name == 'GunBug':           return GunSingle(*GUN_BUG_PARAMS)
+    if name == 'GunAnt':           return GunSingle(*GUN_ANT_PARAMS)
+    if name == 'GunScarab':        return GunSingle(*GUN_SCARAB_PARAMS)
+    if name == 'GunGull':          return GunSingle(*GUN_GULL_PARAMS)
+    if name == 'GunCockroach':     return GunSingle(*GUN_COCKROACH_PARAMS)
+    if name == 'GunTurtle':        return GunSingle(*GUN_TURTLE_PARAMS)
+    if name == 'GunTurtleDMG':     return GunSingle(*GUN_TURTLE_DMG_PARAMS)
+    if name == 'GunTerrorist':     return GunSingle(*GUN_TERRORIST_PARAMS)
+    if name == 'GunBigEgg':        return GunSingle(*GUN_BIGEGG_PARAMS)

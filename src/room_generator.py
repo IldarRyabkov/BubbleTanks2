@@ -13,7 +13,6 @@ WEAK_SLOW_MOBS = ["Turtle", "Turtle_dmg", "Terrorist"]
 WEAK_FAST_MOBS = ["Scarab", "Bug", "Gull", "Ant", "Cockroach"]
 STRONG_MOBS = ["Spider", "Spreader", "Beetle", "BomberShooter", "BenLaden"]
 EPIC_MOBS = ["MachineGunner", "Turret"]
-MOTHERS = ["GullMother", "BugMother", "ScarabMother"]
 BOSS = ['BossLeg', 'BossHandLeft', 'BossHandRight', 'BossHead']
 
 OFFSETS = {'UP':    (0, -1),
@@ -41,7 +40,7 @@ def generate_compensation(delta_health):
 
 def generate_peaceful_mobs():
     mobs = defaultdict(int)
-    add_peaceful_mobs(mobs, 1, 3)
+    add_peaceful_mobs(mobs, 2, 3)
     return mobs
 
 
@@ -81,7 +80,7 @@ def generate_level_6():
     if group == "Ants":
         mobs["Ant"] += 14
     elif group == "Mother":
-        mobs[random.choice(MOTHERS)] += 1
+        mobs["Mother"] += 1
         for _ in range(random.randint(2, 3)):
             mobs[random.choice(WEAK_FAST_MOBS)] += 1
     else:
@@ -117,7 +116,7 @@ def generate_level_8():
             mobs[random.choice(STRONG_MOBS)] += 1
     elif group == "Mothers":
         for _ in range(2):
-            mobs[random.choice(MOTHERS)] += 1
+            mobs["Mother"] += 1
         for _ in range(random.randint(4, 6)):
             mobs[random.choice(WEAK_FAST_MOBS)] += 1
     else:

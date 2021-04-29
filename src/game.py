@@ -52,7 +52,6 @@ class Game:
     def reset_data(self):
         self.running = True
         self.transportation = False
-        self.dt = 0
         self.player = Player()
         self.room_generator.reset()
         self.init_key_handlers()
@@ -63,6 +62,8 @@ class Game:
         self.cooldown_window.reset()
         self.health_window.reset()
         self.set_windows()
+        self.dt = 0
+        self.clock.tick()
 
     def set_language(self, language):
         self.room_generator.set_language(language)
@@ -409,9 +410,9 @@ class Game:
         self.handle_bubble_eating()
         self.handle_mobs_collisions()
         self.handle_player_collisions()
-        self.player.update_all(self.dt, self.room.mobs, self.room.top_effects,
-                               self.room.bottom_effects, self.camera,
-                               self.sound_player)
+        self.player.update(self.dt, self.room.mobs, self.room.top_effects,
+                           self.room.bottom_effects, self.camera,
+                           self.sound_player)
         self.camera.update(*self.player.pos, self.dt)
         self.room.update(self.player.pos,  self.dt)
         if self.room.game_is_over():
@@ -476,7 +477,7 @@ class Game:
         self.pause_menu.update(self.dt, self.sound_player.sounds)
 
     def update_victory_menu(self):
-        if self.player.superpower.name == "Ghost":
+        if isinstance(self.player.superpower, Ghost):
             self.player.superpower.update_body(self.player.body)
             self.player.update_body(self.dt)
         for bubble in self.room.bubbles:

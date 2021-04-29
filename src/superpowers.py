@@ -115,9 +115,9 @@ class ParalysingExplosion(SuperPower):
     def activate(self, pos, mobs, top_effects, bottom_effects, camera, sound_player):
         explosion_pos = self.get_explosion_pos(pos)
         for mob in mobs:
-            if hypot(explosion_pos[0] - mob.x, explosion_pos[1] - mob.y) <= self.radius:
+            if hypot(*(explosion_pos - mob.pos)) <= self.radius:
                 mob.make_paralysed()
-                add_effect('StarsAroundMob', top_effects, mob.x, mob.y, mob.radius)
+                add_effect('StarsAroundMob', top_effects, *mob.pos, mob.radius)
         explosion = 'ParalyzingExplosion' if self.radius == 480 else 'BigParalyzingExplosion'
         add_effect(explosion, bottom_effects, *explosion_pos)
         add_effect('Flash', top_effects)
@@ -136,13 +136,13 @@ class PowerfulExplosion(SuperPower):
         return pos + np.array([-78 * cos(alpha), 78 * sin(alpha)])
 
     def activate(self, pos, mobs, top_effects, bottom_effects, camera, sound_player):
-        coords = self.get_explosion_pos(pos)
+        explosion_pos = self.get_explosion_pos(pos)
         for mob in mobs:
-            if hypot(coords[0] - mob.x, coords[1] - mob.y) <= 250:
+            if hypot(*(explosion_pos - mob.pos)) <= 500:
                 mob.health -= 20
                 mob.update_body_look()
-                add_effect('BulletHitLines', top_effects, mob.x, mob.y)
-        add_effect('PowerfulExplosion', bottom_effects, *coords)
+                add_effect('BulletHitLines', top_effects, *mob.pos)
+        add_effect('PowerfulExplosion', bottom_effects, *explosion_pos)
         add_effect('Flash', top_effects)
         camera.start_shaking(250)
         sound_player.play_sound(THUNDER)
@@ -246,7 +246,7 @@ class StickyCannon(SuperPower):
 
 class PowerfulCannon(SuperPower):
     def __init__(self):
-        super().__init__(cooldown_time=1500)
+        super().__init__(cooldown_time=2000)
 
     def activate(self, x, y, target, bullets):
         angle = calculate_angle(x, y, *target)
@@ -256,7 +256,7 @@ class PowerfulCannon(SuperPower):
 
 class StickyExplosion(SuperPower):
     def __init__(self):
-        super().__init__(cooldown_time=1750)
+        super().__init__(cooldown_time=2500)
 
     def activate(self, pos, bullets):
         for i in range(36):

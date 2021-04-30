@@ -21,34 +21,63 @@ from special_effects import add_effect
 
 class Player(BaseMob):
     def __init__(self):
-        BaseMob.__init__(self, 0, MAX_HEALTH_00, HEALTH_STATES_00, RADIUS_00, BODY_00)
+        BaseMob.__init__(self,
+                         0,
+                         MAX_HEALTH_00,
+                         HEALTH_STATES_00,
+                         RADIUS_00,
+                         BODY_00)
         self.pos = np.array([SCR_W2, SCR_H2], dtype=float)
+        self.bg_radius = BG_RADIUS_00
         self.max_vel = MAX_VEL_00
         self.vel_x = self.vel_y = 0
         self.max_acc = ACC_00
         self.acc_x= self.acc_y = 0
+
         self.moving_left = False
         self.moving_right = False
         self.moving_up = False
         self.moving_down = False
+        self.shooting = False
+
         self.superpower = get_superpower(SUPERPOWER_00)
         self.gun = get_gun(GUN_TYPE_00)
-        self.is_shooting = False
+
         self.bullets = []
         self.homing_bullets = []
         self.shurikens = []
+
         self.max_health = MAX_HEALTH_00
-        self.bg_radius = BG_RADIUS_00
         self.delta_health = 0
-        self.defeated = False
-        self.is_max_tank = False
-        self.armor_on = [False]
-        self.invisible = [False]
+
         self.state = (0, 0)
         self.states_history = [(0, 0)]
 
+    @property
     def level(self):
         return self.state[0]
+
+    @property
+    def is_ready_to_upgrade(self):
+        return self.level < 5 and self.health >= self.max_health
+
+    @property
+    def in_latest_state(self):
+        return self.state == self.states_history[-1]
+
+    @property
+    def defeated(self):
+        return self.health < 0 and self.level == 0
+
+    @property
+    def armor_on(self):
+        return (isinstance(self.superpower, Armor) and
+                self.superpower.time < 0.4 * self.superpower.cooldown_time)
+
+    @property
+    def invisible(self):
+        return (isinstance(self.superpower, Ghost) and
+                (self.superpower.on or self.superpower.dist != 0))
 
     def move(self, dx, dy):
         self.pos += np.array([dx, dy])
@@ -60,6 +89,10 @@ class Player(BaseMob):
         for bullet in self.homing_bullets:
             bullet.move(*offset)
 
+        for shuriken in self.shurikens:
+            if not shuriken.is_orbiting:
+                shuriken.move(*offset)
+
     def stop_moving(self):
         self.moving_right = False
         self.moving_left = False
@@ -69,12 +102,9 @@ class Player(BaseMob):
     def set_params_after_transportation(self):
         self.vel_x = 0
         self.vel_y = 0
+        self.health = max(self.health, 0)
         self.delta_health = 0
-        self.defeated = False
         self.clear_bullets()
-
-    def is_ready_to_upgrade(self):
-        return not self.is_max_tank and self.health >= self.max_health
 
     def get_mouse_pos(self):
         """
@@ -124,25 +154,18 @@ class Player(BaseMob):
         self.bg_radius = bg_radius
         self.max_vel = max_vel
         self.max_acc = max_acc
-        self.armor_on = [False]
-        self.invisible = [False]
 
     def collide_bullet(self, x, y, r):
-        radius = self.bg_radius if self.armor_on[0] else self.radius
+        radius = self.bg_radius if self.armor_on else self.radius
         return circle_collidepoint(*self.pos, radius + r, x, y)
 
     def collide_bubble(self, x, y):
         return circle_collidepoint(*self.pos, self.radius // 2, x, y)
 
-    def in_latest_state(self):
-        return self.state == self.states_history[-1]
-
     def handle_injure(self, damage):
-        if not self.armor_on[0]:
+        if not self.armor_on:
             super().handle_injure(damage)
             self.delta_health += damage
-            if self.health < 0 and self.state[0] == 0:
-                self.defeated = True
 
     def handle_bubble_eating(self, bubble_health):
         self.health += bubble_health
@@ -192,16 +215,13 @@ class Player(BaseMob):
             self.moving_right = False
             self.moving_up = False
             self.moving_down = False
-            self.is_shooting = False
+            self.shooting = False
         else:
             self.state = self.states_history[self.state[0] + 1]
 
         self.setup(*PLAYER_PARAMS[self.state])
         if new_state:
-            self.is_shooting = False
-
-        if self.state[0] == 5:
-            self.is_max_tank = True
+            self.shooting = False
 
         if self.is_frozen:
             self.max_vel *= 0.2
@@ -212,9 +232,8 @@ class Player(BaseMob):
 
     def downgrade(self):
         self.shurikens = []
-        if self.state[0] >= 1:
-            self.is_max_tank = False
-            self.state = self.states_history[self.state[0] - 1]
+        if self.level >= 1:
+            self.state = self.states_history[self.level - 1]
             self.setup(*PLAYER_PARAMS[self.state])
             self.health = self.max_health - 1
             self.update_body_look()
@@ -229,7 +248,7 @@ class Player(BaseMob):
             self.health = 0
 
     def get_next_states(self):
-        i, j = self.state[0], self.state[1]
+        i, j = self.state
 
         if self.state == (2, 3):
             return (i+1, j), (i+1, j+1), (i+1, j+2)
@@ -259,7 +278,7 @@ class Player(BaseMob):
         self.gun.update_time(dt)
         old_length = len(self.bullets)
 
-        if self.is_shooting and not self.invisible[0]:
+        if self.shooting and not self.invisible:
             target = self.get_mouse_pos()
             self.gun.add_bullets(*self.pos, target, self.bullets, self.body.angle)
 
@@ -281,7 +300,7 @@ class Player(BaseMob):
         self.bullets.extend(fragments)
 
         # filter all needless homing bullets
-        self.bullets = list(filter(lambda b: not b.is_outside() and not b.hit_the_target,
+        self.bullets = list(filter(lambda b: not b.is_outside and not b.hit_the_target,
                                    self.bullets))
 
     def update_homing_bullets(self, dt, mobs, top_effects):
@@ -303,7 +322,7 @@ class Player(BaseMob):
             shuriken.update(dt, *self.pos, mobs)
 
         # filter all needless shurikens
-        self.shurikens = list(filter(lambda x: (x.is_orbiting or not x.is_outside())
+        self.shurikens = list(filter(lambda x: (x.is_orbiting or not x.is_outside)
                                                and not x.hit_the_target, self.shurikens))
 
     def update_acc(self):
@@ -351,7 +370,7 @@ class Player(BaseMob):
     def update_superpower(self, dt, mobs, top_effects, bottom_effects, camera, sound_player):
         args = []
         if isinstance(self.superpower, Armor):
-            args = self.armor_on, top_effects
+            args = top_effects,
         elif isinstance(self.superpower, (Bombs, ExplosionStar, StickyExplosion)):
             args = self.pos, self.bullets
         elif isinstance(self.superpower, (ParalysingExplosion, PowerfulExplosion)):
@@ -359,7 +378,7 @@ class Player(BaseMob):
         elif isinstance(self.superpower, Teleportation):
             args = self.pos, top_effects, camera
         elif isinstance(self.superpower, Ghost):
-            args = self.invisible, self.body
+            args = self.body,
         elif isinstance(self.superpower, HomingMissiles):
             args = self.pos, self.homing_bullets, self.health, self.body.angle
         elif isinstance(self.superpower, Shurikens):

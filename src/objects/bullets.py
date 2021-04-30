@@ -23,6 +23,10 @@ class Bullet:
         self.body = Body(body) if isinstance(body, list) else body
         self.hit_the_target = False
 
+    @property
+    def is_outside(self):
+        return not circle_collidepoint(SCR_W2, SCR_H2, ROOM_RADIUS, self.x, self.y)
+
     @staticmethod
     def set_hit_effect(damage):
         if damage <= -5: return 'BigHitLines'
@@ -41,12 +45,6 @@ class Bullet:
         self.y += dy
         self.body.move(dx, dy)
 
-    def is_outside(self):
-        """
-        :return: Bullet is outside the room circle
-        """
-        return not circle_collidepoint(SCR_W2, SCR_H2, ROOM_RADIUS, self.x, self.y)
-
     def draw(self, surface, dx, dy):
         self.body.draw(surface, dx, dy)
 
@@ -57,9 +55,13 @@ class RegularBullet(Bullet):
         Bullet.__init__(self, x, y, 0.8 * body[0][0], damage, vel, angle, body)
         self.body.update(self.x, self.y, 0)
 
+    def update_color(self, dt):
+        pass
+
     def update(self, dt):
         self.update_pos(dt)
         self.update_body(dt)
+        self.update_color(dt)
 
 
 class ExplodingBullet(RegularBullet):
@@ -88,10 +90,6 @@ class ExplodingBullet(RegularBullet):
         elif self.color_time >= self.T and self.color_switch == -1:
             self.change_color()
             self.color_time -= self.T
-
-    def update(self, dt):
-        super().update(dt)
-        self.update_color(dt)
 
 
 class BombBullet(Bullet):
@@ -138,7 +136,7 @@ class Shuriken(Bullet):
         Bullet.__init__(self, x, y, 13, -7, 1.6, 0, SHURIKEN_BODY)
         self.dist = 144
         self.is_orbiting = True
-        self.angle = angle
+        self.angle = 0
         self.angular_vel = -0.002 * pi
         self.health = 1
         self.search_area_rect = pg.Rect(self.x - 250, self.y - 250, 500, 500)
@@ -229,7 +227,7 @@ class DrillingBullet(Bullet):
         self.body = pg.transform.rotate(body, angle * 180 / pi)
         self.x = x - self.body.get_width() / 2
         self.y = y - self.body.get_height() / 2
-        self.attacked_mobs = []
+        self.attacked_mobs = []  # contains IDs of mobs attacked by this bullet
 
     def move(self, dx, dy):
         self.x += dx

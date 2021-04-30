@@ -66,8 +66,9 @@ class Mob(BaseMob):
         self.pos = self.trajectory(self.pos_0, self.polar_angle)
         self.body_rect.center = tuple(self.pos)
 
-    def update_body(self, dt, target=(0, 0)):
-        self.body.update(*self.pos, dt, target, self.gamma)
+    def update_body(self, screen_rect, dt, target=(0, 0)):
+        if self.body_rect.colliderect(screen_rect):
+            self.body.update(*self.pos, dt, target, self.gamma)
 
     def make_paralysed(self):
         self.is_paralysed = True
@@ -97,8 +98,10 @@ class Mob(BaseMob):
             self.gamma = self.count_gamma()
             self.gun.add_bullets(*self.pos, target, bullets, self.gamma)
 
-        if self.body_rect.colliderect(screen_rect):
-            self.update_body(dt, target)
-
+        self.update_body(screen_rect, dt, target)
         self.update_paralysed_state(dt)
         self.update_frozen_state(dt)
+
+    def draw(self, surface, dx, dy, screen_rect):
+        if self.body_rect.colliderect(screen_rect):
+            self.body.draw(surface, dx, dy)

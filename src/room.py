@@ -8,86 +8,121 @@ from objects.mobs import Mother
 from objects.mob_guns import GunBossLeg
 from gui.text_box import TextBox
 from special_effects import add_effect
-from data.config import SCR_H, SCR_W, SCR_H2, SCR_W2, ROOM_RADIUS
+from data.config import *
 from data.colors import WHITE
 from data.paths import FONT_1
 from data.mobs import BOSS_SKELETON_BODY
+from data.player import BG_RADIUS_00
+from room_generator import BOSS_PIECES
 
 
 class Room:
+    """Class that stores, updates and draws all objects in the room, such as:
+
+        - mobs;
+        - bullets;
+        - homing bullets;
+        - bubbles;
+        - special effects;
+        - room hint text;
+        - Boss Skeleton body
+
+    It also stores some parameters of the room such as:
+
+        - radius of player's gravitational field, in which bubbles are attracted to the player;
+
+        - screen offset according to player's position (mobs should be drawn only if they are on screen)
+
+        - boss disposition state ('in current room', 'in neighbour room', 'far away')
+          which is used to determine should we draw boss skeleton or not.
+          Normally mobs in a neighbour room aren't being drawn, but Boss Skeleton is too large,
+          so it has to be drawn even if the Boss is in the neighbour room;
+
     """
-    List of bullets is made separately from list of mobs, because
-    when mob is dead and deleted, its bullets should continue existing.
-    'new_mobs' is a temporary list of mobs, which is created
-    to draw the mobs of room player is being transported to.
-    When player is transported, self.mobs = self.new_mobs.copy().
-    Text is a text text_surface of room, containing rules of the game.
-    Screen rectangle is used to check if mob's rectangle collides
-    with it. If yes, then a mob is drawn.
-    Gravity radius is a radius of circle around player, in which bubbles
-    gravitate to player.
-    'Bottom effects' are drawn below player, mobs, bubbles and bullets,
-    other effects are 'Top effects'.
-    """
-    bubbles = list()
-    mobs = list()
-    new_mobs = list()
-    bullets = list()
-    homing_bullets = list()
-    bottom_effects = list()
-    top_effects = list()
-    text = None
-    screen_rect = pg.Rect(0, 0, SCR_W, SCR_H)
-    gravity_radius = 160
+    mobs = []
+    bullets = []
+
+    # Homing bullets are different from regular bullets. They have their own health
+    # and can be knocked down by the player's bullets. Therefore, they are kept in a separate list.
+    homing_bullets = []
+
+    bubbles = []
+    bottom_effects = []  # bottom effects are being drawn before all room objects are drawn
+    top_effects = []  # top effects are being drawn after all room objects are drawn
+    hint_text = None
     boss_skeleton = Body(BOSS_SKELETON_BODY)
-    boss_position_marker = 0
+
+    # This is a list that temporarily stores mobs for the next room while the player is being transported.
+    # It is needed in order to separately draw and update mobs in the previous room and mobs
+    # in the next room during the player's transportation. After the end of transportation,
+    # the main list of mobs is replaced with a temporary list, and the temporary list is cleared.
+    new_mobs = []
+
+    # Additional parameters of the room
+    gravity_radius = BG_RADIUS_00
+    screen_rect = pg.Rect(0, 0, SCR_W, SCR_H)
+    boss_state = BOSS_IN_NEIGHBOUR_ROOM
 
     def __init__(self):
-        self.set_text('')
+        self.set_hint_text('')
         self.boss_skeleton.update(SCR_W2, SCR_H2, 0, (0, 0), 0.5 * pi)
 
-    def reset(self, new_game=False):
-        """
-        Method is called when a new game is started
-        or a new room is visited. Resets all room data.
+    @property
+    def boss_defeated(self):
+        return self.boss_state == BOSS_IN_CURRENT_ROOM and not self.mobs
+
+    def reset(self):
+        """ Method is called when a new game is started.
+        Resets all room data.
         """
         self.bubbles = []
         self.bullets = []
         self.homing_bullets = []
         self.top_effects = []
         self.bottom_effects = []
-        self.mobs = [] if new_game else self.new_mobs.copy()
+        self.mobs = []
         self.new_mobs = []
-        if new_game:
-            self.boss_position_marker = 0
+        self.boss_state = BOSS_IS_FAR_AWAY
 
-    def check_boss(self):
-        if self.boss_position_marker in [1, 2]:
-            self.boss_position_marker -= 1
-        for mob in self.new_mobs:
-            if mob.name in ("BossLeg", "BossHead",
-                            "BossHandLeft", "BossHandRight"):
-                self.boss_position_marker = 2
-                break
+    def set_params_after_transportation(self):
+        """Clears all lists of objects in room and replaces the list
+        of mobs to list of new mobs for this room.
+        After that the temporary list of new mobs is cleared.
+        """
+        self.bubbles = []
+        self.bullets = []
+        self.homing_bullets = []
+        self.top_effects = []
+        self.bottom_effects = []
+        self.mobs = self.new_mobs.copy()
+        self.new_mobs = []
 
-    def set_new_mobs(self, new_mobs):
-        self.new_mobs = new_mobs
-        self.check_boss()
+    def update_boss_state(self):
+        """Updates the boss disposition state due to
+        transportation of the player to the next room.
+        """
+        if self.boss_state == BOSS_IN_CURRENT_ROOM:
+            self.boss_state = BOSS_IN_NEIGHBOUR_ROOM
+        elif (self.boss_state == BOSS_IN_NEIGHBOUR_ROOM and
+                  any(mob.name in BOSS_PIECES for mob in self.new_mobs)):
+            self.boss_state = BOSS_IN_CURRENT_ROOM
+        else:
+            self.boss_state = BOSS_IS_FAR_AWAY
 
-    def set_text(self, text):
+    def set_hint_text(self, text):
         """
         :param text: list of strings
-        sets background room text, explaining the rules of the game
+        sets background room hint text, explaining the rules of the game
         """
-        self.text = TextBox(text, FONT_1, int(47 * SCR_H/600), True,
-                            WHITE, (2/3 * SCR_H, 11/60 * SCR_H))
+        self.hint_text = TextBox(text, FONT_1, int(47 * SCR_H/600), True,
+                                 WHITE, (2/3 * SCR_H, 11/60 * SCR_H))
 
     def update_bullets(self, dt):
         for bullet in self.bullets:
             bullet.update(dt)
         # filter out bullets that hit the target or are outside the room and
         # make sure there are not more than 100 bullets (for performance reasons)
-        self.bullets = list(filter(lambda b: not b.is_outside() and
+        self.bullets = list(filter(lambda b: not b.is_outside and
                                              not b.hit_the_target,
                                    self.bullets))[:100]
 
@@ -103,7 +138,7 @@ class Room:
         for bubble in self.bubbles:
             bubble.update(x, y, dt)
         # filter out bubbles that are outside the room
-        self.bubbles = list(filter(lambda b: not b.is_outside(), self.bubbles))
+        self.bubbles = list(filter(lambda b: not b.is_outside, self.bubbles))
 
     def update_effects(self, dt):
         for effect in self.top_effects:
@@ -147,7 +182,7 @@ class Room:
             bullet.move(*offset)
 
         self.boss_skeleton.update(SCR_W2, SCR_H2, 0, (0, 0), 0.5 * pi)
-        if self.boss_position_marker == 1:
+        if self.boss_state == BOSS_IN_NEIGHBOUR_ROOM:
             self.boss_skeleton.move(*offset)
 
     def set_gravity_radius(self, gravity_radius):
@@ -160,25 +195,29 @@ class Room:
 
     def maximize_gravity(self):
         """
-        Method is called when all mobs in the room are dead.
+        Method is called when all mobs in the room are killed.
         The radius of player's gravitational field is set equal to
         the diameter of room, so that every bubble starts
         gravitating to player regardless of his position in the room.
         Also speeds of bubbles are maximized to reach player faster.
         """
-
         for bubble in self.bubbles:
             bubble.gravity_r = 2 * ROOM_RADIUS
             bubble.maximize_vel()
 
     def update_mobs(self, target, dt):
+        """Updates mobs in the room. All mobs receive a list of bullets
+        as input in order to add new generated bullets to it.
+        Some mobs are capable of creating new mobs.
+        New mobs generated by them are put into the list of generated mobs
+        Then the main list of mobs is extended with this list of generated mobs.
+        """
         generated_mobs = []
         for mob in self.mobs:
             if isinstance(mob.gun, GunBossLeg):
-                updated_bullets = self.homing_bullets
+                mob.update(target, self.homing_bullets, self.screen_rect, dt)
             else:
-                updated_bullets = self.bullets
-            mob.update(target, updated_bullets, self.screen_rect, dt)
+                mob.update(target, self.bullets, self.screen_rect, dt)
             if isinstance(mob, Mother):
                 generated_mobs.extend(mob.generate_mob(dt))
         self.mobs.extend(generated_mobs)
@@ -191,43 +230,42 @@ class Room:
 
     def update_new_mobs(self, player_x, player_y, dt):
         """
-        Method updates positions and bodies of mobs of the room,
+        Method updates positions and bodies of all mobs of the room,
         player is being transported to.
         """
         target = (player_x, player_y)
         for mob in self.new_mobs:
             mob.update_pos(dt)
             mob.gamma = mob.count_gamma()
-            if mob.body_rect.colliderect(self.screen_rect):
-                mob.update_body(dt, target)
+            mob.update_body(self.screen_rect, dt, target)
 
     def set_screen_rect(self, pos):
+        """Sets the center of room screen-rectangle equal to the player's new pos. """
         self.screen_rect.center = pos
 
-    def game_is_over(self):
-        return self.boss_position_marker == 2 and not self.mobs
-
     def update(self, player_pos, dt):
+        """Updates all objects in the room and room parameters. """
         self.set_screen_rect(player_pos)
-
         self.update_mobs(player_pos, dt)
         self.update_bubbles(*player_pos, dt)
         self.update_bullets(dt)
         self.update_homing_bullets(*player_pos, dt)
         self.update_effects(dt)
-
         if not self.mobs:
             self.maximize_gravity()
 
     def add_bubbles(self, mob_pos, mob_bubbles):
+        """Method is called when a mob is killed.
+        Adds mob's bubbles to the list of bubbles.
+        """
         for name, n in mob_bubbles.items():
             for i in range(n):
                 bubble = Bubble(*mob_pos, uniform(0, 2 * pi),
                                 self.gravity_radius, name)
                 self.bubbles.append(bubble)
 
-    def draw_text(self, surface, dx, dy):
-        self.text.draw(surface, dx, dy)
+    def draw_hint_text(self, surface, dx, dy):
+        self.hint_text.draw(surface, dx, dy)
 
     def draw_bubbles(self, surface, dx, dy):
         for bubble in self.bubbles:
@@ -235,16 +273,14 @@ class Room:
 
     def draw_mobs(self, surface, dx, dy):
         for mob in self.mobs:
-            if mob.body_rect.colliderect(self.screen_rect):
-                mob.body.draw(surface, dx, dy)
+            mob.draw(surface, dx, dy, self.screen_rect)
 
     def draw_new_mobs(self, surface, dx, dy):
         for mob in self.new_mobs:
-            if mob.body_rect.colliderect(self.screen_rect):
-                mob.body.draw(surface, dx, dy)
+            mob.draw(surface, dx, dy, self.screen_rect)
 
     def draw_boss_skeleton(self, surface, dx, dy):
-        if self.boss_position_marker:
+        if self.boss_state != BOSS_IS_FAR_AWAY:
             self.boss_skeleton.draw(surface, dx, dy)
 
     def draw_bombs(self, surface, dx, dy):

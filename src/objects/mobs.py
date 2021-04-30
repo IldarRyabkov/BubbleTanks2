@@ -19,11 +19,12 @@ class BossHead(Mob):
     def collide_bullet(self, x, y, r):
         return circle_collidepoint(self.pos[0], self.pos[1] + 160, self.radius + r, x, y)
 
-    def update_body(self, dt, player_pos=(0, 0)):
-        for i, circle in enumerate(self.body.circles):
-            if circle.visible:
-                target = self.gun.target if 16 <= i < 24 else player_pos
-                circle.update(*self.pos, dt, target, 0, -0.5 * pi)
+    def update_body(self, screen_rect, dt, player_pos=(0, 0)):
+        if self.body_rect.colliderect(screen_rect):
+            for i, circle in enumerate(self.body.circles):
+                if circle.visible:
+                    target = self.gun.target if 16 <= i < 24 else player_pos
+                    circle.update(*self.pos, dt, target, 0, -0.5 * pi)
 
 
 class MobTerrorist(Mob):
@@ -93,10 +94,10 @@ class Turret(Mob):
         d_pos = array([r * cos(fi), -r * sin(fi)])
         self.pos += d_pos
         self.pos_0 += d_pos
-        self.update_body(0)
 
-    def update_body(self, dt, target=(0, 0)):
-        self.body.update(*self.pos, dt, self.gun.target, 0)
+    def update_body(self, screen_rect, dt, target=(0, 0)):
+        if self.body_rect.colliderect(screen_rect):
+            self.body.update(*self.pos, dt, self.gun.target, 0)
 
 
 def get_mob(name):

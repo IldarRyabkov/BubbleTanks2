@@ -3,12 +3,16 @@ import sys
 import numpy as np
 from math import hypot
 from collections import defaultdict
+import ctypes
+import platform
+
 
 from data.paths import (GAME_MUSIC, START_MUSIC, PLAYER_BULLET_HIT,
                         MOB_DEATH, BUBBLE_DEATH, PLAYER_INJURE)
 from data.config import *
 from background_environment import BackgroundEnvironment
 from objects.player import Player
+from objects.mob import Mob
 from objects.bullets import DrillingBullet, ExplodingBullet
 from camera import Camera
 from room import Room
@@ -24,10 +28,22 @@ from gui.cooldown_window import CooldownWindow
 from special_effects import add_effect
 from superpowers import Ghost
 from utils import calculate_angle
+from data.cursor import CURSOR
 
 
 class Game:
+    """The core of the game. """
     def __init__(self):
+        pg.init()
+        cursor = pg.cursors.compile(CURSOR, black='.', white='X')
+        pg.mouse.set_cursor((32, 32), (0, 0), *cursor)
+        pg.event.set_allowed([pg.QUIT, pg.KEYDOWN, pg.KEYUP,
+                              pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP])
+
+        # Make sure the game will display correctly on high DPI monitors on Windows
+        if platform.system() == 'Windows':
+            ctypes.windll.user32.SetProcessDPIAware()
+
         self.screen = pg.display.set_mode(SCR_SIZE)
         self.sound_player = SoundPlayer()
         self.running = True
@@ -37,7 +53,7 @@ class Game:
         self.clock = pg.time.Clock()
         self.bg_environment = BackgroundEnvironment()
         self.player = Player()
-        self.key_handlers = None
+        self.key_handlers = defaultdict(list)
         self.camera = Camera()
         self.room = Room()
         self.room_generator = RoomGenerator()
@@ -54,9 +70,8 @@ class Game:
         self.transportation = False
         self.player = Player()
         self.room_generator.reset()
-        self.init_key_handlers()
-        self.room.reset(new_game=True)
-        self.room.set_text(self.room_generator.get_room_text(0))
+        self.room.reset()
+        self.room.set_hint_text(self.room_generator.get_room_text(0))
         self.bg_environment.set_player_halo(self.player.bg_radius)
         self.pause_menu.reset()
         self.cooldown_window.reset()
@@ -94,7 +109,7 @@ class Game:
         elif e_key == pg.K_s:
             self.player.moving_down = (e_type == pg.KEYDOWN)
         elif e_key == pg.BUTTON_LEFT:
-            self.player.is_shooting = (e_type == pg.MOUSEBUTTONDOWN)
+            self.player.shooting = (e_type == pg.MOUSEBUTTONDOWN)
         elif e_key == pg.K_SPACE:
             self.player.superpower.on = (e_type == pg.KEYDOWN)
         if (e_type == pg.KEYDOWN and
@@ -103,7 +118,6 @@ class Game:
             self.run_pause_menu()
 
     def init_key_handlers(self):
-        self.key_handlers = defaultdict(list)
         self.key_handlers[pg.K_a].append(self.handle)
         self.key_handlers[pg.K_d].append(self.handle)
         self.key_handlers[pg.K_w].append(self.handle)
@@ -139,17 +153,14 @@ class Game:
 
     def handle_bubble_eating(self):
         self.sound_player.reset()
-        eaten_bubbles = []
         for i, bubble in enumerate(self.room.bubbles):
             if self.player.collide_bubble(bubble.x, bubble.y):
                 self.player.handle_bubble_eating(bubble.health)
                 self.health_window.activate(self.player.health, self.player.state)
-                eaten_bubbles.append(i)
+                self.room.bubbles[i] = None
                 self.sound_player.play_sound(BUBBLE_DEATH)
-        eaten_bubbles.reverse()
-        for index in eaten_bubbles:
-            self.room.bubbles.pop(index)
-        if self.player.is_ready_to_upgrade():
+        self.room.bubbles = list(filter(lambda b: b is not None, self.room.bubbles))
+        if self.player.is_ready_to_upgrade:
             self.handle_player_upgrade()
 
     def handle_player_downgrade(self):
@@ -160,7 +171,7 @@ class Game:
         self.room.set_gravity_radius(self.player.bg_radius)
 
     def handle_player_upgrade(self):
-        if self.player.in_latest_state():
+        if self.player.in_latest_state:
             self.upgrade_menu.run(self.player.get_next_states(), self.screen)
             self.clock.tick()
             self.player.upgrade(True, self.upgrade_menu.chosen_state)
@@ -207,9 +218,10 @@ class Game:
         """
         self.sound_player.reset()
 
+        mob_collide_bullet = Mob.collide_bullet
         for b in self.player.bullets:
             for mob in self.room.mobs:
-                if mob.collide_bullet(b.x, b.y, b.radius) and mob.health > 0:
+                if mob_collide_bullet(mob, b.x, b.y, b.radius) and mob.health > 0:
                     self.handle_enemy_injure(mob, b)
                     break
 
@@ -221,13 +233,13 @@ class Game:
 
         for s in self.player.shurikens:
             for mob in self.room.mobs:
-                if mob.collide_bullet(s.x, s.y, s.radius) and mob.health > 0:
+                if mob_collide_bullet(mob, s.x, s.y, s.radius) and mob.health > 0:
                     self.handle_enemy_injure(mob, s)
                     break
 
         for b in self.player.homing_bullets:
             for mob in self.room.mobs:
-                if mob.collide_bullet(b.x, b.y, b.radius) and mob.health > 0:
+                if mob_collide_bullet(mob, b.x, b.y, b.radius) and mob.health > 0:
                     self.handle_enemy_injure(mob, b)
                     break
 
@@ -243,7 +255,7 @@ class Game:
 
         add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
 
-        if not self.player.armor_on[0]:
+        if not self.player.armor_on:
             self.sound_player.play_sound(PLAYER_INJURE)
 
     def handle_player_collisions(self):
@@ -258,9 +270,10 @@ class Game:
         """
         self.sound_player.reset()
 
+        player_collide_bullet = Player.collide_bullet
         for b in self.room.bullets:
-            if (not self.player.invisible[0] and
-                    self.player.collide_bullet(b.x, b.y, b.radius)):
+            if (not self.player.invisible and
+                    player_collide_bullet(self.player, b.x, b.y, b.radius)):
                 self.handle_player_injure(b)
                 break
 
@@ -271,12 +284,12 @@ class Game:
                         break
 
         for b in self.room.homing_bullets:
-            if (not self.player.invisible[0] and
-                    self.player.collide_bullet(b.x, b.y, b.radius)):
+            if (not self.player.invisible and
+                    player_collide_bullet(self.player, b.x, b.y, b.radius)):
                 self.handle_player_injure(b)
                 break
 
-        if self.player.health < 0:
+        if self.player.health < 0 and self.player.level > 0:
             self.handle_player_downgrade()
 
     def update_transportation(self, dt):
@@ -300,7 +313,7 @@ class Game:
         self.bg_environment.draw_transportation(self.screen, offset_new,
                                                 offset_old, time)
         self.room.draw_boss_skeleton(self.screen, *offset_new)
-        self.room.draw_text(self.screen, *offset_new)
+        self.room.draw_hint_text(self.screen, *offset_new)
         self.room.draw_bubbles(self.screen, *offset_new)
         self.room.draw_bombs(self.screen, *offset_new)
         self.player.draw(self.screen, *offset_new)
@@ -354,8 +367,9 @@ class Game:
         self.room_generator.save(self.room.mobs)
         self.room_generator.update(direction, self.player)
 
-        self.room.set_text(self.room_generator.get_room_text(self.player.level()))
-        self.room.set_new_mobs(self.room_generator.get_mobs())
+        self.room.set_hint_text(self.room_generator.get_room_text(self.player.level))
+        self.room.new_mobs = self.room_generator.get_mobs()
+        self.room.update_boss_state()
 
         self.pause_menu.update_game_map(self.room_generator.cur_room)
 
@@ -377,7 +391,7 @@ class Game:
 
         self.run_transportation(*offset)
 
-        self.room.reset()
+        self.room.set_params_after_transportation()
         self.player.set_params_after_transportation()
         self.clock.tick()
         self.transportation = False
@@ -415,7 +429,7 @@ class Game:
                            self.sound_player)
         self.camera.update(*self.player.pos, self.dt)
         self.room.update(self.player.pos,  self.dt)
-        if self.room.game_is_over():
+        if self.room.boss_defeated:
             self.running = False
             self.run_victory_menu()
         else:
@@ -427,7 +441,7 @@ class Game:
         self.bg_environment.draw_room_bg(surface, *self.camera.offset)
         self.bg_environment.draw_player_halo(surface, self.camera.offset)
         self.room.draw_boss_skeleton(surface, *self.camera.offset)
-        self.room.draw_text(surface, *self.camera.offset)
+        self.room.draw_hint_text(surface, *self.camera.offset)
         self.room.draw_bottom_effects(surface, *self.camera.offset)
 
     def draw_foreground(self):
@@ -464,7 +478,7 @@ class Game:
             self.player.superpower.update_body(self.player.body)
         self.player.update_body(self.dt)
         for mob in self.room.mobs:
-            mob.update_body(self.dt, self.player.pos)
+            mob.update_body(self.room.screen_rect, self.dt, self.player.pos)
         for bubble in self.room.bubbles:
             bubble.update_body(self.dt)
         for bullet in self.player.bullets:
@@ -516,6 +530,7 @@ class Game:
         self.running = self.pause_menu.game_running
 
     def run_victory_menu(self):
+        """Victory menu loop which starts after the Boss is defeated. """
         self.draw_background(self.victory_menu.bg_surface)
         self.victory_menu.running = True
         while self.victory_menu.running:
@@ -528,6 +543,7 @@ class Game:
         self.running = False
 
     def run(self):
+        """Main game loop. """
         while True:
             self.sound_player.play_music(START_MUSIC)
             self.run_start_menu()

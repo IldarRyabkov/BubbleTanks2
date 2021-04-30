@@ -44,7 +44,7 @@ class CooldownWindow(PopupWindow):
 
     def update(self, dt, player, transportation):
         self.update_state(dt)
-        shooting_active = player.is_shooting and not player.invisible[0]
+        shooting_active = player.shooting and not player.invisible
         superpower_active = (player.superpower.on and
                              not isinstance(player.superpower, (NoneSuperPower, Ghost, Shurikens)))
         if (shooting_active or superpower_active) and not transportation:

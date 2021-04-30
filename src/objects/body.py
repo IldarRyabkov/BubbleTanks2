@@ -8,13 +8,13 @@ class Body:
     def __init__(self, data):
         self.circles = list()
         self.angle = 0
-        for circle_data in data:
-            self.circles.append(Circle(*circle_data))
+        self.circles = [Circle(*params) for params in data]
         self.randomize_body_scale()
 
     def randomize_body_scale(self):
+        randomize = Circle.randomize_scaling_phase
         for circle in self.circles:
-            circle.randomize_scaling_phase()
+            randomize(circle)
 
     def rotate(self, dest_angle, dt):
         while self.angle > pi:
@@ -32,14 +32,17 @@ class Body:
             circle.angle += d_angle
 
     def move(self, dx, dy):
+        move_circle = Circle.move
         for circle in self.circles:
-            circle.move(dx, dy)
+            move_circle(circle, dx, dy)
 
     def update(self, x, y, dt=0, target=(0, 0), gamma=0):
         beta = calculate_angle(x, y, target[0], target[1])
+        update_circle = Circle.update
         for circle in self.circles:
-            circle.update(x, y, dt, target, beta, gamma)
+            update_circle(circle, x, y, dt, target, beta, gamma)
 
     def draw(self, surface, dx=0, dy=0):
+        draw_circle = Circle.draw
         for circle in self.circles:
-            circle.draw(surface, dx, dy)
+            draw_circle(circle, surface, dx, dy)

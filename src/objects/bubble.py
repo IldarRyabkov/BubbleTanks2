@@ -28,12 +28,13 @@ class Bubble:
             self.base_halo = pg.image.load(BUBBLE_HALO).convert_alpha()
             self.update_halo()
 
+    @property
+    def is_outside(self):
+        return not circle_collidepoint(SCR_W2, SCR_H2, ROOM_RADIUS, self.x, self.y)
+
     def is_on_screen(self, dx, dy):
         return -self.radius <= self.x - dx <= SCR_W + self.radius and \
                -self.radius <= self.y - dy <= SCR_H + self.radius
-
-    def is_outside(self):
-        return not circle_collidepoint(SCR_W2, SCR_H2, ROOM_RADIUS, self.x, self.y)
 
     def check_player_pos(self, player_x, player_y):
         if hypot(self.x - player_x, self.y - player_y) <= self.gravity_r:

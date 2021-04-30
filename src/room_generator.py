@@ -13,7 +13,7 @@ WEAK_SLOW_MOBS = ["Turtle", "Turtle_dmg", "Terrorist"]
 WEAK_FAST_MOBS = ["Scarab", "Bug", "Gull", "Ant", "Cockroach"]
 STRONG_MOBS = ["Spider", "Spreader", "Beetle", "BomberShooter", "BenLaden"]
 EPIC_MOBS = ["MachineGunner", "Turret"]
-BOSS = ['BossLeg', 'BossHandLeft', 'BossHandRight', 'BossHead']
+BOSS_PIECES = ['BossLeg', 'BossHandLeft', 'BossHandRight', 'BossHead']
 
 OFFSETS = {'UP':    (0, -1),
            'DOWN':  (0, 1),
@@ -46,7 +46,7 @@ def generate_peaceful_mobs():
 
 def generate_boss():
     mobs = defaultdict(int)
-    for boss_piece in BOSS:
+    for boss_piece in BOSS_PIECES:
         mobs[boss_piece] += 1
     return mobs
 
@@ -172,7 +172,7 @@ class RoomGenerator:
         if player.defeated:
             return generate_peaceful_mobs()
 
-        if player.level() == 5 and player.health >= 100 and not self.boss_generated:
+        if player.level == 5 and player.health >= 100 and not self.boss_generated:
             self.boss_generated = True
             return generate_boss()
 

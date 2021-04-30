@@ -29,11 +29,12 @@ class SuperPower:
     def activate(self, *args, **kwargs):
         pass
 
-    def update(self, dt, *args):
+    def update(self, *args):
+        dt, params = args
         self.update_time(dt)
         if self.time == self.cooldown_time and self.on:
             self.time = 0
-            self.activate(*args)
+            self.activate(params)
 
 
 class HomingMissiles(SuperPower):
@@ -68,18 +69,8 @@ class Armor(SuperPower):
     def __init__(self):
         SuperPower.__init__(self, cooldown_time=1000)
 
-    def activate(self, armor_on, top_effects):
-        armor_on[0] = True
+    def activate(self, top_effects):
         add_effect('Armor', top_effects, SCR_W2 - 160, SCR_H2 - 160, 160)
-
-    def update_armor_state(self, armor_on):
-        if self.time >= 0.5 * self.cooldown_time and armor_on[0]:
-            armor_on[0] = False
-
-    def update(self, dt, *args):
-        armor_on, _ = args
-        super().update(dt, *args)
-        self.update_armor_state(armor_on)
 
 
 class Bombs(SuperPower):
@@ -195,10 +186,8 @@ class Ghost(SuperPower):
             body.circles[i].dx = self.offsets[i-1][0] * self.dist * cos(beta + self.offsets[i-1][1])
             body.circles[i].dy = -self.offsets[i-1][0] * self.dist * sin(beta + self.offsets[i-1][1])
 
-    def update(self, dt, *args):
-        invisible, body = args
+    def update(self, dt, body):
         if self.on:
-            invisible[0] = True
             self.update_body(body)
             if self.dist != 160:
                 self.dist = min(self.dist + self.vel * dt, 160)
@@ -206,8 +195,6 @@ class Ghost(SuperPower):
         elif self.dist:
             self.dist = max(self.dist - self.vel * dt, 0)
             self.update_body(body)
-            if self.dist == 0:
-                invisible[0] = False
 
 
 class ExplosionStar(SuperPower):
@@ -223,10 +210,9 @@ class ExplosionStar(SuperPower):
 class Shurikens(SuperPower):
     def __init__(self):
         SuperPower.__init__(self, cooldown_time=0)
-        self.shurikens_cooldown = 333
+        self.shurikens_cooldown = 200
 
-    def update(self, dt, *args):
-        pos, shurikens = args
+    def update(self, dt, pos, shurikens):
         self.time = min(self.shurikens_cooldown, self.time + dt)
         if len(shurikens) < 5 and self.time == self.shurikens_cooldown:
             shurikens.append(Shuriken(*pos, uniform(0, 2*pi)))

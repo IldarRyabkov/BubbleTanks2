@@ -2,7 +2,12 @@ from objects.body import Body
 
 
 class BaseMob:
-    def __init__(self, health, max_health, health_states, radius, body):
+    def __init__(self,
+                 health,
+                 max_health,
+                 health_states,
+                 radius,
+                 body):
         self.health = health
         self.max_health = max_health
         self.health_states = health_states

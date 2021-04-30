@@ -132,8 +132,9 @@ class Circle:
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+        move_glare = Glare.move
         for glare in self.glares:
-            glare.move(dx, dy)
+            move_glare(glare, dx, dy)
 
     def swing(self, dt: int, angle: float):
         dr = self.swing_vel * dt

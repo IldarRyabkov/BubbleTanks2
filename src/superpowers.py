@@ -30,11 +30,11 @@ class SuperPower:
         pass
 
     def update(self, *args):
-        dt, params = args
+        dt, *params = args
         self.update_time(dt)
         if self.time == self.cooldown_time and self.on:
             self.time = 0
-            self.activate(params)
+            self.activate(*params)
 
 
 class HomingMissiles(SuperPower):

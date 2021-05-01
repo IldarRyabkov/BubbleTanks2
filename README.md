@@ -2,6 +2,8 @@ Author: Ildar Ryabkov
 EMail: ildar.239@mail.ru
 
 Underwater Battles is a 2D RPG shooter written in Python + Pygame.
+The game is far from finished, development is still in progress.
+
 Explore a wonderful world full of dangerous enemies and try to 
 survive and grow, upgrade your bubble-tank and defeat the Final Boss!
 

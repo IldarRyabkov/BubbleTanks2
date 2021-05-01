@@ -8,7 +8,7 @@ from gui.exit_button import ExitButton
 from gui.side_button import SideButton
 from data.paths import FONT_1, PAUSE_MENU_MASK
 from data.colors import WHITE
-from data.config import SCR_SIZE, SCR_W2
+from data.config import SCR_SIZE, SCR_W2, BOSS_IN_CURRENT_ROOM
 import data.languages.english as eng
 import data.languages.russian as rus
 
@@ -19,11 +19,11 @@ OPTIONS_WINDOW = 2
 
 
 class PauseMenu:
-    def __init__(self):
+    def __init__(self, sounds):
+        self.windows = [StatsWindow(), MapWindow(), OptionsWindow(sounds)]
         self.mask = pg.image.load(PAUSE_MENU_MASK).convert_alpha()
         self.bg_surface = pg.Surface(SCR_SIZE)
         self.caption = None
-        self.windows = [StatsWindow(), MapWindow(), OptionsWindow()]
         self.current_window = STATS_WINDOW
         self.side_buttons = [SideButton(65, 160, "stats_button", True),
                              SideButton(65, 352, "map_button", False),
@@ -53,31 +53,37 @@ class PauseMenu:
     def set_stats_window(self, player_state):
         self.windows[STATS_WINDOW].set_player_stats(player_state)
 
-    def set_boss_location(self):
-        self.windows[MAP_WINDOW].game_map.set_boss_location()
+    def set_params_before_running(self):
+        self.running = True
+        self.game_running = True
+        self.windows[MAP_WINDOW].map.reset_offset()
 
-    def update_game_map(self, room_coords):
-        self.windows[MAP_WINDOW].game_map.update_data(room_coords)
+    def update_map_data(self, room_pos, boss_state):
+        """Adds information about visited room and boss location to the map. """
+        self.windows[MAP_WINDOW].map.add_visited_room(room_pos)
+        if boss_state == BOSS_IN_CURRENT_ROOM:
+            self.windows[MAP_WINDOW].map.boss_aim.pos = room_pos
 
-    def handle_mouse_click(self, e_type, sounds):
-        if e_type == pg.MOUSEBUTTONDOWN and self.exit_button.cursor_on_button():
-            self.running = False
-            self.exit_button.color = self.exit_button.colors[0]
+    def handle_mouse_click(self, e_type):
+        if self.current_window == OPTIONS_WINDOW:
+            self.running = self.game_running = self.windows[OPTIONS_WINDOW].handle(e_type)
 
-        elif self.current_window == OPTIONS_WINDOW:
-            running = self.windows[OPTIONS_WINDOW].handle(e_type, sounds)
-            self.running = self.game_running = running
+        elif self.current_window == MAP_WINDOW:
+            self.windows[MAP_WINDOW].map.handle(e_type)
 
         if e_type == pg.MOUSEBUTTONDOWN:
-            for i in range(len(self.side_buttons)):
-                if self.side_buttons[i].cursor_on_button():
-                    for button in self.side_buttons:
-                        button.clicked = False
-                    self.side_buttons[i].clicked = True
+            self.running = not self.exit_button.cursor_on_button
+            for i, button in enumerate(self.side_buttons):
+                if button.cursor_on_button():
+                    for b in self.side_buttons:
+                        b.clicked = False
+                    button.clicked = True
                     self.current_window = i
+                    if self.current_window == MAP_WINDOW:
+                        self.windows[MAP_WINDOW].map.reset_offset()
                     break
 
-    def handle_events(self, sounds):
+    def handle_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
@@ -85,14 +91,11 @@ class PauseMenu:
             elif event.type == pg.KEYDOWN and event.key in [pg.K_ESCAPE, pg.K_p]:
                 self.running = False
             elif (event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP] and
-                          event.button == pg.BUTTON_LEFT):
-                self.handle_mouse_click(event.type, sounds)
+                    event.button == pg.BUTTON_LEFT):
+                self.handle_mouse_click(event.type)
 
-    def update(self, dt, sounds):
-        if self.current_window == OPTIONS_WINDOW:
-            self.windows[self.current_window].update(sounds)
-        else:
-            self.windows[self.current_window].update(dt)
+    def update(self, dt):
+        self.windows[self.current_window].update(dt)
         self.exit_button.update()
 
     def draw(self, screen):

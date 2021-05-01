@@ -30,9 +30,10 @@ TEXTS = {
 
 
 class OptionsWindow:
-    def __init__(self):
+    def __init__(self, sounds):
         self.sound_slider = Slider(500, 600)
         self.music_slider = Slider(500, 400)
+        self.sounds = sounds
         self.caption = None
         self.label_music = None
         self.label_sound = None
@@ -50,27 +51,27 @@ class OptionsWindow:
         self.label_music = font.render(label_1, True, WHITE)
         self.label_sound = font.render(label_2, True, WHITE)
 
-    def handle(self, e_type, sounds) -> bool:
+    def handle(self, e_type) -> bool:
         game_running = True
         self.sound_slider.handle(e_type)
         self.music_slider.handle(e_type)
-        self.update_mixer(sounds)
+        self.update_mixer()
         if self.quit_button.cursor_on_button():
             game_running = False
         return game_running
 
-    def update_mixer(self, sounds):
+    def update_mixer(self):
         if self.sound_slider.clicked:
-            for sound in sounds.values():
+            for sound in self.sounds.values():
                 sound.set_volume(self.sound_slider.value)
         if self.music_slider.clicked:
             pg.mixer.music.set_volume(self.music_slider.value)
 
-    def update(self, sounds):
+    def update(self, dt):
         self.quit_button.update_color()
         self.sound_slider.update()
         self.music_slider.update()
-        self.update_mixer(sounds)
+        self.update_mixer()
 
     def draw(self, screen):
         screen.blit(self.caption, (560, 176))

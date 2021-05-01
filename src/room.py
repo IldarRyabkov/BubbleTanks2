@@ -103,8 +103,7 @@ class Room:
         """
         if self.boss_state == BOSS_IN_CURRENT_ROOM:
             self.boss_state = BOSS_IN_NEIGHBOUR_ROOM
-        elif (self.boss_state == BOSS_IN_NEIGHBOUR_ROOM and
-                  any(mob.name in BOSS_PIECES for mob in self.new_mobs)):
+        elif any(mob.name in BOSS_PIECES for mob in self.new_mobs):
             self.boss_state = BOSS_IN_CURRENT_ROOM
         else:
             self.boss_state = BOSS_IS_FAR_AWAY

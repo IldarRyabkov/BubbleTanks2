@@ -5,6 +5,7 @@ SCR_W = int(ASPECT_RATIO * SCR_H)
 SCR_W2 = SCR_W // 2
 SCR_H2= SCR_H // 2
 SCR_SIZE = (SCR_W, SCR_H)
+K = SCR_H / 960
 
 # start menu
 START_MENU_SHOW = 1

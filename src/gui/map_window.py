@@ -3,12 +3,13 @@ import pygame as pg
 from data.colors import WHITE
 import data.languages.english as eng
 import data.languages.russian as rus
-from gui.game_map import GameMap
+from map import Map
+from data.config import K
 
 
 def create_caption(language):
     pg.font.init()
-    font = pg.font.SysFont('Calibri', 56, True)
+    font = pg.font.SysFont('Calibri', int(round(56 * K)), True)
     if language == 'English':
         text = eng.MAPWINDOW_CAPTION
     else:
@@ -17,21 +18,21 @@ def create_caption(language):
 
 
 class MapWindow:
-    caption = None
-    game_map = GameMap()
-
     def __init__(self):
+        self.caption = None
+        self.caption_pos = (int(round(584 * K)), int(round(176 * K)))
+        self.map = Map()
         self.set_language("English")
 
     def set_language(self, language):
         self.caption = create_caption(language)
 
     def reset(self):
-        self.game_map.reset()
+        self.map.reset()
 
     def update(self, dt):
-        self.game_map.update(dt)
+        self.map.update(dt)
 
     def draw(self, screen):
-        screen.blit(self.caption, (584, 176))
-        self.game_map.draw(screen)
+        screen.blit(self.caption, self.caption_pos)
+        self.map.draw(screen)

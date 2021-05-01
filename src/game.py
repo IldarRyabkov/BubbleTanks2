@@ -60,7 +60,7 @@ class Game:
         self.start_menu = StartMenu()
         self.upgrade_menu = UpgradeMenu()
         self.victory_menu = VictoryMenu()
-        self.pause_menu = PauseMenu()
+        self.pause_menu = PauseMenu(self.sound_player.sounds)
         self.health_window = HealthWindow()
         self.cooldown_window = CooldownWindow()
         self.init_key_handlers()
@@ -371,7 +371,8 @@ class Game:
         self.room.new_mobs = self.room_generator.get_mobs()
         self.room.update_boss_state()
 
-        self.pause_menu.update_game_map(self.room_generator.cur_room)
+        self.pause_menu.update_map_data(self.room_generator.cur_room,
+                                        self.room.boss_state)
 
         offset, destination = self.get_offset_and_destination(direction)
         self.room.move_objects(offset)
@@ -488,7 +489,7 @@ class Game:
                 shuriken.update_polar_coords(*self.player.pos, self.dt)
         for bullet in self.room.bullets:
             bullet.update_body(self.dt)
-        self.pause_menu.update(self.dt, self.sound_player.sounds)
+        self.pause_menu.update(self.dt)
 
     def update_victory_menu(self):
         if isinstance(self.player.superpower, Ghost):
@@ -518,10 +519,9 @@ class Game:
     def run_pause_menu(self):
         self.draw_background(self.pause_menu.bg_surface)
         self.player.stop_moving()
-        self.pause_menu.running = True
-        self.pause_menu.game_running = True
+        self.pause_menu.set_params_before_running()
         while self.pause_menu.running:
-            self.pause_menu.handle_events(self.sound_player.sounds)
+            self.pause_menu.handle_events()
             self.clock.tick()
             self.update_pause_menu()
             self.draw_pause_menu()

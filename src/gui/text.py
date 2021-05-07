@@ -26,6 +26,12 @@ class Text:
     def is_on_screen(self) -> bool:
         return -self.w <= self.x <= SCR_W and -self.h <= self.y <= SCR_H
 
+    def replace_with(self, text_widget):
+        self.surfaces = text_widget.surfaces
+
+    def clear(self):
+        self.surfaces = []
+
     def set_text(self, text=()):
         """Receives a list of strings as input and makes a list,
         consisting of text surfaces with their coords.

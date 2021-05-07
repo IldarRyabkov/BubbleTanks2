@@ -51,8 +51,12 @@ class BackgroundEnvironment:
             RoomGlare(SCR_W2 + HF(550), SCR_H2 + HF(565), HF(320)),
             RoomGlare(SCR_W2 + HF(260), SCR_H2 + HF(810), HF(176))
         )
-        self.language = "English"
-        self.hints = ROOM_TEXTS[self.language].copy()[:-1]  # hints without superpower hint
+
+        # Hints shown in visited rooms are stored in hints_history dictionary.
+        # Key is room position, and value is hint text for this room.
+        self.hints_history = dict()
+        self.hint_texts = None
+        self.language = None
 
     @property
     def boss_offset(self):
@@ -66,11 +70,15 @@ class BackgroundEnvironment:
         self.boss_disposition = BOSS_IS_FAR_AWAY
         self.boss_pos = None
         self.room_pos = array([0, 0])
+        self.hints_history = dict()
+        self.hint_texts = None
 
     def set_language(self, language):
         self.language = language
-        self.hints = ROOM_TEXTS[self.language].copy()[:-1]
-        self.hint_widget.set_text(self.get_hint())
+        self.hint_texts = ROOM_TEXTS[self.language].copy()[:-1]  # hints without superpower hint
+        text = self.hint_texts.pop(0)
+        self.hint_widget.set_text(text)
+        self.hints_history[(0, 0)] = text
 
     def boss_visible_from_neighbour_room(self, player_offset):
         """Returns True, if Boss skeleton is partly visible from a neighbour room.
@@ -104,24 +112,28 @@ class BackgroundEnvironment:
         """
         self.boss_disposition = self.new_boss_disposition
 
-        self.hint_widget.surfaces = self.new_hint_widget.surfaces
-        self.new_hint_widget.surfaces = []
-
-    def get_hint(self):
-        return self.hints.pop(0)
+        self.hint_widget.replace_with(self.new_hint_widget)
 
     def prepare_superpower_hint(self):
         """Prepare an extra hint to show, when player got his first superpower. """
-        self.hints.append(ROOM_TEXTS[self.language][-1])
+        self.hint_texts.append(ROOM_TEXTS[self.language][-1])
 
     def set_next_hint(self):
         """Method is called when player is being transported to the next room.
         Sets new hint text widget, explaining the rules of the game.
         """
-        try:
-            self.new_hint_widget.set_text(self.get_hint())
-        except IndexError:
-            pass
+        room_pos = tuple(self.room_pos)
+        if room_pos in self.hints_history:
+            # if a hint was set for current room before, load it from hints history
+            self.new_hint_widget.set_text(self.hints_history[room_pos])
+        else:
+            try:
+                text = self.hint_texts.pop(0)
+            except IndexError:
+                self.new_hint_widget.clear()
+            else:
+                self.new_hint_widget.set_text(text)
+                self.hints_history[room_pos] = text
 
     def set_player_halo(self, radius):
         self.player_halo.set_size(radius)

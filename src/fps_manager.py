@@ -9,7 +9,7 @@ class FPSManager:
     def get_fps(self):
         if not self.dt_history:
             return 0
-        return int(sum([1000/dt for dt in self.dt_history]) / len(self.dt_history))
+        return round(sum([1000/dt for dt in self.dt_history]) / len(self.dt_history))
 
     def update(self, dt):
         self.time += dt
@@ -20,6 +20,7 @@ class FPSManager:
         if self.time > ONE_SECOND:
             self.time -= ONE_SECOND
             fps = self.get_fps()
-            pg.display.set_caption('FPS: %s' % fps)
+            #pg.display.set_caption('FPS: %s' % fps)
+            print(fps)
 
 

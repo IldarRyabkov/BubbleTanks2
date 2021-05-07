@@ -3,10 +3,10 @@ from random import uniform
 import pygame as pg
 
 from data.config import *
-from data.bullets import SNIPER_BULLET_BODY, BIG_BUL_BODY_1, SHURIKEN_BODY
+from data.bullets import *
 from data.colors import *
 from objects.body import Body
-from utils import circle_collidepoint, calculate_angle
+from utils import circle_collidepoint, calculate_angle, H, HF
 
 
 class Bullet:
@@ -71,7 +71,7 @@ class ExplodingBullet(RegularBullet):
 
     """
     def __init__(self, x, y, angle):
-        super().__init__(x, y, -20, 1.1, angle, BIG_BUL_BODY_1)
+        super().__init__(x, y, -20, HF(1.1), angle, BULLETS["BigBullet_1"])
 
         # bullet switches colors periodically
         self.colors = {1: DARK_RED, -1: LIGHT_RED}
@@ -95,7 +95,7 @@ class ExplodingBullet(RegularBullet):
 class BombBullet(Bullet):
     """A bullet which is not moving and has a specific body update"""
     def __init__(self, x, y, body):
-        Bullet.__init__(self, x, y, 20, -10, 0, 0, body)
+        Bullet.__init__(self, x, y, HF(18), -10, 0, 0, body)
 
         angle = uniform(0, 2 * pi)
         for circle in self.body.circles:
@@ -132,16 +132,16 @@ class Shuriken(Bullet):
     bullet starts moving evenly and rectilinearly to a target's position.
 
     """
-    def __init__(self, x, y, angle):
-        Bullet.__init__(self, x, y, 13, -7, 1.6, 0, SHURIKEN_BODY)
-        self.dist = 144
+    def __init__(self, x, y):
+        Bullet.__init__(self, x, y, HF(12), -7, HF(1.6), 0, BULLETS["Shuriken"])
+        self.dist = HF(128)
         self.is_orbiting = True
         self.angle = 0
         self.angular_vel = -0.002 * pi
         self.health = 1
-        self.search_area_rect = pg.Rect(self.x - 250, self.y - 250, 500, 500)
+        self.search_area_rect = pg.Rect(self.x - H(250), self.y - H(250), H(500), H(500))
         self.update_polar_coords(x, y)
-        self.hit_effect = 'RedHirCircle'
+        self.hit_effect = 'RedHitCircle'
 
     def is_near_mob(self, mob):
         return self.search_area_rect.colliderect(mob.body_rect)
@@ -222,7 +222,7 @@ class HomingMissile(Bullet):
 class DrillingBullet(Bullet):
     """ A bullet that can pass through many enemies. """
     def __init__(self, x, y, damage, vel, angle, body):
-        Bullet.__init__(self, x, y, 13, damage, vel, angle, body)
+        Bullet.__init__(self, x, y, HF(12), damage, vel, angle, body)
 
         self.body = pg.transform.rotate(body, angle * 180 / pi)
         self.x = x - self.body.get_width() / 2
@@ -232,6 +232,9 @@ class DrillingBullet(Bullet):
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+
+    def update_body(self, dt):
+        pass
 
     def update(self, dt):
         self.update_pos(dt)
@@ -249,14 +252,14 @@ class FrangibleBullet(Bullet):
 
     """
     def __init__(self, x, y, angle, body):
-        Bullet.__init__(self, x, y, 22, -40, 0.8, angle, body)
+        Bullet.__init__(self, x, y, HF(20), -40, HF(0.8), angle, body)
         self.body.update(self.x, self.y, 0)
         self.timer = 0
         self.fragmentation_time = 1000
 
     def create_fragments(self, fragments):
         for i in range(0, 360, 12):
-            fragments.append(DrillingBullet(self.x, self.y, -8, 2.1, i * pi / 180, SNIPER_BULLET_BODY))
+            fragments.append(DrillingBullet(self.x, self.y, -8, HF(2.1), i * pi / 180, BULLETS["SniperBullet"]))
 
     def update(self, dt, fragments):
         self.update_pos(dt)
@@ -266,3 +269,16 @@ class FrangibleBullet(Bullet):
         if self.timer == self.fragmentation_time:
             self.hit_the_target = True
             self.create_fragments(fragments)
+
+
+__all__ = [
+
+    "RegularBullet",
+    "ExplodingBullet",
+    "BombBullet",
+    "Shuriken",
+    "HomingMissile",
+    "DrillingBullet",
+    "FrangibleBullet"
+
+]

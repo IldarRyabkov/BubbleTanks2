@@ -2,15 +2,14 @@ import pygame as pg
 from collections import defaultdict
 
 from data.colors import *
-from data.config import K
+from utils import H
 from data.paths import ROOM_AIM, BOSS_AIM
 
 
 class RoomAim:
     """Object that highlights the current room position on the map. """
     def __init__(self):
-        size = int(round(70 * K)), int(round(70 * K))
-        self.base_image = pg.transform.scale(pg.image.load(ROOM_AIM).convert_alpha(), size)
+        self.base_image = pg.transform.scale(pg.image.load(ROOM_AIM).convert_alpha(), (H(70), H(70)))
         self.surface = None
         self.angle = 0
 
@@ -27,7 +26,7 @@ class RoomAim:
 class BossAim:
     """Object that highlights the current boss position on the map. """
     def __init__(self):
-        self.radius = int(round(42 * K))
+        self.radius = H(42)
         image = pg.image.load(BOSS_AIM).convert_alpha()
         self.surface = pg.transform.scale(image, (2 * self.radius, 2 * self.radius))
         self.alpha = 255
@@ -50,95 +49,137 @@ class Map:
     """ Map class stores, updates and represents in the map_window information
     about all player movements across rooms during the game.
     """
-    def __init__(self):
-        self.surface = pg.Surface((int(round(992 * K)), int(round(616 * K))))
+    w = H(992)  # width of map
+    h = H(616)  # height of map
+    d = H(50)  # distance between rooms on map
+
+    def __init__(self, xo):
+        # surface on which all elements of the map will be drawn
+        self.surface = pg.Surface((self.w, self.h))
         self.surface.set_colorkey(COLOR_KEY)
+        self.rect = pg.Rect(xo + H(136), H(264), self.w, self.h)
+
+        # position of room the player is currently in
+        self.cur_pos = (0, 0)
+
         # Graph of visited rooms, which is used to draw the map of visited rooms.
         # It stores all visited rooms and neighbours of each visited room.
         self.graph = defaultdict(list)
-        self.cur_pos = (0, 0)
         self.graph[self.cur_pos] = []
 
-        # the rectangle within which the map is drawn
-        self.rect = pg.Rect(int(round(200 * K)), int(round(264 * K)),
-                            int(round(992 * K)), int(round(616 * K)))
+        # the positions of the top-left and bottom-right corner of the rectangle
+        # that delimits all rooms in the graph
+        self.topleft = self.bottomright = (0, 0)
 
         self.room_aim = RoomAim()
         self.boss_aim = BossAim()
 
-        self.distance = int(round(50 * K))  # distance between rooms on map
+        self.moving_x = self.moving_y = False  # can map move by x- and y-axis
+        self.pressed = False  # is map pressed by mouse
+        self.movement_start_pos = None   # mouse position when map was pressed
 
-        # parameters that track the movement of the map by the player's mouse
-        self.moving = False
-        self.movement_start_pos = None
-        self.main_offset = [0, 0]  # stores map offset when player is not moving the map by mouse
-        self.offset = [0, 0]  # stores map offset when player is moving the map by mouse
+        # map offset when map is moving. It changes during mouse motion.
+        self.moving_offset = [0, 0]
+
+        # map offset when map is not moving. When the mouse button is released,
+        # the map is no longer moving and static_offset becomes equal to moving_offset.
+        self.static_offset = [0, 0]
 
     def reset(self):
         """Method is called when a new game is started.
         Resets all information about the map.
         """
+        self.cur_pos = self.topleft = self.bottomright = (0, 0)
         self.graph = defaultdict(list)
-        self.cur_pos = (0, 0)
         self.graph[self.cur_pos] = []
         self.boss_aim.pos = None
+        self.moving_x = self.moving_y = False
         self.reset_offset()
 
     def reset_offset(self):
         """Method is called when player goes to the map menu or when a new game is started.
         It resets parameters that track movement of the map by the player's mouse.
         """
-        self.main_offset = [0, 0]
-        self.offset = [0, 0]
-        self.moving = False
+        self.static_offset = [0, 0]
+        self.moving_offset = [0, 0]
+        self.pressed = False
         self.movement_start_pos = None
 
     def add_visited_room(self, room_pos: tuple):
-        """ Adds new room position to the graph. """
+        """ Adds new room position to the graph and updates map parameters."""
         self.graph[room_pos].append(self.cur_pos)
         self.graph[self.cur_pos].append(room_pos)
         self.cur_pos = room_pos
+        self.topleft = (
+            min(self.topleft[0], room_pos[0]),
+            min(self.topleft[1], room_pos[1])
+        )
+        self.bottomright = (
+            max(self.bottomright[0], room_pos[0]),
+            max(self.bottomright[1], room_pos[1])
+        )
+        # check if current map size is big enough to move it by mouse
+        map_size_x = (self.bottomright[0] - self.topleft[0]) * self.d
+        map_size_y = (self.bottomright[1] - self.topleft[1]) * self.d
+        self.moving_x = map_size_x > self.w / 2
+        self.moving_y = map_size_y > self.h / 2
 
     def room_coords(self, room_pos) -> tuple:
-        """ returns coordinates of the room by given room pos in graph. """
-        x = self.rect.w // 2 + self.offset[0] + (room_pos[0] - self.cur_pos[0]) * self.distance
-        y = self.rect.h // 2 + self.offset[1] + (room_pos[1] - self.cur_pos[1]) * self.distance
+        """Returns coordinates of the room by given room pos in graph. """
+        x = self.w / 2 + self.moving_offset[0] + (room_pos[0] - self.cur_pos[0]) * self.d
+        y = self.h / 2 + self.moving_offset[1] + (room_pos[1] - self.cur_pos[1]) * self.d
         return x, y
 
-    def handle(self, e_type):
+    def handle_mouse_click(self, e_type):
         pos = pg.mouse.get_pos()
         if e_type == pg.MOUSEBUTTONDOWN and self.rect.collidepoint(pos):
-            self.moving = True
+            self.pressed = True
             self.movement_start_pos = pos
-            self.main_offset = self.offset.copy()
         else:
-            self.moving = False
+            self.pressed = False
+        self.static_offset = self.moving_offset.copy()
+
+    def update_moving_offset(self):
+        pos = pg.mouse.get_pos()
+        if self.moving_x:
+            self.moving_offset[0] = self.static_offset[0] + pos[0] - self.movement_start_pos[0]
+        if self.moving_y:
+            self.moving_offset[1] = self.static_offset[1] + pos[1] - self.movement_start_pos[1]
+
+        # if the moving offset became too large, correct it
+        left_x, top_y = self.room_coords(self.topleft)
+        right_x, bottom_y = self.room_coords(self.bottomright)
+        current_x, current_y = self.room_coords(self.cur_pos)
+
+        if right_x < self.w / 2:
+            self.moving_offset[0] = current_x - right_x
+        elif left_x > self.w / 2:
+            self.moving_offset[0] = current_x - left_x
+        if bottom_y < self.h / 2:
+            self.moving_offset[1] = current_y - bottom_y
+        elif top_y > self.h / 2:
+            self.moving_offset[1] = current_y - top_y
 
     def update(self, dt):
         """updates map objects that change over time and the map offset. """
         self.room_aim.update(dt)
         self.boss_aim.update(dt)
-        pos = pg.mouse.get_pos()
-        if self.moving and self.rect.collidepoint(pos):
-            scale = 1.8  # It is used to move the map slower than the movement of the player's mouse
-            self.offset[0] = self.main_offset[0] + (pos[0] - self.movement_start_pos[0]) // scale
-            self.offset[1] = self.main_offset[1] + (pos[1] - self.movement_start_pos[1]) // scale
-        else:
-            self.moving = False
+        if self.pressed:
+            self.update_moving_offset()
 
     def draw_line(self, screen, room_pos_1, room_pos_2):
         """Draws a line between two neighbour rooms. """
         coords_1 = self.room_coords(room_pos_1)
         coords_2 = self.room_coords(room_pos_2)
-        pg.draw.line(screen, WHITE, coords_1, coords_2, 2)
+        pg.draw.line(screen, WHITE, coords_1, coords_2, H(2))
 
     def draw_visited_room(self, screen, room_pos):
         """Draws the visited room on the map. """
         coords = self.room_coords(room_pos)
-        pg.draw.circle(screen, WHITE, coords, int(round(8 * K)))
-        pg.draw.circle(screen, GREY, coords, int(round(17 * K)), 2)
+        pg.draw.circle(screen, WHITE, coords, H(8))
+        pg.draw.circle(screen, GREY, coords, H(17), H(2))
         if room_pos == (0, 0):
-            pg.draw.circle(screen, GREY, coords, int(round(26 * K)), 2)
+            pg.draw.circle(screen, GREY, coords, H(26), H(2))
 
     def draw(self, screen):
         """Draws all map objects: visited rooms, traversed paths between rooms etc. """
@@ -156,4 +197,4 @@ class Map:
 
         self.surface.set_colorkey(BLACK)
         screen.blit(self.surface, self.rect)
-        pg.draw.rect(screen, WHITE, self.rect, 2)
+        pg.draw.rect(screen, WHITE, self.rect, H(2))

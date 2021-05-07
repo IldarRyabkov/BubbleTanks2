@@ -4,8 +4,6 @@ from collections import defaultdict
 from math import sqrt
 
 from objects.mobs import get_mob
-import data.languages.english as eng
-import data.languages.russian as rus
 
 
 PEACEFUL_MOBS = ['Infusoria', 'Cell', 'Ameba', 'Baby']
@@ -14,14 +12,6 @@ WEAK_FAST_MOBS = ["Scarab", "Bug", "Gull", "Ant", "Cockroach"]
 STRONG_MOBS = ["Spider", "Spreader", "Beetle", "BomberShooter", "BenLaden"]
 EPIC_MOBS = ["MachineGunner", "Turret"]
 BOSS_PIECES = ['BossLeg', 'BossHandLeft', 'BossHandRight', 'BossHead']
-
-OFFSETS = {'UP':    (0, -1),
-           'DOWN':  (0, 1),
-           'LEFT':  (-1, 0),
-           'RIGHT': (1, 0)}
-
-ROOM_TEXTS = {"English": eng.ROOM_TEXTS,
-              "Russian": rus.ROOM_TEXTS}
 
 
 def add_peaceful_mobs(mobs, n_min, n_max):
@@ -126,56 +116,41 @@ def generate_level_8():
     return mobs
 
 
-class RoomGenerator:
+class MobGenerator:
+    """Saves mobs in all visited rooms and also generates mobs for the next room. """
     def __init__(self):
-        self.visited_rooms = {(0, 0): defaultdict(int)}
-        self.room_texts = None
-        self.cur_room = (0, 0)
-        self.n_player_moves = 0
-        self.boss_generated = False
-        self.superpower_text_shown = False
+        self.mobs = {(0, 0): defaultdict(int)}  # stores mobs in all visited rooms
+        self.cur_room = (0, 0)  # current room the player is in
+        self.boss_generated = False  # flag to make sure boss was generated only once
 
     def reset(self):
-        self.visited_rooms = {(0, 0): defaultdict(int)}
-        self.cur_room = (0, 0)
-        self.n_player_moves = 0
-        self.boss_generated = False
-        self.superpower_text_shown = False
+        self.__init__()
 
-    def set_language(self, language):
-        self.room_texts = ROOM_TEXTS[language]
-
-    def save(self, mobs: list):
+    def save_mobs(self, mobs: list):
         mobs_dict = defaultdict(int)
         for mob in mobs:
             mobs_dict[mob.name] += 1
-        self.visited_rooms[self.cur_room] = mobs_dict
+        self.mobs[self.cur_room] = mobs_dict
 
-    def get_room_text(self, player_level):
-        if player_level >= 2 and not self.superpower_text_shown:
-            self.superpower_text_shown = True
-            return self.room_texts[-1]
-        if self.n_player_moves < len(self.room_texts) - 1:
-            return self.room_texts[self.n_player_moves]
-        return []
-
-    def get_mobs(self) -> list:
+    def load_mobs(self) -> list:
+        """Returns list of mobs in current room. """
         mobs = []
-        for name, n in self.visited_rooms[self.cur_room].items():
+        for name, n in self.mobs[self.cur_room].items():
             mobs.extend([get_mob(name) for _ in range(n)])
         return mobs
 
-    def generate_mobs(self, player) -> defaultdict(int):
+    def generate_level(self, player) -> defaultdict(int):
         if player.delta_health <= -75:
             return generate_compensation(-player.delta_health)
 
         if player.defeated:
             return generate_peaceful_mobs()
 
-        if player.level == 5 and player.health >= 100 and not self.boss_generated:
+        if player.level == 5 and player.health >= 150 and not self.boss_generated:
             self.boss_generated = True
             return generate_boss()
 
+        # the difficulty of level depends on the player's distance from the starting room.
         distance = int(round(sqrt(self.cur_room[0] ** 2 + self.cur_room[1] ** 2)))
         if distance  <= 2:
             return generate_peaceful_mobs()
@@ -192,10 +167,14 @@ class RoomGenerator:
         else:
             return generate_level_8()
 
-    def update(self, direction, player):
-        self.n_player_moves += 1
-        self.cur_room = (self.cur_room[0] + OFFSETS[direction][0],
-                         self.cur_room[1] + OFFSETS[direction][1])
-        if self.cur_room not in self.visited_rooms or player.defeated:
-            new_mobs = self.generate_mobs(player)
-            self.visited_rooms[self.cur_room] = new_mobs
+    def generate_mobs(self, direction, player):
+        """Updates current room position according to direction and
+        if this is a new room or player was defeated, generates mobs for it.
+        """
+        self.cur_room = (self.cur_room[0] + direction[0], self.cur_room[1] + direction[1])
+        if self.cur_room not in self.mobs.keys() or player.defeated:
+            new_mobs = self.generate_level(player)
+            self.mobs[self.cur_room] = new_mobs
+
+
+__all__ = ["MobGenerator"]

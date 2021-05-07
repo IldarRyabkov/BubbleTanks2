@@ -1,30 +1,27 @@
 import pygame as pg
-from math import sqrt, hypot
+from math import hypot
 
-from data.colors import WHITE, LIGHT_GREY
+from utils import H
+from data.paths import EXIT_BUTTON, EXIT_BUTTON_PRESSED
 
 
 class ExitButton:
-    def __init__(self):
-        self.x = 112
-        self.y = 864
-        self.r = 37
-        self.d = int(self.r / sqrt(2))
-        self.colors = ((33, 51, 62), LIGHT_GREY)
-        self.color = self.colors[0]
+    """Button to exit the pause menu and return to the game."""
+    def __init__(self, xo):
+        self.x = xo + H(7)
+        self.y = H(827)
+        self.r = H(37)
+        size = (2 * self.r, 2 * self.r)
+        self.bg = {False: pg.transform.scale(pg.image.load(EXIT_BUTTON).convert_alpha(), size),
+                   True: pg.transform.scale(pg.image.load(EXIT_BUTTON_PRESSED).convert_alpha(), size)}
 
     @property
     def cursor_on_button(self):
         x, y = pg.mouse.get_pos()
-        return hypot(x - self.x, y - self.y) <= self.r
+        return hypot(x - self.x - self.r, y - self.y - self.r) <= self.r
 
-    def update(self):
-        self.color = self.colors[1] if self.cursor_on_button else self.colors[0]
+    def draw(self, screen):
+        screen.blit(self.bg[self.cursor_on_button], (self.x, self.y))
 
-    def draw(self, surface):
-        pg.draw.circle(surface, WHITE, (self.x, self.y), self.r)
-        pg.draw.circle(surface, self.color, (self.x, self.y), self.r-4)
-        pg.draw.line(surface, WHITE, (self.x - self.d + 2, self.y + self.d - 2),
-                                         (self.x + self.d - 2, self.y - self.d + 2), 6)
-        pg.draw.line(surface, WHITE, (self.x - self.d + 2, self.y - self.d + 1),
-                                         (self.x + self.d - 2, self.y + self.d - 2), 6)
+
+__all__ = ["ExitButton"]

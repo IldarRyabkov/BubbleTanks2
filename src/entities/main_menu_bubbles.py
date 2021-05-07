@@ -4,13 +4,11 @@ from objects.bubble import Bubble
 from data.config import *
 
 
-class BackgroundBubbles:
+class Bubbles:
     BUBBLE_RADIUS = 11
     COOLDOWN = 200
-    time = 0
-    bubbles = list()
 
-    def reset(self):
+    def __init__(self):
         self.time = 0
         self.bubbles = list()
 

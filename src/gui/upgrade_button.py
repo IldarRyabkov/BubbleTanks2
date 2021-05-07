@@ -1,103 +1,95 @@
 import pygame as pg
-from math import copysign
 
-from data.colors import *
-from data.paths import (FONT_1, FONT_2, UPGRADE_BUTTON_WIDE_TRANSPARENT,
-                        UPGRADE_BUTTON_TRANSPARENT, UPGRADE_BUTTON_WIDE,
-                        UPGRADE_BUTTON)
-from data.config import SCR_W, SCR_H, UPGRADE_MENU_ANIMATION_TIME
-from gui.text_box import TextBox
-
-
-def set_labels(texts, tank_name):
-    labels = list()
-    pg.font.init()
-    font = pg.font.Font(FONT_1, 48)
-    labels.append(font.render(texts[0], True, UPG_LABEL_COLOR))
-    font = pg.font.Font(FONT_2, 31)
-    labels.append(font.render(tank_name, True, BLACK))
-    labels.append(font.render(texts[1], True, BLACK))
-    labels.append(font.render(texts[2], True, BLACK))
-    return labels
-
-
-def set_texts(text_1, text_2, text_3, center_x):
-    texts = list()
-    texts.append(TextBox(text_1, None, 31, False, BLACK, (center_x, 312)))
-    texts.append(TextBox(text_2, None, 31, False, BLACK, (center_x, 432)))
-    texts.append(TextBox(text_3, None, 31, False, BLACK, (8, 536), False))
-    return texts
+from data.colors import BLACK, UPG_LABEL_COLOR
+from data.paths import *
+from data.config import *
+from data.gui_texts import UPGRADE_BUTTON_TEXTS as TEXTS
+from gui.text import Text
+from utils import H, HF
 
 
 class UpgradeButton:
-    def __init__(self, text_0, text_1, text_2, text_3, text_4,
-                 text_5, labels, button_type, player_state):
+    """Button that is used in upgrade menu.
+    It contains description of new tank, its weapon and superpower.
+    It appears when the upgrade menu opens and hides when it closes.
+    """
+    def __init__(self, button_type, tank, language):
+        self.tank = tank
+        self.w = HF(480) if button_type in (UPG_BUTTON_WIDE_LEFT, UPG_BUTTON_WIDE_RIGHT) else HF(352)
+        self.h = HF(736)
 
-        self.player_state = player_state
-        self.button_type = button_type
+        if button_type == UPG_BUTTON_LEFT:
+            self.X0, self.Y0 = -self.w, HF(160)
+            self.X1, self.Y1 = SCR_W2 - HF(592), HF(160)
 
-        self.w = 352 if self.button_type in [1, 2, 3] else 480
-        self.h = 736
-        self.w2, self.h2 = self.w//2, self.h//2
+        elif button_type == UPG_BUTTON_CENTER:
+            self.X0, self.Y0 = SCR_W2 - HF(176), SCR_H
+            self.X1, self.Y1 = SCR_W2 - HF(176), HF(160)
 
-        if self.button_type in [1, 4]:
-            self.x, self.y = -self.w, 160
-            self.X0, self.Y0 = -self.w, 160
-            self.X1 = 48 if self.button_type == 1 else 104
-            self.Y1 = 160
-        elif self.button_type == 2:
-            self.x, self.y = 464, SCR_H
-            self.X0, self.Y0 = 464, SCR_H
-            self.X1, self.Y1 = 464, 160
-        elif self.button_type in [3, 5]:
-            self.x, self.y = SCR_W, 160
-            self.X0, self.Y0 = SCR_W, 160
-            self.X1 = SCR_W-self.w-48 if self.button_type == 3 else SCR_W-self.w-104
-            self.Y1 = 160
+        elif button_type == UPG_BUTTON_RIGHT:
+            self.X0, self.Y0 = SCR_W, HF(160)
+            self.X1, self.Y1 = SCR_W2 + HF(240), HF(160)
 
+        elif button_type == UPG_BUTTON_WIDE_LEFT:
+            self.X0, self.Y0 = -self.w, HF(160)
+            self.X1, self.Y1 = SCR_W2 - HF(512), HF(160)
+
+        elif button_type == UPG_BUTTON_WIDE_RIGHT:
+            self.X0, self.Y0 = SCR_W, HF(160)
+            self.X1, self.Y1 = SCR_W2 + HF(32), HF(160)
+
+        self.x, self.y = self.X0, self.Y0
         self.vel_x = (self.X1 - self.X0) / UPGRADE_MENU_ANIMATION_TIME
-        self.vel_x_sign = copysign(1, self.vel_x)
         self.vel_y = (self.Y1 - self.Y0) / UPGRADE_MENU_ANIMATION_TIME
-        self.vel_y_sign = copysign(1, self.vel_y)
 
-        self.labels = set_labels(labels, tank_name=text_0)
-        self.texts = set_texts(text_1, text_2, text_3, self.w2)
-
-        if self.button_type in (1, 2, 3):
-            self.bg = pg.image.load(UPGRADE_BUTTON).convert_alpha()
-            self.bg_transparent = pg.image.load(UPGRADE_BUTTON_TRANSPARENT).convert_alpha()
+        # Now we set button background surfaces.
+        # First we load background images of button.
+        if button_type in (UPG_BUTTON_WIDE_LEFT, UPG_BUTTON_WIDE_RIGHT):
+            image = pg.image.load(UPGRADE_BUTTON_WIDE).convert_alpha()
+            image_pressed = pg.image.load(UPGRADE_BUTTON_WIDE_PRESSED).convert_alpha()
         else:
-            self.bg = pg.image.load(UPGRADE_BUTTON_WIDE).convert_alpha()
-            self.bg_transparent = pg.image.load(UPGRADE_BUTTON_WIDE_TRANSPARENT).convert_alpha()
-        self.set_bg()
+            image = pg.image.load(UPGRADE_BUTTON).convert_alpha()
+            image_pressed = pg.image.load(UPGRADE_BUTTON_PRESSED).convert_alpha()
+        size = (round(self.w), round(self.h))
+        self.bg = (
+            pg.transform.scale(image, size),
+            pg.transform.scale(image_pressed, size),
+        )
+        # Then we create text widget to be blitted on background surfaces of button
+        text_widgets = (
+            Text(self.w / 2, HF(6),   FONT_1,  H(48), UPG_LABEL_COLOR, True),  # button caption
+            Text(self.w / 2, HF(264), CALIBRI_BOLD, H(35), BLACK, True),  # main weapon caption
+            Text(self.w / 2, HF(384), CALIBRI_BOLD, H(35), BLACK, True),  # second weapon caption
+            Text(self.w / 2, HF(166), CALIBRI_BOLD,  H(35), BLACK, True),  # tank name
+            Text(self.w / 2, HF(312), CALIBRI,  H(31), BLACK, True),  # main weapon name
+            Text(self.w / 2, HF(432), CALIBRI,  H(31), BLACK, True),  # second weapon name
+            Text(HF(8), HF(536), CALIBRI, H(31), BLACK, False),  # tank description
+        )
+        texts = TEXTS[language]["labels"] + list(TEXTS[language]["texts"][tank][:4])
+        for widget, text in zip(text_widgets, texts):
+            widget.set_text(text)
 
-    def set_bg(self):
-        for bg in self.bg, self.bg_transparent:
-            bg.blit(self.labels[0], ((self.w-self.labels[0].get_size()[0])//2, 6))
-            bg.blit(self.labels[1], ((self.w-self.labels[1].get_size()[0])//2, 160))
-            bg.blit(self.labels[2], ((self.w-self.labels[2].get_size()[0])//2, 264))
-            bg.blit(self.labels[3], ((self.w-self.labels[3].get_size()[0])//2, 384))
-            for text in self.texts:
-                text.draw(bg)
+        # And finally we blit text widgets on background surfaces of button
+        for bg in self.bg:
+            for widget in text_widgets:
+                widget.draw(bg)
 
-    def cursor_on_button(self, pos):
-        return self.x <= pos[0] <= self.x+self.w and self.y <= pos[1] <= self.y+self.h
+    @property
+    def cursor_on_button(self):
+        x, y = pg.mouse.get_pos()
+        return 0 <= x - self.x <= self.w and 0 <= y - self.y <= self.h
 
-    def update(self, dt):
-        self.x += self.vel_x * dt
-        if self.vel_x_sign * self.x > self.vel_x_sign * self.X1:
-            self.x = self.X1
-        elif self.vel_x_sign * self.x < self.vel_x_sign * self.X0:
-            self.x = self.X0
-
-        self.y += self.vel_y * dt
-        if self.vel_y_sign * self.y > self.vel_y_sign * self.Y1:
-            self.y = self.Y1
-        elif self.vel_y_sign * self.y < self.vel_y_sign * self.Y0:
-            self.y = self.Y0
-
-    def draw(self, surface):
-        if self.cursor_on_button(pg.mouse.get_pos()):
-            surface.blit(self.bg, (int(self.x), int(self.y)))
+    def update_pos(self, dt, action):
+        if action == OPEN:
+            dx = self.vel_x * dt
+            dy = self.vel_y * dt
+            self.x = min(self.x + dx, self.X1) if self.vel_x > 0 else max(self.x + dx, self.X1)
+            self.y = min(self.y + dy, self.Y1) if self.vel_y > 0 else max(self.y + dy, self.Y1)
         else:
-            surface.blit(self.bg_transparent, (int(self.x), int(self.y)))
+            dx = -self.vel_x * dt
+            dy = -self.vel_y * dt
+            self.x = max(self.x + dx, self.X0) if self.vel_x > 0 else min(self.x + dx, self.X0)
+            self.y = max(self.y + dy, self.Y0) if self.vel_y > 0 else min(self.y + dy, self.Y0)
+
+    def draw(self, screen):
+        screen.blit(self.bg[self.cursor_on_button], (round(self.x), round(self.y)))

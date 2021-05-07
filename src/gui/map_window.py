@@ -1,31 +1,19 @@
-import pygame as pg
-
 from data.colors import WHITE
-import data.languages.english as eng
-import data.languages.russian as rus
-from map import Map
-from data.config import K
-
-
-def create_caption(language):
-    pg.font.init()
-    font = pg.font.SysFont('Calibri', int(round(56 * K)), True)
-    if language == 'English':
-        text = eng.MAPWINDOW_CAPTION
-    else:
-        text = rus.MAPWINDOW_CAPTION
-    return font.render(text, True, WHITE)
+from gui.text import Text
+from gui.map import Map
+from data.gui_texts import MAP_WINDOW_CAPTIONS as CAPTIONS
+from data.paths import CALIBRI_BOLD
+from utils import H, HF, WF
 
 
 class MapWindow:
-    def __init__(self):
-        self.caption = None
-        self.caption_pos = (int(round(584 * K)), int(round(176 * K)))
-        self.map = Map()
-        self.set_language("English")
+    """Window that shows map of rooms visited by player. """
+    def __init__(self, xo):
+        self.caption = Text(WF(584), HF(176), CALIBRI_BOLD, H(56), WHITE)
+        self.map = Map(xo)
 
     def set_language(self, language):
-        self.caption = create_caption(language)
+        self.caption.set_text(CAPTIONS[language])
 
     def reset(self):
         self.map.reset()
@@ -34,5 +22,8 @@ class MapWindow:
         self.map.update(dt)
 
     def draw(self, screen):
-        screen.blit(self.caption, self.caption_pos)
+        self.caption.draw(screen)
         self.map.draw(screen)
+
+
+__all__ = ["MapWindow"]

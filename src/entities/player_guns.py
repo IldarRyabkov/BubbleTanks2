@@ -1,31 +1,31 @@
 from math import pi, sin, cos
 
-from objects.gun import Gun, GunSingle, GunAutomatic
-from utils import calculate_angle
-from objects.bullets import RegularBullet
-from objects.bullets import DrillingBullet
-from data.bullets import SMALL_BUL_BODY_1, BIG_BUL_BODY_1, STICKY_BUL_BODY
+from objects.bullets import *
+from objects.gun import *
+from data.bullets import BULLETS
+from utils import calculate_angle, HF
 
 
 class Gun00(GunSingle):
     def __init__(self):
-        super().__init__(26, 1.6, -1, 'SmallBullet_1', 300, 0)
+        super().__init__(HF(23), HF(1.6), -1, 'SmallBullet_1', 300, 0)
 
 
 class Gun10(GunSingle):
     def __init__(self):
-        super().__init__(26, 1.6, -1, 'SmallBullet_1', 100, 0)
+        super().__init__(HF(23), HF(1.6), -1, 'SmallBullet_1', 100, 0)
 
 
 class Gun11(Gun):
     def __init__(self):
-        super().__init__(26, 1.6, -1, 'SmallBullet_1', 175, 0)
+        super().__init__(HF(23), HF(1.6), -1, 'SmallBullet_1', 175, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
         xo, yo = self.get_reference_point(x, y, angle)
-        pos_0 = xo + 10 * sin(angle), yo + 10 * cos(angle)
-        pos_1 = xo - 10 * sin(angle), yo - 10 * cos(angle)
+        r = HF(9)
+        pos_0 = xo + r * sin(angle), yo + r * cos(angle)
+        pos_1 = xo - r * sin(angle), yo - r * cos(angle)
 
         return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, self.bul_body),
                 RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
@@ -33,19 +33,20 @@ class Gun11(Gun):
 
 class Gun12(GunSingle):
     def __init__(self):
-        super().__init__(26, 1.2, -5, 'BigBullet_1', 300, 0)
+        super().__init__(HF(23), HF(1.2), -5, 'BigBullet_1', 300, 0)
 
 
 class Gun20(Gun):
     def __init__(self):
-        super().__init__(26, 1.6, -1, 'SmallBullet_1', 125, 0)
+        super().__init__(HF(23), HF(1.6), -1, 'SmallBullet_1', 125, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
         xo, yo = self.get_reference_point(x, y, angle)
         pos_0 = (xo, yo)
-        pos_1 = (xo + 23 * sin(angle - 0.17*pi), yo + 23 * cos(angle - 0.17*pi))
-        pos_2 = (xo - 23 * sin(angle + 0.17*pi), yo - 23 * cos(angle + 0.17*pi))
+        r = HF(21)
+        pos_1 = (xo + r * sin(angle - 0.17*pi), yo + r * cos(angle - 0.17*pi))
+        pos_2 = (xo - r * sin(angle + 0.17*pi), yo - r * cos(angle + 0.17*pi))
 
         return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle,             self.bul_body),
                 RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle - 0.17 * pi, self.bul_body),
@@ -54,14 +55,15 @@ class Gun20(Gun):
 
 class Gun21(Gun):
     def __init__(self):
-        super().__init__(72, 1.6, -1, 'SmallBullet_1', 150, 0)
+        super().__init__(HF(64), HF(1.6), -1, 'SmallBullet_1', 150, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
         xo, yo = self.get_reference_point(x, y, angle)
         pos_0 = (xo, yo)
-        pos_1 = (xo + 22 * sin(angle), yo + 22 * cos(angle))
-        pos_2 = (xo - 22 * sin(angle), yo - 22 * cos(angle))
+        r = HF(20)
+        pos_1 = (xo + r * sin(angle), yo + r * cos(angle))
+        pos_2 = (xo - r * sin(angle), yo - r * cos(angle))
 
         return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, self.bul_body),
                 RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, self.bul_body),
@@ -75,17 +77,18 @@ class Gun22(Gun21):
 
 class Gun23(Gun):
     def __init__(self):
-        super().__init__(72, 1.6, -1, 'SmallBullet_1', 150, 0)
+        super().__init__(HF(64), HF(1.6), -1, 'SmallBullet_1', 150, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
         xo, yo = self.get_reference_point(x, y, angle)
         sina, cosa = sin(angle), cos(angle)
+        r1, r2, r3 = HF(20), HF(40), HF(5)
         coords = [(xo, yo),
-                  (xo + 22*sina,          yo + 22*cosa),
-                  (xo - 22*sina,          yo - 22*cosa),
-                  (xo + 45*sina - 6*cosa, yo + 45*cosa + 6*sina),
-                  (xo - 45*sina - 6*cosa, yo - 45*cosa + 6*sina)]
+                  (xo + r1*sina,           yo + r1*cosa),
+                  (xo - r1*sina,           yo - r1*cosa),
+                  (xo + r2*sina - r3*cosa, yo + r2*cosa + r3*sina),
+                  (xo - r2*sina - r3*cosa, yo - r2*cosa + r3*sina)]
 
         bullets = []
         for pos in coords:
@@ -95,7 +98,7 @@ class Gun23(Gun):
 
 class Gun30(GunSingle):
     def __init__(self):
-        super().__init__(16, 2.1, -10, 'SniperBullet', 350, 0)
+        super().__init__(HF(14), HF(2.1), -10, 'SniperBullet', 350, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
@@ -105,12 +108,12 @@ class Gun30(GunSingle):
 
 class Gun31(GunSingle):
     def __init__(self):
-        super().__init__(32, 1.6, -2, 'SmallBullet_1', 75, 0)
+        super().__init__(HF(28), HF(1.6), -2, 'SmallBullet_1', 75, 0)
 
 
 class Gun32(Gun):
     def __init__(self):
-        super().__init__(56, 1.6, -1, 'SmallBullet_1', 150, 0)
+        super().__init__(HF(50), HF(1.6), -1, 'SmallBullet_1', 150, 0)
 
     @staticmethod
     def get_bullets_angles(angle):
@@ -118,11 +121,12 @@ class Gun32(Gun):
 
     @staticmethod
     def get_bullets_coords(xo, yo, angles):
+        r1, r2 = HF(11), HF(21)
         return [(xo, yo),
-                (xo + 12 * sin(angles[1]), yo + 12 * cos(angles[1])),
-                (xo - 12 * sin(angles[2]), yo - 12 * cos(angles[2])),
-                (xo + 23 * sin(angles[3]),  yo + 23 * cos(angles[3])),
-                (xo - 23 * sin(angles[4]),  yo - 23 * cos(angles[4]))]
+                (xo + r1 * sin(angles[1]), yo + r1 * cos(angles[1])),
+                (xo - r1 * sin(angles[2]), yo - r1 * cos(angles[2])),
+                (xo + r2 * sin(angles[3]), yo + r2 * cos(angles[3])),
+                (xo - r2 * sin(angles[4]), yo - r2 * cos(angles[4]))]
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
@@ -143,16 +147,17 @@ class Gun33(Gun32):
 
 class Gun34(Gun):
     def __init__(self):
-        super().__init__(0, 1.1, -5, 'BigBullet_1', 300, 0)
+        super().__init__(0, HF(1.1), -5, 'BigBullet_1', 300, 0)
 
     def generate_bullets(self, x, y, target, gamma):
-        xo, yo = x + 128 * cos(gamma + 0.76*pi), y - 128 * sin(gamma + 0.76*pi)
+        r1, r2 = HF(114), HF(57)
+        xo, yo = x + r1 * cos(gamma + 0.76*pi), y - r1 * sin(gamma + 0.76*pi)
         angle_0 = calculate_angle(xo, yo, *target)
-        pos_0 = (xo + 64 * cos(angle_0), yo - 64 * sin(angle_0))
+        pos_0 = (xo + r2 * cos(angle_0), yo - r2 * sin(angle_0))
 
-        xo, yo = x + 128 * cos(gamma - 0.76*pi), y - 128 * sin(gamma - 0.76*pi)
+        xo, yo = x + r1 * cos(gamma - 0.76*pi), y - r1 * sin(gamma - 0.76*pi)
         angle_1 = calculate_angle(xo, yo, *target)
-        pos_1 = (xo + 64 * cos(angle_1), yo - 64 * sin(angle_1))
+        pos_1 = (xo + r2 * cos(angle_1), yo - r2 * sin(angle_1))
 
         return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle_0, self.bul_body),
                 RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle_1, self.bul_body)]
@@ -160,13 +165,13 @@ class Gun34(Gun):
 
 class Gun35(GunAutomatic):
     def __init__(self):
-        coords = ((140, 0.25 * pi), (140, -0.25 * pi))
-        super().__init__(48, 1.2, -5, 'BigBullet_1', 200, 0, 200, coords)
+        coords = ((HF(124), 0.25 * pi), (HF(124), -0.25 * pi))
+        super().__init__(HF(43), HF(1.2), -5, 'BigBullet_1', 200, 0, 200, coords)
 
 
 class Gun40(Gun):
     def __init__(self):
-        super().__init__(32, 2.1, -15, 'SniperBullet', 425, 0)
+        super().__init__(HF(28), HF(2.1), -15, 'SniperBullet', 425, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
@@ -182,28 +187,29 @@ class Gun41(Gun11):
 
 class Gun42(Gun):
     def __init__(self):
-        super().__init__(16, 1.6, -1, 'SmallBullet_1', 200, 0)
+        super().__init__(HF(14), HF(1.6), -1, 'SmallBullet_1', 200, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
         xo, yo = self.get_reference_point(x, y, angle)
+        r = HF(76)
         pos_0 = (xo, yo)
-        pos_1 = (xo + 85 * cos(angle + 0.48*pi), yo - 85 * sin(angle + 0.48*pi))
-        pos_2 = (xo + 85 * cos(angle - 0.48*pi), yo - 85 * sin(angle - 0.48*pi))
+        pos_1 = (xo + r * cos(angle + 0.48*pi), yo - r * sin(angle + 0.48*pi))
+        pos_2 = (xo + r * cos(angle - 0.48*pi), yo - r * sin(angle - 0.48*pi))
 
-        return [(RegularBullet(*pos_0, -5, 1.2, angle, BIG_BUL_BODY_1)),
-                (RegularBullet(*pos_1, -1, 1.6,  angle, SMALL_BUL_BODY_1)),
-                (RegularBullet(*pos_2, -1, 1.6,  angle, SMALL_BUL_BODY_1))]
+        return [(RegularBullet(*pos_0, -5, HF(1.2), angle, BULLETS["BigBullet_1"])),
+                (RegularBullet(*pos_1, -1, HF(1.6), angle, BULLETS["SmallBullet_1"])),
+                (RegularBullet(*pos_2, -1, HF(1.6), angle, BULLETS["SmallBullet_1"]))]
 
 
 class Gun43(Gun):
     def __init__(self):
-        super().__init__(32, 1.3, -2, 'MediumBullet_1', 150, 0)
+        super().__init__(HF(28), HF(1.3), -2, 'MediumBullet_1', 150, 0)
 
     def generate_bullets(self, x, y, target, gamma):
         angle = calculate_angle(x, y, *target)
-        pos_0 = (x + 32 * cos(angle + 0.74*pi), y - 32 * sin(angle + 0.74*pi))
-        pos_1 = (x + 32 * cos(angle - 0.74*pi), y - 32 * sin(angle - 0.74*pi))
+        pos_0 = (x + self.radius * cos(angle + 0.74*pi), y - self.radius * sin(angle + 0.74*pi))
+        pos_1 = (x + self.radius * cos(angle - 0.74*pi), y - self.radius * sin(angle - 0.74*pi))
 
         return [(RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle, self.bul_body)),
                 (RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle, self.bul_body))]
@@ -211,17 +217,18 @@ class Gun43(Gun):
 
 class Gun44(GunAutomatic):
     def __init__(self):
-        coords = ((154, 0.25 * pi), (154, -0.25 * pi))
-        super().__init__(48, 1.1, -5, 'BigBullet_1', 300, 0, 200, coords)
+        coords = ((HF(137), 0.25 * pi), (HF(137), -0.25 * pi))
+        super().__init__(HF(43), HF(1.1), -5, 'BigBullet_1', 300, 0, 200, coords)
 
     def generate_bullets(self, x, y, target, gamma):
-        xo, yo = x + 144 * cos(gamma + 0.75*pi), y - 144 * sin(gamma + 0.75*pi)
+        r1, r2 = HF(128), HF(57)
+        xo, yo = x + r1 * cos(gamma + 0.75*pi), y - r1 * sin(gamma + 0.75*pi)
         angle_0 = calculate_angle(xo, yo, *target)
-        pos_0 = (xo + 64 * cos(angle_0), yo - 64 * sin(angle_0))
+        pos_0 = (xo + r2 * cos(angle_0), yo - r2 * sin(angle_0))
 
-        xo, yo = x + 144 * cos(gamma - 0.75*pi), y - 144 * sin(gamma - 0.75*pi)
+        xo, yo = x + r1 * cos(gamma - 0.75*pi), y - r1 * sin(gamma - 0.75*pi)
         angle_1 = calculate_angle(xo, yo, *target)
-        pos_1 = (xo + 64 * cos(angle_1), yo - 64 * sin(angle_1))
+        pos_1 = (xo + r2 * cos(angle_1), yo - r2 * sin(angle_1))
 
         return [RegularBullet(*pos_0, self.bul_dmg, self.bul_vel, angle_0, self.bul_body),
                 RegularBullet(*pos_1, self.bul_dmg, self.bul_vel, angle_1, self.bul_body)]
@@ -229,15 +236,16 @@ class Gun44(GunAutomatic):
 
 class Gun45(GunAutomatic):
     def __init__(self):
-        coords = ((198, 0.3 * pi), (198, -0.3 * pi), (198, 0))
-        super().__init__(0, 1.1, -5, 'BigBullet_1', 300, 0, 300, coords)
+        coords = ((HF(176), 0.3 * pi), (HF(176), -0.3 * pi), (HF(176), 0))
+        super().__init__(0, HF(1.1), -5, 'BigBullet_1', 300, 0, 300, coords)
 
     def generate_bullets(self, x, y, target, gamma):
         bullets = list()
+        r1, r2 = HF(142), HF(57)
         for angle in [gamma + 0.78*pi, gamma - 0.78*pi]:
-            xo, yo = x + 160 * cos(angle), y - 160 * sin(angle)
+            xo, yo = x + r1 * cos(angle), y - r1 * sin(angle)
             bullet_angle = calculate_angle(xo, yo, *target)
-            bullet_pos = (xo + 64 * cos(bullet_angle), yo - 64 * sin(bullet_angle))
+            bullet_pos = (xo + r2 * cos(bullet_angle), yo - r2 * sin(bullet_angle))
             bullets.append(RegularBullet(*bullet_pos, self.bul_dmg, self.bul_vel,
                                          bullet_angle, self.bul_body))
         return bullets
@@ -247,7 +255,7 @@ class Gun50(Gun40):
     def __init__(self):
         super().__init__()
         self.cooldown_time = 500
-        self.radius = 64
+        self.radius = HF(57)
         self.bul_dmg = -15
 
 
@@ -255,7 +263,7 @@ class Gun51(Gun21):
     def __init__(self):
         super().__init__()
         self.cooldown_time = 100
-        self.radius = 23
+        self.radius = HF(21)
 
 
 class Gun52(Gun00):
@@ -270,21 +278,22 @@ class Gun53(Gun00):
 
 class Gun54(GunAutomatic):
     def __init__(self):
-        coords = ((243, 0.09 * pi), (243, -0.09 * pi),
-                  (218, 0.29 * pi), (218, -0.29 * pi),
-                  (218, 0.79 * pi), (218, -0.79 * pi))
-        super().__init__(0, 1.1, -5, 'BigBullet_1', 200, 0, 200, coords)
-        self.bullets_coords = ((192, 0.55 * pi), (192, -0.55 * pi), (200, pi))
+        coords = ((HF(216), 0.09 * pi), (HF(216), -0.09 * pi),
+                  (HF(194), 0.29 * pi), (HF(194), -0.29 * pi),
+                  (HF(194), 0.79 * pi), (HF(194), -0.79 * pi))
+        super().__init__(0, HF(1.1), -5, 'BigBullet_1', 200, 0, 200, coords)
+        self.bullets_coords = ((HF(171), 0.55 * pi), (HF(171), -0.55 * pi), (HF(178), pi))
 
     def generate_bullets(self, x, y, target, gamma):
         bullets = list()
+        r1, r2 = HF(57), HF(178)
         for radius, angle in self.bullets_coords:
             xo = x + radius * cos(gamma + angle)
             yo = y - radius * sin(gamma + angle)
             bullet_angle = calculate_angle(xo, yo, *target)
-            bullet_pos = (xo + 64 * cos(bullet_angle), yo - 64 * sin(bullet_angle))
-            bul_body = self.bul_body if radius != 200 else STICKY_BUL_BODY
-            bul_dmg = self.bul_dmg if radius != 200 else 0
+            bullet_pos = (xo + r1 * cos(bullet_angle), yo - r1 * sin(bullet_angle))
+            bul_body = self.bul_body if radius != r2 else BULLETS["StickyBullet"]
+            bul_dmg = self.bul_dmg if radius != r2 else 0
             bullets.append(RegularBullet(*bullet_pos, bul_dmg, self.bul_vel,
                                          bullet_angle, bul_body))
         return bullets

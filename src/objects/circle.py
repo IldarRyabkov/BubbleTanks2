@@ -1,23 +1,13 @@
 import pygame as pg
-from random import random
-from math import pi, copysign, sin ,cos
+from random import uniform
+from math import pi, sin ,cos
 
 from data.colors import WHITE, GLARE_COLORS
-from utils import calculate_angle
-
-
-def create_glares(color, angle):
-    k = copysign(1, angle) * pi
-    b = pi if angle else 0
-    glares = list()
-    glares.append(Glare(GLARE_COLORS[color][0], b + 0.9 * k, 0.25))
-    glares.append(Glare(GLARE_COLORS[color][0], b + 0.6 * k, 0.17))
-    glares.append(Glare(GLARE_COLORS[color][1], b - 0.25 * k, 0.25))
-    glares.append(Glare(GLARE_COLORS[color][1], b - 0.5 * k, 0.17))
-    return glares
+from utils import calculate_angle, HF
 
 
 class Glare:
+    """Effect of a circle. Each circle has 4 glares. """
     def __init__(self, color, angle, radius_coeff):
         self.x = 0
         self.y = 0
@@ -38,22 +28,22 @@ class Glare:
     def draw(self, surface, dx, dy):
         pg.draw.circle(surface,
                        self.color,
-                       (int(self.x - dx), int(self.y - dy)),
-                       int(self.radius))
+                       (round(self.x - dx), round(self.y - dy)),
+                       round(self.radius))
 
 
 class Circle:
+    """Base element for drawing mobs, bullets, bubbles etc. """
     def __init__(self,
-                 radius,
-                 edge,
-                 color,
-                 dist,
-                 angle,
-                 scaling,
-                 scaling_speed,
-                 scaling_amplitude,
-                 scaling_phase,
-                 visible,
+                 radius: float,
+                 edge: float,
+                 color: tuple,
+                 dist: float,
+                 angle: float,
+                 scaling: bool,
+                 scaling_speed: float,
+                 scaling_amplitude:float,
+                 visible: bool,
                  aiming=False,
                  aiming_dist=0,
                  aiming_angle=0,
@@ -91,15 +81,15 @@ class Circle:
         if self.scaling:
             self.scaling_amplitude = scaling_amplitude
             self.scaling_speed = scaling_speed
-            self.scaling_phase = scaling_phase
+            self.scaling_phase = uniform(0, 1)
 
         self.swinging = swinging
         if self.swinging:
             self.swing_dist = 0
             self.swing_angle = swing_angle
             self.swing_direction = 1
-            self.swing_vel = 0.64
-            self.swing_max_dist = 104
+            self.swing_vel = HF(0.57)
+            self.swing_max_dist = HF(92)
 
         self.rotating = rotating
         if self.rotating:
@@ -107,15 +97,20 @@ class Circle:
             self.rotating_dist = rotating_dist
 
         self.visible = visible
-        self.glares = create_glares(color, aiming_angle if self.aiming else angle)
+
+        glare_angle = aiming_angle if self.aiming else angle
+        k = pi if glare_angle > 0 else -pi
+        b = pi if glare_angle != 0 else 0
+        self.glares = (
+            Glare(GLARE_COLORS[color][0], b + 0.9 * k, 0.25),
+            Glare(GLARE_COLORS[color][0], b + 0.6 * k, 0.17),
+            Glare(GLARE_COLORS[color][1], b - 0.25 * k, 0.25),
+            Glare(GLARE_COLORS[color][1], b - 0.5 * k, 0.17)
+        )
 
     def update_glares(self, angle: float):
         for glare in self.glares:
             glare.update(self.x, self.y, self.radius - self.edge, angle)
-
-    def randomize_scaling_phase(self):
-        if self.scaling:
-            self.scaling_phase = (self.scaling_phase + random()) % 1
 
     def scale_radius(self, dt: int):
         d_phase = dt * self.scaling_speed / self.scaling_amplitude
@@ -132,9 +127,8 @@ class Circle:
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
-        move_glare = Glare.move
         for glare in self.glares:
-            move_glare(glare, dx, dy)
+            glare.move(dx, dy)
 
     def swing(self, dt: int, angle: float):
         dr = self.swing_vel * dt
@@ -151,7 +145,6 @@ class Circle:
                 self.swing_direction *= -1
             else:
                 self.swing_dist -= dr
-
         dx = self.swing_dist * cos(self.swing_angle + angle)
         dy = -self.swing_dist * sin(self.swing_angle + angle)
         self.move(dx, dy)
@@ -161,7 +154,7 @@ class Circle:
         self.x += self.rotating_dist * cos(self.rotating_angle)
         self.y -= self.rotating_dist * sin(self.rotating_angle)
 
-    def update(self, x, y, dt, target=(0, 0), beta=0, gamma=0):
+    def update(self, x, y, dt=0, target=(0, 0), beta=0, gamma=0):
         if self.visible:
             if self.scaling:
                 self.scale_radius(dt)
@@ -180,7 +173,7 @@ class Circle:
                 self.rotate(dt)
 
             if self.swinging:
-                self.swing(dt, beta if self.aiming else gamma)
+                self.swing(dt, (beta if self.aiming else gamma))
 
             self.x += self.dx
             self.y += self.dy
@@ -190,11 +183,11 @@ class Circle:
 
     def draw(self, surface, dx, dy):
         if self.visible:
-            x, y, r = int(self.x - dx), int(self.y - dy), int(self.radius)
+            x, y, r = round(self.x - dx), round(self.y - dy), round(self.radius)
             if self.edge:
                 pg.draw.circle(surface, WHITE, (x, y), r)
 
-            pg.draw.circle(surface, self.color, (x, y), int(r - self.edge))
+            pg.draw.circle(surface, self.color, (x, y), round(r - self.edge))
 
             if self.radius >= 8:
                 for glare in self.glares:

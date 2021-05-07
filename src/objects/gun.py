@@ -1,15 +1,15 @@
 from math import sin, cos, hypot
 from numpy import array
 
-from data.bullets import BULLETS, SMALL_BUL_BODY_1
-from utils import calculate_angle
+from data.bullets import *
+from utils import calculate_angle, HF
 from objects.bullets import RegularBullet
 
 
 class Gun:
     """ A parent class for all gun classes. """
     def __init__(self,
-                 radius: int,
+                 radius: float,
                  bul_vel: float,
                  bul_dmg: int,
                  bullet_name: str,
@@ -93,11 +93,11 @@ class GunAutomatic(GunSingle):
         self.time_auto = cooldown_time_auto
         self.cooldown_time_auto = cooldown_time_auto
         self.auto_bullets_coords = coords
-        self.AUTO_BULLET_VEL = 2.4
+        self.AUTO_BULLET_VEL = HF(2.4)
 
     def generate_bullets_auto(self, x, y, mob, gamma) -> list:
         """ Returns the list of bullets which will linearly move to the given mob. """
-        bullets = list()
+        bullets = []
 
         for radius, angle in self.auto_bullets_coords:
 
@@ -120,7 +120,7 @@ class GunAutomatic(GunSingle):
             bullet_angle = calculate_angle(*start_pos, *target)
 
             bullets.append(RegularBullet(*start_pos, -1, self.AUTO_BULLET_VEL,
-                                         bullet_angle, SMALL_BUL_BODY_1))
+                                         bullet_angle, BULLETS["SmallBullet_1"]))
         return bullets
 
     def add_bullets_auto(self, pos, mobs, bullets, gamma=0):
@@ -147,3 +147,13 @@ class GunPeaceful(Gun):
 
     def update_time(self, dt):
         pass
+
+
+__all__ = [
+
+    "Gun",
+    "GunSingle",
+    "GunAutomatic",
+    "GunPeaceful"
+
+]

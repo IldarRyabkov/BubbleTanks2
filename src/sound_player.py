@@ -1,4 +1,4 @@
-import pygame as pg
+from pygame import mixer
 from data.paths import *
 
 
@@ -7,9 +7,10 @@ sounds = (BUBBLE_DEATH, MOB_DEATH, PLAYER_BULLET_HIT,
 
 
 class SoundPlayer:
+    """Manages game sounds and music. """
     def __init__(self):
-        pg.mixer.pre_init(44100, -32, 8, 4096)
-        self.sounds = {sound: pg.mixer.Sound(sound) for sound in sounds}
+        mixer.pre_init(44100, -32, 8, 4096)
+        self.sounds = {sound: mixer.Sound(sound) for sound in sounds}
         self.sound_on = True
         self.music_on = True
         self.sound_was_played = False
@@ -24,14 +25,17 @@ class SoundPlayer:
 
     @staticmethod
     def play_music(music):
-        pg.mixer.music.load(music)
-        pg.mixer.music.play(-1, 0.0)
+        mixer.music.load(music)
+        mixer.music.play(-1, 0.0)
 
     def update_data(self, music_on, sound_on):
         if self.music_on and not music_on:
             self.music_on = False
-            pg.mixer.music.pause()
+            mixer.music.pause()
         elif not self.music_on and music_on:
             self.music_on = True
-            pg.mixer.music.unpause()
+            mixer.music.unpause()
         self.sound_on = sound_on
+
+
+__all__ = ["SoundPlayer"]

@@ -1,63 +1,56 @@
 import pygame as pg
 from math import hypot
 
-from data.config import *
-from data.paths import RUS_FLAG, ENG_FLAG
-
-
-ENGLISH_BUTTON_POS = 1/15 * SCR_H, 21/20 * SCR_H
-RUSSIAN_BUTTON_POS = 7/40 * SCR_H, 21/20 * SCR_H
+from data.config import CLOSE, OPEN, MAIN_MENU_ANIMATION_TIME as TIME
+from utils import HF
 
 
 class LanguageButton:
-    VELOCITY = 0.44  * SCR_H/600
-    R_MAX = 7/120  * SCR_H
-    R_MIN = 5/120  * SCR_H
+    """A button which is used in Start menu to choose a language. """
+    SIZE_MAX = HF(112)
+    SIZE_MIN = HF(80)
+    VEL = HF(0.704)  # velocity with which button shows and hides
+    SCALING_VEL = HF(0.24)  # velocity with which button scales
 
-    def __init__(self, language: str):
-        self.language = language
+    def __init__(self, x: float, image_file: str):
+        self.x = x
+        self.y = HF(1008)
+        self.start_pos = (self.x, self.y)
+        self.image = pg.image.load(image_file).convert_alpha()
         self.surface = None
-        if language == "English":
-            self.x, self.y = ENGLISH_BUTTON_POS
-            self.image = pg.image.load(ENG_FLAG).convert_alpha()
-            self.clicked = True
-        else:
-            self.x, self.y = RUSSIAN_BUTTON_POS
-            self.image = pg.image.load(RUS_FLAG).convert_alpha()
-            self.clicked = False
-        self.r = self.R_MIN
+        self.size = self.SIZE_MIN
 
+    @property
     def cursor_on_button(self) -> bool:
         x, y = pg.mouse.get_pos()
-        return hypot(x - self.x, y - self.y) <= self.r
+        return hypot(x - self.x, y - self.y) <= self.size / 2
 
     def update_size(self, dt):
-        cursor_on_button = self.cursor_on_button()
-        k = 1 if cursor_on_button else -1
-        self.r += 0.12 * k * dt
-        if k == 1 and self.r > self.R_MAX:
-            self.r = self.R_MAX
-        elif k == -1 and self.r < self.R_MIN:
-            self.r = self.R_MIN
-        diam = int(2 * self.r)
-        self.surface = pg.transform.scale(self.image, (diam, diam))
+        """Updates the size of the button based on
+        whether the cursor is over it or not.
+        """
+        if self.cursor_on_button:
+            self.size = min(self.SIZE_MAX, self.size + self.SCALING_VEL * dt)
+        else:
+            self.size = max(self.SIZE_MIN, self.size - self.SCALING_VEL * dt)
+        self.surface = pg.transform.scale(self.image, (round(self.size), round(self.size)))
+
+    def update_pos(self, dt, animation_time, state):
+        """Updates the size of the button based on
+        whether start menu is showing, hiding or waiting.
+        """
+        if state == CLOSE and  3/6 * TIME <= animation_time <= 4/6 * TIME:
+            self.y += self.VEL * dt
+        elif state == OPEN and 5/6 * TIME <= animation_time <= TIME:
+            self.y -= self.VEL * dt
 
     def update(self, dt, animation_time, state):
         self.update_size(dt)
-        if state == START_MENU_HIDE and \
-                START_MENU_ANIMATION_TIME * 0.5 <= animation_time <= START_MENU_ANIMATION_TIME * 2/3:
-            self.y += self.VELOCITY * dt
-
-        elif state == START_MENU_SHOW and \
-                START_MENU_ANIMATION_TIME * 5/6 <= animation_time <= START_MENU_ANIMATION_TIME:
-            self.y -= self.VELOCITY * dt
-
-    def reset(self):
-        self.r = self.R_MIN
-        if self.language == "English":
-            self.x, self.y = ENGLISH_BUTTON_POS
-        else:
-            self.x, self.y = RUSSIAN_BUTTON_POS
+        self.update_pos(dt, animation_time, state)
 
     def draw(self, screen):
-        screen.blit(self.surface, (int(self.x - self.r), int(self.y - self.r)))
+        screen.blit(self.surface, (round(self.x - self.size / 2),
+                                   round(self.y - self.size / 2)))
+
+
+__all__ = ["LanguageButton"]

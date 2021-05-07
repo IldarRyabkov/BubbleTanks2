@@ -1,14 +1,16 @@
 import pygame as pg
+
 from data.colors import *
+from utils import H
 
 
 class Slider:
     def __init__(self, x: int, y: int):
-        self.value = 1.0
+        self.value = 1
         self.x = x
         self.y = y
-        self.w = 400
-        self.h = 10
+        self.w = H(400)
+        self.h = H(10)
         self.circle_r = int(self.h * 2.5)
         self.circle_x = self.x + self.w - self.circle_r
         self.clicked = False

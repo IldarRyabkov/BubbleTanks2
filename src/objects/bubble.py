@@ -10,20 +10,23 @@ from data.paths import BUBBLE_HALO
 
 
 class Bubble:
-    def __init__(self, x, y, angle=0, gravity_r=0, bubble_type="small"):
+    def __init__(self,
+                 x,
+                 y,
+                 angle=0,
+                 gravitation_radius=0,
+                 bubble_type="small"):
         self.x = x
         self.y = y
         self.radius = BUBBLES[bubble_type]["radius"]
         self.health = BUBBLES[bubble_type]["health"]
-        self.vel = uniform(0.7, 1.7) * MAX_VEL
-        self.acc = ACC
+        self.vel = uniform(0.7, 1.7) * BUBBLE_MAX_VEL
+        self.acc = BUBBLE_ACC
         self.angle = angle
-        self.gravity_r = gravity_r
+        self.gravitation_radius = gravitation_radius
         self.body = Body(BUBBLES[bubble_type]["body"])
-        self.body.randomize_body_scale()
         self.base_halo = None
         self.halo = None
-        self.in_player_gravity = False
         if bubble_type == "big":
             self.base_halo = pg.image.load(BUBBLE_HALO).convert_alpha()
             self.update_halo()
@@ -32,21 +35,19 @@ class Bubble:
     def is_outside(self):
         return not circle_collidepoint(SCR_W2, SCR_H2, ROOM_RADIUS, self.x, self.y)
 
+    def in_gravity_zone(self, player_x, player_y):
+        return hypot(self.x - player_x, self.y - player_y) <= self.gravitation_radius
+
     def is_on_screen(self, dx, dy):
-        return -self.radius <= self.x - dx <= SCR_W + self.radius and \
-               -self.radius <= self.y - dy <= SCR_H + self.radius
+        return (-self.radius <= self.x - dx <= SCR_W + self.radius and
+                -self.radius <= self.y - dy <= SCR_H + self.radius)
 
-    def check_player_pos(self, player_x, player_y):
-        if hypot(self.x - player_x, self.y - player_y) <= self.gravity_r:
-            self.in_player_gravity = True
-            self.acc = ACC
-        else:
-            self.in_player_gravity = False
-
-    def maximize_vel(self):
-        self.vel = 2 * MAX_VEL
+    def maximize_gravity(self):
+        self.vel = 2 * BUBBLE_MAX_VEL
+        self.gravitation_radius = 2 * ROOM_RADIUS
 
     def go_to_player(self, x, y, dt):
+        self.acc = BUBBLE_ACC
         self.angle = calculate_angle(self.x, self.y, x, y)
         dr = self.vel * dt + self.acc * dt*dt / 2
         dist = hypot(self.x-x, self.y-y)
@@ -57,12 +58,12 @@ class Bubble:
             self.x += dr * cos(self.angle)
             self.y -= dr * sin(self.angle)
         self.vel += self.acc * dt
-        if self.vel >= MAX_VEL:
-            self.vel = MAX_VEL
+        if self.vel >= BUBBLE_MAX_VEL:
+            self.vel = BUBBLE_MAX_VEL
             self.acc = 0
 
     def slow_down(self, dt):
-        self.acc = -ACC
+        self.acc = -BUBBLE_ACC
         dr = self.vel * dt + self.acc * dt*dt / 2
         self.x += dr * cos(self.angle)
         self.y -= dr * sin(self.angle)
@@ -79,7 +80,7 @@ class Bubble:
         self.body.move(dx, dy)
 
     def update_halo(self):
-        diam = int(2.9 * self.body.circles[0].radius)
+        diam = round(2.9 * self.body.circles[0].radius)
         self.halo = pg.transform.scale(self.base_halo, (diam, diam))
 
     def update_body(self, dt):
@@ -89,8 +90,7 @@ class Bubble:
 
     def update(self, x, y, dt):
         if self.vel or self.is_on_screen(x - SCR_W2, y - SCR_H2):
-            self.check_player_pos(x, y)
-            if self.in_player_gravity:
+            if self.in_gravity_zone(x, y):
                 self.go_to_player(x, y, dt)
             elif self.vel:
                 self.slow_down(dt)
@@ -101,6 +101,6 @@ class Bubble:
             self.body.draw(surface, dx, dy)
             if self.halo is not None:
                 radius = self.halo.get_width() / 2
-                x = int(self.x - radius - dx)
-                y = int(self.y - radius - dy)
+                x = round(self.x - radius - dx)
+                y = round(self.y - radius - dy)
                 surface.blit(self.halo, (x, y))

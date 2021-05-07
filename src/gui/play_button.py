@@ -1,131 +1,120 @@
 import pygame as pg
-import numpy as np
 
-from gui.play_button_label import PlayButtonLabel
-from gui.play_button_triangle import PlayButtonTriangle
-from data.config import *
-
-class PlayButtonData:
-    K = 0.005
-    A_MIN = 3/40 * SCR_H
-    A_MAX = 1.75 * A_MIN
-    B_MIN = 7/120 * SCR_H
-    B_MAX = 1.75 * B_MIN
-    COLOR_MIN = np.array([125., 199., 240.])
-    COLOR_MAX = np.array([176., 213., 231.])
-    COLOR_DELTA = K * (COLOR_MAX - COLOR_MIN)
-    A_DELTA = K * (A_MAX - A_MIN)
-    B_DELTA = K * (B_MAX - B_MIN)
-    VELOCITY = 0.44 * SCR_H/600
+from utils import HF, H
+from gui.text import Text
+from data.paths import FONT_1, PLAY_BUTTON
+from data.colors import WHITE
+from data.gui_texts import PLAY_BUTTON_TEXTS as TEXTS
+from data.config import SCR_H, SCR_W2,  CLOSE, OPEN, WAIT, MAIN_MENU_ANIMATION_TIME as TIME
 
 
-class PlayButton(PlayButtonData):
+class PlayButton:
+    """Button that is used in the Main menu to start the game. """
+    K = 1.75  # scaling factor
+    D = 0.005  # delta factor
+    VEL = HF(0.704)
+    A_MIN = HF(72)
+    B_MIN = HF(56)
+    A_MAX = K * A_MIN
+    B_MAX = K * B_MIN
+    ALPHA_MIN = 210
+    ALPHA_MAX = 255
+    A_DELTA = D * (A_MAX - A_MIN)
+    B_DELTA = D * (B_MAX - B_MIN)
+    ALPHA_DELTA = D * (ALPHA_MAX - ALPHA_MIN)
+
     def __init__(self):
-        self.scaling = False
-        self.visible = True
+        self.visible = True  # flag used not to draw button during hide animation
+
         self.x = SCR_W2
         self.y = SCR_H + self.B_MIN
+
         self.a = self.A_MIN
         self.b = self.B_MIN
-        self.color = self.COLOR_MIN.copy()
 
-        self.label = PlayButtonLabel()
-        self.triangle = PlayButtonTriangle(self.x, self.y)
+        self.label = Text(SCR_W2, HF(680), FONT_1, H(58), WHITE, True)
+        self.label_alpha = 0
 
-    def set_language(self, language):
-        self.label.set_language(language)
+        self.image = pg.image.load(PLAY_BUTTON).convert_alpha()
+        self.alpha = self.ALPHA_MIN
+        self.surface = None
+        self.scale_surface()
 
-    def set_pos(self, state):
-        if state == START_MENU_HIDE:
-            self.x = SCR_W2
-            self.y = 0.875 * SCR_H
-        elif state == START_MENU_SHOW:
-            self.x = SCR_W2
-            self.y = SCR_H + self.b
-        self.triangle.set_pos(self.x, self.y)
-
+    @property
     def cursor_on_button(self) -> bool:
         x, y = pg.mouse.get_pos()
         return (self.x - x) * (self.x - x) / (self.a * self.a) + \
                (self.y - y) * (self.y - y) / (self.b * self.b) <= 1
 
-    def reset(self):
-        self.a = self.A_MIN
-        self.b = self.B_MIN
-        self.scaling = False
-        self.visible = True
-        self.set_pos(START_MENU_SHOW)
-        self.label.minimize()
-        self.triangle.minimize()
+    def set_language(self, language):
+        """Sets label of the button based on input language. """
+        self.label.set_text(TEXTS[language])
+        self.label.set_alpha(self.label_alpha)
 
-    def scale(self, k, dt):
-        self.a += self.A_DELTA * k * dt
-        self.b += self.B_DELTA * k * dt
-        self.color += self.COLOR_DELTA * k * dt
+    def scale_surface(self):
+        self.surface = pg.transform.scale(self.image, (round(2 * self.a), round(2 * self.b)))
+        self.surface.set_alpha(self.alpha)
 
-    def maximize(self):
-        self.a = self.A_MAX
-        self.b = self.B_MAX
-        self.color = self.COLOR_MAX.copy()
+    def scale(self, dt: int, increasing: bool):
+        """Updates the size of the play button and the alpha-value of label
+        based on whether the cursor is on the button.
+        """
+        # do not scale button when it is already maximised/minimised (for better game performance)
+        if ((increasing and self.a == self.A_MAX) or
+                (not increasing and self.a == self.A_MIN)):
+            return
 
-    def minimize(self):
-        self.a = self.A_MIN
-        self.b = self.B_MIN
-        self.color = self.COLOR_MIN.copy()
+        k = 1 if increasing else -1
 
-    def update_size(self, k, dt):
-        self.scale(k, dt)
-        self.triangle.scale(k, dt)
-        self.label.scale(k, dt)
+        self.a += k * self.A_DELTA * dt
+        self.b += k * self.B_DELTA * dt
+        self.alpha += k * self.ALPHA_DELTA * dt
+        self.label_alpha += k * self.D * 255 * dt
 
-        if k > 0 and self.a > self.A_MAX:
-            self.maximize()
-            self.triangle.maximize()
-            self.label.maximize()
-            self.scaling = False
+        if self.a > self.A_MAX:
+            self.a = self.A_MAX
+            self.b = self.B_MAX
+            self.alpha = self.ALPHA_MAX
+            self.label_alpha = 255
 
-        elif k < 0 and self.a < self.A_MIN:
-            self.minimize()
-            self.triangle.minimize()
-            self.label.minimize()
-            self.scaling = False
+        elif self.a < self.A_MIN:
+            self.a = self.A_MIN
+            self.b = self.B_MIN
+            self.alpha = self.ALPHA_MIN
+            self.label_alpha = 0
 
-        else:
-            self.label.update_text_surface()
-            self.scaling = True
+        self.label.set_alpha(self.label_alpha)
+        self.scale_surface()
 
     def move(self, dy):
+        """ Method is called when the Main menu is showing or hiding.
+        Moves the button by the input offset.
+        """
         self.y += dy
-        self.triangle.pos[1] += dy
 
     def update(self, dt, animation_time, state):
-        if state == START_MENU_WAIT:
-            k = 1 if self.cursor_on_button() else -1
-            self.update_size(k, dt)
+        """Updates size, position and visibility of the button
+        based on the state of pause menu.
+        """
+        self.visible = True
+        if state == WAIT:
+            self.scale(dt, self.cursor_on_button)
+        elif state == CLOSE:
+            if animation_time <= 0.2 * TIME:
+                self.visible = bool((animation_time // 50) % 2 != 0)
+            elif animation_time < 0.5 * TIME:
+                self.scale(dt, False)
+            elif animation_time <= 0.7 * TIME:
+                self.move(self.VEL * dt)
+        elif state == OPEN and TIME * 5/6 <= animation_time <= TIME:
+            self.move(-self.VEL * dt)
 
-        elif state == START_MENU_HIDE:
-            if animation_time < 0.2 * START_MENU_ANIMATION_TIME:
-                self.visible = True if (animation_time // 50) % 2 else False
-
-            elif animation_time < 0.5 * START_MENU_ANIMATION_TIME:
-                self.update_size(-1, dt)
-
-            elif animation_time <= START_MENU_ANIMATION_TIME * 2/3:
-                dy = self.VELOCITY * dt
-                self.move(dy)
-
-        elif state == START_MENU_SHOW:
-            if START_MENU_ANIMATION_TIME * 5/6 <= animation_time\
-                    <= START_MENU_ANIMATION_TIME:
-                dy = -self.VELOCITY * dt
-                self.move(dy)
-
-    def draw(self, surface):
+    def draw(self, screen):
         if self.visible:
-            rect = pg.Rect(int(self.x - self.a),
-                           int(self.y - self.b),
-                           int(2 * self.a),
-                           int(2 * self.b))
-            pg.draw.ellipse(surface, self.color, rect)
-            self.triangle.draw(surface)
-        self.label.draw(surface)
+            x = round(self.x - self.surface.get_width() / 2)
+            y = round(self.y - self.surface.get_height() / 2)
+            screen.blit(self.surface, (x, y))
+        self.label.draw(screen)
+
+
+__all__ = ["PlayButton"]

@@ -3,35 +3,35 @@ from math import cos, sin, pi
 import numpy as np
 
 from data.config import *
-
-from data.player import (MAX_HEALTH_00, HEALTH_STATES_00, RADIUS_00, GUN_TYPE_00, BODY_00,
-                         ACC_00, MAX_VEL_00, SUPERPOWER_00, BG_RADIUS_00, PLAYER_PARAMS)
+from data.player import PLAYER_PARAMS
 from data.paths import PLAYER_BULLET_SHOT
-from objects.player_guns import get_gun
+
+from entities.player_guns import get_gun
+from entities.superpowers import *
+from entities.special_effects import add_effect
+
 from objects.bullets import FrangibleBullet, DrillingBullet
 from objects.gun import GunAutomatic
-from superpowers import (get_superpower, Armor, Bombs, HomingMissiles,
-                         ParalysingExplosion, PowerfulExplosion, Teleportation,
-                         Ghost, ExplosionStar, Shurikens, StickyCannon,
-                         PowerfulCannon, StickyExplosion, GiantCannon)
 from objects.base_mob import BaseMob
+
 from utils import circle_collidepoint
-from special_effects import add_effect
 
 
 class Player(BaseMob):
     def __init__(self):
-        BaseMob.__init__(self,
-                         0,
-                         MAX_HEALTH_00,
-                         HEALTH_STATES_00,
-                         RADIUS_00,
-                         BODY_00)
+        (max_health, health_states, radius, body, max_vel, max_acc,
+         gun_type, bg_radius, superpower) = PLAYER_PARAMS[(0, 0)].values()
+
+        super().__init__(0,
+                         max_health,
+                         health_states,
+                         radius,
+                         body)
         self.pos = np.array([SCR_W2, SCR_H2], dtype=float)
-        self.bg_radius = BG_RADIUS_00
-        self.max_vel = MAX_VEL_00
+        self.bg_radius = bg_radius
+        self.max_vel = max_vel
         self.vel_x = self.vel_y = 0
-        self.max_acc = ACC_00
+        self.max_acc = max_acc
         self.acc_x= self.acc_y = 0
 
         self.moving_left = False
@@ -40,30 +40,34 @@ class Player(BaseMob):
         self.moving_down = False
         self.shooting = False
 
-        self.superpower = get_superpower(SUPERPOWER_00)
-        self.gun = get_gun(GUN_TYPE_00)
+        self.superpower = get_superpower(superpower)
+        self.gun = get_gun(gun_type)
 
         self.bullets = []
         self.homing_bullets = []
         self.shurikens = []
 
-        self.max_health = MAX_HEALTH_00
+        self.max_health = max_health
         self.delta_health = 0
 
-        self.state = (0, 0)
-        self.states_history = [(0, 0)]
+        self.tank = (0, 0)
+        self.tanks_history = [(0, 0)]
 
     @property
     def level(self):
-        return self.state[0]
+        return self.tank[0]
 
     @property
     def is_ready_to_upgrade(self):
         return self.level < 5 and self.health >= self.max_health
 
     @property
-    def in_latest_state(self):
-        return self.state == self.states_history[-1]
+    def last_tank_in_history(self):
+        """ Called when player requests tank upgrade.
+        Checks if player's current tank is last in his history of tanks.
+        If so, there is a need to open upgrade menu to choose a new tank.
+        """
+        return self.tank == self.tanks_history[-1]
 
     @property
     def defeated(self):
@@ -79,10 +83,17 @@ class Player(BaseMob):
         return (isinstance(self.superpower, Ghost) and
                 (self.superpower.on or self.superpower.dist != 0))
 
+    def reset(self):
+        self.__init__()
+
     def move(self, dx, dy):
-        self.pos += np.array([dx, dy])
+        self.pos += np.array([dx, dy], dtype=float)
 
     def move_bullets(self, offset):
+        """Method is called when player is being transported to the next room.
+        Moves all player's bullets by given offset to draw them
+        properly during transportation.
+        """
         for bullet in self.bullets:
             bullet.move(*offset)
 
@@ -148,7 +159,7 @@ class Player(BaseMob):
 
     def setup(self, max_health, health_states, radius, body,
               max_vel, max_acc, gun_type, bg_radius, superpower):
-        BaseMob.__init__(self, 0, max_health, health_states, radius, body)
+        super().__init__(0, max_health, health_states, radius, body)
         self.gun = get_gun(gun_type)
         self.superpower = get_superpower(superpower)
         self.bg_radius = bg_radius
@@ -192,9 +203,9 @@ class Player(BaseMob):
             self.max_acc *= 5
         super().make_unfrozen()
 
-    def set_transportation_vel(self, angle, max_vel):
-        self.vel_x = max_vel * cos(angle)
-        self.vel_y = -max_vel * sin(angle)
+    def set_transportation_vel(self, angle, velocity):
+        self.vel_x = velocity * cos(angle)
+        self.vel_y = -velocity * sin(angle)
 
     def clear_bullets(self):
         """
@@ -209,17 +220,14 @@ class Player(BaseMob):
     def upgrade(self, new_state, state=None):
         self.shurikens = []
         if new_state:
-            self.states_history.append(state)
-            self.state = state
-            self.moving_left = False
-            self.moving_right = False
-            self.moving_up = False
-            self.moving_down = False
+            self.tanks_history.append(state)
+            self.tank = state
+            self.stop_moving()
             self.shooting = False
         else:
-            self.state = self.states_history[self.state[0] + 1]
+            self.tank = self.tanks_history[self.tank[0] + 1]
 
-        self.setup(*PLAYER_PARAMS[self.state])
+        self.setup(*PLAYER_PARAMS[self.tank].values())
         if new_state:
             self.shooting = False
 
@@ -233,8 +241,8 @@ class Player(BaseMob):
     def downgrade(self):
         self.shurikens = []
         if self.level >= 1:
-            self.state = self.states_history[self.level - 1]
-            self.setup(*PLAYER_PARAMS[self.state])
+            self.tank = self.tanks_history[self.level - 1]
+            self.setup(*PLAYER_PARAMS[self.tank].values())
             self.health = self.max_health - 1
             self.update_body_look()
 
@@ -246,26 +254,6 @@ class Player(BaseMob):
                 self.make_body_unfrozen()
         else:
             self.health = 0
-
-    def get_next_states(self):
-        i, j = self.state
-
-        if self.state == (2, 3):
-            return (i+1, j), (i+1, j+1), (i+1, j+2)
-
-        if i == 1 or self.state == (4, 0):
-            return (i+1, j), (i+1, j+1)
-
-        elif self.state == (4, 5):
-            return (i+1, j-1), (i+1, j)
-
-        elif self.state == (3, 5):
-            return (i+1, j-2), (i+1, j-1), (i+1, j)
-
-        elif j == 0 or self.state == (0, 0):
-            return (i+1, j), (i+1, j+1), (i+1, j+2)
-
-        return (i+1, j-1), (i+1, j), (i+1, j+1)
 
     def add_bullets(self, dt, sound_player, mobs):
         """
@@ -391,6 +379,18 @@ class Player(BaseMob):
             args = *self.pos, self.bullets, camera
         self.superpower.update(dt, *args)
 
+    def update_during_transportation(self, dt):
+        """Updates player's params during transportation. """
+        self.move(self.vel_x * dt, self.vel_y * dt)
+        self.update_body(dt)
+        self.update_shurikens(dt, [])
+        self.update_frozen_state(dt)
+        self.gun.update_time(dt)
+        if isinstance(self.superpower, Ghost):
+            self.superpower.update(dt, self.body)
+        else:
+            self.superpower.update_time(dt)
+
     def update(self, dt, mobs, top_effects, bottom_effects, camera, sound_player):
         self.update_pos(dt)
         self.update_superpower(dt, mobs, top_effects, bottom_effects, camera, sound_player)
@@ -416,3 +416,6 @@ class Player(BaseMob):
 
         for shuriken in self.shurikens:
             shuriken.draw(surface, dx, dy)
+
+
+__all__ = ["Player"]

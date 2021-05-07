@@ -1,23 +1,25 @@
 from numpy import array
 from random import uniform, choice
-from math import cos, sin
+from math import cos, sin, pi
 
 from objects.mob import Mob
-from utils import circle_collidepoint
-from objects.mob_guns import get_gun
+from utils import circle_collidepoint, HF
+from entities.mob_guns import get_gun
 from data.mobs import *
 
 
 class BossHead(Mob):
     def __init__(self):
         super().__init__(*BOSS_HEAD_PARAMS.values())
+        self.rect_dy = HF(213)
+
 
     def update_pos(self, dt):
         super().update_pos(dt)
-        self.body_rect.y += 240
+        self.body_rect.y += self.rect_dy
 
     def collide_bullet(self, x, y, r):
-        return circle_collidepoint(self.pos[0], self.pos[1] + 160, self.radius + r, x, y)
+        return circle_collidepoint(self.pos[0], self.pos[1] + self.rect_dy, self.radius + r, x, y)
 
     def update_body(self, screen_rect, dt, player_pos=(0, 0)):
         if self.body_rect.colliderect(screen_rect):
@@ -90,7 +92,7 @@ class Spider(Mob):
 class Turret(Mob):
     def __init__(self):
         super().__init__(*TURRET_PARAMS.values())
-        r, fi = uniform(0, 800), uniform(0, 2 * pi)
+        r, fi = uniform(0, HF(800)), uniform(0, 2 * pi)
         d_pos = array([r * cos(fi), -r * sin(fi)])
         self.pos += d_pos
         self.pos_0 += d_pos

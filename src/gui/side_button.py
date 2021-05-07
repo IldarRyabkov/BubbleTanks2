@@ -1,58 +1,50 @@
 import pygame as pg
 
+from data.gui_texts import SIDE_BUTTON_TEXTS as TEXTS
 from data.colors import WHITE
-from data.paths import FONT_2, SIDE_BUTTON, SIDE_BUTTON_CLICKED
-import data.languages.english as eng
-import data.languages.russian as rus
-
-
-BUTTON_TEXT = {
-    "stats_button": {
-        "English": eng.STATSBUTTON_TEXT,
-        "Russian": rus.STATSBUTTON_TEXT
-    },
-    "options_button": {
-        "English": eng.OPTIONSBUTTON_TEXT,
-        "Russian": rus.OPTIONSBUTTON_TEXT
-    },
-    "map_button": {
-    "English": eng.MAPBUTTON_TEXT,
-    "Russian": rus.MAPBUTTON_TEXT
-    }
-}
+from data.paths import FONT_2, SIDE_BUTTON, SIDE_BUTTON_PRESSED
+from utils import H
 
 
 class SideButton:
+    """A button that is used in the pause menu
+    to switch to a specific window.
+    """
     def __init__(self,
                  x: int,
                  y: int,
-                 button_type: str,
+                 name: str,
                  clicked: bool):
         self.x = x
         self.y = y
-        self.w = 96
-        self.h = 160
+        self.w = H(96)
+        self.h = H(160)
         self.clicked = clicked
-        self.type = button_type
+        self.name = name
         self.text = None
         self.text_pos = None
-        self.bg = {False: pg.image.load(SIDE_BUTTON).convert_alpha(),
-                   True: pg.image.load(SIDE_BUTTON_CLICKED).convert_alpha()}
+        size = (self.w, self.h)
+        self.bg = {
+            False: pg.transform.scale(pg.image.load(SIDE_BUTTON).convert_alpha(), size),
+            True: pg.transform.scale(pg.image.load(SIDE_BUTTON_PRESSED).convert_alpha(), size)
+        }
+
+    @property
+    def cursor_on_button(self):
+        x, y = pg.mouse.get_pos()
+        return 0 <= x - self.x <= self.w and 0 <= y - self.y <= self.h
 
     def set_language(self, language):
         pg.font.init()
-        text = BUTTON_TEXT[self.type][language]
-        size = 29 if len(text) >= 10 else 35
-        font = pg.font.Font(FONT_2, size)
-        text = font.render(text, True, WHITE)
-        self.text = pg.transform.rotate(text, 90)
+        text = TEXTS[self.name][language]
+        font = pg.font.Font(FONT_2, H(35) if len(text) < 10 else H(29))
+        self.text = pg.transform.rotate(font.render(text, True, WHITE), 90)
         self.text_pos = (self.x + (self.w - self.text.get_width()) // 2,
                          self.y + (self.h - self.text.get_height()) // 2)
-
-    def cursor_on_button(self):
-        x, y = pg.mouse.get_pos()
-        return abs(self.x - x) <= self.w and abs(self.y - y) <= self.h
 
     def draw(self, screen):
         screen.blit(self.bg[self.clicked], (self.x, self.y))
         screen.blit(self.text, self.text_pos)
+
+
+__all__ = ["SideButton"]

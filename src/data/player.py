@@ -1808,7 +1808,7 @@ params_42 = {
     "body": scaled_body(BODY_42),
     "max_vel": HF(0.89),
     "max_acc": HF(0.0034),
-    "gun_type": 'Gun41',
+    "gun_type": 'Gun42',
     "bg_radius": HF(180),
     "superpower": 'ThreeHomingMissiles'
 }

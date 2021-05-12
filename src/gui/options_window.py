@@ -1,59 +1,76 @@
+from pygame.constants import MOUSEBUTTONDOWN
 import pygame as pg
+import sys
 
 from data.colors import WHITE
-from data.gui_texts import OPTIONS_WINDOW_TEXTS as TEXTS
-from data.paths import CALIBRI_BOLD
-from gui.long_button import LongButton
+from data.gui_texts import *
+from data.paths import FONT_1
+from gui.text_button import TextButton
 from gui.slider import Slider
 from gui.text import Text
-from utils import WF, H, HF
+from utils import H, HF
 
 
 class OptionsWindow:
     """Pause menu window, in which the player can change the volume
     of music and sound, as well as end the game and return to the start menu.
     """
-    def __init__(self, xo, sounds):
-        self.sound_slider = Slider(xo + H(400), H(600))
-        self.music_slider = Slider(xo + H(400), H(400))
-        self.sounds = sounds
-        self.labels = (
-            Text(WF(560), HF(176), CALIBRI_BOLD, H(56), WHITE),
-            Text(xo + HF(180), HF(375), CALIBRI_BOLD, H(56), WHITE),
-            Text(xo + HF(180), HF(575), CALIBRI_BOLD, H(56), WHITE),
-        )
-        self.quit_button = LongButton(xo + H(880), H(832))
+    def __init__(self, xo, sound_player):
+        self.sound_player = sound_player
+        self.music_slider = Slider(xo + H(587), H(400), MUSIC_VOLUME_TEXT, H(38), sound_player)
+        self.sound_slider = Slider(xo + H(587), H(500), SOUND_VOLUME_TEXT, H(38), sound_player)
+        self.caption = Text(xo + HF(587), HF(200), FONT_1, H(50), WHITE, 1)
+        self.to_menu_button = TextButton(xo + H(584), H(610), EXIT_TO_MENU_TEXT, FONT_1, H(38), 210, sound_player)
+        self.to_desktop_button = TextButton(xo + H(584), H(710), EXIT_TO_DESKTOP_TEXT, FONT_1, H(38), 210, sound_player)
 
     def set_language(self, language):
         """Sets the language for quit-button and labels. """
-        self.quit_button.set_text(TEXTS['quit_button'][language])
-        for i, label in enumerate(self.labels):
-            label.set_text(TEXTS['labels'][language][i])
+        self.caption.set_text(OPTIONS_WINDOW_CAPTION[language])
+        self.to_menu_button.set_language(language)
+        self.to_desktop_button.set_language(language)
+        self.sound_slider.set_language(language)
+        self.music_slider.set_language(language)
+
+    def reset(self):
+        self.sound_slider.reset(self.sound_player.master_volume)
+        self.music_slider.reset(self.sound_player.master_volume)
+        self.to_menu_button.reset()
+        self.to_desktop_button.reset()
+
+    def handle_mouse_click(self):
+        if self.to_menu_button.clicked:
+            return True
+        if self.to_desktop_button.clicked:
+            pg.quit()
+            sys.exit()
 
     def handle(self, e_type) -> bool:
-        """Handles mouse click. Returns whether a quit button
-         has not been pressed. """
+        """Handles mouse click. Returns True if one of exit buttons was pressed. """
         self.sound_slider.handle(e_type)
         self.music_slider.handle(e_type)
-        return not (e_type == pg.MOUSEBUTTONDOWN and self.quit_button.cursor_on_button)
-
-    def update_mixer(self):
-        """Updates the volume of sounds and music. """
-        if self.sound_slider.clicked:
-            for sound in self.sounds.values():
-                sound.set_volume(self.sound_slider.value)
-        if self.music_slider.clicked:
-            pg.mixer.music.set_volume(self.music_slider.value)
+        if e_type == MOUSEBUTTONDOWN:
+            if self.to_menu_button.clicked:
+                return True
+            if self.to_desktop_button.clicked:
+                pg.quit()
+                sys.exit()
+        return False
 
     def update(self, dt):
-        self.sound_slider.update()
-        self.music_slider.update()
-        self.update_mixer()
+        self.sound_slider.update(dt)
+        self.music_slider.update(dt)
+        self.to_menu_button.update(dt)
+        self.to_desktop_button.update(dt)
+
+        if self.sound_slider.pressed:
+            self.sound_player.set_sound_volume(self.sound_slider.value)
+        elif self.music_slider.pressed:
+            self.sound_player.set_music_volume(self.music_slider.value)
 
     def draw(self, screen):
-        for label in self.labels:
-            label.draw(screen)
-        self.quit_button.draw(screen)
+        self.caption.draw(screen)
+        self.to_menu_button.draw(screen)
+        self.to_desktop_button.draw(screen)
         self.sound_slider.draw(screen)
         self.music_slider.draw(screen)
 

@@ -42,8 +42,8 @@ class BackgroundEnvironment:
         # New hint widget is a temporary text widget used to draw hint text
         # of the new room during player's transportation.
         # After transportation is done, hint widget is replaced with the new hint widget.
-        self.hint_widget = Text(WF(640), HF(176), FONT_1, H(75), WHITE, centralised=True)
-        self.new_hint_widget = Text(WF(640), HF(176), FONT_1, H(75), WHITE, centralised=True)
+        self.hint_widget = Text(WF(640), HF(176), FONT_1, H(75), WHITE, 1)
+        self.new_hint_widget = Text(WF(640), HF(176), FONT_1, H(75), WHITE, 1)
 
         self.room_glares = (
             RoomGlare(SCR_W2 - HF(550), SCR_H2 - HF(565), HF(320)),

@@ -2,8 +2,8 @@ from pygame import mixer
 from data.paths import *
 
 
-sounds = (BUBBLE_DEATH, MOB_DEATH, PLAYER_BULLET_HIT,
-          PLAYER_BULLET_SHOT, PLAYER_INJURE, THUNDER)
+sounds = (BUBBLE_DEATH, MOB_DEATH, PLAYER_BULLET_HIT, PLAYER_BULLET_SHOT,
+          PLAYER_INJURE, THUNDER, UI_CHOOSE, UI_CLICK)
 
 
 class SoundPlayer:
@@ -14,6 +14,9 @@ class SoundPlayer:
         self.sound_on = True
         self.music_on = True
         self.sound_was_played = False
+        self.master_volume = 0.3
+        self.set_music_volume(self.master_volume)
+        self.set_sound_volume(self.master_volume)
 
     def reset(self):
         self.sound_was_played = False
@@ -22,6 +25,14 @@ class SoundPlayer:
         if self.sound_on and not self.sound_was_played:
             self.sounds[sound].play()
             self.sound_was_played = True
+
+    def set_sound_volume(self, value):
+        for sound in self.sounds:
+            self.sounds[sound].set_volume(value)
+
+    def set_music_volume(self, volume):
+        mixer.music.set_volume(volume)
+        self.master_volume = volume
 
     @staticmethod
     def play_music(music):

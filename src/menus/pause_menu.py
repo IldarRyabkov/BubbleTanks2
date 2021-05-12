@@ -4,13 +4,13 @@ import pygame as pg
 from gui.stats_window import StatsWindow
 from gui.map_window import MapWindow
 from gui.options_window import OptionsWindow
-from gui.exit_button import ExitButton
 from gui.side_button import SideButton
 from gui.text import Text
 from data.paths import FONT_1
 from data.colors import WHITE
 from data.config import *
-from data.gui_texts import PAUSE_MENU_CAPTIONS as CAPTIONS
+from data.gui_texts import (PAUSE_MENU_CAPTION, OPTIONS_WINDOW_CAPTION,
+                            STATS_WINDOW_CAPTION, MAP_WINDOW_CAPTION)
 from utils import H, W
 
 
@@ -19,43 +19,41 @@ class PauseMenu:
     """ Pause menu, which the player can go to during the game.
     Includes statistics window, map window, options window and exit button.
     """
-    def __init__(self, sounds):
+    def __init__(self, game):
+        self.game = game
+
         xo = SCR_W2 - H(584)  # x-coord of  top-left corner of pause menu
 
         self.windows = (
             StatsWindow(xo),
             MapWindow(xo),
-            OptionsWindow(xo, sounds)
+            OptionsWindow(xo, game.sound_player)
         )
         self.current_window = STATS_WINDOW
 
         self.side_buttons = (
-            SideButton(xo, H(160), "stats_button", True),
-            SideButton(xo, H(352), "map_button", False),
-            SideButton(xo, H(544), "options_button", False)
+            SideButton(xo, H(160), STATS_WINDOW_CAPTION, True),
+            SideButton(xo, H(352), MAP_WINDOW_CAPTION, False),
+            SideButton(xo, H(544), OPTIONS_WINDOW_CAPTION, False)
         )
         self.masks = (
             (pg.Surface(SCR_SIZE), (0, 0)),
             (pg.Surface((H(1072), H(760))), (xo + H(96), H(160)))
         )
-        self.masks[0][0].set_alpha(150)
+        self.masks[0][0].set_alpha(175)
         self.masks[1][0].set_alpha(125)
 
         self.bg_surface = pg.Surface(SCR_SIZE)
         self.caption = Text(W(528), H(40), FONT_1, H(56), WHITE)
 
-        self.exit_button = ExitButton(xo)
-
         self.running = True
-        self.game_running = True
-        self.set_language("English")
 
     def set_language(self, language):
         for window in self.windows:
             window.set_language(language)
         for button in self.side_buttons:
             button.set_language(language)
-        self.caption.set_text(CAPTIONS[language])
+        self.caption.set_text(PAUSE_MENU_CAPTION[language])
 
     def reset(self):
         """Method is called when a new game is started. Resets map
@@ -63,23 +61,19 @@ class PauseMenu:
         Also sets stats window as a current window.
         """
         self.windows[MAP_WINDOW].reset()
+        self.windows[OPTIONS_WINDOW].reset()
         self.windows[STATS_WINDOW].set_player_stats((0, 0))
         self.set_current_window(STATS_WINDOW)
 
     def set_current_window(self, window):
-        self.side_buttons[self.current_window].clicked = False
+        self.side_buttons[self.current_window].pressed = False
         self.current_window = window
-        self.side_buttons[self.current_window].clicked = True
+        self.side_buttons[self.current_window].pressed = True
         if window == MAP_WINDOW:
             self.windows[MAP_WINDOW].map.reset_offset()
 
     def set_stats_window(self, player_state):
         self.windows[STATS_WINDOW].set_player_stats(player_state)
-
-    def set(self):
-        self.running = True
-        self.game_running = True
-        self.windows[MAP_WINDOW].map.reset_offset()
 
     def update_map_data(self, room_pos, boss_state):
         """Adds information about visited room and boss location to the map. """
@@ -88,17 +82,16 @@ class PauseMenu:
             self.windows[MAP_WINDOW].map.boss_aim.pos = room_pos
 
     def handle_mouse_click(self, e_type):
+        """Handles situations when mouse left button was pressed or unpressed. """
         if self.current_window == OPTIONS_WINDOW:
-            self.running = self.game_running = self.windows[OPTIONS_WINDOW].handle(e_type)
+            self.running = self.game.running = not self.windows[OPTIONS_WINDOW].handle(e_type)
 
         elif self.current_window == MAP_WINDOW:
             self.windows[MAP_WINDOW].map.handle_mouse_click(e_type)
 
         if e_type == pg.MOUSEBUTTONDOWN:
-            if self.exit_button.cursor_on_button:
-                self.running = False
             for window, button in enumerate(self.side_buttons):
-                if button.cursor_on_button:
+                if button.clicked:
                     self.set_current_window(window)
                     break
 
@@ -113,18 +106,41 @@ class PauseMenu:
                     event.button == pg.BUTTON_LEFT):
                 self.handle_mouse_click(event.type)
 
-    def update(self, dt):
-        self.windows[self.current_window].update(dt)
-
     def draw(self, screen):
+        """Draws all objects in the background and pause menu items. """
+        screen.blit(self.bg_surface, (0, 0))
+
+        self.game.draw_foreground()
+
         for mask, pos in self.masks:
             screen.blit(mask, pos)
         self.caption.draw(screen)
         self.windows[self.current_window].draw(screen)
         for button in self.side_buttons:
             button.draw(screen)
-        self.exit_button.draw(screen)
         pg.display.update()
+
+    def run(self):
+        """Pause menu loop which starts when player pressed pause key. """
+        self.game.draw_background(self.bg_surface)
+        self.game.player.stop_moving()
+
+        self.running = True
+        self.game.dt = 0
+
+        self.windows[MAP_WINDOW].map.reset_offset()
+        self.windows[OPTIONS_WINDOW].reset()
+
+        while self.running:
+            self.handle_events()
+
+            self.game.update_scaling_objects()
+            self.windows[self.current_window].update(self.game.dt)
+
+            self.draw(self.game.screen)
+
+            self.game.dt = self.game.clock.tick()
+            self.game.fps_manager.update(self.game.dt)
 
 
 __all__ = ["PauseMenu"]

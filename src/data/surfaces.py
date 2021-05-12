@@ -13,7 +13,7 @@ import os
 from math import hypot, cos, sin, pi, sqrt
 
 from data.colors import *
-from data.paths import ROOT_DIR, FONT_1
+from data.paths import *
 from data.languages.english import UPGRADEMENU_CAPTION as ENG_UPG_CAPTION
 from data.languages.russian import UPGRADEMENU_CAPTION as RUS_UPG_CAPTION
 
@@ -413,6 +413,57 @@ def upgrade_button_wide_pressed() -> pg.Surface:
     return upgrade_button(900, WHITE)
 
 
+def settings_button() -> pg.Surface:
+    r = 250
+    color = (176, 213, 231)
+
+    rect_surface  = pg.Surface((2 * r, 100))
+    rect_surface.fill(RED)
+    pg.draw.rect(rect_surface, color, rect_surface.get_rect(), border_radius=15)
+    rect_surface.set_colorkey(RED)
+
+    surface = pg.Surface((2 * r, 2 * r))
+    surface.fill(RED)
+    for i in range(4):
+        rotated = pg.transform.rotate(rect_surface, 45 * i)
+        x = r - rotated.get_width() // 2
+        y = r - rotated.get_height() // 2
+        surface.blit(rotated, (x, y))
+
+    pg.draw.circle(surface, color, (r, r), 215)
+    pg.draw.circle(surface, WHITE, (r, r), 134)
+    pg.draw.circle(surface, RED, (r, r), 110)
+    surface.set_colorkey(RED)
+
+    main_surface = pg.Surface((2 * r, 2 * r), pg.SRCALPHA)
+    main_surface.blit(surface, (0, 0))
+    return main_surface
+
+
+def info_button() -> pg.Surface:
+    r = 250
+    color = (176, 213, 231)
+
+    surface = pg.Surface((2 * r, 2 * r))
+    surface.fill(RED)
+    pg.draw.circle(surface, color, (r, r), 250)
+
+    pg.font.init()
+    font = pg.font.Font(FONT_1, 405)
+    text = font.render('i', False, WHITE)
+    surface.blit(text, (r - text.get_width() // 2, r - text.get_height() // 2 + 30))
+    font = pg.font.Font(FONT_1, 240)
+    text = font.render('i', False, RED)
+    text = pg.transform.scale(text, (102, 360))
+    surface.blit(text, (r - text.get_width()//2 - 1, r - text.get_height()//2 + 30))
+
+    surface.set_colorkey(RED)
+
+    main_surface = pg.Surface((2 * r, 2 * r), pg.SRCALPHA)
+    main_surface.blit(surface, (0, 0))
+    return main_surface
+
+
 def play_button() -> pg.Surface:
     a = 72 * 5
     b = 56 * 5
@@ -425,7 +476,7 @@ def play_button() -> pg.Surface:
     triangle_pos = np.array([a, b])
 
     pg.draw.polygon(surface, WHITE, edge_dots + triangle_pos)
-    pg.draw.polygon(surface, TRIANGLE_COLOR_MAX, dots + triangle_pos)
+    pg.draw.polygon(surface, RED, dots + triangle_pos)
 
     surface.set_colorkey(RED)
     main_surface = pg.Surface((2 * a, 2 * b), pg.SRCALPHA)
@@ -433,4 +484,31 @@ def play_button() -> pg.Surface:
     return main_surface
 
 
-#save(play_button(), 'play_button')
+def scroll_button() -> pg.Surface:
+    w = 340 * 2
+    h = 56 * 2
+    surface = pg.Surface((w, h))
+    surface.fill(RED)
+
+    triangle_w = round(0.05 * w)
+    triangle_h = round(0.8 * h)
+    triangles = (
+        (
+            (1, h // 2),
+            (triangle_w, (h - triangle_h) // 2),
+            (triangle_w, (h + triangle_h) // 2)),
+        (
+            (w - triangle_w, (h - triangle_h) // 2),
+            (w - triangle_w, (h + triangle_h) // 2),
+            (w - 1, h // 2))
+    )
+    for triangle in triangles:
+        pg.draw.polygon(surface, WHITE, triangle)
+
+    surface.set_colorkey(RED)
+    main_surface = pg.Surface((w, h), pg.SRCALPHA)
+    main_surface.blit(surface, (0, 0))
+    return main_surface
+
+
+#save(scroll_button(), 'scroll_button')

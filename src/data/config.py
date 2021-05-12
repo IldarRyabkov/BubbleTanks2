@@ -1,9 +1,8 @@
-from pygame import display
+from .resolution import get_resolution
 
 
 # screen
-display.init()
-SCR_W, SCR_H = display.list_modes()[0]  # The height MUST be a multiple of 6!
+SCR_W, SCR_H = get_resolution()
 SCR_W2 = SCR_W // 2
 SCR_H2 = SCR_H // 2
 SCR_SIZE = (SCR_W, SCR_H)
@@ -14,8 +13,11 @@ WIDTH_SCALE_FACTOR = SCR_W / 1280
 OPEN = 1
 WAIT = 0
 CLOSE = -1
-MAIN_MENU_ANIMATION_TIME = 1500
+
+MAIN_MENU_ANIMATION_TIME = 1000
+MAIN_MENU_AWAKE_TIME = 600
 UPGRADE_MENU_ANIMATION_TIME = 350
+TEXTS_ANIMATION_TIME = 500
 
 # upgrade buttons
 UPG_BUTTON_LEFT = 0
@@ -77,6 +79,9 @@ __all__ = [
     "UPG_BUTTON_CENTER",
     "UPG_BUTTON_RIGHT",
     "UPG_BUTTON_WIDE_LEFT",
-    "UPG_BUTTON_WIDE_RIGHT"
+    "UPG_BUTTON_WIDE_RIGHT",
+    "HEIGHT_SCALE_FACTOR",
+    "WIDTH_SCALE_FACTOR",
+    "TEXTS_ANIMATION_TIME"
 
 ]

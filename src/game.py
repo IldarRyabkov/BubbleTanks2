@@ -8,8 +8,7 @@ import platform
 
 from data.config import *
 from data.cursor import CURSOR
-from data.paths import (GAME_MUSIC, START_MUSIC, PLAYER_BULLET_HIT,
-                        MOB_DEATH, BUBBLE_DEATH, PLAYER_INJURE)
+from data.paths import *
 
 from menus.upgrade_menu import UpgradeMenu
 from menus.victory_menu import VictoryMenu
@@ -73,10 +72,10 @@ class Game:
         self.room = Room()
         self.mob_generator = MobGenerator()
 
-        self.main_menu = MainMenu()
-        self.upgrade_menu = UpgradeMenu()
-        self.victory_menu = VictoryMenu()
-        self.pause_menu = PauseMenu(self.sound_player.sounds)
+        self.main_menu = MainMenu(self)
+        self.upgrade_menu = UpgradeMenu(self)
+        self.victory_menu = VictoryMenu(self)
+        self.pause_menu = PauseMenu(self)
 
         self.health_window = HealthWindow()
         self.cooldown_window = CooldownWindow()
@@ -84,6 +83,10 @@ class Game:
 
         self.key_handlers = defaultdict(list)
         self.init_key_handlers()
+
+    @property
+    def language(self):
+        return self.main_menu.language
 
     def reset_data(self):
         """Method is called when the game has started. Resets
@@ -97,6 +100,7 @@ class Game:
         self.set_windows()
         self.room.reset()
         self.pause_menu.reset()
+        self.victory_menu.reset()
         self.running = True
         self.transportation = False
         self.dt = 0
@@ -138,7 +142,7 @@ class Game:
         if (e_type ==  pg.KEYDOWN and
                 e_key in [pg.K_p, pg.K_ESCAPE]
                 and not self.transportation):
-            self.run_pause_menu()
+            self.pause_menu.run()
 
     def init_key_handlers(self):
         self.key_handlers[pg.K_a].append(self.handle)
@@ -186,7 +190,7 @@ class Game:
 
     def handle_player_upgrade(self):
         if self.player.last_tank_in_history:
-            self.run_upgrade_menu()
+            self.upgrade_menu.run()
             self.player.upgrade(True, self.upgrade_menu.chosen_tank)
             if self.player.level == 2:
                 self.bg_environment.prepare_superpower_hint()
@@ -452,7 +456,7 @@ class Game:
         self.room.update(self.player.pos,  self.dt)
         if self.room.boss_defeated(self.bg_environment.boss_disposition):
             self.running = False
-            self.run_victory_menu()
+            self.victory_menu.run()
         else:
             self.update_windows(self.dt)
             self.check_transportation()
@@ -500,132 +504,22 @@ class Game:
         for bullet in self.room.bullets:
             bullet.update_body(self.dt)
 
-    def update_pause_menu(self):
-        """Updates the background objects and all the items of the Pause menu.
-        Since the objects in the background do not move or interact with each
-        other while the Pause menu is running, only their bodies are updated.
-        """
-        self.update_scaling_objects()
-        self.pause_menu.update(self.dt)
-
-    def update_victory_menu(self):
-        """Updates the background objects and all the items of the Victory menu.
-        Since the objects in the background do not move or interact with each
-        other while the Victory menu is running, only their bodies are updated.
-        """
-        self.update_scaling_objects()
-        self.victory_menu.update(self.dt)
-
-    def draw_pause_menu(self):
-        """Draws all objects in the background and pause menu items. """
-        self.screen.blit(self.pause_menu.bg_surface, (0, 0))
-        self.draw_foreground()
-        self.pause_menu.draw(self.screen)
-
-    def draw_victory_menu(self):
-        """Draws all objects in the background and victory menu items. """
-        self.screen.blit(self.victory_menu.bg_surface, (0, 0))
-        self.draw_foreground()
-        self.victory_menu.draw(self.screen)
-
-    def run_main_menu_animation(self, state):
-        """Main menu animation loop which begins when
-        the main menu starts opening or closing.
-        """
-        self.clock.tick()
-        dt = animation_time = 0
-        while animation_time <= MAIN_MENU_ANIMATION_TIME:
-            self.main_menu.handle_events(animation=True)
-            self.main_menu.update(dt, animation_time, state)
-            self.main_menu.draw(self.screen)
-            dt = self.clock.tick()
-            self.fps_manager.update(dt)
-            animation_time += dt
-
-    def run_main_menu(self):
-        """Main menu loop which starts at the beginning of the main loop. """
-        self.sound_player.play_music(START_MUSIC)
-        self.main_menu.__init__(self.main_menu.language)
-        self.run_main_menu_animation(OPEN)
-        self.clock.tick()
-        dt = 0
-        while self.main_menu.running:
-            self.main_menu.handle_events()
-            self.main_menu.update(dt)
-            self.main_menu.draw(self.screen)
-            dt = self.clock.tick()
-            self.fps_manager.update(dt)
-        self.run_main_menu_animation(CLOSE)
-
-    def run_pause_menu(self):
-        """Pause menu loop which starts when player pressed pause key. """
-        self.draw_background(self.pause_menu.bg_surface)
-        self.player.stop_moving()
-        self.pause_menu.set()
-        while self.pause_menu.running:
-            self.pause_menu.handle_events()
-            self.update_pause_menu()
-            self.draw_pause_menu()
-            self.dt = self.clock.tick()
-            self.fps_manager.update(self.dt)
-        self.running = self.pause_menu.game_running
-
-    def run_upgrade_menu_animation(self, action):
-        """Upgrade menu animation loop which begins when
-        the upgrade menu starts opening or closing.
-        """
-        self.clock.tick()
-        dt = animation_time = 0
-        while animation_time <=UPGRADE_MENU_ANIMATION_TIME:
-            self.upgrade_menu.handle_events(animation=True)
-            self.upgrade_menu.update_pos(dt, action)
-            self.upgrade_menu.draw(self.screen)
-            dt = self.clock.tick()
-            self.fps_manager.update(dt)
-            animation_time += dt
-
-    def run_upgrade_menu(self):
-        """Pause menu loop which starts when player collected
-        enough bubbles to upgrade his tank.
-        """
-        self.upgrade_menu.set(self.player.tank)
-        # The current game screen will be a static background for the upgrade menu.
-        self.upgrade_menu.bg_surface.blit(self.screen, (0, 0))
-        self.run_upgrade_menu_animation(OPEN)
-        while self.upgrade_menu.running:
-            self.upgrade_menu.handle_events()
-            self.upgrade_menu.draw(self.screen)
-        self.run_upgrade_menu_animation(CLOSE)
-        self.clock.tick()
-
-    def run_victory_menu(self):
-        """Victory menu loop which starts after the Boss is defeated. """
-        self.draw_background(self.victory_menu.bg_surface)
-        self.victory_menu.running = True
-        while self.victory_menu.running:
-            self.victory_menu.handle_events()
-            self.update_victory_menu()
-            self.draw_victory_menu()
-            self.dt = self.clock.tick()
-            self.fps_manager.update(self.dt)
-        self.running = False
-
     def run_game(self):
         """ Game loop that starts when the main menu is closed. """
         self.sound_player.play_music(GAME_MUSIC)
         while self.running:
-            self.handle_events()
             self.update()
             self.draw_background(self.screen)
             self.draw_foreground()
             pg.display.update()
             self.dt = self.clock.tick()
             self.fps_manager.update(self.dt)
+            self.handle_events()
 
     def run(self):
         """Main game loop. """
         while True:
-            self.run_main_menu()
+            self.main_menu.run()
             self.reset_data()
             self.run_game()
 

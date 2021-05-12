@@ -1,7 +1,7 @@
 from math import pi, atan, hypot, cos, sin
 import numpy as np
 
-from data.config import HEIGHT_SCALE_FACTOR, WIDTH_SCALE_FACTOR
+from data.config import *
 from data.colors import *
 
 
@@ -151,25 +151,6 @@ def WF(v: float):
     return v * WIDTH_SCALE_FACTOR
 
 
-def get_next_tanks(current_tank):
-    """Returns new tanks available for player. """
-    level, i = current_tank
-    new_level = level + 1
-
-    if level in (0, 2):
-        indexes = (i, i + 1, i + 2)
-    elif level == 1:
-        indexes = (i, i + 1)
-    elif i == 0:
-        indexes = (i, i + 1, i + 2)
-    elif i == 5:
-        indexes = (i - 2, i - 1, i)
-    else:
-        indexes = (i - 1, i, i + 1)
-
-    return [(new_level, new_index) for new_index in indexes]
-
-
 __all__ = [
 
     "calculate_angle",
@@ -185,7 +166,6 @@ __all__ = [
     "W",
     "HF",
     "WF",
-    "get_next_tanks",
     "scaled_body"
 
 ]

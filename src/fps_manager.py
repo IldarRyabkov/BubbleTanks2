@@ -1,6 +1,5 @@
-import pygame as pg
-
 ONE_SECOND = 1000
+
 
 class FPSManager:
     dt_history = []
@@ -24,3 +23,4 @@ class FPSManager:
             print(fps)
 
 
+__all__ = ["FPSManager"]

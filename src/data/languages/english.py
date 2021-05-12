@@ -1,8 +1,9 @@
-# StartMenu text data
-MAIN_MENU_CAPTION = ['Underwater battles']
+# Main menu text data
 PLAY_BUTTON = ['PLAY']
+MAIN_MENU_BUTTONS = ['PLAY'], ['Settings'], ['About game']
 
-# Level generator text data
+SETTINGS_WINDOW_LABELS = ['Settings'], ['Language'], ['Resolution'], ['Master volume']
+
 ROOM_TEXTS = [
               ['       W', 'Use A S D', 'to move.',
                ' Use mouse to aim,', 'hold down the left ', 'mouse button',
@@ -28,13 +29,10 @@ ROOM_TEXTS = [
               ]
 
 # PauseMenu text data
-STATSWINDOW_CAPTIONS = [['Statistics'], ['Main weapon'], ['Second weapon']]
-MAPWINDOW_CAPTION = ['Map']
 OPTIONSWINDOW_CAPTION = ['Options']
-OPTIONSWINDOW_LABEL_MUSIC = ['Music']
-OPTIONSWINDOW_LABEL_SOUND = ['Sound']
+OPTIONSWINDOW_LABEL_MUSIC = ['Music volume']
+OPTIONSWINDOW_LABEL_SOUND = ['Sound volume']
 OPTIONSWINDOW_QUIT_BUTTON = ['MAIN MENU']
-PAUSEMENU_CAPTION = ['PAUSE']
 STATSBUTTON_TEXT = 'Statistics'
 MAPBUTTON_TEXT = 'Map'
 OPTIONSBUTTON_TEXT = 'Options'
@@ -192,15 +190,7 @@ UPGRADE_TEXT = {
     (5, 5): UPG_TEXT_55
 }
 
-UPGRADEMENU_LABELS = [['Upgrade!'], ['- Main weapon -'], ['- Second weapon -']]
 UPGRADEMENU_CAPTION = 'Choose your upgrade...'
-
-# VictoryMenu text data
-VICTORYMENU_LABELS = [['CONGRATULATIONS!'], ['You passed the game!']]
-VICTORYMENU_BUTTON = ['Back to menu']
-
-# CooldownWindow text data
-WINDOW_COOLDOWN_LABELS = [['M:'], ['S:']]
 
 # HealthWindow text data
 TANK_NAMES = {
@@ -231,5 +221,3 @@ TANK_NAMES = {
     (5, 4): ['Super Heavy'],
     (5, 5): ['APC carrier']
 }
-
-BUBBLES_TEXTS = [[' bubbles left'], ['Maximum tank']]

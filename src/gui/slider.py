@@ -1,44 +1,77 @@
 import pygame as pg
 
+from gui.text import Text
+from gui.scaling_button import ScalingButton
 from data.colors import *
+from data.paths import FONT_1
 from utils import H
 
 
-class Slider:
-    def __init__(self, x: int, y: int):
+class Slider(ScalingButton):
+    def __init__(self, x, y, label_texts, font_size, sound_player):
+        super().__init__(x, y, H(960), H(56), 0.92, 200, label_texts, sound_player)
         self.value = 1
-        self.x = x
-        self.y = y
-        self.w = H(400)
-        self.h = H(10)
-        self.circle_r = int(self.h * 2.5)
-        self.circle_x = self.x + self.w - self.circle_r
-        self.clicked = False
-        self.click_area = pg.Rect(self.x,
-                                  self.y + self.h // 2 - self.circle_r,
-                                  self.w,
-                                  self.circle_r * 2)
+
+        self.line_w = H(370)
+        self.line_h = H(7)
+
+        self.empty_line = pg.Rect(self.w//2 + H(40), (self.h - self.line_h)//2, self.line_w, self.line_h)
+        self.filled_line = self.empty_line.copy()
+        self.slider_rect = pg.Rect(self.empty_line.right - H(6) , 0, H(12), self.h)
+
+        self.click_area = pg.Rect(self.x + H(40), self.y - self.h//2, self.line_w, self.h)
+
+        self.zoom_area.w -= H(100)
+        self.zoom_area.x += H(50)
+
+        self.text_widget = Text(self.w//2 - H(40), H(10), FONT_1, font_size, WHITE, 2)
+
+        self.pressed = False
+
+    @property
+    def cursor_on_slider(self):
+        return self.click_area.collidepoint(pg.mouse.get_pos())
+
+    @property
+    def cursor_on_button(self) -> bool:
+        return super().cursor_on_button or self.pressed
+
+    def render_surface(self):
+        self.surface.fill((0, 0, 0, 0))
+        self.text_widget.draw(self.surface)
+        pg.draw.rect(self.surface, GREY_2, self.empty_line, border_radius=3)
+        pg.draw.rect(self.surface, WHITE, self.filled_line, border_radius=3)
+        pg.draw.rect(self.surface, WHITE, self.slider_rect, border_radius=6)
+        self.set_scaled_surface()
 
     def handle(self, e_type):
         if e_type == pg.MOUSEBUTTONUP:
-            self.clicked = False
-        elif self.click_area.collidepoint(*pg.mouse.get_pos()):
-            self.clicked = True
+            self.pressed = False
+        elif self.cursor_on_slider:
+            self.pressed = True
 
-    def update(self):
-        if self.clicked:
+    def reset(self, value):
+        self.set_value(value)
+        self.pressed = False
+        super().reset()
+
+    def set_value(self, value):
+        self.value = value
+        self.slider_rect.centerx = self.w//2 + H(40) + value * self.line_w
+        self.filled_line.w = value * self.line_w
+
+    def update_wait(self, dt):
+        super().update_wait(dt)
+        if self.pressed:
             x = pg.mouse.get_pos()[0]
-            x_min = self.x + self.circle_r
-            if x < x_min:
-                self.circle_x = x_min
-            else:
-                self.circle_x = min(self.x + self.w - self.circle_r, x)
-            self.value = (self.circle_x - x_min) / (self.w - 2 * self.circle_r)
+            new_value = (x - self.x - H(40)) / self.line_w
+            if new_value < 0:
+                new_value = 0
+            elif new_value > 1:
+                new_value = 1
+            if self.value != new_value:
+                self.set_value(new_value)
+                self.render_surface()
 
-    def draw(self, screen):
-        r = self.h // 2
-        pg.draw.circle(screen, WHITE, (self.x + self.w - r, self.y + r), r)
-        pg.draw.rect(screen, WHITE, pg.Rect(self.x + r, self.y, self.w - self.h, self.h))
-        pg.draw.circle(screen, BLUE, (self.x + r, self.y + r), r)
-        pg.draw.rect(screen, BLUE, pg.Rect(self.x + r, self.y, self.circle_x - self.x, self.h))
-        pg.draw.circle(screen, BLUE, (self.circle_x, self.y + r), self.circle_r)
+
+__all__ = ["Slider"]

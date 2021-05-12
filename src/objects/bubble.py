@@ -104,3 +104,7 @@ class Bubble:
                 x = round(self.x - radius - dx)
                 y = round(self.y - radius - dy)
                 surface.blit(self.halo, (x, y))
+
+
+__all__ = ["Bubble"]
+

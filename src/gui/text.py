@@ -10,17 +10,19 @@ class Text:
                  font: str,
                  size: int,
                  color: tuple,
-                 centralised=False):
+                 align=0,
+                 hidden=False):
         pg.font.init()
         self.font = pg.font.Font(font, size)
         self.x = x
         self.y = y
         self.color = color
-        self.centralised = centralised
+        self.align = align
         self.surfaces = []   # list of text surfaces with their coords
         self.w = 0
         self.h = 0
         self.letter_h = self.font.size('A')[1]
+        self.hidden = hidden
 
     @property
     def is_on_screen(self) -> bool:
@@ -40,7 +42,9 @@ class Text:
         self.surfaces = []
         for i, string in enumerate(text):
             surface = self.font.render(string, True, self.color)
-            x = -surface.get_width() / 2 if self.centralised else 0
+            if self.align == 0: x = 0
+            elif self.align == 1: x = -surface.get_width() / 2
+            else: x = -surface.get_width()
             y = i * self.letter_h
             self.surfaces.append([surface, x, y])
 
@@ -61,9 +65,10 @@ class Text:
         self.y = y
 
     def draw(self, screen, dx=0, dy=0):
-        if self.is_on_screen:
-            for surface, x, y in self.surfaces:
-                screen.blit(surface, (round(self.x + x - dx), round(self.y + y - dy)))
+        if not self.is_on_screen or self.hidden:
+            return
+        for surface, x, y in self.surfaces:
+            screen.blit(surface, (round(self.x + x - dx), round(self.y + y - dy)))
 
 
 __all__ = ["Text"]

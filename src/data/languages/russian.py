@@ -1,6 +1,8 @@
-# StartMenu text data
-MAIN_MENU_CAPTION = ['Подводные битвы']
+# MainMenu text data
 PLAY_BUTTON = ['ИГРАТЬ']
+MAIN_MENU_BUTTONS = ['ИГРАТЬ'], ['Настройки'], ['Об игре']
+
+SETTINGS_WINDOW_LABELS = ['Настройки'], ['Язык'], ['Разрешение'], ['Общая громкость']
 
 # LevelGenerator text data
 ROOM_TEXTS = [
@@ -28,13 +30,10 @@ ROOM_TEXTS = [
              ]
 
 # PauseMenu text data
-STATSWINDOW_CAPTIONS = [['Статистика'], ['Основное оружие'], ['Второе оружие']]
-MAPWINDOW_CAPTION = ['Карта']
 OPTIONSWINDOW_CAPTION = ['Опции']
-OPTIONSWINDOW_LABEL_MUSIC = ['Музыка']
-OPTIONSWINDOW_LABEL_SOUND = ['Звук']
+OPTIONSWINDOW_LABEL_MUSIC = ['Громкость музыки']
+OPTIONSWINDOW_LABEL_SOUND = ['Громкость звука']
 OPTIONSWINDOW_QUIT_BUTTON = ['ГЛАВНОЕ МЕНЮ']
-PAUSEMENU_CAPTION = ['ПАУЗА']
 STATSBUTTON_TEXT = 'Статистика'
 MAPBUTTON_TEXT = 'Карта'
 OPTIONSBUTTON_TEXT = 'Опции'
@@ -198,15 +197,7 @@ UPGRADE_TEXT = {
     (5, 5): UPG_TEXT_55
 }
 
-UPGRADEMENU_LABELS = [['Улучшение!'], ['- Основное оружие -'], ['- Второе оружие -']]
 UPGRADEMENU_CAPTION = 'Выбирай улучшение...'
-
-# VictoryMenu text data
-VICTORYMENU_LABELS = [['ПОЗДРАВЛЯЕМ!'], ['Ты прошел игру!']]
-VICTORYMENU_BUTTON = ['Назад в меню']
-
-# CooldownWindow text data
-WINDOW_COOLDOWN_LABELS = [['О:'], ['В']]
 
 # HealthWindow text data
 TANK_NAMES = {
@@ -237,5 +228,3 @@ TANK_NAMES = {
     (5, 4): ['Супер Тяжелый'],
     (5, 5): ['БЗТ перевозчик']
 }
-
-BUBBLES_TEXTS = [[' пузырей осталось'], ['Максимальный танк']]

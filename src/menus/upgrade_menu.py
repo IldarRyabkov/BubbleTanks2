@@ -4,7 +4,6 @@ import pygame as pg
 from gui.upgrade_button import UpgradeButton
 from gui.upgrade_menu_caption import UpgradeMenuCaption
 from data.config import *
-from utils import get_next_tanks
 
 
 class UpgradeMenu:
@@ -13,35 +12,35 @@ class UpgradeMenu:
     player is asked to choose one of several tank improvements.
     When the player chooses a new tank, the upgrade menu closes.
     """
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
+
         self.caption = UpgradeMenuCaption()
         self.buttons = []
         self.chosen_tank = None
-        self.language = "English"
         self.running = False
         self.bg_surface = pg.Surface(SCR_SIZE)
 
+    def get_next_tanks(self):
+        """Returns new tanks available for player. """
+        level, i = self.game.player.tank
+        new_level = level + 1
+
+        if level in (0, 2):
+            indexes = (i, i + 1, i + 2)
+        elif level == 1:
+            indexes = (i, i + 1)
+        elif i == 0:
+            indexes = (i, i + 1, i + 2)
+        elif i == 5:
+            indexes = (i - 2, i - 1, i)
+        else:
+            indexes = (i - 1, i, i + 1)
+
+        return [(new_level, new_index) for new_index in indexes]
+
     def set_language(self, language):
         self.caption.set_language(language)
-
-    def set(self, player_tank):
-        """Method is called when upgrade menu starts running.
-        Sets all upgrade buttons based on player's current tank.
-        """
-        self.running = True
-
-        new_tanks = get_next_tanks(player_tank)
-        if len(new_tanks) == 3:
-            self.buttons = (
-                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], self.language),
-                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], self.language),
-                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], self.language)
-            )
-        else:
-            self.buttons = (
-                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], self.language),
-                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], self.language)
-            )
 
     def handle_mouse_click(self):
         """Method is called when mouse button is pressed.
@@ -66,18 +65,61 @@ class UpgradeMenu:
                   and e.button == pg.BUTTON_LEFT):
                 self.handle_mouse_click()
 
-    def update_pos(self, dt, action):
-        """Method is called during menu opening/closing animations.
-        Updates positions of buttons and caption.
+    def run_animation(self, action):
+        """Upgrade menu animation loop which begins when
+        the upgrade menu starts opening or closing.
         """
-        for button in self.buttons:
-            button.update_pos(dt, action)
-        self.caption.update_pos(dt, action)
+        self.game.clock.tick()
+        dt = animation_time = 0
+        while animation_time <=UPGRADE_MENU_ANIMATION_TIME:
+            self.handle_events(animation=True)
 
-    def draw(self, screen):
+            for button in self.buttons:
+                button.update_pos(dt, action)
+            self.caption.update_pos(dt, action)
+
+            self.draw()
+
+            dt = self.game.clock.tick()
+            self.game.fps_manager.update(dt)
+            animation_time += dt
+
+    def run(self):
+        self.running = True
+
+        new_tanks = self.get_next_tanks()
+        lang = self.game.language
+        if len(new_tanks) == 3:
+            self.buttons = (
+                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], lang),
+                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], lang),
+                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], lang)
+            )
+        else:
+            self.buttons = (
+                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], lang),
+                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], lang)
+            )
+
+        self.bg_surface.blit(self.game.screen, (0, 0))
+
+        self.run_animation(OPEN)
+
+        while self.running:
+            self.handle_events()
+            self.draw()
+
+        self.run_animation(CLOSE)
+
+        self.game.clock.tick()
+
+    def draw(self):
         """Draws menu background, buttons and caption. """
-        screen.blit(self.bg_surface, (0, 0))
+        self.game.screen.blit(self.bg_surface, (0, 0))
         for button in self.buttons:
-            button.draw(screen)
-        self.caption.draw(screen)
+            button.draw(self.game.screen)
+        self.caption.draw(self.game.screen)
         pg.display.update()
+
+
+__all__ = ["UpgradeMenu"]

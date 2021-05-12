@@ -9,7 +9,9 @@ import sys
 
 
 def path(directory: str, filename: str):
-    return os.path.abspath(os.path.join(ROOT_DIR, "%s/%s" % (directory, filename)))
+    if directory:
+        return os.path.abspath(os.path.join(ROOT_DIR, "%s/%s" % (directory, filename)))
+    return os.path.abspath(os.path.join(ROOT_DIR, "%s" % filename))
 
 
 def img_path(filename: str): return path("images", filename)
@@ -44,9 +46,10 @@ TELEPORTATION = img_path("teleportation.png")
 HEALTH_WINDOW_BG = img_path("health_window_bg.png")
 COOLDOWN_WINDOW_BG = img_path("cooldown_window_bg.png")
 BUBBLE_HALO = img_path("bubble_halo.png")
-RUS_FLAG = img_path("russian_flag.png")
-ENG_FLAG = img_path("english_flag.png")
 PLAY_BUTTON = img_path("play_button.png")
+SETTINGS_BUTTON = img_path("settings_button.png")
+INFO_BUTTON = img_path("info_button.png")
+SCROLL_BUTTON = img_path("scroll_button.png")
 
 # fonts
 FONT_1 = font_path('font_1.otf')
@@ -66,6 +69,10 @@ PLAYER_BULLET_HIT = sound_path('player_bullet_hit.wav')
 PLAYER_BULLET_SHOT = sound_path('player_bullet_shot.wav')
 PLAYER_INJURE = sound_path('player_injure.wav')
 THUNDER = sound_path('thunder.wav')
+UI_CHOOSE = sound_path('ui_choose.wav')
+UI_CLICK = sound_path('ui_click.wav')
+
+RESOLUTION = path('', 'resolution.json')
 
 
 __all__ = [
@@ -93,8 +100,6 @@ __all__ = [
     "HEALTH_WINDOW_BG",
     "COOLDOWN_WINDOW_BG",
     "BUBBLE_HALO",
-    "RUS_FLAG",
-    "ENG_FLAG",
     "FONT_1",
     "FONT_2",
     "CALIBRI",
@@ -106,6 +111,12 @@ __all__ = [
     "PLAYER_INJURE",
     "PLAYER_BULLET_HIT",
     "PLAYER_BULLET_SHOT",
-    "THUNDER"
+    "THUNDER",
+    "UI_CHOOSE",
+    "UI_CLICK",
+    "SETTINGS_BUTTON",
+    "INFO_BUTTON",
+    "PLAY_BUTTON",
+    "SCROLL_BUTTON"
 
 ]

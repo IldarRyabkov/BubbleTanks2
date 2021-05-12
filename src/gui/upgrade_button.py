@@ -57,13 +57,13 @@ class UpgradeButton:
         )
         # Then we create text widget to be blitted on background surfaces of button
         text_widgets = (
-            Text(self.w / 2, HF(6),   FONT_1,  H(48), UPG_LABEL_COLOR, True),  # button caption
-            Text(self.w / 2, HF(264), CALIBRI_BOLD, H(35), BLACK, True),  # main weapon caption
-            Text(self.w / 2, HF(384), CALIBRI_BOLD, H(35), BLACK, True),  # second weapon caption
-            Text(self.w / 2, HF(166), CALIBRI_BOLD,  H(35), BLACK, True),  # tank name
-            Text(self.w / 2, HF(312), CALIBRI,  H(31), BLACK, True),  # main weapon name
-            Text(self.w / 2, HF(432), CALIBRI,  H(31), BLACK, True),  # second weapon name
-            Text(HF(8), HF(536), CALIBRI, H(31), BLACK, False),  # tank description
+            Text(self.w / 2, HF(6),   FONT_1,  H(48), UPG_LABEL_COLOR, 1),  # button caption
+            Text(self.w / 2, HF(264), CALIBRI_BOLD, H(35), BLACK, 1),  # main weapon caption
+            Text(self.w / 2, HF(384), CALIBRI_BOLD, H(35), BLACK, 1),  # second weapon caption
+            Text(self.w / 2, HF(166), CALIBRI_BOLD,  H(35), BLACK, 1),  # tank name
+            Text(self.w / 2, HF(312), CALIBRI,  H(31), BLACK, 1),  # main weapon name
+            Text(self.w / 2, HF(432), CALIBRI,  H(31), BLACK, 1),  # second weapon name
+            Text(HF(8), HF(536), CALIBRI, H(31), BLACK),  # tank description
         )
         texts = TEXTS[language]["labels"] + list(TEXTS[language]["texts"][tank][:4])
         for widget, text in zip(text_widgets, texts):

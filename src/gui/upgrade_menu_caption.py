@@ -1,7 +1,7 @@
 import pygame as pg
 
-from data.config import UPGRADE_MENU_ANIMATION_TIME, SCR_W2, OPEN
-from data.paths import UPGRADE_CAPTION_RUS, UPGRADE_CAPTION_ENG
+from data.config import SCR_W2, OPEN
+from data.paths import UPGRADE_CAPTION_RUS_BG, UPGRADE_CAPTION_ENG_BG
 from utils import H, HF
 
 
@@ -9,16 +9,16 @@ class UpgradeMenuCaption:
     """Caption of the upgrade menu. It appears when
     upgrade menu opens and hides when it closes.
     """
-    def __init__(self):
+    def __init__(self, animation_duration):
         self.x = SCR_W2 - HF(592)
         self.y = -HF(112)
         self.Y0 = -HF(112)
         self.Y1 = HF(16)
-        self.vel = (self.Y1 - self.Y0) / UPGRADE_MENU_ANIMATION_TIME
+        self.vel = (self.Y1 - self.Y0) / animation_duration
         self.surface = None
 
     def set_language(self, language):
-        filename = UPGRADE_CAPTION_ENG if language == "English" else UPGRADE_CAPTION_RUS
+        filename = UPGRADE_CAPTION_ENG_BG if language == "English" else UPGRADE_CAPTION_RUS_BG
         image = pg.image.load(filename).convert_alpha()
         self.surface = pg.transform.scale(image, (H(1184), H(112)))
 

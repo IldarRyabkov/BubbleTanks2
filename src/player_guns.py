@@ -1,7 +1,7 @@
 from math import pi, sin, cos
 
-from objects.bullets import *
-from objects.gun import *
+from bullets import *
+from gun import *
 from data.bullets import BULLETS
 from utils import calculate_angle, HF
 

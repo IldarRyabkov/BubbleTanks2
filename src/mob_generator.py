@@ -3,7 +3,7 @@ import itertools
 from collections import defaultdict
 from math import sqrt
 
-from objects.mobs import get_mob
+from mobs import get_mob
 
 
 PEACEFUL_MOBS = ['Infusoria', 'Cell', 'Ameba', 'Baby']

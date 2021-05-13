@@ -5,7 +5,7 @@ from data.config import SCR_W
 from data.colors import WHITE
 from data.gui_texts import COOLDOWN_WINDOW_LABELS as LABELS
 from data.paths import COOLDOWN_WINDOW_BG, CALIBRI_BOLD
-from entities.superpowers import *
+from superpowers import *
 from utils import H, HF
 
 

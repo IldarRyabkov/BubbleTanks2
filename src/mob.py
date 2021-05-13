@@ -3,8 +3,8 @@ import numpy as np
 from pygame import Rect
 
 from utils import circle_collidepoint, calculate_angle
-from entities.mob_guns import get_gun
-from objects.base_mob import BaseMob
+from mob_guns import get_gun
+from base_mob import BaseMob
 
 
 class Mob(BaseMob):

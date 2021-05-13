@@ -1,4 +1,4 @@
-from objects.body import Body
+from body import Body
 
 
 class BaseMob:

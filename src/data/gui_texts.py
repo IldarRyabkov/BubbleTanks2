@@ -7,34 +7,35 @@ PAUSE_MENU_CAPTION = {
     "Russian": ['ПАУЗА']
 }
 
-OPTIONS_WINDOW_CAPTION = {
-    'Russian': ["Опции"],
-    'English': ["Options"]
+PAUSE_MENU_WINDOW_CAPTIONS = {
+    "English": [['Statistics'], ["Map"], ["Options"], ["Exit to main menu?"], ["Exit to desktop?"]],
+    "Russian": [['Статистика'], ["Карта"], ["Опции"], ["Выйти в главное меню?"], ["Выйти из игры?"]]
 }
 
-MAP_WINDOW_CAPTION = {
-    "English": ['Map'],
-    "Russian": ['Карта']
-}
-
-STATS_WINDOW_CAPTION = {
+STATS_SIDE_BUTTON_CAPTION = {
     "English": ['Statistics'],
     "Russian": ['Статистика']
 }
 
-STATS_WINDOW_TEXTS = {
-    "English":
-        {
-            "labels": [['Main weapon'], ['Second weapon']],
-            "description": eng.UPGRADE_TEXT
-        },
-    "Russian":
-        {
-            "labels": [['Основное оружие'], ['Второе оружие']],
-            "description": rus.UPGRADE_TEXT
-        }
+MAP_SIDE_BUTTON_CAPTION = {
+    "English": ['Map'],
+    "Russian": ['Карта']
 }
 
+OPTIONS_SIDE_BUTTON_CAPTION = {
+    "English": ['Options'],
+    "Russian": ['Опции']
+}
+
+STATS_WINDOW_LABELS = {
+    "English": [['Main weapon'], ['Second weapon']],
+    "Russian": [['Основное оружие'], ['Второе оружие']]
+}
+
+STATS_WINDOW_DESCRIPTIONS = {
+    "English":  eng.UPGRADE_TEXT,
+    "Russian": rus.UPGRADE_TEXT
+}
 
 PLAY_BUTTON_LABEL= {
     "English": ["PLAY"],
@@ -44,11 +45,6 @@ PLAY_BUTTON_LABEL= {
 SETTINGS_BUTTON_LABEL = {
     "English": ["Settings"],
     "Russian": ["Настройки"]
-}
-
-MAIN_MENU_CAPTION = {
-    "English": ['Underwater battles'],
-    "Russian": ['Подводные битвы']
 }
 
 ROOM_TEXTS = {
@@ -98,16 +94,16 @@ VICTORY_MENU_LABELS = {
     "Russian": [['ПОЗДРАВЛЯЕМ!'], ['Ты прошел игру!']]
 }
 
-SETTINGS_WINDOW_CAPTIONS = {
-    "English": [["Settings"], ["Exit to desktop?"], ["Resolution"],  ["Language"]],
-    "Russian": [["Настройки"], ["Выйти из игры"], ["Разрешение"], ["Язык"]]
+MAIN_MENU_CAPTIONS = {
+    "English": [["Underwater battles"], ["Settings"],  ["Language"], ["Resolution"], ["Exit to desktop"]],
+    "Russian": [["Подводные битвы"], ["Настройки"], ["Язык"], ["Разрешение"], ["Выйти из игры"]]
 }
 
 LANGUAGES = ["English"], ["Russian"]
 
 RESOLUTION_WARNING = {
     "English": ["Restart the game to apply the new resolution"],
-    "Russian": ["Перезапустите игру, чтобы применить", "новое разрешение"]
+    "Russian": ["Перезапустите игру, чтобы применить новое разрешение"]
 }
 
 EXIT_TO_MENU_TEXT = {
@@ -155,17 +151,18 @@ LANGUAGE_LABEL = {
 __all__ = [
 
     "PAUSE_MENU_CAPTION",
-    "OPTIONS_WINDOW_CAPTION",
-    "MAP_WINDOW_CAPTION",
-    "STATS_WINDOW_CAPTION",
-    "STATS_WINDOW_TEXTS",
+    "PAUSE_MENU_WINDOW_CAPTIONS",
+    "STATS_WINDOW_LABELS",
+    "STATS_WINDOW_DESCRIPTIONS",
+    "STATS_SIDE_BUTTON_CAPTION",
+    "OPTIONS_SIDE_BUTTON_CAPTION",
+    "MAP_SIDE_BUTTON_CAPTION",
     "SETTINGS_BUTTON_LABEL",
     "PLAY_BUTTON_LABEL",
-    "MAIN_MENU_CAPTION",
     "ROOM_TEXTS",
     "COOLDOWN_WINDOW_LABELS",
     "VICTORY_MENU_LABELS",
-    "SETTINGS_WINDOW_CAPTIONS",
+    "MAIN_MENU_CAPTIONS",
     "LANGUAGES",
     "RESOLUTION_WARNING",
     "BACK_BUTTON_TEXT",

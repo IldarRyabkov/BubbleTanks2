@@ -4,7 +4,7 @@ import sys
 
 from data.colors import WHITE
 from data.gui_texts import *
-from data.paths import FONT_1
+from data.paths import FONT_1, CALIBRI_BOLD
 from gui.text_button import TextButton
 from gui.slider import Slider
 from gui.text import Text
@@ -17,11 +17,11 @@ class OptionsWindow:
     """
     def __init__(self, xo, sound_player):
         self.sound_player = sound_player
-        self.music_slider = Slider(xo + H(587), H(400), MUSIC_VOLUME_TEXT, H(38), sound_player)
-        self.sound_slider = Slider(xo + H(587), H(500), SOUND_VOLUME_TEXT, H(38), sound_player)
-        self.caption = Text(xo + HF(587), HF(200), FONT_1, H(50), WHITE, 1)
-        self.to_menu_button = TextButton(xo + H(584), H(610), EXIT_TO_MENU_TEXT, FONT_1, H(38), 210, sound_player)
-        self.to_desktop_button = TextButton(xo + H(584), H(710), EXIT_TO_DESKTOP_TEXT, FONT_1, H(38), 210, sound_player)
+        self.music_slider = Slider(xo + H(587), H(400), MUSIC_VOLUME_TEXT, CALIBRI_BOLD, H(44), sound_player)
+        self.sound_slider = Slider(xo + H(587), H(500), SOUND_VOLUME_TEXT, CALIBRI_BOLD, H(44), sound_player)
+        self.caption = Text(xo + HF(587), HF(200), CALIBRI_BOLD, H(56), WHITE, 1)
+        self.to_menu_button = TextButton(xo + H(584), H(610), EXIT_TO_MENU_TEXT, CALIBRI_BOLD, H(44), 210, sound_player)
+        self.to_desktop_button = TextButton(xo + H(584), H(710), EXIT_TO_DESKTOP_TEXT, CALIBRI_BOLD, H(44), 210, sound_player)
 
     def set_language(self, language):
         """Sets the language for quit-button and labels. """

@@ -2,7 +2,7 @@ from random import uniform
 from math import hypot, cos, sin
 import pygame as pg
 
-from objects.body import Body
+from body import Body
 from utils import circle_collidepoint, calculate_angle
 from data.config import ROOM_RADIUS, SCR_W, SCR_H, SCR_W2, SCR_H2
 from data.bubble import *

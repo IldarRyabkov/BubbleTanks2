@@ -19,7 +19,7 @@ class ScrollButton(ScalingButton):
 
         self.text_widget = Text(self.w//2 - H(40), H(8), FONT_1, H(44), WHITE, 2)
 
-        self.arrows_image = pg.image.load(SCROLL_BUTTON).convert_alpha()
+        self.arrows_image = pg.image.load(SCROLL_BUTTON_BG).convert_alpha()
         self.arrows_image = pg.transform.scale(self.arrows_image, (self.w//2 - H(60), self.h))
 
         self.left_arrow_rect = pg.Rect(self.x + H(20),

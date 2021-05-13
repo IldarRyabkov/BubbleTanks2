@@ -13,7 +13,7 @@ class UpgradeButton:
     It contains description of new tank, its weapon and superpower.
     It appears when the upgrade menu opens and hides when it closes.
     """
-    def __init__(self, button_type, tank, language):
+    def __init__(self, button_type, tank, language, animation_duration):
         self.tank = tank
         self.w = HF(480) if button_type in (UPG_BUTTON_WIDE_LEFT, UPG_BUTTON_WIDE_RIGHT) else HF(352)
         self.h = HF(736)
@@ -39,17 +39,17 @@ class UpgradeButton:
             self.X1, self.Y1 = SCR_W2 + HF(32), HF(160)
 
         self.x, self.y = self.X0, self.Y0
-        self.vel_x = (self.X1 - self.X0) / UPGRADE_MENU_ANIMATION_TIME
-        self.vel_y = (self.Y1 - self.Y0) / UPGRADE_MENU_ANIMATION_TIME
+        self.vel_x = (self.X1 - self.X0) / animation_duration
+        self.vel_y = (self.Y1 - self.Y0) / animation_duration
 
         # Now we set button background surfaces.
         # First we load background images of button.
         if button_type in (UPG_BUTTON_WIDE_LEFT, UPG_BUTTON_WIDE_RIGHT):
-            image = pg.image.load(UPGRADE_BUTTON_WIDE).convert_alpha()
-            image_pressed = pg.image.load(UPGRADE_BUTTON_WIDE_PRESSED).convert_alpha()
+            image = pg.image.load(UPGRADE_BUTTON_WIDE_BG).convert_alpha()
+            image_pressed = pg.image.load(UPGRADE_BUTTON_WIDE_PRESSED_BG).convert_alpha()
         else:
-            image = pg.image.load(UPGRADE_BUTTON).convert_alpha()
-            image_pressed = pg.image.load(UPGRADE_BUTTON_PRESSED).convert_alpha()
+            image = pg.image.load(UPGRADE_BUTTON_BG).convert_alpha()
+            image_pressed = pg.image.load(UPGRADE_BUTTON_PRESSED_BG).convert_alpha()
         size = (round(self.w), round(self.h))
         self.bg = (
             pg.transform.scale(image, size),

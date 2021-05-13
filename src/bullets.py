@@ -5,7 +5,7 @@ import pygame as pg
 from data.config import *
 from data.bullets import *
 from data.colors import *
-from objects.body import Body
+from body import Body
 from utils import circle_collidepoint, calculate_angle, H, HF
 
 

@@ -2,9 +2,9 @@ from numpy import array
 from random import uniform, choice
 from math import cos, sin, pi
 
-from objects.mob import Mob
+from mob import Mob
 from utils import circle_collidepoint, HF
-from entities.mob_guns import get_gun
+from mob_guns import get_gun
 from data.mobs import *
 
 

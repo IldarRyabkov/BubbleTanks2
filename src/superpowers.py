@@ -2,11 +2,11 @@ import pygame as pg
 from math import cos, sin, hypot, pi
 import numpy as np
 
-from objects.bullets import *
+from bullets import *
 from data.config import *
 from data.bullets import *
 from data.paths import THUNDER
-from entities.special_effects import add_effect
+from special_effects import add_effect
 from utils import calculate_angle, HF
 
 

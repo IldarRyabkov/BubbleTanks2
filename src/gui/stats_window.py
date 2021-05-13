@@ -2,7 +2,7 @@ from pygame import draw
 
 from data.tank_bodies import TANK_BODIES
 from data.gui_texts import STATS_WINDOW_TEXTS, STATS_WINDOW_CAPTION
-from data.colors import WHITE, PAUSEMENU_PLAYER_BG
+from data.colors import WHITE, TANK_BG_COLOR
 from data.paths import FONT_2, CALIBRI_BOLD
 from gui.text import Text
 from objects.body import Body
@@ -58,7 +58,7 @@ class StatsWindow:
 
     def draw_tank(self, screen):
         draw.circle(screen, WHITE, self.tank_body_pos, H(149))
-        draw.circle(screen, PAUSEMENU_PLAYER_BG, self.tank_body_pos, H(142))
+        draw.circle(screen, TANK_BG_COLOR, self.tank_body_pos, H(142))
         self.tank_body.draw(screen)
 
     def draw(self, screen):

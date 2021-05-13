@@ -3,7 +3,7 @@ from numpy import array
 
 from data.bullets import *
 from utils import calculate_angle, HF
-from objects.bullets import RegularBullet
+from bullets import RegularBullet
 
 
 class Gun:

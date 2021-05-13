@@ -8,7 +8,7 @@ class ScalingButton:
     """Parent class for all buttons that change their size
     and transparency, when a cursor is on them.
     """
-    def __init__(self, x, y, w, h, min_scale, min_alpha, texts, sound_player, hidden=False):
+    def __init__(self, x, y, w, h, min_scale, min_alpha, texts, sound_player):
         """(x, y) is the center of the button. """
         self.x = x
         self.y = y
@@ -42,8 +42,6 @@ class ScalingButton:
         self.texts = texts
         self.text_widget = None
 
-        self.hidden = hidden
-
     @property
     def cursor_on_button(self) -> bool:
         return bool(self.zoom_area.collidepoint(pg.mouse.get_pos()))
@@ -52,8 +50,6 @@ class ScalingButton:
     def clicked(self):
         """Handles left mouse button press event.
         Returns True, if scaling button was clicked. """
-        if self.hidden:
-            return False
         if self.cursor_on_button:
             self.handle_click()
             return True
@@ -121,19 +117,15 @@ class ScalingButton:
     def update_close(self, time_elapsed, dt):
         self.scaled_surface.set_alpha(self.alpha - self.alpha * time_elapsed)
 
-    def update(self, dt, state=WAIT, time_elapsed=0):
-        if self.hidden:
-            return
-        if state == WAIT:
+    def update(self, dt, animation_state=WAIT, time_elapsed=0):
+        if animation_state == WAIT:
             self.update_wait(dt)
-        elif state == OPEN:
+        elif animation_state == OPEN:
             self.update_open(time_elapsed, dt)
         else:
             self.update_close(time_elapsed, dt)
 
     def draw(self, screen):
-        if self.hidden:
-            return
         screen.blit(self.scaled_surface, (self.x - self.scaled_surface.get_width() // 2,
                                           self.y - self.scaled_surface.get_height() // 2))
 

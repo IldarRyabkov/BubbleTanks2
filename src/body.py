@@ -1,6 +1,6 @@
 from math import pi
 
-from objects.circle import Circle
+from circle import Circle
 from utils import calculate_angle
 
 

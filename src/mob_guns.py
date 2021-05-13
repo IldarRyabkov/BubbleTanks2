@@ -1,8 +1,8 @@
 from math import pi, sin, cos
 from random import uniform
 
-from objects.gun import *
-from objects.bullets import *
+from gun import *
+from bullets import *
 from data.bullets import *
 from data.mob_guns import *
 from utils import calculate_angle, HF

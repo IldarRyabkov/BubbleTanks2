@@ -15,7 +15,8 @@ class UpgradeMenu:
     def __init__(self, game):
         self.game = game
 
-        self.caption = UpgradeMenuCaption()
+        self.animation_duration = 350
+        self.caption = UpgradeMenuCaption(self.animation_duration)
         self.buttons = []
         self.chosen_tank = None
         self.running = False
@@ -70,8 +71,8 @@ class UpgradeMenu:
         the upgrade menu starts opening or closing.
         """
         self.game.clock.tick()
-        dt = animation_time = 0
-        while animation_time <=UPGRADE_MENU_ANIMATION_TIME:
+        dt = time = 0
+        while time <= self.animation_duration:
             self.handle_events(animation=True)
 
             for button in self.buttons:
@@ -82,7 +83,7 @@ class UpgradeMenu:
 
             dt = self.game.clock.tick()
             self.game.fps_manager.update(dt)
-            animation_time += dt
+            time += dt
 
     def run(self):
         self.running = True
@@ -91,14 +92,14 @@ class UpgradeMenu:
         lang = self.game.language
         if len(new_tanks) == 3:
             self.buttons = (
-                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], lang),
-                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], lang),
-                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], lang)
+                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], lang, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], lang, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], lang, self.animation_duration)
             )
         else:
             self.buttons = (
-                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], lang),
-                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], lang)
+                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], lang, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], lang, self.animation_duration)
             )
 
         self.bg_surface.blit(self.game.screen, (0, 0))

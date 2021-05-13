@@ -5,7 +5,6 @@ from gui.scaling_button import ScalingButton
 from data.config import *
 from data.colors import WHITE
 from data.paths import *
-from data.config import MAIN_MENU_ANIMATION_TIME as TIME
 from utils import H
 
 
@@ -15,12 +14,13 @@ class MainMenuButton(ScalingButton):
         """Radius is half the height of the button. """
         super().__init__(x, SCR_H + radius, 2*radius*aspect_ratio, 2*radius, 0.7, 210, texts, sound_player)
         self.flashing = False
+        self.flashing_time = 0
 
         self.Y_MIN = H(840)  # y-coord when button is shown
         self.Y_MAX = SCR_H + radius  # y-coord when button is hidden
         self.vel = (self.Y_MAX - self.Y_MIN) / 250
 
-        self.text_widget = Text(x, self.Y_MIN - 2 * radius, FONT_1, round(0.7 * radius), WHITE, 1)
+        self.text_widget = Text(x, self.Y_MIN - 2.2 * radius, FONT_3, round(0.7 * radius), WHITE, 1)
 
         self.text_alpha = 0
         self.TEXT_ALPHA_MIN = 0
@@ -51,6 +51,7 @@ class MainMenuButton(ScalingButton):
     def reset(self):
         self.y = self.Y_MAX
         self.flashing = False
+        self.flashing_time = 0
         self.text_alpha = self.TEXT_ALPHA_MIN
         super().reset()
 
@@ -63,9 +64,14 @@ class MainMenuButton(ScalingButton):
         self.text_alpha = max(self.TEXT_ALPHA_MIN, self.text_alpha - self.TEXT_ALPHA_DELTA * dt)
 
     def update_close(self, time_elapsed, dt):
-        if self.flashing and time_elapsed <= 0.2:
-            alpha = 0 if round(time_elapsed * TIME / 50) % 2 != 0 else self.alpha
-            self.scaled_surface.set_alpha(alpha)
+        if self.flashing:
+            if time_elapsed <= 0.2:
+                self.flashing_time += dt
+                alpha = 0 if round(self.flashing_time / 50) % 2 != 0 else self.alpha
+                self.scaled_surface.set_alpha(alpha)
+            else:
+                self.flashing = False
+                self.flashing_time = 0
 
         if time_elapsed >= 0.5:
             self.y = min(self.Y_MAX, self.y + self.vel * dt)

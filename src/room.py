@@ -2,10 +2,10 @@ from math import pi, hypot
 import pygame as pg
 from random import uniform
 
-from objects.bubble import Bubble
-from objects.mobs import Mother
-from entities.mob_guns import GunBossLeg
-from entities.special_effects import add_effect
+from bubble import Bubble
+from mobs import Mother
+from mob_guns import GunBossLeg
+from special_effects import add_effect
 from data.config import *
 from utils import HF
 

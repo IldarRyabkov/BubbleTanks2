@@ -6,13 +6,13 @@ from data.config import *
 from data.player import PLAYER_PARAMS
 from data.paths import PLAYER_BULLET_SHOT
 
-from entities.player_guns import get_gun
-from entities.superpowers import *
-from entities.special_effects import add_effect
+from player_guns import get_gun
+from superpowers import *
+from special_effects import add_effect
 
-from objects.bullets import FrangibleBullet, DrillingBullet
-from objects.gun import GunAutomatic
-from objects.base_mob import BaseMob
+from bullets import FrangibleBullet, DrillingBullet
+from gun import GunAutomatic
+from base_mob import BaseMob
 
 from utils import circle_collidepoint
 

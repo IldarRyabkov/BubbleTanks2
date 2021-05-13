@@ -1,124 +1,276 @@
 import sys
 import pygame as pg
 
-from gui.stats_window import StatsWindow
-from gui.map_window import MapWindow
-from gui.options_window import OptionsWindow
+from body import Body
+from gui.map import Map
 from gui.side_button import SideButton
+from gui.slider import Slider
+from gui.text_button import TextButton
 from gui.text import Text
-from data.paths import FONT_1
-from data.colors import WHITE
+from data.paths import FONT_1, FONT_3, UI_CLICK
+from data.colors import WHITE, TANK_BG_COLOR
 from data.config import *
-from data.gui_texts import (PAUSE_MENU_CAPTION, OPTIONS_WINDOW_CAPTION,
-                            STATS_WINDOW_CAPTION, MAP_WINDOW_CAPTION)
-from utils import H, W
+from data.gui_texts import *
+from data.tank_bodies import TANK_BODIES
+from utils import H
+
+
+class State:
+    STATS_WINDOW = 0
+    MAP_WINDOW = 1
+    OPTIONS_WINDOW = 2
+    EXIT_TO_MENU_CONFIRMATION = 3
+    EXIT_TO_DESKTOP_CONFIRMATION = 4
 
 
 
 class PauseMenu:
     """ Pause menu, which the player can go to during the game.
-    Includes statistics window, map window, options window and exit button.
+    It has statistics window, map window and options window.
+
+        -In stats window player can see all information about his tank.
+        -In map window player can see his current position on map.
+        -In options window player can change game options.
     """
     def __init__(self, game):
         self.game = game
+        self.running = True
+        self.state = State.STATS_WINDOW
 
         xo = SCR_W2 - H(584)  # x-coord of  top-left corner of pause menu
 
-        self.windows = (
-            StatsWindow(xo),
-            MapWindow(xo),
-            OptionsWindow(xo, game.sound_player)
-        )
-        self.current_window = STATS_WINDOW
+        # gui elements of Stats window
+        self.tank_body = None
+        self.tank_body_pos = (xo + H(880), H(400))
 
+        self.stats_widgets = (
+            Text(xo + H(180), H(262), FONT_3, H(45), WHITE),
+            Text(xo + H(180), H(646), FONT_3, H(37), WHITE),
+            Text(xo + H(690), H(646), FONT_3, H(37), WHITE),
+            Text(xo + H(180), H(318), FONT_3, H(30), WHITE),
+            Text(xo + H(180), H(721), FONT_3, H(30), WHITE),
+            Text(xo + H(690), H(721), FONT_3, H(30), WHITE),
+        )
+        self.stats_labels = (
+            Text(xo + H(180), H(582), FONT_3, H(45), WHITE),
+            Text(xo + H(690), H(582), FONT_3, H(45), WHITE)
+        )
+
+        # gui elements of Map window
+        self.map = Map(xo)
+
+        # gui elements of Options window
+        sp = game.sound_player
+        self.music_slider = Slider(SCR_W2, H(400), MUSIC_VOLUME_TEXT, FONT_3, H(52), sp)
+        self.sound_slider = Slider(SCR_W2, H(500), SOUND_VOLUME_TEXT, FONT_3, H(52), sp)
+        self.to_menu_button = TextButton(SCR_W2, H(610), EXIT_TO_MENU_TEXT, FONT_3, H(52), 210, sp)
+        self.to_desktop_button = TextButton(SCR_W2, H(710), EXIT_TO_DESKTOP_TEXT, FONT_3, H(52), 210, sp)
+        self.yes_button = TextButton(SCR_W2 - H(140), H(600), YES_BUTTON_TEXT, FONT_3, H(54), 210, sp, H(200))
+        self.no_button = TextButton(SCR_W2 + H(140), H(600), NO_BUTTON_TEXT, FONT_3, H(54), 210, sp, H(200))
+
+        # Base gui elements of Pause menu
         self.side_buttons = (
-            SideButton(xo, H(160), STATS_WINDOW_CAPTION, True),
-            SideButton(xo, H(352), MAP_WINDOW_CAPTION, False),
-            SideButton(xo, H(544), OPTIONS_WINDOW_CAPTION, False)
+            SideButton(xo, H(160), STATS_SIDE_BUTTON_CAPTION, sp, True),
+            SideButton(xo, H(352), MAP_SIDE_BUTTON_CAPTION, sp),
+            SideButton(xo, H(544), OPTIONS_SIDE_BUTTON_CAPTION, sp)
         )
-        self.masks = (
-            (pg.Surface(SCR_SIZE), (0, 0)),
-            (pg.Surface((H(1072), H(760))), (xo + H(96), H(160)))
-        )
-        self.masks[0][0].set_alpha(175)
-        self.masks[1][0].set_alpha(125)
+        self.screen_mask = pg.Surface(SCR_SIZE)
+        self.screen_mask.set_alpha(175)
+        self.menu_mask = pg.Surface((H(1072), H(760)))
+        self.menu_mask.set_alpha(125)
 
         self.bg_surface = pg.Surface(SCR_SIZE)
-        self.caption = Text(W(528), H(40), FONT_1, H(56), WHITE)
+        self.caption = Text(SCR_W2, H(50), FONT_1, H(56), WHITE, 1)
+        self.window_caption = Text(SCR_W2, H(176), FONT_3, H(58), WHITE, 1)
 
-        self.running = True
+    def set_stats_widgets(self, tank=(0, 0)):
+        for i, widget in enumerate(self.stats_widgets):
+            widget.set_text(STATS_WINDOW_DESCRIPTIONS[self.game.language][tank][i])
+        for i, label in enumerate(self.stats_labels):
+            label.set_text(STATS_WINDOW_LABELS[self.game.language][i])
+
+    def set_tank_stats(self, tank=(0, 0)):
+        self.set_stats_widgets(tank)
+        self.tank_body = Body(TANK_BODIES[tank])
 
     def set_language(self, language):
-        for window in self.windows:
-            window.set_language(language)
+        self.caption.set_text(PAUSE_MENU_CAPTION[language])
+        self.window_caption.set_text(PAUSE_MENU_WINDOW_CAPTIONS[language][State.STATS_WINDOW])
+        self.set_stats_widgets()
+        self.to_menu_button.set_language(language)
+        self.to_desktop_button.set_language(language)
+        self.sound_slider.set_language(language)
+        self.music_slider.set_language(language)
+        self.yes_button.set_language(language)
+        self.no_button.set_language(language)
         for button in self.side_buttons:
             button.set_language(language)
-        self.caption.set_text(PAUSE_MENU_CAPTION[language])
 
     def reset(self):
         """Method is called when a new game is started. Resets map
         in the map window and player statistics in the stats window.
         Also sets stats window as a current window.
         """
-        self.windows[MAP_WINDOW].reset()
-        self.windows[OPTIONS_WINDOW].reset()
-        self.windows[STATS_WINDOW].set_player_stats((0, 0))
-        self.set_current_window(STATS_WINDOW)
+        self.set_tank_stats()
+        self.map.reset()
+        self.sound_slider.reset(self.game.sound_player.master_volume)
+        self.music_slider.reset(self.game.sound_player.master_volume)
+        self.to_menu_button.reset()
+        self.to_desktop_button.reset()
+        self.set_state(State.STATS_WINDOW)
+        self.set_side_button_pressed(State.STATS_WINDOW)
 
-    def set_current_window(self, window):
-        self.side_buttons[self.current_window].pressed = False
-        self.current_window = window
-        self.side_buttons[self.current_window].pressed = True
-        if window == MAP_WINDOW:
-            self.windows[MAP_WINDOW].map.reset_offset()
+    def set_side_button_pressed(self, index):
+        for button in self.side_buttons:
+            button.pressed = False
+        self.side_buttons[index].pressed = True
 
-    def set_stats_window(self, player_state):
-        self.windows[STATS_WINDOW].set_player_stats(player_state)
+    def set_state(self, state):
+        animation = all(s not in (State.STATS_WINDOW, State.MAP_WINDOW) for s in (self.state, state))
+        if animation:
+            self.run_animation(CLOSE)
+        self.state = state
+        self.window_caption.set_text(PAUSE_MENU_WINDOW_CAPTIONS[self.game.language][self.state])
+        if state in (State.EXIT_TO_MENU_CONFIRMATION, State.EXIT_TO_DESKTOP_CONFIRMATION):
+            self.window_caption.y = H(400)
+        else:
+            self.window_caption.y = H(176)
+        if state == State.MAP_WINDOW:
+            self.map.reset_offset()
+        if animation:
+            self.run_animation(OPEN)
 
     def update_map_data(self, room_pos, boss_state):
         """Adds information about visited room and boss location to the map. """
-        self.windows[MAP_WINDOW].map.add_visited_room(room_pos)
+        self.map.add_visited_room(room_pos)
         if boss_state == BOSS_IN_CURRENT_ROOM:
-            self.windows[MAP_WINDOW].map.boss_aim.pos = room_pos
+            self.map.boss_aim.pos = room_pos
 
-    def handle_mouse_click(self, e_type):
-        """Handles situations when mouse left button was pressed or unpressed. """
-        if self.current_window == OPTIONS_WINDOW:
-            self.running = self.game.running = not self.windows[OPTIONS_WINDOW].handle(e_type)
+    def handle_mouse_up(self, e_type):
+        if self.state == State.OPTIONS_WINDOW:
+            self.music_slider.handle(e_type)
+            self.sound_slider.handle(e_type)
+        elif self.state == State.MAP_WINDOW:
+            self.map.handle_mouse_click(e_type)
 
-        elif self.current_window == MAP_WINDOW:
-            self.windows[MAP_WINDOW].map.handle_mouse_click(e_type)
+    def handle_mouse_down(self, e_type):
+        if self.state == State.OPTIONS_WINDOW:
+            self.music_slider.handle(e_type)
+            self.sound_slider.handle(e_type)
+            if self.to_desktop_button.clicked:
+                self.set_state(State.EXIT_TO_DESKTOP_CONFIRMATION)
+            elif self.to_menu_button.clicked:
+                self.set_state(State.EXIT_TO_MENU_CONFIRMATION)
 
-        if e_type == pg.MOUSEBUTTONDOWN:
-            for window, button in enumerate(self.side_buttons):
-                if button.clicked:
-                    self.set_current_window(window)
-                    break
+        elif self.state == State.MAP_WINDOW:
+            self.map.handle_mouse_click(e_type)
 
-    def handle_events(self):
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
+        elif self.state == State.EXIT_TO_DESKTOP_CONFIRMATION:
+            if self.yes_button.clicked:
+                self.run_animation(CLOSE)
                 pg.quit()
                 sys.exit()
-            elif event.type == pg.KEYDOWN and event.key in [pg.K_ESCAPE, pg.K_p]:
-                self.running = False
-            elif (event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP] and
-                    event.button == pg.BUTTON_LEFT):
-                self.handle_mouse_click(event.type)
+            elif self.no_button.clicked:
+                self.set_state(State.OPTIONS_WINDOW)
+
+        elif self.state == State.EXIT_TO_MENU_CONFIRMATION:
+            if self.yes_button.clicked:
+                self.running = self.game.running = False
+            elif self.no_button.clicked:
+                self.set_state(State.OPTIONS_WINDOW)
+
+        for state, button in enumerate(self.side_buttons):
+            if button.clicked:
+                self.set_side_button_pressed(state)
+                self.set_state(state)
+
+    def handle_events(self, animation_state=WAIT):
+        for e in pg.event.get():
+            if e.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+            if animation_state == WAIT:
+                if e.type == pg.KEYDOWN and e.key in [pg.K_ESCAPE, pg.K_p]:
+                    self.game.sound_player.reset()
+                    self.game.sound_player.play_sound(UI_CLICK)
+                    self.running = False
+                elif e.type == pg.MOUSEBUTTONUP and e.button == pg.BUTTON_LEFT:
+                    self.handle_mouse_up(e.type)
+                elif e.type == pg.MOUSEBUTTONDOWN and e.button == pg.BUTTON_LEFT:
+                    self.handle_mouse_down(e.type)
+
+    def update(self, dt, animation_state=WAIT, time_elapsed=0):
+        self.game.update_scaling_objects()
+        if animation_state != WAIT:
+            self.window_caption.update_alpha(animation_state, time_elapsed)
+
+        if self.state == State.STATS_WINDOW:
+            x, y = self.tank_body_pos
+            self.tank_body.update(x, y, dt, (9000, y))
+
+        elif self.state == State.MAP_WINDOW:
+            self.map.update(dt)
+
+        elif self.state == State.OPTIONS_WINDOW:
+            self.sound_slider.update(dt, animation_state, time_elapsed)
+            self.music_slider.update(dt, animation_state, time_elapsed)
+            self.to_menu_button.update(dt, animation_state, time_elapsed)
+            self.to_desktop_button.update(dt, animation_state, time_elapsed)
+            if self.sound_slider.pressed:
+                self.game.sound_player.set_sound_volume(self.sound_slider.value)
+            elif self.music_slider.pressed:
+                self.game.sound_player.set_music_volume(self.music_slider.value)
+
+        else:
+            self.yes_button.update(dt, animation_state, time_elapsed)
+            self.no_button.update(dt, animation_state, time_elapsed)
 
     def draw(self, screen):
         """Draws all objects in the background and pause menu items. """
         screen.blit(self.bg_surface, (0, 0))
-
         self.game.draw_foreground()
-
-        for mask, pos in self.masks:
-            screen.blit(mask, pos)
+        screen.blit(self.screen_mask, (0, 0))
+        screen.blit(self.menu_mask, (SCR_W2 - H(488), H(160)))
         self.caption.draw(screen)
-        self.windows[self.current_window].draw(screen)
+        self.window_caption.draw(screen)
         for button in self.side_buttons:
             button.draw(screen)
+
+        if self.state == State.STATS_WINDOW:
+            for widget in self.stats_widgets:
+                widget.draw(screen)
+            for label in self.stats_labels:
+                label.draw(screen)
+            pg.draw.circle(screen, WHITE, self.tank_body_pos, H(149))
+            pg.draw.circle(screen, TANK_BG_COLOR, self.tank_body_pos, H(142))
+            self.tank_body.draw(screen)
+
+        elif self.state == State.MAP_WINDOW:
+            self.map.draw(screen)
+
+        elif self.state == State.OPTIONS_WINDOW:
+            self.to_menu_button.draw(screen)
+            self.to_desktop_button.draw(screen)
+            self.sound_slider.draw(screen)
+            self.music_slider.draw(screen)
+
+        else:
+            self.yes_button.draw(screen)
+            self.no_button.draw(screen)
+
         pg.display.update()
+
+    def run_animation(self, animation_state, duration=400):
+        self.game.clock.tick()
+        dt = time = 0
+        while time <= duration:
+            self.handle_events(animation_state)
+            self.update(dt, animation_state, time / duration)
+            self.draw(self.game.screen)
+            self.game.fps_manager.update(dt)
+            dt = self.game.clock.tick()
+            time += dt
+        self.game.clock.tick()
 
     def run(self):
         """Pause menu loop which starts when player pressed pause key. """
@@ -128,19 +280,21 @@ class PauseMenu:
         self.running = True
         self.game.dt = 0
 
-        self.windows[MAP_WINDOW].map.reset_offset()
-        self.windows[OPTIONS_WINDOW].reset()
+        self.map.reset_offset()
+        self.music_slider.reset()
+        self.sound_slider.reset()
+        self.to_menu_button.reset()
+        self.to_desktop_button.reset()
+        if self.state in (State.EXIT_TO_DESKTOP_CONFIRMATION,
+                          State.EXIT_TO_MENU_CONFIRMATION):
+            self.set_state(State.OPTIONS_WINDOW)
 
         while self.running:
-            self.handle_events()
-
-            self.game.update_scaling_objects()
-            self.windows[self.current_window].update(self.game.dt)
-
+            self.update(self.game.dt)
             self.draw(self.game.screen)
-
             self.game.dt = self.game.clock.tick()
             self.game.fps_manager.update(self.game.dt)
+            self.handle_events()
 
 
 __all__ = ["PauseMenu"]

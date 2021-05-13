@@ -1,7 +1,7 @@
 import pygame as pg
 
 from data.colors import WHITE
-from data.paths import FONT_2, SIDE_BUTTON, SIDE_BUTTON_PRESSED
+from data.paths import FONT_3, SIDE_BUTTON_BG, SIDE_BUTTON_PRESSED_BG, UI_CLICK
 from utils import H
 
 
@@ -9,7 +9,8 @@ class SideButton:
     """A button that is used in the pause menu
     to switch to a specific window.
     """
-    def __init__(self, x, y, texts, pressed):
+    def __init__(self, x, y, texts, sound_player, pressed=False):
+        """(x, y) is topleft of the button. """
         self.x = x
         self.y = y
 
@@ -17,6 +18,8 @@ class SideButton:
         self.h = H(160)
 
         self.pressed = pressed
+        self.sound_player = sound_player
+        self.click_area = pg.Rect(self.x, self.y, self.w, self.h)
 
         self.texts = texts
         self.text_surface = None
@@ -24,19 +27,22 @@ class SideButton:
 
         size = (self.w, self.h)
         self.bg = {
-            False: pg.transform.scale(pg.image.load(SIDE_BUTTON).convert_alpha(), size),
-            True: pg.transform.scale(pg.image.load(SIDE_BUTTON_PRESSED).convert_alpha(), size)
+            False: pg.transform.scale(pg.image.load(SIDE_BUTTON_BG).convert_alpha(), size),
+            True: pg.transform.scale(pg.image.load(SIDE_BUTTON_PRESSED_BG).convert_alpha(), size)
         }
 
     @property
     def clicked(self):
-        x, y = pg.mouse.get_pos()
-        return 0 <= x - self.x <= self.w and 0 <= y - self.y <= self.h
+        if not self.pressed and self.click_area.collidepoint(pg.mouse.get_pos()):
+            self.sound_player.reset()
+            self.sound_player.play_sound(UI_CLICK)
+            return True
+        return False
 
     def set_language(self, language):
         pg.font.init()
         text = self.texts[language][0]
-        font = pg.font.Font(FONT_2, H(35) if len(text) < 10 else H(29))
+        font = pg.font.Font(FONT_3, H(35) if len(text) < 10 else H(29))
         self.text_surface = pg.transform.rotate(font.render(text, True, WHITE), 90)
         self.text_pos = (self.x + (self.w - self.text_surface.get_width()) // 2,
                          self.y + (self.h - self.text_surface.get_height()) // 2)

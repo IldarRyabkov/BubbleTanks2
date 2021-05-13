@@ -19,8 +19,8 @@ from gui.health_window import HealthWindow
 from gui.cooldown_window import CooldownWindow
 
 from player import Player
-from objects.mob import Mob
-from objects.bullets import DrillingBullet, ExplodingBullet
+from mob import Mob
+from bullets import DrillingBullet, ExplodingBullet
 
 from background_environment import BackgroundEnvironment
 from camera import Camera
@@ -28,8 +28,8 @@ from room import Room
 from sound_player import SoundPlayer
 from mob_generator import MobGenerator
 from fps_manager import FPSManager
-from entities.superpowers import Ghost
-from entities.special_effects import add_effect
+from superpowers import Ghost
+from special_effects import add_effect
 from utils import calculate_angle, H
 
 
@@ -142,6 +142,8 @@ class Game:
         if (e_type ==  pg.KEYDOWN and
                 e_key in [pg.K_p, pg.K_ESCAPE]
                 and not self.transportation):
+            self.sound_player.reset()
+            self.sound_player.play_sound(UI_CLICK)
             self.pause_menu.run()
 
     def init_key_handlers(self):
@@ -184,7 +186,7 @@ class Game:
     def handle_player_downgrade(self):
         self.player.downgrade()
         self.set_windows()
-        self.pause_menu.set_stats_window(self.player.tank)
+        self.pause_menu.set_tank_stats(self.player.tank)
         self.bg_environment.set_player_halo(self.player.bg_radius)
         self.room.set_gravity_radius(1.3 * self.player.bg_radius)
 
@@ -198,7 +200,7 @@ class Game:
             self.player.upgrade(False)
 
         self.set_windows()
-        self.pause_menu.set_stats_window(self.player.tank)
+        self.pause_menu.set_tank_stats(self.player.tank)
         self.bg_environment.set_player_halo(self.player.bg_radius)
         self.room.set_gravity_radius(1.3 * self.player.bg_radius)
 

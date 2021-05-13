@@ -1,5 +1,6 @@
 import pygame as pg
-from data.config import SCR_H, SCR_W
+
+from data.config import SCR_H, SCR_W, OPEN
 
 
 class Text:
@@ -8,12 +9,13 @@ class Text:
                  x: float,
                  y: float,
                  font: str,
-                 size: int,
+                 font_size: int,
                  color: tuple,
                  align=0,
                  hidden=False):
         pg.font.init()
-        self.font = pg.font.Font(font, size)
+        self.font_name = font
+        self.font = pg.font.Font(font, font_size)
         self.x = x
         self.y = y
         self.color = color
@@ -23,10 +25,15 @@ class Text:
         self.h = 0
         self.letter_h = self.font.size('A')[1]
         self.hidden = hidden
+        self.text = None
 
     @property
     def is_on_screen(self) -> bool:
         return -self.w <= self.x <= SCR_W and -self.h <= self.y <= SCR_H
+
+    def set_font_size(self, font_size):
+        pg.font.init()
+        self.font = pg.font.Font(self.font_name, font_size)
 
     def replace_with(self, text_widget):
         self.surfaces = text_widget.surfaces
@@ -39,6 +46,7 @@ class Text:
         consisting of text surfaces with their coords.
         Then remembers the width and height of resulting text object.
         """
+        self.text = text
         self.surfaces = []
         for i, string in enumerate(text):
             surface = self.font.render(string, True, self.color)
@@ -55,6 +63,13 @@ class Text:
         """Sets alpha-value for all text surfaces. """
         for surface, _, _ in self.surfaces:
             surface.set_alpha(alpha)
+
+    def update_alpha(self, animation_state, time_elapsed):
+        if animation_state == OPEN:
+            alpha = round(255 * time_elapsed)
+        else:
+            alpha = round(255 - 255 * time_elapsed)
+        self.set_alpha(alpha)
 
     def move(self, dx, dy):
         self.x += dx

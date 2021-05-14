@@ -3,7 +3,7 @@ from gui.popup_window import PopupWindow
 from gui.text import Text
 from data.config import SCR_W
 from data.colors import WHITE
-from data.gui_texts import COOLDOWN_WINDOW_LABELS as LABELS
+from data.gui_texts import COOLDOWN_WINDOW_LABELS
 from data.paths import COOLDOWN_WINDOW_BG, CALIBRI_BOLD
 from superpowers import *
 from utils import H, HF
@@ -25,11 +25,10 @@ class CooldownWindow(PopupWindow):
         self.status_bar_2 = StatusBar(self.x + HF(56), self.y + HF(53), self.w - HF(72), H(32), 0)
         self.label_1 = Text(self.x + HF(16), self.y + HF(14), CALIBRI_BOLD, H(27), WHITE)
         self.label_2 = Text(self.x + HF(16), self.y + HF(56), CALIBRI_BOLD, H(27), WHITE)
-        self.set_language("English")
 
     def set_language(self, language):
-        self.label_1.set_text(LABELS[language][0])
-        self.label_2.set_text(LABELS[language][1])
+        self.label_1.set_text(COOLDOWN_WINDOW_LABELS[language][0])
+        self.label_2.set_text(COOLDOWN_WINDOW_LABELS[language][1])
 
     def reset(self):
         super().reset()

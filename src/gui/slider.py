@@ -42,6 +42,7 @@ class Slider(ScalingButton):
         pg.draw.rect(self.surface, GREY_2, self.empty_line, border_radius=3)
         pg.draw.rect(self.surface, WHITE, self.filled_line, border_radius=3)
         pg.draw.rect(self.surface, WHITE, self.slider_rect, border_radius=6)
+        self.set_alpha()
         self.set_scaled_surface()
 
     def handle(self, e_type):

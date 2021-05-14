@@ -7,7 +7,7 @@ from data.paths import *
 from data.config import *
 from data.colors import *
 from gui.text import Text
-from data.gui_texts import ROOM_TEXTS
+from data.gui_texts import ROOM_HINTS
 from data.mobs import BOSS_SKELETON_BODY
 from mob_generator import BOSS_PIECES
 from utils import H, HF, WF, scaled_body
@@ -181,8 +181,8 @@ class BackgroundEnvironment:
         # New hint widget is a temporary text widget used to draw hint text
         # of the new room during player's transportation.
         # After transportation is done, hint widget is replaced with the new hint widget.
-        self.hint_widget = Text(WF(640), HF(176), FONT_1, H(75), WHITE, 1)
-        self.new_hint_widget = Text(WF(640), HF(176), FONT_1, H(75), WHITE, 1)
+        self.hint_widget = Text(WF(640), HF(170), FONT_1, H(75), WHITE, 1, H(890))
+        self.new_hint_widget = Text(WF(640), HF(170), FONT_1, H(75), WHITE, 1, H(890))
 
         self.room_glares = (
             RoomGlare(SCR_W2 - HF(550), SCR_H2 - HF(565), HF(320)),
@@ -214,7 +214,7 @@ class BackgroundEnvironment:
 
     def set_language(self, language):
         self.language = language
-        self.hint_texts = ROOM_TEXTS[self.language].copy()[:-1]  # hints without superpower hint
+        self.hint_texts = ROOM_HINTS[self.language].copy()[:-1]  # hints without superpower hint
         text = self.hint_texts.pop(0)
         self.hint_widget.set_text(text)
         self.hints_history[(0, 0)] = text
@@ -255,7 +255,7 @@ class BackgroundEnvironment:
 
     def prepare_superpower_hint(self):
         """Prepare an extra hint to show, when player got his first superpower. """
-        self.hint_texts.append(ROOM_TEXTS[self.language][-1])
+        self.hint_texts.append(ROOM_HINTS[self.language][-1])
 
     def set_next_hint(self):
         """Method is called when player is being transported to the next room.

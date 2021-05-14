@@ -2,7 +2,6 @@ import json
 from json.decoder import JSONDecodeError
 from pygame import display
 from pathlib import Path
-
 from data.paths import RESOLUTIONS
 
 
@@ -69,7 +68,7 @@ def get_available_resolutions():
     available = [res for res in ALL_RESOLUTIONS if res <= max_res()]
     if available[-1] != max_res():
         available.append(max_res())
-    return [[pretty_resolution(res)] for res in available]
+    return [pretty_resolution(res) for res in available]
 
 
 def pretty_resolution(res):

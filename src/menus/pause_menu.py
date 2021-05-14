@@ -2,7 +2,7 @@ import sys
 import pygame as pg
 
 from body import Body
-from gui.map import Map
+from map import Map
 from gui.side_button import SideButton
 from gui.slider import Slider
 from gui.text_button import TextButton
@@ -41,19 +41,25 @@ class PauseMenu:
 
         # gui elements of Stats window
         self.tank_body = None
-        self.tank_body_pos = (xo + H(880), H(400))
+        self.tank_body_pos = (xo + H(940), H(370))
 
         self.stats_widgets = (
-            Text(xo + H(180), H(262), FONT_3, H(45), WHITE),
-            Text(xo + H(180), H(646), FONT_3, H(37), WHITE),
-            Text(xo + H(690), H(646), FONT_3, H(37), WHITE),
-            Text(xo + H(180), H(318), FONT_3, H(30), WHITE),
-            Text(xo + H(180), H(721), FONT_3, H(30), WHITE),
-            Text(xo + H(690), H(721), FONT_3, H(30), WHITE),
+            Text(xo + H(160), H(260), FONT_3, H(48), WHITE, 0, H(490)),
+            Text(xo + H(160), H(573), FONT_3, H(39), WHITE, 0, H(490)),
+            Text(xo + H(656), H(573), FONT_3, H(39), WHITE, 0, H(490)),
+            Text(xo + H(160), H(344), FONT_3, H(29), WHITE, 0, H(630)),
+            Text(xo + H(160), H(647), FONT_3, H(29), WHITE, 0, H(490)),
+            Text(xo + H(656), H(647), FONT_3, H(29), WHITE, 0, H(490)),
         )
         self.stats_labels = (
-            Text(xo + H(180), H(582), FONT_3, H(45), WHITE),
-            Text(xo + H(690), H(582), FONT_3, H(45), WHITE)
+            Text(xo + H(160), H(508), FONT_3, H(48), WHITE),
+            Text(xo + H(656), H(508), FONT_3, H(48), WHITE),
+            Text(xo + H(160), H(830), FONT_3, H(39), WHITE),
+            Text(xo + H(656), H(830), FONT_3, H(39), WHITE),
+        )
+        self.counters = (
+            Text(xo + H(440), H(830), FONT_3, H(43), WHITE),
+            Text(xo + H(990), H(830), FONT_3, H(43), WHITE)
         )
 
         # gui elements of Map window
@@ -61,10 +67,10 @@ class PauseMenu:
 
         # gui elements of Options window
         sp = game.sound_player
-        self.music_slider = Slider(SCR_W2, H(400), MUSIC_VOLUME_TEXT, FONT_3, H(52), sp)
-        self.sound_slider = Slider(SCR_W2, H(500), SOUND_VOLUME_TEXT, FONT_3, H(52), sp)
-        self.to_menu_button = TextButton(SCR_W2, H(610), EXIT_TO_MENU_TEXT, FONT_3, H(52), 210, sp)
-        self.to_desktop_button = TextButton(SCR_W2, H(710), EXIT_TO_DESKTOP_TEXT, FONT_3, H(52), 210, sp)
+        self.music_slider = Slider(SCR_W2, H(400), MUSIC_VOLUME_TEXT, FONT_3, H(48), sp)
+        self.sound_slider = Slider(SCR_W2, H(485), SOUND_VOLUME_TEXT, FONT_3, H(48), sp)
+        self.to_menu_button = TextButton(SCR_W2, H(580), EXIT_TO_MENU_TEXT, FONT_3, H(48), 210, sp)
+        self.to_desktop_button = TextButton(SCR_W2, H(665), EXIT_TO_DESKTOP_TEXT, FONT_3, H(48), 210, sp)
         self.yes_button = TextButton(SCR_W2 - H(140), H(600), YES_BUTTON_TEXT, FONT_3, H(54), 210, sp, H(200))
         self.no_button = TextButton(SCR_W2 + H(140), H(600), NO_BUTTON_TEXT, FONT_3, H(54), 210, sp, H(200))
 
@@ -85,13 +91,17 @@ class PauseMenu:
 
     def set_stats_widgets(self, tank=(0, 0)):
         for i, widget in enumerate(self.stats_widgets):
-            widget.set_text(STATS_WINDOW_DESCRIPTIONS[self.game.language][tank][i])
+            widget.set_text(TANK_DESCRIPTIONS[self.game.language][tank][i])
         for i, label in enumerate(self.stats_labels):
             label.set_text(STATS_WINDOW_LABELS[self.game.language][i])
 
     def set_tank_stats(self, tank=(0, 0)):
         self.set_stats_widgets(tank)
         self.tank_body = Body(TANK_BODIES[tank])
+
+    def update_counter(self, counter_index, value):
+        new_value = int(self.counters[counter_index].text) + value
+        self.counters[counter_index].set_text(str(new_value))
 
     def set_language(self, language):
         self.caption.set_text(PAUSE_MENU_CAPTION[language])
@@ -119,6 +129,8 @@ class PauseMenu:
         self.to_desktop_button.reset()
         self.set_state(State.STATS_WINDOW)
         self.set_side_button_pressed(State.STATS_WINDOW)
+        for counter in self.counters:
+            counter.set_text("0")
 
     def set_side_button_pressed(self, index):
         for button in self.side_buttons:
@@ -203,7 +215,7 @@ class PauseMenu:
                 if e.type == pg.KEYDOWN and e.key in [pg.K_ESCAPE, pg.K_p]:
                     self.game.sound_player.reset()
                     self.game.sound_player.play_sound(UI_CLICK)
-                    if self.state in (State.EXIT_TO_DESKTOP_CONFIRMATION, State.EXIT_TO_MENU_CONFIRMATION):
+                    if self.state not in (State.MAP_WINDOW, State.STATS_WINDOW):
                         self.set_state(State.OPTIONS_WINDOW)
                     elif self.state == State.MAP_WINDOW:
                         self.map.reset_offset()
@@ -257,8 +269,10 @@ class PauseMenu:
                 widget.draw(screen)
             for label in self.stats_labels:
                 label.draw(screen)
-            pg.draw.circle(screen, WHITE, self.tank_body_pos, H(149))
-            pg.draw.circle(screen, TANK_BG_COLOR, self.tank_body_pos, H(142))
+            for counter in self.counters:
+                counter.draw(screen)
+            pg.draw.circle(screen, WHITE, self.tank_body_pos, H(129))
+            pg.draw.circle(screen, TANK_BG_COLOR, self.tank_body_pos, H(123))
             self.tank_body.draw(screen)
 
         elif self.state == State.MAP_WINDOW:

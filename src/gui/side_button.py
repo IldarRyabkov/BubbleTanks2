@@ -41,8 +41,8 @@ class SideButton:
 
     def set_language(self, language):
         pg.font.init()
-        text = self.texts[language][0]
-        font = pg.font.Font(FONT_3, H(35) if len(text) < 10 else H(29))
+        text = self.texts[language]
+        font = pg.font.Font(FONT_3, H(35) if len(text) < 10 else H(28))
         self.text_surface = pg.transform.rotate(font.render(text, True, WHITE), 90)
         self.text_pos = (self.x + (self.w - self.text_surface.get_width()) // 2,
                          self.y + (self.h - self.text_surface.get_height()) // 2)

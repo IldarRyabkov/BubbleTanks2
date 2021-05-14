@@ -173,12 +173,15 @@ class Game:
 
     def handle_bubble_eating(self):
         self.sound_player.reset()
+        eaten_bubbles = 0
         for i, bubble in enumerate(self.room.bubbles):
             if self.player.collide_bubble(bubble.x, bubble.y):
                 self.player.handle_bubble_eating(bubble.health)
                 self.health_window.activate(self.player.health, self.player.level)
                 self.room.bubbles[i] = None
                 self.sound_player.play_sound(BUBBLE_DEATH)
+                eaten_bubbles += 1
+        self.pause_menu.update_counter(1, eaten_bubbles)
         self.room.bubbles = list(filter(lambda b: b is not None, self.room.bubbles))
         if self.player.is_ready_to_upgrade:
             self.handle_player_upgrade()
@@ -225,8 +228,12 @@ class Game:
             self.room.handle_bullet_explosion(bullet.x, bullet.y)
             self.camera.start_shaking(250)
 
-        sound = PLAYER_BULLET_HIT if mob.health > 0 else MOB_DEATH
-        self.sound_player.play_sound(sound)
+        if mob.health <= 0:
+            self.pause_menu.update_counter(0, 1)
+            self.sound_player.reset()
+            self.sound_player.play_sound(MOB_DEATH)
+        else:
+            self.sound_player.play_sound(PLAYER_BULLET_HIT)
 
     def handle_mobs_collisions(self):
         """

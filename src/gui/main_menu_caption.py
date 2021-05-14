@@ -26,7 +26,10 @@ class MainMenuCaption:
             self.text.set_font_size(H(80))
 
         self.text.set_text(text)
-        scaled_h = 2*self.text.h + H(20) if state == State.MAIN_MENU else self.text.h + H(25)
+        if state == State.MAIN_MENU:
+            scaled_h = 2*self.text.h + H(20)
+        else:
+            scaled_h = round(1.2 * self.text.h) + H(25)
         self.surface = pg.transform.scale(self.image, (self.text.w + H(60), scaled_h))
         self.text.set_alpha(self.alpha)
         self.surface.set_alpha(self.alpha)
@@ -42,7 +45,7 @@ class MainMenuCaption:
 
     def draw(self, screen):
         x = SCR_W2 - self.surface.get_width() // 2
-        y = self.text.y - self.surface.get_height() // 2.3 + self.text.h // 4
+        y = self.text.y - self.surface.get_height() // 2 + self.text.h // 2.12
         screen.blit(self.surface, (x, y))
         self.text.draw(screen)
 

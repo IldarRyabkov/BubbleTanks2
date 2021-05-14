@@ -9,6 +9,10 @@ SCR_SIZE = (SCR_W, SCR_H)
 HEIGHT_SCALE_FACTOR = SCR_H / 960
 WIDTH_SCALE_FACTOR = SCR_W / 1280
 
+# languages
+ENGLISH = 0
+RUSSIAN = 1
+
 # animation states
 OPEN = 1
 WAIT = 0
@@ -33,7 +37,7 @@ DIST_BETWEEN_ROOMS = 2 * ROOM_RADIUS + SCR_W2
 TRANSPORTATION_TIME = 600
 MU = 0.00064
 
-# room
+# boss disposition states
 BOSS_IS_FAR_AWAY = 0
 BOSS_IN_NEIGHBOUR_ROOM = 1
 BOSS_IN_CURRENT_ROOM = 2
@@ -54,6 +58,8 @@ __all__ = [
     "SCR_W2",
     "SCR_H2",
     "SCR_SIZE",
+    "ENGLISH",
+    "RUSSIAN",
     "OPEN",
     "CLOSE",
     "WAIT",

@@ -14,8 +14,8 @@ from math import hypot, cos, sin, pi, sqrt
 
 from data.colors import *
 from data.paths import *
-from data.languages.english import UPGRADEMENU_CAPTION as ENG_UPG_CAPTION
-from data.languages.russian import UPGRADEMENU_CAPTION as RUS_UPG_CAPTION
+from data.gui_texts import UPGRADE_MENU_CAPTION
+from data.config import ENGLISH, RUSSIAN
 
 
 def save(surface, filename):
@@ -361,7 +361,7 @@ def start_menu_caption() -> pg.Surface:
     return surface
 
 
-def upgrade_caption_eng(text=ENG_UPG_CAPTION) -> pg.Surface:
+def upgrade_caption_eng(text=UPGRADE_MENU_CAPTION[ENGLISH]) -> pg.Surface:
     w, h = 2220, 210
     surface = pg.Surface((w, h))
     surface.fill(COLOR_KEY)
@@ -377,7 +377,7 @@ def upgrade_caption_eng(text=ENG_UPG_CAPTION) -> pg.Surface:
 
 
 def upgrade_caption_rus() -> pg.Surface:
-    return upgrade_caption_eng(text=RUS_UPG_CAPTION)
+    return upgrade_caption_eng(text=UPGRADE_MENU_CAPTION[RUSSIAN])
 
 
 def upgrade_button(w=660, bg_color=(230, 230, 230)) -> pg.Surface:

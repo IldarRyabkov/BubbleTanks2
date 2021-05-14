@@ -3,7 +3,7 @@ import pygame as pg
 from data.colors import BLACK, UPG_LABEL_COLOR
 from data.paths import *
 from data.config import *
-from data.gui_texts import UPGRADE_BUTTON_TEXTS as TEXTS
+from data.gui_texts import UPGRADE_BUTTON_LABELS, TANK_DESCRIPTIONS
 from gui.text import Text
 from utils import H, HF
 
@@ -65,7 +65,7 @@ class UpgradeButton:
             Text(self.w / 2, HF(432), CALIBRI,  H(31), BLACK, 1),  # second weapon name
             Text(HF(8), HF(536), CALIBRI, H(31), BLACK),  # tank description
         )
-        texts = TEXTS[language]["labels"] + list(TEXTS[language]["texts"][tank][:4])
+        texts = UPGRADE_BUTTON_LABELS[language] + list(TANK_DESCRIPTIONS[language][tank][:4])
         for widget, text in zip(text_widgets, texts):
             widget.set_text(text)
 

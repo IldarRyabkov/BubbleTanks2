@@ -42,7 +42,7 @@ class MainMenu:
             button.set_text(button.texts)
             self.lang_buttons.append(button)
 
-        self.resolution_warning = Text(SCR_W2, H(890), FONT_3, H(28), WHITE, 1)
+        self.resolution_warning = Text(SCR_W2, H(890), FONT_3, H(34), WHITE, 1)
 
         self.lang_window_button = DoubleTextButton(SCR_W2, H(325), LANGUAGE_LABEL, LANGUAGES[0], FONT_3, H(56), 200, sp)
         self.res_window_button = DoubleTextButton(SCR_W2, H(415), RESOLUTION_LABEL, resolutions[cur_res_index()], FONT_3, H(56), 200, sp)
@@ -66,7 +66,7 @@ class MainMenu:
         self.bubbles = []
         self.bubbles_time = 0
 
-        self.language = "English"
+        self.language = ENGLISH
         self.set_language(self.language)
 
     def set_language(self, language):
@@ -144,9 +144,9 @@ class MainMenu:
         elif self.state == State.LANGUAGES:
             for button in self.lang_buttons:
                 if button.clicked:
-                    new_language = button.texts[0]
+                    new_language = LANGUAGES.index(button.texts)
                     self.set_language(new_language)
-                    self.lang_window_button.set_value([new_language])
+                    self.lang_window_button.set_value(button.texts)
                     self.set_state(State.SETTINGS)
                     break
 
@@ -154,7 +154,7 @@ class MainMenu:
             for button in self.res_buttons:
                 if button.clicked:
                     self.res_window_button.set_value(button.texts)
-                    new_resolution = raw_resolution(button.texts[0])
+                    new_resolution = raw_resolution(button.texts)
                     if list(SCR_SIZE) != new_resolution:
                         save_resolution(new_resolution)
                     self.set_state(State.SETTINGS)

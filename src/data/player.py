@@ -92,8 +92,8 @@ params_00 = {
     "health_states": HEALTH_STATES_00,
     "radius": HF(64),
     "body": scaled_body(BODY_00),
-    "max_vel": HF(1),
-    "max_acc": HF(0.0032),
+    "max_vel": HF(0.93),
+    "max_acc": HF(0.0028),
     "gun_type": 'Gun00',
     "bg_radius": HF(160),
     "superpower": None

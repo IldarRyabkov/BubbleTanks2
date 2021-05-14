@@ -13,7 +13,8 @@ class UpgradeButton:
     It contains description of new tank, its weapon and superpower.
     It appears when the upgrade menu opens and hides when it closes.
     """
-    def __init__(self, button_type, tank, language, animation_duration):
+    def __init__(self, button_type, tank, language, sound_player, animation_duration):
+        self.sound_player = sound_player
         self.tank = tank
         self.w = HF(480) if button_type in (UPG_BUTTON_WIDE_LEFT, UPG_BUTTON_WIDE_RIGHT) else HF(352)
         self.h = HF(736)
@@ -56,14 +57,15 @@ class UpgradeButton:
             pg.transform.scale(image_pressed, size),
         )
         # Then we create text widget to be blitted on background surfaces of button
+        width = self.w - HF(30)
         text_widgets = (
-            Text(self.w / 2, HF(6),   FONT_1,  H(48), UPG_LABEL_COLOR, 1),  # button caption
-            Text(self.w / 2, HF(264), CALIBRI_BOLD, H(35), BLACK, 1),  # main weapon caption
-            Text(self.w / 2, HF(384), CALIBRI_BOLD, H(35), BLACK, 1),  # second weapon caption
-            Text(self.w / 2, HF(166), CALIBRI_BOLD,  H(35), BLACK, 1),  # tank name
-            Text(self.w / 2, HF(312), CALIBRI,  H(31), BLACK, 1),  # main weapon name
-            Text(self.w / 2, HF(432), CALIBRI,  H(31), BLACK, 1),  # second weapon name
-            Text(HF(8), HF(536), CALIBRI, H(31), BLACK),  # tank description
+            Text(self.w / 2, HF(6),   FONT_1,  H(48), UPG_LABEL_COLOR, 1, width),  # button caption
+            Text(self.w / 2, HF(264), CALIBRI_BOLD, H(35), BLACK, 1, width),  # main weapon caption
+            Text(self.w / 2, HF(384), CALIBRI_BOLD, H(35), BLACK, 1, width),  # second weapon caption
+            Text(self.w / 2, HF(166), CALIBRI_BOLD,  H(35), BLACK, 1, width),  # tank name
+            Text(self.w / 2, HF(312), CALIBRI,  H(31), BLACK, 1, width),  # main weapon name
+            Text(self.w / 2, HF(432), CALIBRI,  H(31), BLACK, 1, width),  # second weapon name
+            Text(HF(15), HF(536), CALIBRI, H(31), BLACK, 0, width),  # tank description
         )
         texts = UPGRADE_BUTTON_LABELS[language] + list(TANK_DESCRIPTIONS[language][tank][:4])
         for widget, text in zip(text_widgets, texts):
@@ -78,6 +80,14 @@ class UpgradeButton:
     def cursor_on_button(self):
         x, y = pg.mouse.get_pos()
         return 0 <= x - self.x <= self.w and 0 <= y - self.y <= self.h
+
+    @property
+    def clicked(self):
+        if self.cursor_on_button:
+            self.sound_player.reset()
+            self.sound_player.play_sound(UI_CLICK)
+            return True
+        return False
 
     def update_pos(self, dt, action):
         if action == OPEN:

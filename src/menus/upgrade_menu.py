@@ -48,7 +48,7 @@ class UpgradeMenu:
         Checks if any of buttons was pressed.
         """
         for button in self.buttons:
-            if button.cursor_on_button:
+            if button.clicked:
                 self.chosen_tank = button.tank
                 self.running = False
                 break
@@ -90,16 +90,17 @@ class UpgradeMenu:
 
         new_tanks = self.get_next_tanks()
         lang = self.game.language
+        sp = self.game.sound_player
         if len(new_tanks) == 3:
             self.buttons = (
-                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], lang, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], lang, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], lang, self.animation_duration)
+                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], lang, sp, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], lang, sp, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], lang, sp, self.animation_duration)
             )
         else:
             self.buttons = (
-                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], lang, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], lang, self.animation_duration)
+                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], lang, sp, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], lang, sp, self.animation_duration)
             )
 
         self.bg_surface.blit(self.game.screen, (0, 0))

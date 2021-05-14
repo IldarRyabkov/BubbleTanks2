@@ -1,7 +1,9 @@
 import json
 from json.decoder import JSONDecodeError
 from pygame import display
-from data.paths import RESOLUTION
+from pathlib import Path
+
+from data.paths import RESOLUTIONS
 
 
 ALL_RESOLUTIONS = [
@@ -24,7 +26,7 @@ def max_res():
 
 
 def save_resolution(res):
-    with open(RESOLUTION, 'w', encoding='utf-8') as file:
+    with open(RESOLUTIONS, 'w', encoding='utf-8') as file:
         json.dump(res, file, ensure_ascii=False, indent=4)
 
 
@@ -33,7 +35,11 @@ def get_resolution() -> list:
     If file data is incorrect, returns maximum available
     resolution and saves it in file resolution.json.
     """
-    with open(RESOLUTION, 'r', encoding='utf-8') as file:
+    if not Path(RESOLUTIONS).is_file():
+        with open(RESOLUTIONS, "w") as write_file:
+            json.dump('', write_file)
+
+    with open(RESOLUTIONS, 'r', encoding='utf-8') as file:
         try:
             data = json.load(file)
         except JSONDecodeError:

@@ -8,11 +8,19 @@ PATH = os.path.dirname(os.path.abspath("__file__"))
 block_cipher = None
 
 
+added_files = [
+	('data\\images', 'images'),
+	('data\\music', 'music'),
+	('data\\sounds', 'sounds'), 
+	('data\\fonts', 'fonts')
+]
+
+
 
 a = Analysis(['__main__.py'],
 	     pathex=[PATH],
              binaries=[],
-             datas=[('data\\images', 'images'), ('data\\music', 'music'), ('data\\sounds', 'sounds'), ('data\\fonts', 'fonts')],
+             datas=added_files,
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

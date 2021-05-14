@@ -72,6 +72,7 @@ class MainMenuButton(ScalingButton):
             else:
                 self.flashing = False
                 self.flashing_time = 0
+                self.scaled_surface.set_alpha(self.alpha)
 
         if time_elapsed >= 0.5:
             self.y = min(self.Y_MAX, self.y + self.vel * dt)

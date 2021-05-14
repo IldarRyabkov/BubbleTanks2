@@ -349,6 +349,8 @@ class Game:
         self.cooldown_window.draw(self.screen)
 
     def run_transportation(self, dist_between_rooms):
+        self.sound_player.reset()
+        self.sound_player.play_sound(WATER_SPLASH)
         time = dt = 0
         while time < TRANSPORTATION_TIME and self.running:
             self.handle_events()

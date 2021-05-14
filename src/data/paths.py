@@ -14,6 +14,13 @@ def path(directory: str, filename: str):
     return os.path.abspath(os.path.join(ROOT_DIR, "%s" % filename))
 
 
+user_dir = os.path.join(os.path.abspath(os.path.expanduser("~")), f".Underwater_Battles")
+if not os.path.exists(user_dir):
+    os.mkdir(user_dir)
+
+RESOLUTIONS = os.path.join(user_dir, 'resolution.json')
+
+
 def img_path(filename: str): return path("images", filename)
 def font_path(filename: str): return path("fonts", filename)
 def music_path(filename: str): return path("music", filename)
@@ -21,7 +28,6 @@ def sound_path(filename: str): return path("sounds", filename)
 
 
 ROOT_DIR = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-
 
 # images
 BG = img_path("bg.png")
@@ -70,8 +76,7 @@ PLAYER_INJURE = sound_path('player_injure.wav')
 THUNDER = sound_path('thunder.wav')
 UI_CHOOSE = sound_path('ui_choose.wav')
 UI_CLICK = sound_path('ui_click.wav')
-
-RESOLUTION = path('', 'resolution.json')
+WATER_SPLASH = sound_path('water_splash.wav')
 
 
 __all__ = [
@@ -112,9 +117,11 @@ __all__ = [
     "THUNDER",
     "UI_CHOOSE",
     "UI_CLICK",
+    "WATER_SPLASH",
     "SETTINGS_BUTTON_BG",
     "INFO_BUTTON_BG",
     "PLAY_BUTTON_BG",
-    "SCROLL_BUTTON_BG"
+    "SCROLL_BUTTON_BG",
+    "RESOLUTIONS"
 
 ]

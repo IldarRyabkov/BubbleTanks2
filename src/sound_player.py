@@ -3,7 +3,7 @@ from data.paths import *
 
 
 sounds = (BUBBLE_DEATH, MOB_DEATH, PLAYER_BULLET_HIT, PLAYER_BULLET_SHOT,
-          PLAYER_INJURE, THUNDER, UI_CHOOSE, UI_CLICK)
+          PLAYER_INJURE, THUNDER, UI_CHOOSE, UI_CLICK, WATER_SPLASH)
 
 
 class SoundPlayer:
@@ -13,18 +13,18 @@ class SoundPlayer:
         self.sounds = {sound: mixer.Sound(sound) for sound in sounds}
         self.sound_on = True
         self.music_on = True
-        self.sound_was_played = False
+        self.sound_lock = False
         self.master_volume = 0.3
         self.set_music_volume(self.master_volume)
         self.set_sound_volume(self.master_volume)
 
     def reset(self):
-        self.sound_was_played = False
+        self.sound_lock = False
 
     def play_sound(self, sound):
-        if self.sound_on and not self.sound_was_played:
+        if self.sound_on and not self.sound_lock:
             self.sounds[sound].play()
-            self.sound_was_played = True
+            self.sound_lock = True
 
     def set_sound_volume(self, value):
         for sound in self.sounds:

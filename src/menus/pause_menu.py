@@ -125,18 +125,26 @@ class PauseMenu:
             button.pressed = False
         self.side_buttons[index].pressed = True
 
-    def set_state(self, state):
-        animation = all(s not in (State.STATS_WINDOW, State.MAP_WINDOW) for s in (self.state, state))
+    def set_state(self, state, animation=False):
         if animation:
             self.run_animation(CLOSE)
+
         self.state = state
         self.window_caption.set_text(PAUSE_MENU_WINDOW_CAPTIONS[self.game.language][self.state])
         if state in (State.EXIT_TO_MENU_CONFIRMATION, State.EXIT_TO_DESKTOP_CONFIRMATION):
             self.window_caption.y = H(400)
+            self.yes_button.reset()
+            self.no_button.reset()
         else:
             self.window_caption.y = H(176)
         if state == State.MAP_WINDOW:
             self.map.reset_offset()
+        elif state == State.OPTIONS_WINDOW:
+            self.sound_slider.reset()
+            self.music_slider.reset()
+            self.to_desktop_button.reset()
+            self.to_menu_button.reset()
+
         if animation:
             self.run_animation(OPEN)
 
@@ -154,13 +162,19 @@ class PauseMenu:
             self.map.handle_mouse_click(e_type)
 
     def handle_mouse_down(self, e_type):
+        for state, button in enumerate(self.side_buttons):
+            if button.clicked:
+                self.set_side_button_pressed(state)
+                self.set_state(state)
+                return
+
         if self.state == State.OPTIONS_WINDOW:
             self.music_slider.handle(e_type)
             self.sound_slider.handle(e_type)
             if self.to_desktop_button.clicked:
-                self.set_state(State.EXIT_TO_DESKTOP_CONFIRMATION)
+                self.set_state(State.EXIT_TO_DESKTOP_CONFIRMATION, True)
             elif self.to_menu_button.clicked:
-                self.set_state(State.EXIT_TO_MENU_CONFIRMATION)
+                self.set_state(State.EXIT_TO_MENU_CONFIRMATION, True)
 
         elif self.state == State.MAP_WINDOW:
             self.map.handle_mouse_click(e_type)
@@ -171,31 +185,33 @@ class PauseMenu:
                 pg.quit()
                 sys.exit()
             elif self.no_button.clicked:
-                self.set_state(State.OPTIONS_WINDOW)
+                self.set_state(State.OPTIONS_WINDOW, True)
 
         elif self.state == State.EXIT_TO_MENU_CONFIRMATION:
             if self.yes_button.clicked:
                 self.running = self.game.running = False
             elif self.no_button.clicked:
-                self.set_state(State.OPTIONS_WINDOW)
-
-        for state, button in enumerate(self.side_buttons):
-            if button.clicked:
-                self.set_side_button_pressed(state)
-                self.set_state(state)
+                self.set_state(State.OPTIONS_WINDOW, True)
 
     def handle_events(self, animation_state=WAIT):
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
+
             if animation_state == WAIT:
                 if e.type == pg.KEYDOWN and e.key in [pg.K_ESCAPE, pg.K_p]:
                     self.game.sound_player.reset()
                     self.game.sound_player.play_sound(UI_CLICK)
+                    if self.state in (State.EXIT_TO_DESKTOP_CONFIRMATION, State.EXIT_TO_MENU_CONFIRMATION):
+                        self.set_state(State.OPTIONS_WINDOW)
+                    elif self.state == State.MAP_WINDOW:
+                        self.map.reset_offset()
                     self.running = False
+
                 elif e.type == pg.MOUSEBUTTONUP and e.button == pg.BUTTON_LEFT:
                     self.handle_mouse_up(e.type)
+
                 elif e.type == pg.MOUSEBUTTONDOWN and e.button == pg.BUTTON_LEFT:
                     self.handle_mouse_down(e.type)
 
@@ -279,15 +295,6 @@ class PauseMenu:
 
         self.running = True
         self.game.dt = 0
-
-        self.map.reset_offset()
-        self.music_slider.reset()
-        self.sound_slider.reset()
-        self.to_menu_button.reset()
-        self.to_desktop_button.reset()
-        if self.state in (State.EXIT_TO_DESKTOP_CONFIRMATION,
-                          State.EXIT_TO_MENU_CONFIRMATION):
-            self.set_state(State.OPTIONS_WINDOW)
 
         while self.running:
             self.update(self.game.dt)

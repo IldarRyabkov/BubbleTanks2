@@ -11,7 +11,7 @@ class MainMenuCaption:
     def __init__(self):
         self.text = Text(SCR_W2, H(405), FONT_1, H(112), WHITE, 1)
         self.image = pg.image.load(START_MENU_CAPTION_BG).convert_alpha()
-        self.surface = pg.transform.scale(self.image, (H(1280), H(280)))
+        self.surface = pg.transform.scale(self.image, (H(1280), H(240)))
         self.alpha = 255
 
     def set_format(self, state, text):
@@ -26,7 +26,7 @@ class MainMenuCaption:
             self.text.set_font_size(H(80))
 
         self.text.set_text(text)
-        scaled_h = 2*self.text.h + H(75) if state == State.MAIN_MENU else self.text.h + H(25)
+        scaled_h = 2*self.text.h + H(20) if state == State.MAIN_MENU else self.text.h + H(25)
         self.surface = pg.transform.scale(self.image, (self.text.w + H(60), scaled_h))
         self.text.set_alpha(self.alpha)
         self.surface.set_alpha(self.alpha)

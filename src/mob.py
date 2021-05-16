@@ -2,7 +2,7 @@ import random
 import numpy as np
 from pygame import Rect
 
-from utils import circle_collidepoint, calculate_angle
+from utils import *
 from mob_guns import get_gun
 from base_mob import BaseMob
 
@@ -28,7 +28,7 @@ class Mob(BaseMob):
         self.gun = get_gun(gun_type)
         self.pos_0 = np.array([x, y], dtype=float)
         self.pos = np.array([x, y], dtype=float)
-        self.randomize_pos(random_shift)
+        self.randomize_pos(H(random_shift))
         self.polar_angle = random.uniform(0, 1000)
         self.angular_vel = random.choice([-angular_vel * random.uniform(0.9, 1.1),
                                           angular_vel * random.uniform(0.9, 1.1)])

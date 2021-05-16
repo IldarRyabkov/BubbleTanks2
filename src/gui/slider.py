@@ -17,7 +17,7 @@ class Slider(ScalingButton):
 
         self.empty_line = pg.Rect(self.w//2 + H(40), (self.h - self.line_h)//2, self.line_w, self.line_h)
         self.filled_line = self.empty_line.copy()
-        self.slider_rect = pg.Rect(self.empty_line.right - H(6) , (self.h - H(56))//2, H(12), H(56))
+        self.slider_rect = pg.Rect(self.empty_line.right - H(6) , (self.h - H(46))//2, H(12), H(46))
 
         self.click_area = pg.Rect(self.x + H(40), self.y - self.h//2, self.line_w, self.h)
 

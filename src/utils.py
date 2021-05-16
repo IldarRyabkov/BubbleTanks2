@@ -1,4 +1,4 @@
-from math import pi, atan, hypot, cos, sin
+from math import pi, hypot, cos, sin, atan2
 import numpy as np
 
 from data.config import *
@@ -6,15 +6,7 @@ from data.colors import *
 
 
 def calculate_angle(x1, y1, x2, y2) -> float:
-    """Calculates angle in radians between x-axis and
-    2D vector with coordinates (x2 - x1; y2 - y1). For example:
-    x1 = 1, y1 = 1, x2 = 2, y2 = 0 -> 0.25 * pi
-    x1 = 1, y1 = 1, x2 = 1, y2 = 5 -> -0.5 * pi
-    """
-    if x2 > x1: return atan((y1 - y2) / (x2 - x1))
-    if x2 < x1: return atan((y1 - y2) / (x2 - x1)) + pi
-    if y2 < y1: return pi/2
-    return -pi/2
+    return atan2(y1 - y2, x2 - x1)
 
 
 def circle_collidepoint(x0, y0, r, x, y) -> bool:

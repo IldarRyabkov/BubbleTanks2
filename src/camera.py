@@ -8,7 +8,7 @@ class Camera:
     def __init__(self):
         self.offset = array([0, 0])
         self.shaking = False
-        self.shaking_offset = array([0, 0])
+        self.shaking_offset = array([0., 0.])
         self.shaking_vel = 0
         self.shaking_time = 0
         self.shaking_temp_time = 0
@@ -29,7 +29,7 @@ class Camera:
 
     def stop_shaking(self):
         self.shaking = False
-        self.shaking_offset = array([0, 0])
+        self.shaking_offset = array([0., 0.])
         self.shaking_time = 0
         self.shaking_temp_time = 0
 

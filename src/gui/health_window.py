@@ -1,6 +1,6 @@
 from gui.popup_window import PopupWindow
 from gui.status_bar import StatusBar
-from data.paths import HEALTH_WINDOW_BG, FONT_3
+from data.paths import HEALTH_WINDOW_BG, CALIBRI_BOLD
 from data.config import SCR_H, SCR_W2, ENGLISH
 from data.colors import WHITE
 from data.gui_texts import HEALTH_WINDOW_LABELS, TANK_NAMES
@@ -22,8 +22,8 @@ class HealthWindow(PopupWindow):
                          HEALTH_WINDOW_BG)
         self.max_health = 75
         self.status_bar = StatusBar(self.x + HF(16), self.y + HF(56), self.w - HF(32), H(32), 75)
-        self.tank_label = Text(self.x + HF(23), self.y + HF(9), FONT_3, H(30), WHITE)
-        self.bubbles_label = Text(0, self.y + HF(9), FONT_3, H(30), WHITE)
+        self.tank_label = Text(self.x + HF(23), self.y + HF(18), CALIBRI_BOLD, H(32), WHITE)
+        self.bubbles_label = Text(0, self.y + HF(18), CALIBRI_BOLD, H(32), WHITE)
         self.language = ENGLISH
 
     def reset(self):

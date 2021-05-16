@@ -187,8 +187,8 @@ class MainMenu:
                     self.handle_mouse_down(e.type)
 
     def update_bubbles(self, dt):
-        self.bubbles_time = min(self.bubbles_time + dt, 200)
-        if self.bubbles_time == 200:
+        self.bubbles_time = min(self.bubbles_time + dt, 150)
+        if self.bubbles_time == 150:
             self.bubbles_time = 0
             new_bubble = Bubble(uniform(0, SCR_W), SCR_H + HF(13), 0, 0, "tiny")
             new_bubble.vel = -uniform(HF(0.32), HF(0.96))

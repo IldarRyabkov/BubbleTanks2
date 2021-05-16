@@ -7,7 +7,7 @@ from gui.side_button import SideButton
 from gui.slider import Slider
 from gui.text_button import TextButton
 from gui.text import Text
-from data.paths import FONT_1, FONT_3, UI_CLICK
+from data.paths import *
 from data.colors import WHITE, TANK_BG_COLOR
 from data.config import *
 from data.gui_texts import *
@@ -44,17 +44,17 @@ class PauseMenu:
         self.tank_body_pos = (xo + H(940), H(370))
 
         self.stats_widgets = (
-            Text(xo + H(160), H(260), FONT_3, H(48), WHITE, 0, H(490)),
-            Text(xo + H(160), H(573), FONT_3, H(39), WHITE, 0, H(490)),
-            Text(xo + H(656), H(573), FONT_3, H(39), WHITE, 0, H(490)),
-            Text(xo + H(160), H(344), FONT_3, H(29), WHITE, 0, H(630)),
-            Text(xo + H(160), H(647), FONT_3, H(29), WHITE, 0, H(490)),
-            Text(xo + H(656), H(647), FONT_3, H(29), WHITE, 0, H(490)),
+            Text(xo + H(150), H(260), FONT_3, H(48), WHITE, 0, H(470)),
+            Text(xo + H(150), H(577), CALIBRI_BOLD, H(44), WHITE, 0, H(470)),
+            Text(xo + H(656), H(577), CALIBRI_BOLD, H(44), WHITE, 0, H(470)),
+            Text(xo + H(150), H(344), CALIBRI, H(34), WHITE, 0, H(630)),
+            Text(xo + H(150), H(647), CALIBRI, H(34), WHITE, 0, H(470)),
+            Text(xo + H(656), H(647), CALIBRI, H(34), WHITE, 0, H(470)),
         )
         self.stats_labels = (
-            Text(xo + H(160), H(508), FONT_3, H(48), WHITE),
+            Text(xo + H(150), H(508), FONT_3, H(48), WHITE),
             Text(xo + H(656), H(508), FONT_3, H(48), WHITE),
-            Text(xo + H(160), H(830), FONT_3, H(39), WHITE),
+            Text(xo + H(150), H(830), FONT_3, H(39), WHITE),
             Text(xo + H(656), H(830), FONT_3, H(39), WHITE),
         )
         self.counters = (

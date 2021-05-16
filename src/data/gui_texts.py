@@ -211,7 +211,7 @@ eng_tank_descriptions = {
 
 
 eng_room_hints = [
-    '~~~~~~~~~~~~~W~~~~ ~~~~~Use A S D~~~ to move. Use mouse to aim, hold down the left mouse button to shoot. Try to get out of this bubble...',
+    '~~~~~~~~~~~~~~~W~~~~~~ ~~~~~Use A S D~~ to move. Use mouse to aim, hold down the left mouse button to shoot. Try to get out of this bubble...',
     'You moved to a new bubble-field! Destroy the bubble-tank enemies to take away the bubbles from them and ~~~~~~GROW!~~~~~~',
     'Taking damage from enemy tanks will make your tank weaker. If you are defeated, you will be transported to the nearest safe bubble-field.',
     'Sometimes the best way is to just run away! ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ press "p" to pause',

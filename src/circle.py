@@ -80,7 +80,7 @@ class Circle:
         self.scaling = scaling
         if self.scaling:
             self.scaling_amplitude = scaling_amplitude
-            self.scaling_speed = scaling_speed
+            self.scaling_phase_speed = scaling_speed / scaling_amplitude
             self.scaling_phase = uniform(0, 1)
 
         self.swinging = swinging
@@ -113,16 +113,11 @@ class Circle:
             glare.update(self.x, self.y, self.radius - self.edge, angle)
 
     def scale_radius(self, dt: int):
-        d_phase = dt * self.scaling_speed / self.scaling_amplitude
-        self.scaling_phase = (self.scaling_phase + d_phase) % 1
-        if self.scaling_phase > 0.75:
-            d_phase = self.scaling_phase - 1
-        elif self.scaling_phase > 0.25:
-            d_phase = 0.5 - self.scaling_phase
-        else:
-            d_phase = self.scaling_phase
-        dr = self.scaling_amplitude * d_phase
-        self.radius = self.max_radius + dr
+        self.scaling_phase = (self.scaling_phase + dt * self.scaling_phase_speed) % 1
+        if self.scaling_phase > 0.75: d_phase = self.scaling_phase - 1
+        elif self.scaling_phase > 0.25: d_phase = 0.5 - self.scaling_phase
+        else:  d_phase = self.scaling_phase
+        self.radius = self.max_radius + self.scaling_amplitude * d_phase
 
     def move(self, dx, dy):
         self.x += dx
@@ -183,11 +178,10 @@ class Circle:
 
     def draw(self, surface, dx, dy):
         if self.visible:
-            x, y, r = round(self.x - dx), round(self.y - dy), round(self.radius)
-            if self.edge:
-                pg.draw.circle(surface, WHITE, (x, y), r)
+            pos, r = (round(self.x - dx), round(self.y - dy)), round(self.radius)
+            pg.draw.circle(surface, WHITE, pos, r)
 
-            pg.draw.circle(surface, self.color, (x, y), round(r - self.edge))
+            pg.draw.circle(surface, self.color, pos, r - round(self.edge))
 
             if self.radius >= 8:
                 for glare in self.glares:

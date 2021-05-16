@@ -6,7 +6,7 @@ BUBBLES = {
     "tiny": {
         "radius": HF(13),
         "health": 1,
-        "body": scaled_body([[13, 2, BUBBLE_COLOR, 0, 0, True, 0.024, 12, True, False]])
+        "body": scaled_body([[15, 2, BUBBLE_COLOR, 0, 0, True, 0.028, 14, True, False]])
     },
     "small": {
         "radius": HF(17),

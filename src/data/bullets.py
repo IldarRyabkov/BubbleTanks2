@@ -16,89 +16,94 @@ def create_sniper_bullet():
 
 SNIPER_BULLET_BODY = create_sniper_bullet()
 
+AIR_BULLET_BODY = [
+    [28, 3, BUBBLE_COLOR, 0, 0, True, 17, True, False]
+
+]
+
 SMALL_BUL_BODY_1 = [
-    [12, 1, DARK_RED, 0, 0, False, 0.0, 0, True, False]
+    [12, 1, DARK_RED, 0, 0, False, 0, True, False]
 ]
 
 SMALL_BUL_BODY_2 = [
-    [12, 1, RED, 0, 0, False, 0.0, 0, True, False]
+    [12, 1, RED, 0, 0, False, 0, True, False]
 ]
 
 MEDIUM_BUL_BODY_1 = [
-    [22, 3, DARK_RED, 0, 0, True, 0.031, 17, True, False]
+    [22, 3, DARK_RED, 0, 0, True, 17, True, False]
 ]
 
 MEDIUM_BUL_BODY_2 = [
-    [22, 3, RED, 0, 0, True, 0.031, 17, True, False]
+    [22, 3, RED, 0, 0, True, 17, True, False]
 ]
 
 BIG_BUL_BODY_1 = [
-    [28, 3, DARK_RED, 0, 0, True, 0.033, 17, True, False]
+    [28, 3, DARK_RED, 0, 0, True, 17, True, False]
 ]
 
 BIG_BUL_BODY_2 = [
-    [28, 3, RED, 0, 0, True, 0.033, 17, True, False]
+    [28, 3, RED, 0, 0, True, 17, True, False]
 ]
 
 GIANT_BUL_BODY = [
-    [88, 7, RED, 0, 0, True, 0.041, 20, True, False]
+    [88, 7, RED, 0, 0, True, 20, True, False]
 ]
 
 BOMB_BUL_BODY_1 = [
-    [8,  1, DARK_RED, 16, 0,          False, 0.0, 0, True, False],
-    [8,  1, DARK_RED, 16, 0.667 * pi, False, 0.0, 0, True, False],
-    [8,  1, DARK_RED, 16, 1.333 * pi, False, 0.0, 0, True, False],
-    [16, 3, DARK_RED, 0,  0,          False, 0.0, 0, True, False]
+    [8,  1, DARK_RED, 16, 0,          False, 0, True, False],
+    [8,  1, DARK_RED, 16, 0.667 * pi, False, 0, True, False],
+    [8,  1, DARK_RED, 16, 1.333 * pi, False, 0, True, False],
+    [16, 3, DARK_RED, 0,  0,          False, 0, True, False]
 ]
 
 BOMB_BUL_BODY_2 = [
-    [8,  1, RED, 16, 0,          False, 0.0, 0, True, False],
-    [8,  1, RED, 16, 0.667 * pi, False, 0.0, 0, True, False],
-    [8,  1, RED, 16, 1.333 * pi, False, 0.0, 0, True, False],
-    [16, 3, RED, 0,  0,          False, 0.0, 0, True, False]
+    [8,  1, RED, 16, 0,          False, 0, True, False],
+    [8,  1, RED, 16, 0.667 * pi, False, 0, True, False],
+    [8,  1, RED, 16, 1.333 * pi, False, 0, True, False],
+    [16, 3, RED, 0,  0,          False, 0, True, False]
 ]
 
 STICKY_BUL_BODY = [
-    [25, 1, VIOLET, 0, 0, False, 0.0, 0, True, False]
+    [25, 1, VIOLET, 0, 0, False, 0, True, False]
 ]
 
 SMALL_SCALING_BUL_BODY_1 = [
-    [13, 1, DARK_RED, 0, 0, True, 0.026, 13, True, False]
+    [13, 1, DARK_RED, 0, 0, True, 13, True, False]
 ]
 
 SMALL_SCALING_BUL_BODY_2 = [
-    [13, 1, RED, 0, 0, True, 0.026, 13, True, False]
+    [13, 1, RED, 0, 0, True, 13, True, False]
 ]
 
 HOMING_MISSILE_BODY_1 = [
-    [14, 1, DARK_RED, 0, 0, False, 0.0, 0, True, True],
-    [7,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 16, 0.72 * pi],
-    [7,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 16, -0.72 * pi],
-    [5,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 14, pi],
-    [8,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 16, 0],
-    [5,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 25, 0]
+    [14, 1, DARK_RED, 0, 0, False, 0, True, True],
+    [7,  1, DARK_RED, 0, 0, False, 0, True, True, 16, 0.72 * pi],
+    [7,  1, DARK_RED, 0, 0, False, 0, True, True, 16, -0.72 * pi],
+    [5,  1, DARK_RED, 0, 0, False, 0, True, True, 14, pi],
+    [8,  1, DARK_RED, 0, 0, False, 0, True, True, 16, 0],
+    [5,  1, DARK_RED, 0, 0, False, 0, True, True, 25, 0]
 ]
 
 HOMING_MISSILE_BODY_2 = [
-    [14, 1, RED, 0, 0, False, 0.0, 0, True, True],
-    [7,  1, RED, 0, 0, False, 0.0, 0, True, True, 16, 0.72 * pi],
-    [7,  1, RED, 0, 0, False, 0.0, 0, True, True, 16, -0.72 * pi],
-    [5,  1, RED, 0, 0, False, 0.0, 0, True, True, 14, pi],
-    [8,  1, RED, 0, 0, False, 0.0, 0, True, True, 16, 0],
-    [5,  1, RED, 0, 0, False, 0.0, 0, True, True, 25, 0]
+    [14, 1, RED, 0, 0, False, 0, True, True],
+    [7,  1, RED, 0, 0, False, 0, True, True, 16, 0.72 * pi],
+    [7,  1, RED, 0, 0, False, 0, True, True, 16, -0.72 * pi],
+    [5,  1, RED, 0, 0, False, 0, True, True, 14, pi],
+    [8,  1, RED, 0, 0, False, 0, True, True, 16, 0],
+    [5,  1, RED, 0, 0, False, 0, True, True, 25, 0]
 ]
 
 SHURIKEN_BODY = [
-    [11, 1, DARK_RED, 0, 0, False, 0.0, 0, True, True],
-    [7,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 14, pi],
-    [7,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 14, -0.6 * pi],
-    [7,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 14, -0.2 * pi],
-    [7,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 14, 0.2 * pi],
-    [7,  1, DARK_RED, 0, 0, False, 0.0, 0, True, True, 14, 0.6 * pi]
+    [11, 1, DARK_RED, 0, 0, False, 0, True, True],
+    [7,  1, DARK_RED, 0, 0, False, 0, True, True, 14, pi],
+    [7,  1, DARK_RED, 0, 0, False, 0, True, True, 14, -0.6 * pi],
+    [7,  1, DARK_RED, 0, 0, False, 0, True, True, 14, -0.2 * pi],
+    [7,  1, DARK_RED, 0, 0, False, 0, True, True, 14, 0.2 * pi],
+    [7,  1, DARK_RED, 0, 0, False, 0, True, True, 14, 0.6 * pi]
 ]
 
 
-BULLETS = {
+BULLET_BODIES = {
     'SmallBullet_1': scaled_body(SMALL_BUL_BODY_1),
     'SmallBullet_2': scaled_body(SMALL_BUL_BODY_2),
     'MediumBullet_1': scaled_body(MEDIUM_BUL_BODY_1),
@@ -114,8 +119,9 @@ BULLETS = {
     'HomingMissile_1': scaled_body(HOMING_MISSILE_BODY_1),
     'HomingMissile_2': scaled_body(HOMING_MISSILE_BODY_2),
     'Shuriken': scaled_body(SHURIKEN_BODY),
-    'GiantBullet': scaled_body(GIANT_BUL_BODY)
+    'GiantBullet': scaled_body(GIANT_BUL_BODY),
+    'AirBullet': scaled_body(AIR_BULLET_BODY)
 }
 
 
-__all__ = ["BULLETS"]
+__all__ = ["BULLET_BODIES"]

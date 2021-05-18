@@ -172,7 +172,6 @@ class MainMenu:
 
             if animation_state == WAIT:
                 if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE:
-                    self.game.sound_player.reset()
                     self.game.sound_player.play_sound(UI_CLICK)
                     if self.state in (State.SETTINGS, State.EXIT_CONFIRMATION):
                         self.set_state(State.MAIN_MENU)

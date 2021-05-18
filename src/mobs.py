@@ -24,7 +24,7 @@ class BossHead(Mob):
     def update_body(self, screen_rect, dt, player_pos=(0, 0)):
         if self.body_rect.colliderect(screen_rect):
             for i, circle in enumerate(self.body.circles):
-                if circle.visible:
+                if circle.is_visible:
                     target = self.gun.target if 16 <= i < 24 else player_pos
                     circle.update(*self.pos, dt, target, 0, -0.5 * pi)
 

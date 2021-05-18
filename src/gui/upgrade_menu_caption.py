@@ -1,6 +1,6 @@
 import pygame as pg
 
-from data.config import SCR_W2, OPEN
+from data.config import *
 from data.paths import UPGRADE_CAPTION_RUS_BG, UPGRADE_CAPTION_ENG_BG
 from utils import H, HF
 
@@ -22,11 +22,11 @@ class UpgradeMenuCaption:
         image = pg.image.load(filename).convert_alpha()
         self.surface = pg.transform.scale(image, (H(1184), H(112)))
 
-    def update_pos(self, dt, action):
-        if action == OPEN:
+    def update(self, dt, animation_state=WAIT):
+        if animation_state == OPEN:
             dy = self.vel * dt
             self.y = min(self.y + dy, self.Y1) if self.vel > 0 else max(self.y + dy, self.Y1)
-        else:
+        elif animation_state == CLOSE:
             dy = -self.vel * dt
             self.y = max(self.y + dy, self.Y0) if self.vel > 0 else min(self.y + dy, self.Y0)
 

@@ -197,13 +197,13 @@ class Room:
             for bubble in self.bubbles:
                 bubble.maximize_gravity()
 
-    def add_bubbles(self, mob_pos, mob_bubbles):
-        """Method is called when a mob is killed.
-        Adds mob's bubbles to the list of bubbles.
+    def add_bubbles(self, pos, bubbles):
+        """Method is called when a mob is killed or an Air bullet hit the target.
+        Adds new bubbles to the list of bubbles.
         """
-        for bubble_name, n in mob_bubbles.items():
+        for bubble_name, n in bubbles.items():
             for i in range(n):
-                bubble = Bubble(*mob_pos, uniform(0, 2 * pi),
+                bubble = Bubble(*pos, uniform(0, 2 * pi),
                                 self.gravitation_radius, bubble_name)
                 self.bubbles.append(bubble)
 

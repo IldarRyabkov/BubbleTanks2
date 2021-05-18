@@ -2,7 +2,7 @@ import pygame as pg
 import sys
 
 from data.config import SCR_W2, SCR_H2, SCR_SIZE
-from data.paths import FONT_1, FONT_2, CALIBRI_BOLD
+from data.paths import FONT_1, FONT_3
 from data.colors import WHITE
 from bubble import Bubble
 from gui.text_button import TextButton
@@ -24,10 +24,10 @@ class VictoryMenu:
         self.mask.set_alpha(195)
 
         self.exit_button = TextButton(SCR_W2, H(688), EXIT_TO_MENU_TEXT,
-                                      FONT_1, H(52), 200, self.game.sound_player)
+                                      FONT_3, H(52), 200, self.game.sound_player)
         self.labels = (
             Text(SCR_W2, H(128), FONT_1, H(90), WHITE, 1),
-            Text(SCR_W2, H(232), FONT_2, H(48), WHITE, 1),
+            Text(SCR_W2, H(232), FONT_1, H(50), WHITE, 1),
         )
         self.bubbles = (
             Bubble(SCR_W2 - H(192), SCR_H2 - H(80), 0, 0, "big"),
@@ -53,11 +53,11 @@ class VictoryMenu:
             if e.type == pg.MOUSEBUTTONDOWN and e.button == pg.BUTTON_LEFT:
                 self.running = not self.exit_button.clicked
 
-    def update(self):
-        self.game.update_scaling_objects()
+    def update(self, dt):
+        self.game.update_scaling_objects(dt)
         for bubble in self.bubbles:
-            bubble.update_body(self.game.dt)
-        self.exit_button.update(self.game.dt)
+            bubble.update_body(dt)
+        self.exit_button.update(dt)
 
     def draw(self, screen):
         """Draws all objects in the background and victory menu items. """
@@ -76,13 +76,13 @@ class VictoryMenu:
         self.game.draw_background(self.bg_surface)
 
         self.running = True
-        self.game.dt = 0
+        dt = 0
         while self.running:
-            self.update()
+            self.update(dt)
             self.draw(self.game.screen)
 
-            self.game.dt = self.game.clock.tick()
-            self.game.fps_manager.update(self.game.dt)
+            dt = self.game.clock.tick()
+            self.game.fps_manager.update(dt)
             self.handle_events()
 
         self.game.running = False

@@ -8,6 +8,8 @@ class Body:
     def __init__(self, data):
         self.angle = 0
         self.circles = [Circle(*params) for params in data]
+        #for circle in self.circles:
+        #    circle.is_scaling = False
 
     def rotate(self, dest_angle, dt):
         while self.angle > pi:
@@ -32,10 +34,10 @@ class Body:
         for circle in self.circles:
             circle.update(x, y)
 
-    def update(self, x, y, dt=0, target=(0, 0), gamma=0):
-        beta = calculate_angle(x, y, target[0], target[1])
+    def update(self, x, y, dt=0, target=(0, 0), body_angle=0):
+        angle_to_target = calculate_angle(x, y, *target)
         for circle in self.circles:
-            circle.update(x, y, dt, target, beta, gamma)
+            circle.update(x, y, dt, target, angle_to_target, body_angle)
 
     def draw(self, surface, dx=0, dy=0):
         for circle in self.circles:

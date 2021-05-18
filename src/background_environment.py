@@ -82,9 +82,6 @@ class PlayerHalo:
         self.surface = None
         self.set_size(HF(160))
 
-    def reset(self):
-        self.__init__()
-
     def set_size(self, radius: float):
         self.radius = radius
         self.x = SCR_W2 - radius
@@ -155,7 +152,9 @@ class PlayerTrace:
 
 class BackgroundEnvironment:
     """Stores, updates and draws all background game objects"""
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
+
         self.bg = pg.transform.scale(pg.image.load(BG).convert(), SCR_SIZE)
         self.room_bg = room_bg()
         self.player_halo = PlayerHalo()
@@ -205,7 +204,7 @@ class BackgroundEnvironment:
         """Method is called when a new game is started.
         Resets background environment parameters.
         """
-        self.player_halo.reset()
+        self.player_halo.set_size(self.game.player.bg_radius)
         self.boss_disposition = BOSS_IS_FAR_AWAY
         self.boss_pos = None
         self.room_pos = array([0, 0])
@@ -299,8 +298,8 @@ class BackgroundEnvironment:
     def draw_new_hint(self, surface, dx, dy):
         self.new_hint_widget.draw(surface, dx, dy)
 
-    def draw_player_halo(self, screen, pos1, pos2=None):
-        self.player_halo.draw(screen, pos1, pos2)
+    def draw_player_halo(self, screen, offset, offset_new=None):
+        self.player_halo.draw(screen, offset, offset_new)
 
     def draw_room_glares(self, surface, dx, dy):
         for glare in self.room_glares:

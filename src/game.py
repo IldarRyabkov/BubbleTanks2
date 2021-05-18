@@ -19,8 +19,7 @@ from gui.health_window import HealthWindow
 from gui.cooldown_window import CooldownWindow
 
 from player import Player
-from mob import Mob
-from bullets import DrillingBullet, ExplodingBullet
+from bullets import *
 
 from background_environment import BackgroundEnvironment
 from camera import Camera
@@ -61,14 +60,13 @@ class Game:
 
         self.running = True
         self.transportation = False
-        self.dt = 0
 
         self.sound_player = SoundPlayer()
         self.fps_manager = FPSManager()
         self.clock = pg.time.Clock()
-        self.bg_environment = BackgroundEnvironment()
+        self.bg_environment = BackgroundEnvironment(self)
         self.camera = Camera()
-        self.player = Player()
+        self.player = Player(self)
         self.room = Room()
         self.mob_generator = MobGenerator()
 
@@ -103,7 +101,6 @@ class Game:
         self.victory_menu.reset()
         self.running = True
         self.transportation = False
-        self.dt = 0
         self.clock.tick()
 
         # Set the language for all game objects AFTER their parameters are reset
@@ -139,11 +136,7 @@ class Game:
             self.player.shooting = (e_type == pg.MOUSEBUTTONDOWN)
         elif e_key == pg.K_SPACE:
             self.player.superpower.on = (e_type == pg.KEYDOWN)
-        if (e_type ==  pg.KEYDOWN and
-                e_key in [pg.K_p, pg.K_ESCAPE]
-                and not self.transportation):
-            self.sound_player.reset()
-            self.sound_player.play_sound(UI_CLICK)
+        if e_type ==  pg.KEYDOWN and e_key in [pg.K_p, pg.K_ESCAPE]  and not self.transportation:
             self.pause_menu.run()
 
     def init_key_handlers(self):
@@ -172,17 +165,17 @@ class Game:
                 sys.exit()
 
     def handle_bubble_eating(self):
-        self.sound_player.reset()
         eaten_bubbles = 0
         for i, bubble in enumerate(self.room.bubbles):
             if self.player.collide_bubble(bubble.x, bubble.y):
                 self.player.handle_bubble_eating(bubble.health)
                 self.health_window.activate(self.player.health, self.player.level)
                 self.room.bubbles[i] = None
-                self.sound_player.play_sound(BUBBLE_DEATH)
                 eaten_bubbles += 1
-        self.pause_menu.update_counter(1, eaten_bubbles)
-        self.room.bubbles = list(filter(lambda b: b is not None, self.room.bubbles))
+        if eaten_bubbles:
+            self.pause_menu.update_counter(1, eaten_bubbles)
+            self.room.bubbles = list(filter(lambda b: b is not None, self.room.bubbles))
+            self.sound_player.play_sound(BUBBLE_DEATH)
         if self.player.is_ready_to_upgrade:
             self.handle_player_upgrade()
 
@@ -196,9 +189,10 @@ class Game:
     def handle_player_upgrade(self):
         if self.player.last_tank_in_history:
             self.upgrade_menu.run()
-            self.player.upgrade(True, self.upgrade_menu.chosen_tank)
-            if self.player.level == 2:
-                self.bg_environment.prepare_superpower_hint()
+            if self.running:
+                self.player.upgrade(True, self.upgrade_menu.chosen_tank)
+                if self.player.level == 2:
+                    self.bg_environment.prepare_superpower_hint()
         else:
             self.player.upgrade(False)
 
@@ -213,10 +207,12 @@ class Game:
         adds a hit-effect to the list of effects and plays an appropriate sound.
 
         """
-        if isinstance(bullet, DrillingBullet):
+        if isinstance(bullet, (DrillingBullet, AirBullet)):
             if mob in bullet.attacked_mobs:
                 return
             bullet.attacked_mobs.append(mob)
+            if isinstance(bullet, AirBullet):
+                self.room.add_bubbles((bullet.x, bullet.y), bullet.bubbles)
         else:
             bullet.hit_the_target = True
 
@@ -230,10 +226,10 @@ class Game:
 
         if mob.health <= 0:
             self.pause_menu.update_counter(0, 1)
-            self.sound_player.reset()
-            self.sound_player.play_sound(MOB_DEATH)
+            if not isinstance(mob, HomingMissile):
+                self.sound_player.play_sound(MOB_DEATH)
         else:
-            self.sound_player.play_sound(PLAYER_BULLET_HIT)
+            self.sound_player.play_sound(PLAYER_BULLET_HIT, False)
 
     def handle_mobs_collisions(self):
         """
@@ -244,12 +240,11 @@ class Game:
             mobs' homing bullets and player's bullets.
 
         """
-        self.sound_player.reset()
+        self.sound_player.unlock()
 
-        mob_collide_bullet = Mob.collide_bullet
         for b in self.player.bullets:
             for mob in self.room.mobs:
-                if mob_collide_bullet(mob, b.x, b.y, b.radius) and mob.health > 0:
+                if mob.collide_bullet(b.x, b.y, b.radius) and mob.health > 0:
                     self.handle_enemy_injure(mob, b)
                     break
 
@@ -261,13 +256,13 @@ class Game:
 
         for s in self.player.shurikens:
             for mob in self.room.mobs:
-                if mob_collide_bullet(mob, s.x, s.y, s.radius) and mob.health > 0:
+                if mob.collide_bullet(s.x, s.y, s.radius) and mob.health > 0:
                     self.handle_enemy_injure(mob, s)
                     break
 
         for b in self.player.homing_bullets:
             for mob in self.room.mobs:
-                if mob_collide_bullet(mob, b.x, b.y, b.radius) and mob.health > 0:
+                if mob.collide_bullet(b.x, b.y, b.radius) and mob.health > 0:
                     self.handle_enemy_injure(mob, b)
                     break
 
@@ -284,7 +279,7 @@ class Game:
         add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
 
         if not self.player.armor_on:
-            self.sound_player.play_sound(PLAYER_INJURE)
+            self.sound_player.play_sound(PLAYER_INJURE, False)
 
     def handle_player_collisions(self):
         """
@@ -296,12 +291,11 @@ class Game:
         If player's health becomes < 0, calls a 'downgrade_player' method.
 
         """
-        self.sound_player.reset()
+        self.sound_player.unlock()
 
-        player_collide_bullet = Player.collide_bullet
         for b in self.room.bullets:
             if (not self.player.invisible and
-                    player_collide_bullet(self.player, b.x, b.y, b.radius)):
+                    self.player.collide_bullet(b.x, b.y, b.radius)):
                 self.handle_player_injure(b)
                 break
 
@@ -313,7 +307,7 @@ class Game:
 
         for b in self.room.homing_bullets:
             if (not self.player.invisible and
-                    player_collide_bullet(self.player, b.x, b.y, b.radius)):
+                    self.player.collide_bullet(b.x, b.y, b.radius)):
                 self.handle_player_injure(b)
                 break
 
@@ -356,7 +350,6 @@ class Game:
         self.cooldown_window.draw(self.screen)
 
     def run_transportation(self, dist_between_rooms):
-        self.sound_player.reset()
         self.sound_player.play_sound(WATER_SPLASH)
         time = dt = 0
         while time < TRANSPORTATION_TIME and self.running:
@@ -456,20 +449,18 @@ class Game:
             direction = self.get_direction(player_offset)
             self.transport_player(direction)
 
-    def update(self):
+    def update(self, dt):
         self.handle_bubble_eating()
         self.handle_mobs_collisions()
         self.handle_player_collisions()
-        self.player.update(self.dt, self.room.mobs, self.room.top_effects,
-                           self.room.bottom_effects, self.camera,
-                           self.sound_player)
-        self.camera.update(*self.player.pos, self.dt)
-        self.room.update(self.player.pos,  self.dt)
+        self.player.update(dt)
+        self.camera.update(*self.player.pos, dt)
+        self.room.update(self.player.pos,  dt)
         if self.room.boss_defeated(self.bg_environment.boss_disposition):
             self.running = False
             self.victory_menu.run()
         else:
-            self.update_windows(self.dt)
+            self.update_windows(dt)
             self.check_transportation()
 
     def draw_background(self, surface):
@@ -495,36 +486,37 @@ class Game:
         self.health_window.draw(self.screen)
         self.cooldown_window.draw(self.screen)
 
-    def update_scaling_objects(self):
+    def update_scaling_objects(self, dt):
         """Method is called when Pause menu/Victory menu is running.
         It updates the sizes of mobs, player, bullets, etc.,
         animating them in the background in the Pause menu/Victory menu.
         """
         if isinstance(self.player.superpower, Ghost):
             self.player.superpower.update_body(self.player.body)
-        self.player.update_body(self.dt)
+        self.player.update_body(dt)
         for mob in self.room.mobs:
-            mob.update_body(self.room.rect, self.dt, self.player.pos)
+            mob.update_body(self.room.rect, dt, self.player.pos)
         for bubble in self.room.bubbles:
-            bubble.update_body(self.dt)
+            bubble.update_body(dt)
         for bullet in self.player.bullets:
-            bullet.update_body(self.dt)
+            bullet.update_body(dt)
         for shuriken in self.player.shurikens:
             if shuriken.is_orbiting:
-                shuriken.update_polar_coords(*self.player.pos, self.dt)
+                shuriken.update_polar_coords(*self.player.pos, dt)
         for bullet in self.room.bullets:
-            bullet.update_body(self.dt)
+            bullet.update_body(dt)
 
     def run_game(self):
         """ Game loop that starts when the main menu is closed. """
         self.sound_player.play_music(GAME_MUSIC)
+        self.clock.tick()
         while self.running:
-            self.update()
             self.draw_background(self.screen)
             self.draw_foreground()
             pg.display.update()
-            self.dt = self.clock.tick()
-            self.fps_manager.update(self.dt)
+            dt = self.clock.tick()
+            self.fps_manager.update(dt)
+            self.update(dt)
             self.handle_events()
 
     def run(self):

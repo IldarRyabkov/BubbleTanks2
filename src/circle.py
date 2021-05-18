@@ -40,16 +40,15 @@ class Circle:
                  color: tuple,
                  dist: float,
                  angle: float,
-                 scaling: bool,
-                 scaling_speed: float,
+                 is_scaling: bool,
                  scaling_amplitude:float,
-                 visible: bool,
-                 aiming=False,
+                 is_visible: bool,
+                 is_aiming=False,
                  aiming_dist=0,
                  aiming_angle=0,
-                 swinging=False,
+                 is_swinging=False,
                  swing_angle=0,
-                 rotating=False,
+                 is_rotating=False,
                  rotating_dist=0,
                  rotating_angle=0):
         self.x = 0
@@ -61,44 +60,45 @@ class Circle:
         self.edge = edge
         self.color = color
 
-        # полярные координаты, которые используются для вычисления
-        # позиции круга относительна центра тела моба, этот круг
-        # совершает некоторое движение
-        self.dist = dist
+        # polar coordinates, which are used to calculate the
+        # offset of the circle from the center of the body
+        self.distance = dist
         self.angle = angle
 
-        # полярные координаты, которые используются для вычисления
-        # позиции круга относительна центра тела моба, если для этого
-        # круга происходит автоматическая ориентировка относительно
-        # некоторой заданной точки (курсора, позиции другого моба и тд)
-        self.aiming = aiming
-        if self.aiming:
-            self.aiming_dist = aiming_dist
-            self.aiming_angle = aiming_angle
+        # Polar coordinates, which are used to calculate the additional offset
+        # of the circle, if this circle is automatically oriented relative to
+        # some specified point. Usually such a circle is an element of the enemy's
+        # tank cannon, which is automatically directed at the player, or it is an
+        # element of the player's tank, which automatically turns towards the cursor position
+        self.is_aiming = is_aiming
+        self.aiming_distance = aiming_dist
+        self.aiming_angle = aiming_angle
 
-        # у масштабируемого круга происходят автоматические колебания радиуса
-        self.scaling = scaling
-        if self.scaling:
-            self.scaling_amplitude = scaling_amplitude
-            self.scaling_phase_speed = scaling_speed / scaling_amplitude
-            self.scaling_phase = uniform(0, 1)
+        # The scaled circle performs automatic radius fluctuations
+        self.is_scaling = is_scaling
+        self.scaling_amplitude = scaling_amplitude
+        self.scaling_phase_speed = uniform(0.0015, 0.0019)
+        self.scaling_phase = uniform(0, 1)
 
-        self.swinging = swinging
-        if self.swinging:
-            self.swing_dist = 0
-            self.swing_angle = swing_angle
-            self.swing_direction = 1
-            self.swing_vel = HF(0.57)
-            self.swing_max_dist = HF(92)
+        # The swinging circle additionally performs an automatic swinging motion
+        # back and forth in a given direction. Usually such a circle is an element
+        # of the body of a mob that releases mines.
+        self.is_swinging = is_swinging
+        self.swing_distance = 0
+        self.swing_distance_max = HF(92)
+        self.swing_angle = swing_angle
+        self.swing_vel = HF(0.57)
 
-        self.rotating = rotating
-        if self.rotating:
-            self.rotating_angle = rotating_angle
-            self.rotating_dist = rotating_dist
+        # The rotating circle additionally performs an automatic rotating movement
+        self.is_rotating = is_rotating
+        self.rotating_angle = rotating_angle
+        self.rotating_distance = rotating_dist
 
-        self.visible = visible
+        # If a circle is not visible, it won't be updated and drawn
+        self.is_visible = is_visible
 
-        glare_angle = aiming_angle if self.aiming else angle
+        # Each circle has 4 glares
+        glare_angle = aiming_angle if self.is_aiming else angle
         k = pi if glare_angle > 0 else -pi
         b = pi if glare_angle != 0 else 0
         self.glares = (
@@ -126,63 +126,58 @@ class Circle:
             glare.move(dx, dy)
 
     def swing(self, dt: int, angle: float):
-        dr = self.swing_vel * dt
-
-        if self.swing_direction == 1:
-            if abs(self.swing_dist + dr) >= abs(self.swing_max_dist):
-                self.swing_dist = self.swing_max_dist
-                self.swing_direction *= -1
-            else:
-                self.swing_dist += dr
-        else:
-            if abs(self.swing_dist) <= abs(dr):
-                self.swing_dist = 0
-                self.swing_direction *= -1
-            else:
-                self.swing_dist -= dr
-        dx = self.swing_dist * cos(self.swing_angle + angle)
-        dy = -self.swing_dist * sin(self.swing_angle + angle)
+        self.swing_distance += self.swing_vel * dt
+        if self.swing_distance > self.swing_distance_max:
+            self.swing_distance = self.swing_distance_max
+            self.swing_vel *= -1
+        elif self.swing_distance < 0:
+            self.swing_distance = 0
+            self.swing_vel *= -1
+        dx = self.swing_distance * cos(self.swing_angle + angle)
+        dy = -self.swing_distance * sin(self.swing_angle + angle)
         self.move(dx, dy)
 
-    def rotate(self, dt: int):
-        self.rotating_angle += 2 * pi * dt / 1000
-        self.x += self.rotating_dist * cos(self.rotating_angle)
-        self.y -= self.rotating_dist * sin(self.rotating_angle)
+    def update(self, body_x, body_y, dt=0, target=(0, 0), angle_to_target=0, body_angle=0):
+        if not self.is_visible:
+            return
 
-    def update(self, x, y, dt=0, target=(0, 0), beta=0, gamma=0):
-        if self.visible:
-            if self.scaling:
-                self.scale_radius(dt)
+        if self.is_scaling:
+            self.scale_radius(dt)
 
-            angle = self.angle + gamma
-            self.x = x + self.dist * cos(angle)
-            self.y = y - self.dist * sin(angle)
+        angle = self.angle + body_angle
+        self.x = body_x + self.distance * cos(angle)
+        self.y = body_y - self.distance * sin(angle)
 
-            if self.aiming:
-                aiming_angle = calculate_angle(self.x, self.y, target[0], target[1])
-                angle = self.aiming_angle + aiming_angle
-                self.x += self.aiming_dist * cos(angle)
-                self.y -= self.aiming_dist * sin(angle)
+        if self.is_aiming:
+            angle = calculate_angle(self.x, self.y, *target) + self.aiming_angle
+            self.x += self.aiming_distance * cos(angle)
+            self.y -= self.aiming_distance * sin(angle)
 
-            if self.rotating:
-                self.rotate(dt)
+        if self.is_rotating:
+            self.rotating_angle += 0.002 * pi * dt
+            self.x += self.rotating_distance * cos(self.rotating_angle)
+            self.y -= self.rotating_distance * sin(self.rotating_angle)
 
-            if self.swinging:
-                self.swing(dt, (beta if self.aiming else gamma))
+        if self.is_swinging:
+            self.swing(dt, (angle_to_target if self.is_aiming else body_angle))
 
-            self.x += self.dx
-            self.y += self.dy
+        self.x += self.dx
+        self.y += self.dy
 
-            if self.radius >= 8:
-                self.update_glares(angle)
+        if self.radius >= 8:
+            self.update_glares(angle)
 
     def draw(self, surface, dx, dy):
-        if self.visible:
-            pos, r = (round(self.x - dx), round(self.y - dy)), round(self.radius)
-            pg.draw.circle(surface, WHITE, pos, r)
+        if not self.is_visible:
+            return
+        pos, r = (round(self.x - dx), round(self.y - dy)), round(self.radius)
+        pg.draw.circle(surface, WHITE, pos, r)
 
-            pg.draw.circle(surface, self.color, pos, r - round(self.edge))
+        pg.draw.circle(surface, self.color, pos, r - round(self.edge))
 
-            if self.radius >= 8:
-                for glare in self.glares:
-                    glare.draw(surface, dx, dy)
+        if self.radius >= 8:
+            for glare in self.glares:
+                glare.draw(surface, dx, dy)
+
+
+__all__ = ["Circle"]

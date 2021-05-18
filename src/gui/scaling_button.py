@@ -56,7 +56,6 @@ class ScalingButton:
         return False
 
     def handle_click(self):
-        self.sound_player.reset()
         self.sound_player.play_sound(UI_CLICK)
 
     def set_scaled_surface(self):
@@ -106,7 +105,6 @@ class ScalingButton:
         if not self.cursor_on_button:
             self.sound_lock = False
         elif not self.sound_lock:
-            self.sound_player.reset()
             self.sound_player.play_sound(UI_CHOOSE)
             self.sound_lock = True
         self.update_size(dt, self.cursor_on_button)

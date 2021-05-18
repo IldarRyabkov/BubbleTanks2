@@ -15,6 +15,7 @@ class UpgradeButton:
     """
     def __init__(self, button_type, tank, language, sound_player, animation_duration):
         self.sound_player = sound_player
+        self.sound_lock = False
         self.tank = tank
         self.w = HF(480) if button_type in (UPG_BUTTON_WIDE_LEFT, UPG_BUTTON_WIDE_RIGHT) else HF(352)
         self.h = HF(736)
@@ -84,22 +85,30 @@ class UpgradeButton:
     @property
     def clicked(self):
         if self.cursor_on_button:
-            self.sound_player.reset()
             self.sound_player.play_sound(UI_CLICK)
             return True
         return False
 
-    def update_pos(self, dt, action):
-        if action == OPEN:
+    def update(self, dt, animation_state=WAIT):
+        if animation_state == OPEN:
             dx = self.vel_x * dt
             dy = self.vel_y * dt
             self.x = min(self.x + dx, self.X1) if self.vel_x > 0 else max(self.x + dx, self.X1)
             self.y = min(self.y + dy, self.Y1) if self.vel_y > 0 else max(self.y + dy, self.Y1)
-        else:
+
+        elif animation_state == CLOSE:
             dx = -self.vel_x * dt
             dy = -self.vel_y * dt
             self.x = max(self.x + dx, self.X0) if self.vel_x > 0 else min(self.x + dx, self.X0)
             self.y = max(self.y + dy, self.Y0) if self.vel_y > 0 else min(self.y + dy, self.Y0)
+
+        elif animation_state == WAIT:
+            if not self.cursor_on_button:
+                self.sound_lock = False
+            elif not self.sound_lock:
+                self.sound_player.play_sound(UI_CHOOSE)
+                self.sound_lock = True
+
 
     def draw(self, screen):
         screen.blit(self.bg[self.cursor_on_button], (round(self.x), round(self.y)))

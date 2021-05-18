@@ -76,11 +76,11 @@ class Mob(BaseMob):
 
     def make_body_frozen(self):
         for i in range(-10, 0):
-            self.body.circles[i].visible = True
+            self.body.circles[i].is_visible = True
 
     def make_body_unfrozen(self):
         for i in range(-10, 0):
-            self.body.circles[i].visible = False
+            self.body.circles[i].is_visible = False
 
     def update_paralysed_state(self, dt):
         if self.is_paralysed:

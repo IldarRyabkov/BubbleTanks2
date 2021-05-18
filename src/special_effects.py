@@ -90,10 +90,12 @@ class BulletHitLines(SpecialEffect):
 
 class BulletHitCircle(SpecialEffect):
     def __init__(self, x, y, color):
-        super().__init__(x, y, duration=125)
+        duration = HF(128)
+        super().__init__(x, y, duration)
         self.r = HF(96)
-        self.circle = Circle(HF(64), HF(3), color, 0, 0, True, HF(0.51), HF(128), True)
+        self.circle = Circle(2/3*self.r, HF(3), color, 0, 0, True, 4/3*self.r, True)
         self.circle.scaling_phase = 0.75
+        self.circle.scaling_phase_speed = 0.5 / duration
         self.surface = pg.Surface((2 * self.r, 2 * self.r))
         self.alpha = 255
         self.surface.set_alpha(self.alpha)
@@ -162,7 +164,7 @@ class PowerfulExplosion(SpecialEffect):
         super().__init__(x, y, duration=300)
         self.surface_0 = pg.image.load(POWERFUL_EXPLOSION).convert_alpha()
         self.surface = None
-        self.max_diam = HF(1000)
+        self.max_diam = HF(1200)
         self.diam = None
 
     def update(self, dt):
@@ -178,7 +180,7 @@ class PowerfulExplosion(SpecialEffect):
 
 class Flash(SpecialEffect):
     def __init__(self):
-        super().__init__(0, 0, duration=200)
+        super().__init__(0, 0, duration=250)
         self.surface = pg.Surface((SCR_W, SCR_H))
         self.surface.fill(WHITE)
 

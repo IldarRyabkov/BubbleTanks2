@@ -13,18 +13,18 @@ class SoundPlayer:
         self.sounds = {sound: mixer.Sound(sound) for sound in sounds}
         self.sound_on = True
         self.music_on = True
-        self.sound_lock = False
+        self._sound_lock = False
         self.master_volume = 0.3
         self.set_music_volume(self.master_volume)
         self.set_sound_volume(self.master_volume)
 
-    def reset(self):
-        self.sound_lock = False
+    def unlock(self):
+        self._sound_lock = False
 
-    def play_sound(self, sound):
-        if self.sound_on and not self.sound_lock:
+    def play_sound(self, sound, ignore_lock=True):
+        if self.sound_on and (ignore_lock or not self._sound_lock):
             self.sounds[sound].play()
-            self.sound_lock = True
+            self._sound_lock = True
 
     def set_sound_volume(self, value):
         for sound in self.sounds:

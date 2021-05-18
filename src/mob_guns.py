@@ -20,10 +20,10 @@ class GunBossHead(Gun):
         self.target_angle = uniform(0, 2*pi)
         self.target = [0, 0]
 
-    def generate_bullets(self, x, y, target, gamma):
+    def generate_bullets(self, x, y, target, body_angle):
         xo, yo = x, y + HF(299)
         angle = calculate_angle(xo, yo, *target)
-        coords = (xo + self.radius * cos(angle), yo - self.radius * sin(angle))
+        coords = (xo + self.distance * cos(angle), yo - self.distance * sin(angle))
 
         return [RegularBullet(*coords, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
 
@@ -32,7 +32,7 @@ class GunBossHead(Gun):
 
     def append_bullet(self, x, y, bullets):
         self.target = self.get_target(x, y)
-        bullets.append(RegularBullet(*self.target, -10, HF(1.0), self.target_angle, BULLETS["BigBullet_2"]))
+        bullets.append(RegularBullet(*self.target, -10, HF(1.0), self.target_angle, BULLET_BODIES["BigBullet_2"]))
 
     def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.activated and self.turret_shot_time == self.bullet_cooldown:
@@ -63,7 +63,7 @@ class GunBossHand(Gun):
     def __init__(self):
         super().__init__(*GUN_BOSS_HAND_PARAMS)
 
-    def generate_bullets(self, x, y, target, gamma):
+    def generate_bullets(self, x, y, target, body_angle):
         angle = calculate_angle(x, y, *target)
         xo, yo = self.get_reference_point(x, y, angle)
         r = HF(23)
@@ -81,12 +81,12 @@ class GunBossLeg(Gun):
         super().__init__(*GUN_BOSS_LEG_PARAMS)
         self.missile_switch = 1
 
-    def generate_bullets(self, x, y, target, gamma):
+    def generate_bullets(self, x, y, target, body_angle):
         angle = 0.61 * pi if self.missile_switch == 1 else 0.39 * pi
-        xo = x + self.radius * cos(angle)
-        yo = y - self.radius * sin(angle)
+        xo = x + self.distance * cos(angle)
+        yo = y - self.distance * sin(angle)
 
-        return [HomingMissile(xo, yo, HF(28), self.bul_dmg, self.bul_vel, self.bul_body)]
+        return [HomingMissile(xo, yo, angle, 0.06, HF(28), self.bul_dmg, self.bul_vel, self.bul_body)]
 
     def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time:
@@ -110,9 +110,9 @@ class GunBenLaden(Gun):
         pos_5 = (x + r * cos(gamma - 0.5 * pi),  y - r * sin(gamma - 0.5 * pi))
         return [pos_0, pos_1, pos_2, pos_3, pos_4, pos_5]
 
-    def generate_bullets(self, x, y, target, gamma):
+    def generate_bullets(self, x, y, target, body_angle):
         bullets = []
-        coords = self.get_bullets_coords(x, y, gamma)
+        coords = self.get_bullets_coords(x, y, body_angle)
         for i in range(6):
             bullets.append(BombBullet(*coords[i], self.bul_body))
         return bullets
@@ -140,7 +140,7 @@ class GunBomberShooter(Gun):
     def append_bomb_bullet(x, y, bullets, gamma):
         r = HF(64)
         xo, yo = x - r*cos(gamma), y + r*sin(gamma)
-        bullets.append(BombBullet(xo, yo, BULLETS["BombBullet_2"]))
+        bullets.append(BombBullet(xo, yo, BULLET_BODIES["BombBullet_2"]))
 
     def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time:
@@ -212,7 +212,7 @@ class GunSpider(Gun):
         angle = calculate_angle(x, y, *target)
         x += r2 * cos(angle)
         y -= r2 * sin(angle)
-        bullets.append(RegularBullet(x, y, -2, HF(0.88), angle, BULLETS["SmallBullet_2"]))
+        bullets.append(RegularBullet(x, y, -2, HF(0.88), angle, BULLET_BODIES["SmallBullet_2"]))
 
     @staticmethod
     def append_big_bullet(x, y, bullets, gamma, target):
@@ -222,7 +222,7 @@ class GunSpider(Gun):
         angle = calculate_angle(x, y, *target)
         x += r2 * cos(angle)
         y -= r2 * sin(angle)
-        bullets.append(RegularBullet(x, y, -15, HF(0.88), angle, BULLETS["BigBullet_2"]))
+        bullets.append(RegularBullet(x, y, -15, HF(0.88), angle, BULLET_BODIES["BigBullet_2"]))
 
     def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time and self.small_gun_is_alive:

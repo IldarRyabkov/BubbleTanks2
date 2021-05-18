@@ -15,23 +15,30 @@ class Gun:
                  bullet_name: str,
                  cooldown_time: int,
                  delay_time: int):
-        self.radius = radius
+        self.distance = radius
         self.bul_vel = bul_vel
         self.bul_dmg = bul_dmg
-        self.bul_body = BULLETS[bullet_name]
+        self.bul_body = BULLET_BODIES[bullet_name]
         self.cooldown_time = cooldown_time
         self.time = cooldown_time + delay_time
+
+    @property
+    def ready_to_shoot(self):
+        if self.time == self.cooldown_time:
+            self.time = 0
+            return True
+        return False
 
     def get_reference_point(self, x, y, angle) -> tuple:
         """ Returns the coordinates of the point relative
         to which the starting positions of the bullets will
         be calculated, depending on the type of gun.
         """
-        xo = x + self.radius * cos(angle)
-        yo = y - self.radius * sin(angle)
+        xo = x + self.distance * cos(angle)
+        yo = y - self.distance * sin(angle)
         return xo, yo
 
-    def generate_bullets(self, x, y, target, gamma) -> list:
+    def generate_bullets(self, mob_x, mob_y, target, body_angle) -> list:
         """ Returns the list of generated bullets. """
         return []
 
@@ -66,7 +73,7 @@ class GunSingle(Gun):
                          cooldown_time,
                          delay_time)
 
-    def generate_bullets(self, x, y, target, gamma) -> list:
+    def generate_bullets(self, x, y, target, body_angle) -> list:
         angle = calculate_angle(x, y, *target)
         coords = self.get_reference_point(x, y, angle)
         return [RegularBullet(*coords, self.bul_dmg, self.bul_vel, angle, self.bul_body)]
@@ -95,6 +102,13 @@ class GunAutomatic(GunSingle):
         self.auto_bullets_coords = coords
         self.AUTO_BULLET_VEL = HF(2.4)
 
+    @property
+    def ready_to_shoot_auto(self):
+        if self.time_auto == self.cooldown_time_auto:
+            self.time_auto = 0
+            return True
+        return False
+
     def generate_bullets_auto(self, x, y, mob, gamma) -> list:
         """ Returns the list of bullets which will linearly move to the given mob. """
         bullets = []
@@ -120,7 +134,7 @@ class GunAutomatic(GunSingle):
             bullet_angle = calculate_angle(*start_pos, *target)
 
             bullets.append(RegularBullet(*start_pos, -1, self.AUTO_BULLET_VEL,
-                                         bullet_angle, BULLETS["SmallBullet_1"]))
+                                         bullet_angle, BULLET_BODIES["SmallBullet_1"]))
         return bullets
 
     def add_bullets_auto(self, pos, mobs, bullets, gamma=0):

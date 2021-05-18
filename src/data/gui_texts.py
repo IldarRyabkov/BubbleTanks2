@@ -193,19 +193,19 @@ eng_tank_descriptions = {
     ),
     (5, 4): (
         'Super Heavy',
-        '2 E. C, 6 S. A, 1 BC',
-        'Huge cannon',
+        '2 A. C, 6 S. A, 1 BC',
+        'Giant cannon',
         'A Hefty Monster bubble-tank.',
-        'Shoots regular bullets.',
-        '-'
+        'You control 1 Large and 2 Air cannon, while 6 small ones will shoot automatically.',
+        'Launch the Death Projectile from the Giant Cannon to crush any enemy'
     ),
     (5, 5): (
         'APC carrier',
-        '1 B. C, 4 S. A, 1 BC',
-        'Summon allies',
-        'A giant tank that generates a bunch of hunters.',
-        'Shoots regular bullets.',
-        '-'
+        '1 A. C, 4 S. A, 1 BC',
+        'Summon a missile strike',
+        'A giant tank that causes a hurricane of missiles..',
+        'You control 1 Large and 1 Air cannon, while 4 small ones will shoot automatically.',
+        '6 homing missiles fly out and create panic in the ranks of the enemy.'
     )
 }
 
@@ -418,16 +418,16 @@ rus_tank_descriptions = {
         '2 В. П, 6 М. А, 1 БП',
         'Огромная пушка',
         'Здоровенный монстр бульботанк.',
-        'Стреляет обычными бульбами.',
-        '-'
+        'Ты управляешь 1 Большой и 2 Воздушными пушками, пока 6 маленьких будут стрелять автоматически.',
+        'Запусти снаряд смерти из гиганской пушки, чтоб сокрушить любого врага'
     ),
     (5, 5): (
         'БЗТ перевозчик',
-        '1 Б. П, 4 М. А, 1 БП',
-        'Вызвать союзников',
-        'Гигантский танк, который выпускает толпу охотников.',
-        'Стреляет обычными бульбами.',
-        '-'
+        '1 В. П, 4 М. А, 1 БП',
+        'Вызвать ракетный удар',
+        'Гигантский танк, который выпускает шквал из ракет.',
+        'Ты управляешь 1 Большой и 1 Воздушной пушками, пока 4 маленькие будут стрелять автоматически.',
+        '6 самонаводящихся ракет вылетают и создают панику в рядах врага.'
     )
 }
 

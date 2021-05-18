@@ -208,13 +208,10 @@ class PauseMenu:
     def handle_events(self, animation_state=WAIT):
         for e in pg.event.get():
             if e.type == pg.QUIT:
-                pg.quit()
                 sys.exit()
 
             if animation_state == WAIT:
                 if e.type == pg.KEYDOWN and e.key in [pg.K_ESCAPE, pg.K_p]:
-                    self.game.sound_player.reset()
-                    self.game.sound_player.play_sound(UI_CLICK)
                     if self.state not in (State.MAP_WINDOW, State.STATS_WINDOW):
                         self.set_state(State.OPTIONS_WINDOW)
                     elif self.state == State.MAP_WINDOW:
@@ -228,7 +225,7 @@ class PauseMenu:
                     self.handle_mouse_down(e.type)
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
-        self.game.update_scaling_objects()
+        self.game.update_scaling_objects(dt)
         if animation_state != WAIT:
             self.window_caption.update_alpha(animation_state, time_elapsed)
 
@@ -308,13 +305,13 @@ class PauseMenu:
         self.game.player.stop_moving()
 
         self.running = True
-        self.game.dt = 0
+        dt = 0
 
         while self.running:
-            self.update(self.game.dt)
+            self.update(dt)
             self.draw(self.game.screen)
-            self.game.dt = self.game.clock.tick()
-            self.game.fps_manager.update(self.game.dt)
+            dt = self.game.clock.tick()
+            self.game.fps_manager.update(dt)
             self.handle_events()
 
 

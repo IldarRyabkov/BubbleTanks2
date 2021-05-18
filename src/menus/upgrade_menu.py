@@ -22,6 +22,23 @@ class UpgradeMenu:
         self.running = False
         self.bg_surface = pg.Surface(SCR_SIZE)
 
+    def set_buttons(self):
+        new_tanks = self.get_next_tanks()
+        lang = self.game.language
+        sp = self.game.sound_player
+        if len(new_tanks) == 3:
+            self.buttons = (
+                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], lang, sp, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], lang, sp, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], lang, sp, self.animation_duration)
+            )
+        else:
+            self.buttons = (
+                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], lang, sp, self.animation_duration),
+                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], lang, sp, self.animation_duration)
+            )
+
+
     def get_next_tanks(self):
         """Returns new tanks available for player. """
         level, i = self.game.player.tank
@@ -51,6 +68,7 @@ class UpgradeMenu:
             if button.clicked:
                 self.chosen_tank = button.tank
                 self.running = False
+                self.run_animation(CLOSE)
                 break
 
     def handle_events(self, animation=False):
@@ -60,60 +78,20 @@ class UpgradeMenu:
         """
         for e in pg.event.get():
             if e.type == pg.QUIT:
-                pg.quit()
                 sys.exit()
+
+            elif e.type == pg.KEYDOWN and e.key in [pg.K_p, pg.K_ESCAPE]:
+                self.game.pause_menu.run()
+                self.running = self.game.running
+
             elif (not animation and e.type == pg.MOUSEBUTTONDOWN
                   and e.button == pg.BUTTON_LEFT):
                 self.handle_mouse_click()
 
-    def run_animation(self, action):
-        """Upgrade menu animation loop which begins when
-        the upgrade menu starts opening or closing.
-        """
-        self.game.clock.tick()
-        dt = time = 0
-        while time <= self.animation_duration:
-            self.handle_events(animation=True)
-
-            for button in self.buttons:
-                button.update_pos(dt, action)
-            self.caption.update_pos(dt, action)
-
-            self.draw()
-
-            dt = self.game.clock.tick()
-            self.game.fps_manager.update(dt)
-            time += dt
-
-    def run(self):
-        self.running = True
-
-        new_tanks = self.get_next_tanks()
-        lang = self.game.language
-        sp = self.game.sound_player
-        if len(new_tanks) == 3:
-            self.buttons = (
-                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], lang, sp, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], lang, sp, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], lang, sp, self.animation_duration)
-            )
-        else:
-            self.buttons = (
-                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], lang, sp, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], lang, sp, self.animation_duration)
-            )
-
-        self.bg_surface.blit(self.game.screen, (0, 0))
-
-        self.run_animation(OPEN)
-
-        while self.running:
-            self.handle_events()
-            self.draw()
-
-        self.run_animation(CLOSE)
-
-        self.game.clock.tick()
+    def update(self, dt, animation_state=WAIT):
+        for button in self.buttons:
+            button.update(dt, animation_state)
+        self.caption.update(dt, animation_state)
 
     def draw(self):
         """Draws menu background, buttons and caption. """
@@ -122,6 +100,36 @@ class UpgradeMenu:
             button.draw(self.game.screen)
         self.caption.draw(self.game.screen)
         pg.display.update()
+
+    def run_animation(self, animation_state):
+        """Upgrade menu animation loop which begins when
+        the upgrade menu starts opening or closing.
+        """
+        dt = time = 0
+        self.game.clock.tick()
+        while time <= self.animation_duration:
+            self.handle_events(animation=True)
+            self.update(dt, animation_state)
+            self.draw()
+            dt = self.game.clock.tick()
+            self.game.fps_manager.update(dt)
+            time += dt
+        self.game.clock.tick()
+
+    def run(self):
+        self.running = True
+        self.set_buttons()
+        self.bg_surface.blit(self.game.screen, (0, 0))
+        self.run_animation(OPEN)
+        dt = 0
+        self.game.clock.tick()
+        while self.running:
+            self.update(dt)
+            self.draw()
+            self.handle_events()
+            dt = self.game.clock.tick()
+            self.game.fps_manager.update(dt)
+        self.game.clock.tick()
 
 
 __all__ = ["UpgradeMenu"]

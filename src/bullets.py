@@ -1,5 +1,5 @@
 from math import cos, sin, pi, hypot
-from random import uniform
+from random import uniform, choice
 import pygame as pg
 
 from data.config import *
@@ -71,7 +71,7 @@ class ExplodingBullet(RegularBullet):
 
     """
     def __init__(self, x, y, angle):
-        super().__init__(x, y, -20, HF(1.1), angle, BULLETS["BigBullet_1"])
+        super().__init__(x, y, -20, HF(1.1), angle, BULLET_BODIES["BigBullet_1"])
 
         # bullet switches colors periodically
         self.colors = {1: DARK_RED, -1: LIGHT_RED}
@@ -133,7 +133,7 @@ class Shuriken(Bullet):
 
     """
     def __init__(self, x, y):
-        Bullet.__init__(self, x, y, HF(12), -7, HF(1.6), 0, BULLETS["Shuriken"])
+        Bullet.__init__(self, x, y, HF(12), -7, HF(1.6), 0, BULLET_BODIES["Shuriken"])
         self.dist = HF(128)
         self.is_orbiting = True
         self.angle = 0
@@ -195,10 +195,13 @@ class Shuriken(Bullet):
 class HomingMissile(Bullet):
     """ A bullet which moves with constant velocity and follows a moving target.
         Therefore, the x- and y-components of velocity are changing. """
-    def __init__(self, x, y, radius, damage, vel, body):
+    def __init__(self, x, y, start_angle, maneuvering_angle, radius, damage, vel, body):
         Bullet.__init__(self, x, y, radius, damage, vel, 0, body)
 
         self.body.update(self.x, self.y, 0)
+        self.update_vel(start_angle)
+        self.maneuvering_angle = maneuvering_angle
+        self.rearrangement_angle = choice((-maneuvering_angle, maneuvering_angle))
         self.health = 1
         self.hit_effect = 'RedHitCircle'
 
@@ -214,9 +217,15 @@ class HomingMissile(Bullet):
 
     def update(self, dt, target_x=0, target_y=0):
         angle = calculate_angle(self.x, self.y, target_x, target_y)
-        self.update_vel(angle)
+        vel_angle = calculate_angle(0, 0, self.vel_x, self.vel_y)
+        if abs(vel_angle - angle) > pi/2:
+            self.update_vel(vel_angle - self.rearrangement_angle)
+        elif vel_angle - angle > 0:
+            self.update_vel(vel_angle - self.maneuvering_angle)
+        else:
+            self.update_vel(vel_angle + self.maneuvering_angle)
         self.update_pos(dt)
-        self.body.update(self.x, self.y, dt, [target_x, target_y])
+        self.body.update(self.x, self.y, dt, [self.x + self.vel_x, self.y + self.vel_y])
 
 
 class DrillingBullet(Bullet):
@@ -254,21 +263,27 @@ class FrangibleBullet(Bullet):
     def __init__(self, x, y, angle, body):
         Bullet.__init__(self, x, y, HF(20), -40, HF(0.8), angle, body)
         self.body.update(self.x, self.y, 0)
-        self.timer = 0
+        self.time = 0
         self.fragmentation_time = 1000
 
-    def create_fragments(self, fragments):
-        for i in range(0, 360, 12):
-            fragments.append(DrillingBullet(self.x, self.y, -8, HF(2.1), i * pi / 180, BULLETS["SniperBullet"]))
-
-    def update(self, dt, fragments):
+    def update(self, dt, bullets):
         self.update_pos(dt)
         self.body.update(self.x, self.y, dt)
-
-        self.timer = min(self.timer + dt, self.fragmentation_time)
-        if self.timer == self.fragmentation_time:
+        self.time = min(self.fragmentation_time, self.time + dt)
+        if self.time == self.fragmentation_time:
             self.hit_the_target = True
-            self.create_fragments(fragments)
+            fragments = [
+                DrillingBullet(self.x, self.y, -8, HF(2.1), i * pi / 180, BULLET_BODIES["SniperBullet"])
+                for i in range(0, 360, 12)
+            ]
+            bullets.extend(fragments)
+
+
+class AirBullet(RegularBullet):
+    def __init__(self, x, y, angle):
+        super().__init__(x, y, -1, HF(1.1), angle, BULLET_BODIES["AirBullet"])
+        self.bubbles = {"small": 2}
+        self.attacked_mobs = []
 
 
 __all__ = [
@@ -279,6 +294,7 @@ __all__ = [
     "Shuriken",
     "HomingMissile",
     "DrillingBullet",
-    "FrangibleBullet"
+    "FrangibleBullet",
+    "AirBullet"
 
 ]

@@ -34,7 +34,6 @@ class SideButton:
     @property
     def clicked(self):
         if not self.pressed and self.click_area.collidepoint(pg.mouse.get_pos()):
-            self.sound_player.reset()
             self.sound_player.play_sound(UI_CLICK)
             return True
         return False

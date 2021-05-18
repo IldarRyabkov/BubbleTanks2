@@ -5,7 +5,7 @@ import numpy as np
 from bullets import *
 from data.config import *
 from data.bullets import *
-from data.paths import THUNDER
+from data.paths import THUNDER, MOB_DEATH
 from special_effects import add_effect
 from utils import calculate_angle, HF
 
@@ -24,6 +24,14 @@ FOUR_MISSILES_COORDS = (
     (HF(101), -0.55 * pi),
     (HF(131), 0.8 * pi),
     (HF(131), -0.8 * pi)
+)
+SIX_MISSILES_COORDS = (
+    (HF(142), 0.5 * pi),
+    (HF(132), 0.65 * pi),
+    (HF(132), 0.35 * pi),
+    (HF(142), -0.5 * pi),
+    (HF(132), -0.65 * pi),
+    (HF(132), -0.35 * pi),
 )
 
 
@@ -54,17 +62,20 @@ class HomingMissiles(SuperPower):
         self.coords = coords
 
     def get_missiles_coords(self, pos, body_angle):
-        if len(self.coords) != 4:
+        if len(self.coords) < 4:
             body_angle = calculate_angle(SCR_W2, SCR_H2, *pg.mouse.get_pos())
         coords = []
         for r, angle in self.coords:
-            coords.append(pos + np.array([r * cos(body_angle + angle), -r * sin(body_angle + angle)]))
+            start_angle = body_angle + angle
+            start_pos = pos + np.array([r * cos(start_angle), -r * sin(start_angle)])
+            coords.append((start_pos, start_angle))
         return coords
 
     def activate(self, pos, bullets, health, body_angle):
+        print(body_angle, 'kek')
         missiles_coords = self.get_missiles_coords(pos, body_angle)
-        for pos in missiles_coords:
-            bullets.append(HomingMissile(*pos, HF(10), -5, HF(0.93), BULLETS["HomingMissile_1"]))
+        for pos, angle in missiles_coords:
+            bullets.append(HomingMissile(*pos, angle, 0.04, HF(10), -5, HF(0.8), BULLET_BODIES["HomingMissile_1"]))
 
 
 class NoneSuperPower(SuperPower):
@@ -96,7 +107,7 @@ class Bombs(SuperPower):
 
     def activate(self, pos, bullets):
         bullet_pos = self.get_bullet_pos(pos)
-        bullets.append(BombBullet(*bullet_pos, BULLETS["BombBullet_1"]))
+        bullets.append(BombBullet(*bullet_pos, BULLET_BODIES["BombBullet_1"]))
 
 
 class ParalysingExplosion(SuperPower):
@@ -131,11 +142,14 @@ class PowerfulExplosion(SuperPower):
         alpha = calculate_angle(SCR_W2, SCR_H2, *mouse_pos)
         explosion_pos = pos + np.array([-HF(69) * cos(alpha), HF(69) * sin(alpha)])
 
+        sound_player.unlock()
         for mob in mobs:
-            if hypot(*(explosion_pos - mob.pos)) <= HF(500):
-                mob.health -= 20
+            if hypot(*(explosion_pos - mob.pos)) <= HF(600):
+                mob.health -= 30
                 mob.update_body_look()
-                add_effect('BulletHitLines', top_effects, *mob.pos)
+                if mob.health <= 0:
+                    sound_player.play_sound(MOB_DEATH, False)
+                add_effect('BigHitLines', top_effects, *mob.pos)
 
         add_effect('PowerfulExplosion', bottom_effects, *explosion_pos)
         add_effect('Flash', top_effects)
@@ -203,7 +217,7 @@ class ExplosionStar(SuperPower):
     def activate(self, pos, bullets):
         beta = calculate_angle(SCR_W2, SCR_H2, *pg.mouse.get_pos())
         coords = pos + np.array([HF(73) * cos(beta), -HF(73) * sin(beta)])
-        bullets.append(FrangibleBullet(*coords, beta, BULLETS["BigBullet_1"]))
+        bullets.append(FrangibleBullet(*coords, beta, BULLET_BODIES["BigBullet_1"]))
 
 
 class Shurikens(SuperPower):
@@ -226,7 +240,7 @@ class StickyCannon(SuperPower):
         xo, yo = x + HF(114) * cos(gamma), y - HF(114) * sin(gamma)
         angle = calculate_angle(xo, yo, *target)
         pos = (xo + HF(48) * cos(angle), yo - HF(48) * sin(angle))
-        bullets.append(RegularBullet(*pos, 0, HF(1.1), angle, BULLETS["StickyBullet"]))
+        bullets.append(RegularBullet(*pos, 0, HF(1.1), angle, BULLET_BODIES["StickyBullet"]))
 
 
 class PowerfulCannon(SuperPower):
@@ -246,7 +260,7 @@ class StickyExplosion(SuperPower):
     def activate(self, pos, bullets):
         for i in range(36):
             angle = i * pi/18
-            bullets.append(RegularBullet(*pos, 0, HF(1.1), angle, BULLETS["StickyBullet"]))
+            bullets.append(RegularBullet(*pos, 0, HF(1.1), angle, BULLET_BODIES["StickyBullet"]))
 
 
 class GiantCannon(SuperPower):
@@ -255,7 +269,7 @@ class GiantCannon(SuperPower):
 
     def activate(self, x, y, bullets, camera):
         angle = calculate_angle(SCR_W2, SCR_H2, *pg.mouse.get_pos())
-        bullets.append(RegularBullet(x, y, -50, HF(1.4), angle, BULLETS["GiantBullet"]))
+        bullets.append(RegularBullet(x, y, -50, HF(1.4), angle, BULLET_BODIES["GiantBullet"]))
         camera.start_shaking(500)
 
 
@@ -263,7 +277,7 @@ def get_superpower(name):
     if name is None: return NoneSuperPower()
     if name == 'Armor': return Armor()
     if name == 'Bombs': return Bombs()
-    if name == 'Paralysing_explosion': return ParalysingExplosion(HF(67), HF(480), name)
+    if name == 'ParalyzingExplosion': return ParalysingExplosion(HF(67), HF(480), name)
     if name == 'BigParalyzingExplosion': return ParalysingExplosion(0, HF(720), name)
     if name == 'Powerful_explosion': return PowerfulExplosion()
     if name == 'Fast_teleportation': return Teleportation(350)
@@ -272,6 +286,7 @@ def get_superpower(name):
     if name == 'TwoHomingMissiles': return HomingMissiles(TWO_MISSILES_COORDS)
     if name == 'ThreeHomingMissiles': return HomingMissiles(THREE_MISSILES_COORDS)
     if name == 'FourHomingMissiles': return HomingMissiles(FOUR_MISSILES_COORDS)
+    if name == 'SixHomingMissiles': return HomingMissiles(SIX_MISSILES_COORDS)
     if name == 'ExplosionStar': return ExplosionStar()
     if name == 'Shurikens': return Shurikens()
     if name == 'StickyCannon': return StickyCannon()

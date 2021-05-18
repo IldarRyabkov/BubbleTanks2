@@ -6,6 +6,11 @@ from data.colors import *
 
 
 def calculate_angle(x1, y1, x2, y2) -> float:
+    """Calculates angle in radians between x-axis and
+    2D vector with coordinates (x2 - x1; y2 - y1). For example:
+    x1 = 1, y1 = 1, x2 = 2, y2 = 0 -> 0.25 * pi
+    x1 = 1, y1 = 1, x2 = 1, y2 = 5 -> -0.5 * pi
+    """
     return atan2(y1 - y2, x2 - x1)
 
 
@@ -70,13 +75,10 @@ def print_pretty(ugly_body, scale=1.0):
                 elif body[j][2] == BUBBLE_COLOR_2: body[j][2] = 'BUBBLE_COLOR_2'
                 elif body[j][2] == BUBBLE_COLOR: body[j][2] = 'BUBBLE_COLOR'
 
-            elif i == 6:
-                body[j][i] = str(round(body[j][i] / scale, 3))
+            elif i in (0, 1, 3, 6, 9, 14):
+                body[j][i] = str(max(1, round(body[j][i] / scale)))
 
-            elif i in (0, 1, 3, 7, 10, 15):
-                body[j][i] = str(round(body[j][i] / scale))
-
-            elif i in (4, 11, 13, 16):
+            elif i in (4, 10, 12, 15):
                 sign = '' if body[j][i] > 0 else '-'
                 if body[j][i] == 0:
                     body[j][i] = '0'
@@ -106,7 +108,7 @@ def scaled_body(body: list) -> list:
     scaled = [row.copy() for row in body]
     for row in scaled:
         for i in range(len(row)):
-            if i in (0, 1, 3, 6, 7, 10, 15):
+            if i in (0, 1, 3, 6, 9, 14):
                 row[i] = HF(row[i])
     return scaled
 

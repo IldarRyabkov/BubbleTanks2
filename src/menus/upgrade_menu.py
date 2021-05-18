@@ -1,9 +1,9 @@
 import sys
 import pygame as pg
 
-from gui.upgrade_button import UpgradeButton
+from gui.upgrade_button import *
 from gui.upgrade_menu_caption import UpgradeMenuCaption
-from data.config import *
+from constants import *
 
 
 class UpgradeMenu:
@@ -28,14 +28,14 @@ class UpgradeMenu:
         sp = self.game.sound_player
         if len(new_tanks) == 3:
             self.buttons = (
-                UpgradeButton(UPG_BUTTON_LEFT, new_tanks[0], lang, sp, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_CENTER, new_tanks[1], lang, sp, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_RIGHT, new_tanks[2], lang, sp, self.animation_duration)
+                UpgradeButton(ButtonType.LEFT, new_tanks[0], lang, sp, self.animation_duration),
+                UpgradeButton(ButtonType.CENTER, new_tanks[1], lang, sp, self.animation_duration),
+                UpgradeButton(ButtonType.RIGHT, new_tanks[2], lang, sp, self.animation_duration)
             )
         else:
             self.buttons = (
-                UpgradeButton(UPG_BUTTON_WIDE_LEFT, new_tanks[0], lang, sp, self.animation_duration),
-                UpgradeButton(UPG_BUTTON_WIDE_RIGHT, new_tanks[1], lang, sp, self.animation_duration)
+                UpgradeButton(ButtonType.WIDE_LEFT, new_tanks[0], lang, sp, self.animation_duration),
+                UpgradeButton(ButtonType.WIDE_RIGHT, new_tanks[1], lang, sp, self.animation_duration)
             )
 
 

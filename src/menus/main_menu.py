@@ -8,9 +8,9 @@ from gui.text_button import *
 from gui.slider import Slider
 from gui.main_menu_caption import MainMenuCaption
 from gui.main_menu_button import MainMenuButton
-from data.config import *
-from data.resolution import *
-from data.colors import WHITE
+from constants import *
+from constants import MainMenuState as State
+from data.scripts import *
 from data.gui_texts import *
 from data.paths import *
 from utils import H, HF
@@ -23,29 +23,27 @@ class MainMenu:
     def __init__(self, game):
         self.game = game
         self.running = True
-        self.state = State.MAIN_MENU
+        self.state = State.MAIN_PAGE
 
         sp = self.game.sound_player
-        resolutions = get_available_resolutions()
+        resolutions = list(map(self.pretty_res, SUPPORTED_RESOLUTIONS))
 
         self.res_buttons = []
-        for i in range(len(resolutions)):
-            h = H(240 + 671/len(resolutions)*i)
-            button = TextButton(SCR_W2, h, resolutions[i], FONT_3, H(52), 200, sp, H(300))
+        for i, res_text in enumerate(resolutions):
+            button = TextButton(SCR_W2, H(240 + i * 671/len(resolutions)), res_text, FONT_3, H(52), 200, sp, H(300))
             button.set_text(button.texts)
             self.res_buttons.append(button)
 
         self.lang_buttons = []
-        for i in range(len(LANGUAGES)):
-            h = H(440 + 150*i)
-            button = TextButton(SCR_W2, h, LANGUAGES[i], FONT_3, H(62), 200, sp, H(300))
+        for i, lang_text in enumerate(LANGUAGES):
+            button = TextButton(SCR_W2, H(440 + i * 150*i), lang_text, FONT_3, H(62), 200, sp, H(300))
             button.set_text(button.texts)
             self.lang_buttons.append(button)
 
         self.resolution_warning = Text(SCR_W2, H(890), FONT_3, H(34), WHITE, 1)
 
-        self.lang_window_button = DoubleTextButton(SCR_W2, H(325), LANGUAGE_LABEL, LANGUAGES[0], FONT_3, H(56), 200, sp)
-        self.res_window_button = DoubleTextButton(SCR_W2, H(415), RESOLUTION_LABEL, resolutions[cur_res_index()], FONT_3, H(56), 200, sp)
+        self.lang_window_button = DoubleTextButton(SCR_W2, H(325), LANGUAGE_LABEL, LANGUAGES[self.game.language], FONT_3, H(56), 200, sp)
+        self.res_window_button = DoubleTextButton(SCR_W2, H(415), RESOLUTION_LABEL, self.pretty_res([SCR_W, SCR_H]), FONT_3, H(56), 200, sp)
 
         self.slider = Slider(SCR_W2, H(516), MASTER_VOLUME_TEXT, FONT_3, H(56), sp)
         self.slider.set_value(sp.master_volume)
@@ -58,20 +56,22 @@ class MainMenu:
         self.play_button = MainMenuButton(SCR_W2, PLAY_BUTTON_LABEL, H(84), PLAY_BUTTON_BG, sp, 1.3)
         self.settings_button = MainMenuButton(SCR_W2 - H(360), SETTINGS_BUTTON_LABEL, H(63), SETTINGS_BUTTON_BG, sp, 1)
 
-        self.caption = MainMenuCaption()
+        self.caption = MainMenuCaption(self, game)
 
         self.bg = pg.image.load(BG).convert()
         self.bg = pg.transform.scale(self.bg, SCR_SIZE)
 
         self.bubbles = []
         self.bubbles_time = 0
+        self.set_language(self.game.language)
 
-        self.language = ENGLISH
-        self.set_language(self.language)
+    @staticmethod
+    def pretty_res(resolution) -> str:
+        """Returns text representation of game resolution."""
+        return '%d x %d' % tuple(resolution)
 
     def set_language(self, language):
-        self.language = language
-        self.caption.set_format(self.state, MAIN_MENU_CAPTIONS[language][self.state])
+        self.caption.set_format()
         self.resolution_warning.set_text(RESOLUTION_WARNING[language])
         self.lang_window_button.set_language(language)
         self.res_window_button.set_language(language)
@@ -84,13 +84,13 @@ class MainMenu:
         self.settings_button.set_language(language)
 
     def set_state(self, state):
-        duration = 1000 if self.state == State.MAIN_MENU else 300
+        duration = 1000 if self.state == State.MAIN_PAGE else 300
         self.run_animation(CLOSE, duration)
 
         self.state = state
-        self.caption.set_format(state, MAIN_MENU_CAPTIONS[self.language][state])
+        self.caption.set_format()
 
-        if state == State.MAIN_MENU:
+        if state == State.MAIN_PAGE:
             self.play_button.reset()
             self.settings_button.reset()
         elif state == State.SETTINGS:
@@ -109,11 +109,11 @@ class MainMenu:
             self.yes_button.reset()
             self.no_button.reset()
 
-        duration = 1000 if self.state == State.MAIN_MENU else 400
+        duration = 1000 if self.state == State.MAIN_PAGE else 400
         self.run_animation(OPEN, duration)
 
     def handle_mouse_down(self, e_type):
-        if self.state == State.MAIN_MENU:
+        if self.state == State.MAIN_PAGE:
             if self.play_button.clicked:
                 self.running = False
                 self.run_animation(CLOSE, 1700)
@@ -129,7 +129,7 @@ class MainMenu:
             elif self.res_window_button.clicked:
                 self.set_state(State.RESOLUTIONS)
             elif self.back_button.clicked:
-                self.set_state(State.MAIN_MENU)
+                self.set_state(State.MAIN_PAGE)
             elif self.exit_button.clicked:
                 self.set_state(State.EXIT_CONFIRMATION)
 
@@ -139,12 +139,14 @@ class MainMenu:
                 pg.quit()
                 sys.exit()
             elif self.no_button.clicked:
-                self.set_state(State.MAIN_MENU)
+                self.set_state(State.MAIN_PAGE)
 
         elif self.state == State.LANGUAGES:
             for button in self.lang_buttons:
                 if button.clicked:
+                    save_language(button.texts)
                     new_language = LANGUAGES.index(button.texts)
+                    self.game.language = new_language
                     self.set_language(new_language)
                     self.lang_window_button.set_value(button.texts)
                     self.set_state(State.SETTINGS)
@@ -153,10 +155,8 @@ class MainMenu:
         elif self.state == State.RESOLUTIONS:
             for button in self.res_buttons:
                 if button.clicked:
+                    save_resolution(button.texts)
                     self.res_window_button.set_value(button.texts)
-                    new_resolution = raw_resolution(button.texts)
-                    if list(SCR_SIZE) != new_resolution:
-                        save_resolution(new_resolution)
                     self.set_state(State.SETTINGS)
                     break
 
@@ -174,8 +174,8 @@ class MainMenu:
                 if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE:
                     self.game.sound_player.play_sound(UI_CLICK)
                     if self.state in (State.SETTINGS, State.EXIT_CONFIRMATION):
-                        self.set_state(State.MAIN_MENU)
-                    elif self.state == State.MAIN_MENU:
+                        self.set_state(State.MAIN_PAGE)
+                    elif self.state == State.MAIN_PAGE:
                         self.set_state(State.EXIT_CONFIRMATION)
                     else:
                         self.set_state(State.SETTINGS)
@@ -207,7 +207,7 @@ class MainMenu:
             if self.state == State.RESOLUTIONS:
                 self.resolution_warning.set_alpha(self.caption.alpha)
 
-        if self.state == State.MAIN_MENU:
+        if self.state == State.MAIN_PAGE:
             self.play_button.update(dt, animation_state, time_elapsed)
             self.settings_button.update(dt, animation_state, time_elapsed)
 
@@ -239,7 +239,7 @@ class MainMenu:
             bubble.draw(screen, 0, 0)
         self.caption.draw(screen)
 
-        if self.state == State.MAIN_MENU:
+        if self.state == State.MAIN_PAGE:
             self.play_button.draw(screen)
             self.settings_button.draw(screen)
 

@@ -1,8 +1,7 @@
 from gui.status_bar import StatusBar
 from gui.popup_window import PopupWindow
 from gui.text import Text
-from data.config import SCR_W
-from data.colors import WHITE
+from constants import SCR_W, WHITE
 from data.gui_texts import COOLDOWN_WINDOW_LABELS
 from data.paths import COOLDOWN_WINDOW_BG, CALIBRI_BOLD
 from superpowers import *

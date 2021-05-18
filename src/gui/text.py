@@ -1,6 +1,6 @@
 import pygame as pg
 
-from data.config import OPEN
+from constants import OPEN
 
 
 class Text:

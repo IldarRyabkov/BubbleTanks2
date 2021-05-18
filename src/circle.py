@@ -2,7 +2,7 @@ import pygame as pg
 from random import uniform
 from math import pi, sin ,cos
 
-from data.colors import WHITE, GLARE_COLORS
+from constants import WHITE, GLARE_COLORS
 from utils import calculate_angle, HF
 
 

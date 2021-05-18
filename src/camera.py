@@ -1,6 +1,6 @@
 from numpy import array
 
-from data.config import SCR_W2, SCR_H2
+from constants import SCR_W2, SCR_H2
 from utils import HF
 
 

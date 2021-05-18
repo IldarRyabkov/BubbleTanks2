@@ -1,8 +1,7 @@
 from math import pi, hypot, cos, sin, atan2
 import numpy as np
 
-from data.config import *
-from data.colors import *
+from constants import *
 
 
 def calculate_angle(x1, y1, x2, y2) -> float:
@@ -118,7 +117,7 @@ def H(v):
     Initially, all sizes of objects were matched to the height of 960,
     so the scaling factor is SCR_H / 960.
     """
-    return round(v * HEIGHT_SCALE_FACTOR)
+    return round(v * H_SCALE_FACTOR)
 
 
 def W(v):
@@ -126,7 +125,7 @@ def W(v):
     Initially, all sizes of objects were matched to the width of 1280,
     so the scaling factor is SCR_W / 1280.
     """
-    return round(v * WIDTH_SCALE_FACTOR)
+    return round(v * W_SCALE_FACTOR)
 
 
 def HF(v):
@@ -134,7 +133,7 @@ def HF(v):
     Initially, all sizes of objects were matched to the height of 960,
     so the scaling factor is SCR_H / 960.
     """
-    return v * HEIGHT_SCALE_FACTOR
+    return v * H_SCALE_FACTOR
 
 
 def WF(v: float):
@@ -142,7 +141,7 @@ def WF(v: float):
     Initially, all sizes of objects were matched to the width of 1280,
     so the scaling factor is SCR_W / 1280.
     """
-    return v * WIDTH_SCALE_FACTOR
+    return v * W_SCALE_FACTOR
 
 
 __all__ = [

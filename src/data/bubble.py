@@ -1,4 +1,4 @@
-from data.colors import BUBBLE_COLOR, BUBBLE_COLOR_2
+from constants import BUBBLE_COLOR, BUBBLE_COLOR_2
 from utils import scaled_body, HF
 
 

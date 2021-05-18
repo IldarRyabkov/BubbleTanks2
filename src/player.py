@@ -2,7 +2,7 @@ import pygame as pg
 from math import cos, sin, pi, hypot
 import numpy as np
 
-from data.config import *
+from constants import *
 from data.player import PLAYER_PARAMS
 from data.paths import PLAYER_BULLET_SHOT
 
@@ -31,6 +31,7 @@ class Player(BaseMob):
         self.vel_x = self.vel_y = 0
         self.max_acc = max_acc
         self.acc_x= self.acc_y = 0
+        self.DECELERATION = 0.00064
 
         self.moving_left = False
         self.moving_right = False
@@ -301,7 +302,7 @@ class Player(BaseMob):
             # If the left and right movement keys are not pressed
             # (or are pressed together), acceleration must be opposite
             # to speed in order to slow down the player's movement.
-            self.acc_x = -np.sign(self.vel_x) * MU
+            self.acc_x = -np.sign(self.vel_x) * self.DECELERATION
         elif abs(self.vel_x) == self.max_vel:
             # If the player has reached maximum speed, he must stop accelerating
             self.acc_x = 0
@@ -312,7 +313,7 @@ class Player(BaseMob):
 
         # Same thing with acc_y
         if not self.moving_up ^ self.moving_down:
-            self.acc_y = -np.sign(self.vel_y) * MU
+            self.acc_y = -np.sign(self.vel_y) * self.DECELERATION
         elif abs(self.vel_y) == self.max_vel:
                 self.acc_y = 0
         else:

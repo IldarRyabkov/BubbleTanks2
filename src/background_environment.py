@@ -4,8 +4,7 @@ from numpy import array
 
 from body import Body
 from data.paths import *
-from data.config import *
-from data.colors import *
+from constants import *
 from gui.text import Text
 from data.gui_texts import ROOM_HINTS
 from data.mobs import BOSS_SKELETON_BODY

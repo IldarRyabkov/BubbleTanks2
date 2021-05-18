@@ -1,6 +1,6 @@
 import pygame as pg
 from math import pi
-from data.colors import *
+from constants import *
 from utils import scaled_body, H
 
 

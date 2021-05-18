@@ -1,11 +1,18 @@
 import pygame as pg
 
-from data.colors import BLACK, UPG_LABEL_COLOR
 from data.paths import *
-from data.config import *
+from constants import *
 from data.gui_texts import UPGRADE_BUTTON_LABELS, TANK_DESCRIPTIONS
 from gui.text import Text
 from utils import H, HF
+
+
+class ButtonType:
+    LEFT = 0
+    CENTER = 1
+    RIGHT = 2
+    WIDE_LEFT = 3
+    WIDE_RIGHT = 4
 
 
 class UpgradeButton:
@@ -17,26 +24,26 @@ class UpgradeButton:
         self.sound_player = sound_player
         self.sound_lock = False
         self.tank = tank
-        self.w = HF(480) if button_type in (UPG_BUTTON_WIDE_LEFT, UPG_BUTTON_WIDE_RIGHT) else HF(352)
+        self.w = HF(480) if button_type in (ButtonType.LEFT, ButtonType.RIGHT) else HF(352)
         self.h = HF(736)
 
-        if button_type == UPG_BUTTON_LEFT:
+        if button_type == ButtonType.LEFT:
             self.X0, self.Y0 = -self.w, HF(160)
             self.X1, self.Y1 = SCR_W2 - HF(592), HF(160)
 
-        elif button_type == UPG_BUTTON_CENTER:
+        elif button_type == ButtonType.CENTER:
             self.X0, self.Y0 = SCR_W2 - HF(176), SCR_H
             self.X1, self.Y1 = SCR_W2 - HF(176), HF(160)
 
-        elif button_type == UPG_BUTTON_RIGHT:
+        elif button_type == ButtonType.RIGHT:
             self.X0, self.Y0 = SCR_W, HF(160)
             self.X1, self.Y1 = SCR_W2 + HF(240), HF(160)
 
-        elif button_type == UPG_BUTTON_WIDE_LEFT:
+        elif button_type == ButtonType.WIDE_LEFT:
             self.X0, self.Y0 = -self.w, HF(160)
             self.X1, self.Y1 = SCR_W2 - HF(512), HF(160)
 
-        elif button_type == UPG_BUTTON_WIDE_RIGHT:
+        elif button_type == ButtonType.WIDE_RIGHT:
             self.X0, self.Y0 = SCR_W, HF(160)
             self.X1, self.Y1 = SCR_W2 + HF(32), HF(160)
 
@@ -46,7 +53,7 @@ class UpgradeButton:
 
         # Now we set button background surfaces.
         # First we load background images of button.
-        if button_type in (UPG_BUTTON_WIDE_LEFT, UPG_BUTTON_WIDE_RIGHT):
+        if button_type in (ButtonType.WIDE_LEFT, ButtonType.WIDE_RIGHT):
             image = pg.image.load(UPGRADE_BUTTON_WIDE_BG).convert_alpha()
             image_pressed = pg.image.load(UPGRADE_BUTTON_WIDE_PRESSED_BG).convert_alpha()
         else:
@@ -112,3 +119,11 @@ class UpgradeButton:
 
     def draw(self, screen):
         screen.blit(self.bg[self.cursor_on_button], (round(self.x), round(self.y)))
+
+
+__all__ = [
+
+    "ButtonType",
+    "UpgradeButton"
+
+]

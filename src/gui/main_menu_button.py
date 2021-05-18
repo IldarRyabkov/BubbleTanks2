@@ -2,8 +2,7 @@ import pygame as pg
 
 from gui.text import Text
 from gui.scaling_button import ScalingButton
-from data.config import *
-from data.colors import WHITE
+from constants import *
 from data.paths import *
 from utils import H
 

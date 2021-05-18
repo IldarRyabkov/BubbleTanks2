@@ -9,24 +9,18 @@ but I saved them here just in case.
 
 import pygame as pg
 import numpy as np
-import os
-from math import hypot, cos, sin, pi, sqrt
+from math import hypot, cos, sin, pi
 
-from data.colors import *
+from constants import *
 from data.paths import *
 from data.gui_texts import UPGRADE_MENU_CAPTION
-from data.config import ENGLISH, RUSSIAN
-
-
-def save(surface, filename):
-    pg.image.save(surface, os.path.join(ROOT_DIR, "images\%s.png" % filename))
 
 
 def background() -> pg.Surface:
     w, h = 1920, 1080
     surface = pg.Surface((w, h))
-    color_1 = np.array(BG_COLOR_1, dtype=float)
-    color_2 = np.array(BG_COLOR_2, dtype=float)
+    color_1 = np.array((36, 192, 238), dtype=float)
+    color_2 = np.array((34, 113, 158), dtype=float)
     color_delta = color_2 - color_1
     for i in range(h):
         color = color_1 + color_delta * i/(h - 1)
@@ -113,7 +107,7 @@ def room_aim() -> pg.Surface:
 
 def popup_window(w, h) -> pg.Surface:
     surface = pg.Surface((w, h), pg.SRCALPHA)
-    surface.fill(POPUP_WINDOW_COLOR)
+    surface.fill((255, 255, 255, 100))
     transparent_color = (0, 0, 0, 0)
     pixels = pg.PixelArray(surface)
     r = h // 8
@@ -134,23 +128,6 @@ def cooldown_window() -> pg.Surface:
 
 def health_window() -> pg.Surface:
     return popup_window(1710, 198)
-
-
-def exit_button(color_1=(33, 51, 62), color_2=(200, 200, 200)) -> pg.Surface:
-    r = 150
-    d = int(r / sqrt(2))
-    surface = pg.Surface((2 * r, 2 * r), pg.SRCALPHA)
-    pg.draw.circle(surface, color_2, (r, r), r)
-    pg.draw.circle(surface, color_1, (r, r), r - 14)
-    pg.draw.line(surface, color_2, (r - d + 5, r + d - 5),
-                 (r + d - 5, r - d + 5), 21)
-    pg.draw.line(surface, color_2, (r - d + 5, r - d + 5),
-                 (r + d - 5, r + d - 5), 21)
-    return surface
-
-
-def exit_button_pressed() -> pg.Surface:
-    return exit_button(LIGHT_GREY, WHITE)
 
 
 def paralyzing_explosion() -> pg.Surface:
@@ -386,13 +363,13 @@ def upgrade_button(w=660, bg_color=(230, 230, 230)) -> pg.Surface:
     surface = pg.Surface((w, h))
     surface.fill(COLOR_KEY)
     pg.draw.rect(surface, bg_color, surface.get_rect(), 0, 30)
-    color_1 = np.array(UPG_CIRCLE_COLOR_1, dtype=float)
-    color_2 = np.array(UPG_CIRCLE_COLOR_3, dtype=float)
+    color_1 = np.array((151, 217, 251), dtype=float)
+    color_2 = np.array((58, 170, 231), dtype=float)
     color_delta = color_2 - color_1
     for i in range(24):
         color = color_1 + color_delta * i / 23
         pg.draw.circle(surface, color, (w2, 198), 99 - i)
-    pg.draw.polygon(surface, UPG_ARROW_COLOR,
+    pg.draw.polygon(surface, (196, 230, 248),
                     ((w2, 150), (w2 + 33, 195), (w2 + 12, 195), (w2 + 12, 240),
                      (w2 - 12, 240), (w2 - 12, 195), (w2 - 33, 195)))
     surface.set_colorkey(COLOR_KEY)

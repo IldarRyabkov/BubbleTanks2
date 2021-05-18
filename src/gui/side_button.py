@@ -1,6 +1,6 @@
 import pygame as pg
 
-from data.colors import WHITE
+from constants import WHITE
 from data.paths import FONT_3, SIDE_BUTTON_BG, SIDE_BUTTON_PRESSED_BG, UI_CLICK
 from utils import H
 

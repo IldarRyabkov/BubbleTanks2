@@ -1,7 +1,13 @@
 import pygame as pg
-from data.config import *
 from utils import HF
 from numpy import sign
+
+
+class State:
+    CLOSED = 0
+    OPENING = 1
+    CLOSING = 2
+    OPENED = 3
 
 
 class PopupWindow:
@@ -23,7 +29,7 @@ class PopupWindow:
         self.time = 0
         self.vel = vel
         self.duration = duration
-        self.state = WINDOW_CLOSED
+        self.state = State.CLOSED
         img = pg.image.load(image).convert_alpha()
         self.background = pg.transform.scale(img, (round(w), round(h)))
 
@@ -36,7 +42,7 @@ class PopupWindow:
         """Method is called when a new game is started.
         Resets popup window state and parameters.
         """
-        self.state = WINDOW_CLOSED
+        self.state = State.CLOSED
         self.time = 0
         self.y = self.Y_CLOSED
 
@@ -45,26 +51,26 @@ class PopupWindow:
         pass
 
     def activate(self, *args, **kwargs):
-        if self.state != WINDOW_OPENED:
-            self.state = WINDOW_OPENING
+        if self.state != State.OPENED:
+            self.state = State.OPENING
         self.time = 0
 
     def update_state(self, dt):
         k = sign(self.vel)
-        if self.state == WINDOW_OPENING:
+        if self.state == State.OPENING:
             self.y += self.vel * dt
             if k * self.y > k * self.Y_OPENED:
-                self.state = WINDOW_OPENED
+                self.state = State.OPENED
                 self.y = self.Y_OPENED
-        elif self.state == WINDOW_CLOSING:
+        elif self.state == State.CLOSING:
             self.y -= self.vel * dt
             if k * self.y < k * self.Y_CLOSED:
-                self.state = WINDOW_CLOSED
+                self.state = State.CLOSED
                 self.y = self.Y_CLOSED
-        elif self.state == WINDOW_OPENED:
+        elif self.state == State.OPENED:
             self.time += dt
             if self.time >= self.duration:
-                self.state = WINDOW_CLOSING
+                self.state = State.CLOSING
                 self.time = 0
 
 

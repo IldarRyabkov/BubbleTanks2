@@ -1,5 +1,5 @@
 from math import pi
-from data.colors import *
+from constants import *
 from utils import *
 
 

@@ -3,8 +3,7 @@ from random import uniform
 from math import pi, sin, cos
 
 from circle import Circle
-from data.config import *
-from data.colors import *
+from constants import *
 from data.paths import PARALYZING_EXPLOSION, POWERFUL_EXPLOSION, TELEPORTATION
 from utils import H, HF
 

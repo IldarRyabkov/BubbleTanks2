@@ -1,7 +1,7 @@
 import pygame as pg
 
 from data.paths import UI_CHOOSE, UI_CLICK
-from data.config import WAIT, OPEN
+from constants import WAIT, OPEN
 
 
 class ScalingButton:

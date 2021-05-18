@@ -8,8 +8,7 @@ from gui.slider import Slider
 from gui.text_button import TextButton
 from gui.text import Text
 from data.paths import *
-from data.colors import WHITE, TANK_BG_COLOR
-from data.config import *
+from constants import *
 from data.gui_texts import *
 from data.tank_bodies import TANK_BODIES
 from utils import H
@@ -212,11 +211,13 @@ class PauseMenu:
 
             if animation_state == WAIT:
                 if e.type == pg.KEYDOWN and e.key in [pg.K_ESCAPE, pg.K_p]:
-                    if self.state not in (State.MAP_WINDOW, State.STATS_WINDOW):
-                        self.set_state(State.OPTIONS_WINDOW)
-                    elif self.state == State.MAP_WINDOW:
-                        self.map.reset_offset()
-                    self.running = False
+                    if self.state in (State.EXIT_TO_DESKTOP_CONFIRMATION,
+                                      State.EXIT_TO_MENU_CONFIRMATION):
+                        self.set_state(State.OPTIONS_WINDOW, True)
+                    else:
+                        self.running = False
+                        if self.state == State.MAP_WINDOW:
+                            self.map.reset_offset()
 
                 elif e.type == pg.MOUSEBUTTONUP and e.button == pg.BUTTON_LEFT:
                     self.handle_mouse_up(e.type)

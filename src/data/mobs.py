@@ -1,6 +1,5 @@
 from math import pi
-from data.colors import *
-from data.config import *
+from constants import *
 from utils import *
 
 

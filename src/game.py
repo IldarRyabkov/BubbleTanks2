@@ -6,9 +6,9 @@ from collections import defaultdict
 import platform
 
 
-from data.config import *
 from data.cursor import CURSOR
 from data.paths import *
+from data.scripts import load_language
 
 from menus.upgrade_menu import UpgradeMenu
 from menus.victory_menu import VictoryMenu
@@ -20,7 +20,7 @@ from gui.cooldown_window import CooldownWindow
 
 from player import Player
 from bullets import *
-
+from constants import *
 from background_environment import BackgroundEnvironment
 from camera import Camera
 from room import Room
@@ -59,6 +59,7 @@ class Game:
         self.screen = pg.display.set_mode(SCR_SIZE, flags=pg.NOFRAME)
 
         self.running = True
+        self.language = load_language()
         self.transportation = False
 
         self.sound_player = SoundPlayer()
@@ -75,16 +76,19 @@ class Game:
         self.victory_menu = VictoryMenu(self)
         self.pause_menu = PauseMenu(self)
 
-        self.health_window = HealthWindow()
+        self.health_window = HealthWindow(self)
         self.cooldown_window = CooldownWindow()
         self.set_windows()
 
         self.key_handlers = defaultdict(list)
         self.init_key_handlers()
 
-    @property
-    def language(self):
-        return self.main_menu.language
+    def set_language(self, lang):
+        self.bg_environment.set_language(lang)
+        self.upgrade_menu.set_language(lang)
+        self.victory_menu.set_language(lang)
+        self.pause_menu.set_language(lang)
+        self.cooldown_window.set_language(lang)
 
     def reset_data(self):
         """Method is called when the game has started. Resets
@@ -104,13 +108,7 @@ class Game:
         self.clock.tick()
 
         # Set the language for all game objects AFTER their parameters are reset
-        language = self.main_menu.language
-        self.bg_environment.set_language(language)
-        self.upgrade_menu.set_language(language)
-        self.victory_menu.set_language(language)
-        self.pause_menu.set_language(language)
-        self.health_window.set_language(language)
-        self.cooldown_window.set_language(language)
+        self.set_language(self.language)
 
     def set_windows(self):
         self.health_window.set(self.player.tank,

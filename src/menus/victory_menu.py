@@ -1,9 +1,8 @@
 import pygame as pg
 import sys
 
-from data.config import SCR_W2, SCR_H2, SCR_SIZE
+from constants import *
 from data.paths import FONT_1, FONT_3
-from data.colors import WHITE
 from bubble import Bubble
 from gui.text_button import TextButton
 from gui.text import Text

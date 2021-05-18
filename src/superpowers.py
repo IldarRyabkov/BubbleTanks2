@@ -3,7 +3,7 @@ from math import cos, sin, hypot, pi
 import numpy as np
 
 from bullets import *
-from data.config import *
+from constants import *
 from data.bullets import *
 from data.paths import THUNDER, MOB_DEATH
 from special_effects import add_effect
@@ -75,7 +75,7 @@ class HomingMissiles(SuperPower):
         print(body_angle, 'kek')
         missiles_coords = self.get_missiles_coords(pos, body_angle)
         for pos, angle in missiles_coords:
-            bullets.append(HomingMissile(*pos, angle, 0.04, HF(10), -5, HF(0.8), BULLET_BODIES["HomingMissile_1"]))
+            bullets.append(HomingMissile(*pos, angle, 0.05, HF(10), -5, HF(0.9), BULLET_BODIES["HomingMissile_1"]))
 
 
 class NoneSuperPower(SuperPower):

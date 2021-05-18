@@ -1,7 +1,7 @@
 import pygame as pg
 from collections import defaultdict
 
-from data.colors import *
+from constants import *
 from utils import H
 from data.paths import ROOM_AIM, BOSS_AIM
 

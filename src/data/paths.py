@@ -14,20 +14,14 @@ def path(directory: str, filename: str):
     return os.path.abspath(os.path.join(ROOT_DIR, "%s" % filename))
 
 
-user_dir = os.path.join(os.path.abspath(os.path.expanduser("~")), f".Underwater_Battles")
-if not os.path.exists(user_dir):
-    os.mkdir(user_dir)
-
-RESOLUTIONS = os.path.join(user_dir, 'resolution.json')
-
-
 def img_path(filename: str): return path("images", filename)
 def font_path(filename: str): return path("fonts", filename)
-def music_path(filename: str): return path("music", filename)
+def music_path(filename: str):  return path("music", filename)
 def sound_path(filename: str): return path("sounds", filename)
 
 
 ROOT_DIR = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+
 
 # images
 BG = img_path("bg.png")
@@ -55,12 +49,14 @@ SETTINGS_BUTTON_BG = img_path("settings_button.png")
 INFO_BUTTON_BG = img_path("info_button.png")
 SCROLL_BUTTON_BG = img_path("scroll_button.png")
 
+
 # fonts
 FONT_1 = font_path('font_1.otf')
 FONT_2 = font_path('font_2.ttf')
 FONT_3 = font_path('font_3.ttf')
 CALIBRI = font_path('calibri.ttf')
 CALIBRI_BOLD = font_path('calibri_bold.ttf')
+
 
 # music
 GAME_MUSIC = music_path('game_music.wav')
@@ -81,7 +77,6 @@ WATER_SPLASH = sound_path('water_splash.wav')
 
 __all__ = [
 
-    "ROOT_DIR",
     "BG",
     "ROOM_BG",
     "START_MENU_CAPTION_BG",
@@ -122,6 +117,5 @@ __all__ = [
     "INFO_BUTTON_BG",
     "PLAY_BUTTON_BG",
     "SCROLL_BUTTON_BG",
-    "RESOLUTIONS"
 
 ]

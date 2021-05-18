@@ -1,6 +1,6 @@
 import pygame as pg
 
-from data.config import *
+from constants import *
 from data.paths import UPGRADE_CAPTION_RUS_BG, UPGRADE_CAPTION_ENG_BG
 from utils import H, HF
 

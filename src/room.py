@@ -6,7 +6,7 @@ from bubble import Bubble
 from mobs import Mother
 from mob_guns import GunBossLeg
 from special_effects import add_effect
-from data.config import *
+from constants import *
 from utils import HF
 
 

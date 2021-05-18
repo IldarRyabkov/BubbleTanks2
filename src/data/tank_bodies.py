@@ -5,7 +5,7 @@ Module contains data of tank bodies used for statistics window.
 
 
 from math import pi
-from data.colors import BLUE, ORANGE, LIGHT_ORANGE
+from constants import BLUE, ORANGE, LIGHT_ORANGE
 from utils import scaled_body
 
 

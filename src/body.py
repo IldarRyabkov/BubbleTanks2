@@ -8,8 +8,6 @@ class Body:
     def __init__(self, data):
         self.angle = 0
         self.circles = [Circle(*params) for params in data]
-        #for circle in self.circles:
-        #    circle.is_scaling = False
 
     def rotate(self, dest_angle, dt):
         while self.angle > pi:

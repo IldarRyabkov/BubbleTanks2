@@ -2,9 +2,8 @@ from math import cos, sin, pi, hypot
 from random import uniform, choice
 import pygame as pg
 
-from data.config import *
+from constants import *
 from data.bullets import *
-from data.colors import *
 from body import Body
 from utils import circle_collidepoint, calculate_angle, H, HF
 

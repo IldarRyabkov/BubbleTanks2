@@ -558,7 +558,7 @@ MAIN_MENU_CAPTIONS = [
 
 LANGUAGES = [
     "English",
-    "Russian"
+    "Русский"
 ]
 
 

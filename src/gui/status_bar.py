@@ -1,6 +1,6 @@
 import pygame as pg
 
-from data.colors import WHITE, STATUS_BAR_BG
+from constants import WHITE, STATUS_BAR_BG
 from utils import H
 
 

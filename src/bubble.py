@@ -4,7 +4,7 @@ import pygame as pg
 
 from body import Body
 from utils import circle_collidepoint, calculate_angle
-from data.config import ROOM_RADIUS, SCR_W, SCR_H, SCR_W2, SCR_H2
+from constants import *
 from data.bubble import *
 from data.paths import BUBBLE_HALO
 

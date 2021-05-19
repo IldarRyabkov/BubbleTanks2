@@ -2,7 +2,6 @@ import pygame as pg
 import sys
 import numpy as np
 from math import hypot
-from collections import defaultdict
 import platform
 
 
@@ -80,9 +79,6 @@ class Game:
         self.cooldown_window = CooldownWindow()
         self.set_windows()
 
-        self.key_handlers = defaultdict(list)
-        self.init_key_handlers()
-
     def set_language(self, lang):
         self.bg_environment.set_language(lang)
         self.upgrade_menu.set_language(lang)
@@ -137,29 +133,16 @@ class Game:
         if e_type ==  pg.KEYDOWN and e_key in [pg.K_p, pg.K_ESCAPE]  and not self.transportation:
             self.pause_menu.run()
 
-    def init_key_handlers(self):
-        self.key_handlers[pg.K_a].append(self.handle)
-        self.key_handlers[pg.K_d].append(self.handle)
-        self.key_handlers[pg.K_w].append(self.handle)
-        self.key_handlers[pg.K_s].append(self.handle)
-        self.key_handlers[pg.BUTTON_LEFT].append(self.handle)
-        self.key_handlers[pg.K_SPACE].append(self.handle)
-        self.key_handlers[pg.K_p].append(self.handle)
-        self.key_handlers[pg.K_ESCAPE].append(self.handle)
-
     def handle_events(self):
         """Main events handler that handles pygame events
         during the actual game.
         """
         for event in pg.event.get():
             if event.type in [pg.KEYDOWN, pg.KEYUP]:
-                for handler in self.key_handlers[event.key]:
-                    handler(event.type, event.key)
+                self.handle(event.type, event.key)
             elif event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP]:
-                for handler in self.key_handlers[event.button]:
-                    handler(event.type, event.button)
+                self.handle(event.type, event.button)
             elif event.type == pg.QUIT:
-                pg.quit()
                 sys.exit()
 
     def handle_bubble_eating(self):

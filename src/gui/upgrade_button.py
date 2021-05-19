@@ -24,7 +24,7 @@ class UpgradeButton:
         self.sound_player = sound_player
         self.sound_lock = False
         self.tank = tank
-        self.w = HF(480) if button_type in (ButtonType.LEFT, ButtonType.RIGHT) else HF(352)
+        self.w = HF(480) if button_type in (ButtonType.WIDE_LEFT, ButtonType.WIDE_RIGHT) else HF(352)
         self.h = HF(736)
 
         if button_type == ButtonType.LEFT:

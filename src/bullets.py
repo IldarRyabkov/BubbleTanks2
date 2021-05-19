@@ -199,8 +199,8 @@ class HomingMissile(Bullet):
 
         self.body.update(self.x, self.y, 0)
         self.update_vel(start_angle)
-        self.maneuvering_angle = maneuvering_angle
         self.rearrangement_angle = choice((-maneuvering_angle, maneuvering_angle))
+        self.maneuvering_angle = maneuvering_angle
         self.health = 1
         self.hit_effect = 'RedHitCircle'
 

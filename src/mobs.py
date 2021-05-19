@@ -3,7 +3,7 @@ from random import uniform, choice
 from math import cos, sin, pi
 
 from mob import Mob
-from utils import circle_collidepoint, HF
+from utils import *
 from mob_guns import get_gun
 from data.mobs import *
 
@@ -12,7 +12,6 @@ class BossHead(Mob):
     def __init__(self):
         super().__init__(*BOSS_HEAD_PARAMS.values())
         self.rect_dy = HF(213)
-
 
     def update_pos(self, dt):
         super().update_pos(dt)
@@ -26,7 +25,7 @@ class BossHead(Mob):
             for i, circle in enumerate(self.body.circles):
                 if circle.is_visible:
                     target = self.gun.target if 16 <= i < 24 else player_pos
-                    circle.update(*self.pos, dt, target, 0, -0.5 * pi)
+                    circle.update(*self.pos, dt, target)
 
 
 class MobTerrorist(Mob):

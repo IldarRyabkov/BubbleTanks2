@@ -72,8 +72,8 @@ class ScalingButton:
         self.text_widget.set_text(self.texts[language])
         self.render_surface()
 
-    def set_alpha(self):
-        self.surface.set_alpha(self.alpha)
+    def set_alpha(self, default_alpha=None):
+        self.surface.set_alpha(self.alpha if default_alpha is None else default_alpha)
 
     def reset(self, *args, **kwargs):
         self.alpha = self.ALPHA_MIN
@@ -89,7 +89,7 @@ class ScalingButton:
         self.alpha = max(self.ALPHA_MIN, self.alpha - self.ALPHA_DELTA * dt)
         self.scale = max(self.SCALE_MIN, self.scale - self.SCALE_DELTA * dt)
 
-    def update_size(self, dt, increasing):
+    def update_size(self, dt, increasing, default_alpha=None):
         old_scale = self.scale
 
         if increasing and self.scale < self.SCALE_MAX:
@@ -98,7 +98,7 @@ class ScalingButton:
             self.decrease(dt)
 
         if self.scale != old_scale:
-            self.set_alpha()
+            self.set_alpha(default_alpha)
             self.set_scaled_surface()
 
     def update_wait(self, dt):

@@ -53,15 +53,15 @@ eng_tank_descriptions = {
         'Bombs',
         'A balanced tank is a bit heavier in armament, but lighter, than a Heavy Tank.',
         'Shoots 3 bullets next to each other.',
-        'Mines can be installed and will bring great damage when the enemy passes over them.'
+        'Bombs can be installed and will bring great damage when the enemy passes over them.'
     ),
     (2, 3): (
         'Heavy #2',
         '5 parallel shots',
         'Bombs',
         'Large and slow tank, but well armed.',
-        'Shoots regular bullets.',
-        '-'
+        'Shoots 5 bullets next to each other.',
+        'Bombs can be installed and will bring great damage when the enemy passes over them.'
     ),
     (3, 0): (
         'Sniper #1',
@@ -82,7 +82,7 @@ eng_tank_descriptions = {
     (3, 2): (
         'Balanced Hunter #2',
         '5 bullets scattered',
-        'Deafening explosion',
+        'Paralyzing explosion',
         'A balanced tank has a little more speed and maneuverability.',
         'Shoots 5 bullets scattered.',
         'The impulse comes from a tank that is stuck surrounded by enemies, and stuns them for a while.'
@@ -156,8 +156,8 @@ eng_tank_descriptions = {
         '2 B. cannons, 3 S. auto',
         'Huge powerful explosion',
         'A very large and slow tank that stuns and kills.',
-        'Shoots regular bullets.',
-        '-'
+        'You control 2 big cannons, while 2 small cannons will search for enemies and shoot automatically.',
+        'The impulse comes from a tank that is stuck surrounded by enemies, and stuns them for a while.'
     ),
     (5, 0): (
         'Ghost sniper',
@@ -176,7 +176,7 @@ eng_tank_descriptions = {
         'Shurikens automatically appear and surround you. They will leave you and harm the enemies that have come.'
     ),
     (5, 2): (
-        'Vampire tank',
+        'Vampire tank (not added yet!)',
         'Life suction bubbles',
         'Bubbles-viruses',
         'This tank sucks the life out of enemies and can infect them with a virus.',
@@ -184,7 +184,7 @@ eng_tank_descriptions = {
         '-'
     ),
     (5, 3): (
-        'Drone tank',
+        'Drone tank (not added yet!)',
         'Mitotic self-guided bullets',
         'Drones conversion',
         'This tank is a master of self-guided bullets.',
@@ -249,7 +249,7 @@ rus_tank_descriptions = {
         'Тяжелый #1',
         'Тяжелая пушка',
         'Нет',
-        'Немного медленный и менее маневренный, но наносит более мощные удары.'
+        'Немного медленный и менее маневренный, но наносит более мощные удары.',
         'Стреляет обычными, тяжелыми бульбами, которые наносят ощутимый урон.',
         '-'
     ),
@@ -282,8 +282,8 @@ rus_tank_descriptions = {
         '5 параллельных выстрелов',
         'Мины',
         'Большой и медленный танк, но хорошо вооружен.',
-        'Стреляет обычными бульбами.',
-        '-'
+        'Стреляет 5 бульбами, идущими рядом друг с другом.',
+        'Мины могут быть установлены и принесут большой урон, когда враг пройдет по ним.'
     ),
     (3, 0): (
         'Снайпер #1',
@@ -378,8 +378,8 @@ rus_tank_descriptions = {
         '2 Б. пушки, 3 М. авто',
         'Оглушающий взрыв',
         'Очень большой и медленный танк, который оглушает и убивает.',
-        'Стреляет обычными бульбами.',
-        '-'
+        'Ты управляешь 2 Большими пушками, пока 3 маленькие будут стрелять автоматически.',
+        'Импульс исходит из танка, который застрял в окружении врагов, и оглушает их на некоторое время.'
     ),
     (5, 0): (
         'Снайпер-призрак',
@@ -398,7 +398,7 @@ rus_tank_descriptions = {
         'Сюрикены автоматически появляются и окружают тебя. Они покинут тебя и повредят врагов, которые подошли.'
     ),
     (5, 2): (
-        'Танк вампир',
+        'Танк вампир (еще не добавлен!)',
         'Высасывающие пузыри',
         'Пузыри-вирусы',
         'Этот танк высасывает жизнь из врагов и может заразить их вирусом.',
@@ -406,7 +406,7 @@ rus_tank_descriptions = {
         '-'
     ),
     (5, 3): (
-        'Танк-трутень',
+        'Танк-трутень (еще не добавлен!)',
         'Митозные самонаводяшки',
         'Конвертация трутней',
         'Этот танк - мастер самонаводящихся снарядов.',

@@ -14,13 +14,13 @@ from bullets import FrangibleBullet
 from gun import GunAutomatic
 from base_mob import BaseMob
 
-from utils import circle_collidepoint
+from utils import *
 
 
 class Player(BaseMob):
     def __init__(self, game):
-        (max_health, health_states, radius, body, max_vel, max_acc,
-         gun_type, bg_radius, superpower) = PLAYER_PARAMS[(0, 0)].values()
+        (max_health, health_states, radius, body, body_is_rotating, max_vel,
+         max_acc, gun_type, bg_radius, superpower) = PLAYER_PARAMS[(0, 0)].values()
 
         super().__init__(0, max_health, health_states, radius, body)
         self.game = game
@@ -31,12 +31,13 @@ class Player(BaseMob):
         self.vel_x = self.vel_y = 0
         self.max_acc = max_acc
         self.acc_x= self.acc_y = 0
-        self.DECELERATION = 0.00064
+        self.DECELERATION = HF(0.00064)
 
         self.moving_left = False
         self.moving_right = False
         self.moving_up = False
         self.moving_down = False
+        self.body_is_rotating = body_is_rotating
         self.shooting = False
 
         self.superpower = get_superpower(superpower)
@@ -125,40 +126,39 @@ class Player(BaseMob):
         return mouse_pos
 
     def rotate_body(self, dt):
-        dest_angle = None
+        """Rotates player's tank body according to its movement."""
         if self.moving_left == self.moving_right:
-            if self.moving_up and not self.moving_down:
-                dest_angle = 0.5 * pi
-            elif not self.moving_up and self.moving_down:
-                dest_angle = -0.5 * pi
-
-        elif self.moving_left and not self.moving_right:
-            if self.moving_up and not self.moving_down:
-                dest_angle = 0.75 * pi
-            elif not self.moving_up and self.moving_down:
-                dest_angle = -0.75 * pi
+            if self.moving_up ^ self.moving_down:
+                destination_angle = 0.5 * pi if self.moving_up else -0.5 * pi
             else:
-                dest_angle = pi
+                destination_angle = None
+
+        elif self.moving_left:
+            if self.moving_up ^ self.moving_down:
+                destination_angle = 0.75 * pi if self.moving_up else -0.75 * pi
+            else:
+                destination_angle = pi
 
         else:
-            if self.moving_up and not self.moving_down:
-                dest_angle = 0.25 * pi
-            elif not self.moving_up and self.moving_down:
-                dest_angle = -0.25 * pi
+            if self.moving_up ^ self.moving_down:
+                destination_angle = 0.25 * pi if self.moving_up else -0.25 * pi
             else:
-                dest_angle = 0
+                destination_angle = 0
 
-        if dest_angle is not None:
-            self.body.rotate(dest_angle, dt)
+        if destination_angle is not None:
+            self.body.rotate(destination_angle, dt)
 
     def update_body(self, dt):
+        if self.body_is_rotating:
+            self.rotate_body(dt)
+
         mouse_pos = self.get_mouse_pos()
-        self.rotate_body(dt)
         self.body.update(*self.pos, dt, mouse_pos)
 
-    def setup(self, max_health, health_states, radius, body,
+    def setup(self, max_health, health_states, radius, body, body_is_rotating,
               max_vel, max_acc, gun_type, bg_radius, superpower):
         super().__init__(0, max_health, health_states, radius, body)
+        self.body_is_rotating = body_is_rotating
         self.gun = get_gun(gun_type)
         self.superpower = get_superpower(superpower)
         self.bg_radius = bg_radius

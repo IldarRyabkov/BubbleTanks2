@@ -72,7 +72,6 @@ class HomingMissiles(SuperPower):
         return coords
 
     def activate(self, pos, bullets, health, body_angle):
-        print(body_angle, 'kek')
         missiles_coords = self.get_missiles_coords(pos, body_angle)
         for pos, angle in missiles_coords:
             bullets.append(HomingMissile(*pos, angle, 0.05, HF(10), -5, HF(0.9), BULLET_BODIES["HomingMissile_1"]))
@@ -255,7 +254,7 @@ class PowerfulCannon(SuperPower):
 
 class StickyExplosion(SuperPower):
     def __init__(self):
-        super().__init__(cooldown_time=2500)
+        super().__init__(cooldown_time=2000)
 
     def activate(self, pos, bullets):
         for i in range(36):

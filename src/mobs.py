@@ -98,7 +98,7 @@ class Turret(Mob):
 
     def update_body(self, screen_rect, dt, target=(0, 0)):
         if self.body_rect.colliderect(screen_rect):
-            self.body.update(*self.pos, dt, self.gun.target, 0)
+            self.body.update(*self.pos, dt, self.gun.target)
 
 
 def get_mob(name):

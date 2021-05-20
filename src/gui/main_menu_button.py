@@ -12,8 +12,6 @@ class MainMenuButton(ScalingButton):
     def __init__(self, x, texts, radius, image, sound_player, aspect_ratio):
         """Radius is half the height of the button. """
         super().__init__(x, SCR_H + radius, 2*radius*aspect_ratio, 2*radius, 0.7, 210, texts, sound_player)
-        self.flashing = False
-        self.flashing_time = 0
 
         self.Y_MIN = H(840)  # y-coord when button is shown
         self.Y_MAX = SCR_H + radius  # y-coord when button is hidden
@@ -37,11 +35,10 @@ class MainMenuButton(ScalingButton):
 
     def handle_click(self):
         super().handle_click()
-        self.flashing = True
 
-    def set_alpha(self):
-        super().set_alpha()
-        self.text_widget.set_alpha(self.text_alpha)
+    def set_alpha(self, default_alpha=None):
+        super().set_alpha(default_alpha)
+        self.text_widget.set_alpha(self.text_alpha if default_alpha is None else default_alpha)
 
     def render_surface(self):
         self.set_alpha()
@@ -49,8 +46,6 @@ class MainMenuButton(ScalingButton):
 
     def reset(self):
         self.y = self.Y_MAX
-        self.flashing = False
-        self.flashing_time = 0
         self.text_alpha = self.TEXT_ALPHA_MIN
         super().reset()
 
@@ -63,20 +58,9 @@ class MainMenuButton(ScalingButton):
         self.text_alpha = max(self.TEXT_ALPHA_MIN, self.text_alpha - self.TEXT_ALPHA_DELTA * dt)
 
     def update_close(self, time_elapsed, dt):
-        if self.flashing:
-            if time_elapsed <= 0.2:
-                self.flashing_time += dt
-                alpha = 0 if round(self.flashing_time / 50) % 2 != 0 else self.alpha
-                self.scaled_surface.set_alpha(alpha)
-            else:
-                self.flashing = False
-                self.flashing_time = 0
-                self.scaled_surface.set_alpha(self.alpha)
-
         if time_elapsed >= 0.5:
             self.y = min(self.Y_MAX, self.y + self.vel * dt)
-        elif time_elapsed > 0.2:
-            self.update_size(dt, False)
+        self.update_size(dt, False)
 
     def update_open(self, time_elapsed, dt):
         if time_elapsed >= 0.5:

@@ -6,10 +6,9 @@ from bubble import Bubble
 from gui.text import Text
 from gui.text_button import *
 from gui.slider import Slider
-from gui.main_menu_caption import MainMenuCaption
+from gui.main_menu_caption import *
 from gui.main_menu_button import MainMenuButton
 from constants import *
-from constants import MainMenuState as State
 from data.scripts import *
 from data.gui_texts import *
 from data.paths import *
@@ -83,7 +82,10 @@ class MainMenu:
         self.play_button.set_language(language)
         self.settings_button.set_language(language)
 
-    def set_state(self, state):
+    def set_state(self, state, clicked_button=None):
+        if clicked_button is not None:
+            self.run_button_press_animation(clicked_button)
+
         duration = 1000 if self.state == State.MAIN_PAGE else 300
         self.run_animation(CLOSE, duration)
 
@@ -116,30 +118,32 @@ class MainMenu:
         if self.state == State.MAIN_PAGE:
             if self.play_button.clicked:
                 self.running = False
+                self.run_button_press_animation(self.play_button)
                 self.run_animation(CLOSE, 1700)
                 self.play_button.reset()
                 self.settings_button.reset()
             elif self.settings_button.clicked:
-                self.set_state(State.SETTINGS)
+                self.set_state(State.SETTINGS, self.settings_button)
 
         elif self.state == State.SETTINGS:
             self.slider.handle(e_type)
             if self.lang_window_button.clicked:
-                self.set_state(State.LANGUAGES)
+                self.set_state(State.LANGUAGES, self.lang_window_button)
             elif self.res_window_button.clicked:
-                self.set_state(State.RESOLUTIONS)
+                self.set_state(State.RESOLUTIONS, self.res_window_button)
             elif self.back_button.clicked:
-                self.set_state(State.MAIN_PAGE)
+                self.set_state(State.MAIN_PAGE, self.back_button)
             elif self.exit_button.clicked:
-                self.set_state(State.EXIT_CONFIRMATION)
+                self.set_state(State.EXIT_CONFIRMATION, self.exit_button)
 
         elif self.state == State.EXIT_CONFIRMATION:
             if self.yes_button.clicked:
+                self.run_button_press_animation(self.yes_button)
                 self.run_animation(CLOSE)
-                pg.quit()
+                self.run_awake_animation(CLOSE)
                 sys.exit()
             elif self.no_button.clicked:
-                self.set_state(State.MAIN_PAGE)
+                self.set_state(State.MAIN_PAGE, self.no_button)
 
         elif self.state == State.LANGUAGES:
             for button in self.lang_buttons:
@@ -149,7 +153,7 @@ class MainMenu:
                     self.game.language = new_language
                     self.set_language(new_language)
                     self.lang_window_button.set_value(button.texts)
-                    self.set_state(State.SETTINGS)
+                    self.set_state(State.SETTINGS, button)
                     break
 
         elif self.state == State.RESOLUTIONS:
@@ -157,7 +161,7 @@ class MainMenu:
                 if button.clicked:
                     save_resolution(button.texts)
                     self.res_window_button.set_value(button.texts)
-                    self.set_state(State.SETTINGS)
+                    self.set_state(State.SETTINGS, button)
                     break
 
     def handle_mouse_up(self, e_type):
@@ -167,7 +171,6 @@ class MainMenu:
     def handle_events(self, animation_state=WAIT):
         for e in pg.event.get():
             if e.type == pg.QUIT:
-                pg.quit()
                 sys.exit()
 
             if animation_state == WAIT:
@@ -265,15 +268,17 @@ class MainMenu:
 
         pg.display.update()
 
-    def awake(self):
-        dt = time = 0
-        mask = pg.Surface(SCR_SIZE)
-        alpha = 255
+    def run_awake_animation(self, state):
+        time = 0
         duration = 600
+        mask = pg.Surface(SCR_SIZE)
         self.game.clock.tick()
 
         while time <= duration:
-            alpha = max(0, alpha - 255 * dt / duration)
+            if state == OPEN:
+                alpha = 255 - 255 * time/duration
+            else:
+                alpha = 255 * time/duration
             mask.set_alpha(alpha)
 
             self.game.screen.blit(self.bg, (0, 0))
@@ -283,6 +288,21 @@ class MainMenu:
             dt = self.game.clock.tick()
             self.game.fps_manager.update(dt)
             time += dt
+
+    def run_button_press_animation(self, button):
+        dt = time = 0
+        duration = 250
+        self.game.clock.tick()
+        while time <= duration:
+            self.handle_events(CLOSE)
+            self.update_bubbles(dt)
+            increasing = time/duration >= 0.5
+            button.update_size(dt, increasing, default_alpha=255)
+            self.draw(self.game.screen)
+            self.game.fps_manager.update(dt)
+            dt = self.game.clock.tick()
+            time += dt
+        self.game.clock.tick()
 
     def run_animation(self, animation_state, duration=400):
         self.game.clock.tick()
@@ -303,7 +323,7 @@ class MainMenu:
         self.bubbles = []
         self.bubbles_time = 0
 
-        self.awake()
+        self.run_awake_animation(OPEN)
         self.run_animation(OPEN, 1000)
 
         self.game.clock.tick()

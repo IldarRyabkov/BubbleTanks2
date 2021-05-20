@@ -82,14 +82,6 @@ GLARE_COLORS = {ORANGE:         [ORANGE_GLARE_1,        ORANGE_GLARE_2],
                 PURPLE:         [PURPLE_GLARE_1,        PURPLE_GLARE_2]}
 
 
-class MainMenuState:
-    MAIN_PAGE = 0
-    SETTINGS = 1
-    LANGUAGES = 2
-    RESOLUTIONS = 3
-    EXIT_CONFIRMATION = 4
-
-
 __all__ = [
 
     "SCR_W",
@@ -150,7 +142,6 @@ __all__ = [
     "ROOM_COLOR",
     "STATUS_BAR_BG",
     "TANK_BG_COLOR",
-    "GLARE_COLORS",
-    "MainMenuState"
+    "GLARE_COLORS"
     
 ]

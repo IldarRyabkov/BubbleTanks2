@@ -33,7 +33,6 @@ class Mob(BaseMob):
         self.angular_vel = random.choice([-angular_vel * random.uniform(0.9, 1.1),
                                           angular_vel * random.uniform(0.9, 1.1)])
         self.trajectory = trajectory
-        self.gamma = 0
         self.bubbles = bubbles
         self.body_rect = Rect(0, 0, body_size, body_size)
         self.is_paralysed = False
@@ -50,10 +49,10 @@ class Mob(BaseMob):
     def collide_bullet(self, x, y, r):
         return circle_collidepoint(*self.pos, self.radius + r, x, y)
 
-    def count_gamma(self):
+    def update_body_angle(self):
         d_angle = np.sign(self.angular_vel) * 0.01
         pos = self.trajectory(self.pos_0, self.polar_angle + d_angle)
-        return calculate_angle(*self.pos, *pos)
+        self.body.angle = calculate_angle(*self.pos, *pos)
 
     def move(self, dx, dy):
         self.pos += np.array([dx, dy])
@@ -68,7 +67,7 @@ class Mob(BaseMob):
 
     def update_body(self, screen_rect, dt, target=(0, 0)):
         if self.body_rect.colliderect(screen_rect):
-            self.body.update(*self.pos, dt, target, self.gamma)
+            self.body.update(*self.pos, dt, target)
 
     def make_paralysed(self):
         self.is_paralysed = True
@@ -95,8 +94,8 @@ class Mob(BaseMob):
                 self.update_pos(dt)
 
             self.gun.update_time(dt)
-            self.gamma = self.count_gamma()
-            self.gun.add_bullets(*self.pos, target, bullets, self.gamma)
+            self.update_body_angle()
+            self.gun.add_bullets(*self.pos, target, bullets, self.body.angle)
 
         self.update_body(screen_rect, dt, target)
         self.update_paralysed_state(dt)

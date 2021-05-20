@@ -1,10 +1,18 @@
 import pygame as pg
 
 from gui.text import Text
-from constants import MainMenuState as State, SCR_W2, WHITE, OPEN
+from constants import *
 from data.gui_texts import MAIN_MENU_CAPTIONS
 from data.paths import START_MENU_CAPTION_BG, FONT_1
 from utils import H
+
+
+class State:
+    MAIN_PAGE = 0
+    SETTINGS = 1
+    LANGUAGES = 2
+    RESOLUTIONS = 3
+    EXIT_CONFIRMATION = 4
 
 
 class MainMenuCaption:
@@ -53,4 +61,4 @@ class MainMenuCaption:
         self.text.draw(screen)
 
 
-__all__ = ["MainMenuCaption"]
+__all__ = ["MainMenuCaption", "State"]

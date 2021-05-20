@@ -344,7 +344,9 @@ class Game:
 
     def get_destination_pos(self, direction):
         """Method returns player's destination point during transportation. """
-        distance = ROOM_RADIUS - self.player.radius - H(240)  # distance from center of the next room to the player's destination point
+        # distance from center of the next room to the player's destination point
+        distance = ROOM_RADIUS - self.player.radius - H(240)
+
         destination_pos = np.array([SCR_W2, SCR_H2]) - distance * direction
         return destination_pos
 

@@ -218,7 +218,7 @@ class Gun43(Gun):
 class Gun44(GunAutomatic):
     def __init__(self):
         coords = ((HF(137), 0.25 * pi), (HF(137), -0.25 * pi))
-        super().__init__(HF(43), HF(1.1), -5, 'BigBullet_1', 300, 0, 200, coords)
+        super().__init__(HF(43), HF(1.1), -5, 'BigBullet_1', 230, 0, 200, coords)
 
     def generate_bullets(self, x, y, target, body_angle):
         r1, r2 = HF(128), HF(57)

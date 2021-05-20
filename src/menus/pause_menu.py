@@ -43,22 +43,22 @@ class PauseMenu:
         self.tank_body_pos = (xo + H(940), H(370))
 
         self.stats_widgets = (
-            Text(xo + H(150), H(260), FONT_3, H(48), WHITE, 0, H(470)),
-            Text(xo + H(150), H(577), CALIBRI_BOLD, H(44), WHITE, 0, H(470)),
-            Text(xo + H(656), H(577), CALIBRI_BOLD, H(44), WHITE, 0, H(470)),
+            Text(xo + H(150), H(268), FONT_3, H(48), WHITE, 0, H(470)),
+            Text(xo + H(150), H(575), CALIBRI_BOLD, H(42), WHITE, 0, H(480)),
+            Text(xo + H(656), H(575), CALIBRI_BOLD, H(42), WHITE, 0, H(480)),
             Text(xo + H(150), H(344), CALIBRI, H(34), WHITE, 0, H(630)),
-            Text(xo + H(150), H(647), CALIBRI, H(34), WHITE, 0, H(470)),
-            Text(xo + H(656), H(647), CALIBRI, H(34), WHITE, 0, H(470)),
+            Text(xo + H(150), H(668), CALIBRI, H(34), WHITE, 0, H(470)),
+            Text(xo + H(656), H(668), CALIBRI, H(34), WHITE, 0, H(470)),
         )
         self.stats_labels = (
             Text(xo + H(150), H(508), FONT_3, H(48), WHITE),
             Text(xo + H(656), H(508), FONT_3, H(48), WHITE),
-            Text(xo + H(150), H(830), FONT_3, H(39), WHITE),
-            Text(xo + H(656), H(830), FONT_3, H(39), WHITE),
+            Text(xo + H(150), H(842), FONT_3, H(39), WHITE),
+            Text(xo + H(656), H(842), FONT_3, H(39), WHITE),
         )
         self.counters = (
-            Text(xo + H(440), H(830), FONT_3, H(43), WHITE),
-            Text(xo + H(990), H(830), FONT_3, H(43), WHITE)
+            Text(xo + H(440), H(840), FONT_3, H(43), WHITE),
+            Text(xo + H(990), H(840), FONT_3, H(43), WHITE)
         )
 
         # gui elements of Map window
@@ -136,7 +136,9 @@ class PauseMenu:
             button.pressed = False
         self.side_buttons[index].pressed = True
 
-    def set_state(self, state, animation=False):
+    def set_state(self, state, animation=False, clicked_button=None):
+        if clicked_button is not None:
+            self.run_button_press_animation(clicked_button)
         if animation:
             self.run_animation(CLOSE)
 
@@ -183,26 +185,27 @@ class PauseMenu:
             self.music_slider.handle(e_type)
             self.sound_slider.handle(e_type)
             if self.to_desktop_button.clicked:
-                self.set_state(State.EXIT_TO_DESKTOP_CONFIRMATION, True)
+                self.set_state(State.EXIT_TO_DESKTOP_CONFIRMATION, True, self.to_desktop_button)
             elif self.to_menu_button.clicked:
-                self.set_state(State.EXIT_TO_MENU_CONFIRMATION, True)
+                self.set_state(State.EXIT_TO_MENU_CONFIRMATION, True, self.to_menu_button)
 
         elif self.state == State.MAP_WINDOW:
             self.map.handle_mouse_click(e_type)
 
         elif self.state == State.EXIT_TO_DESKTOP_CONFIRMATION:
             if self.yes_button.clicked:
+                self.run_button_press_animation(self.yes_button)
                 self.run_animation(CLOSE)
-                pg.quit()
                 sys.exit()
             elif self.no_button.clicked:
-                self.set_state(State.OPTIONS_WINDOW, True)
+                self.set_state(State.OPTIONS_WINDOW, True, self.no_button)
 
         elif self.state == State.EXIT_TO_MENU_CONFIRMATION:
             if self.yes_button.clicked:
+                self.run_button_press_animation(self.yes_button)
                 self.running = self.game.running = False
             elif self.no_button.clicked:
-                self.set_state(State.OPTIONS_WINDOW, True)
+                self.set_state(State.OPTIONS_WINDOW, True, self.no_button)
 
     def handle_events(self, animation_state=WAIT):
         for e in pg.event.get():
@@ -287,6 +290,20 @@ class PauseMenu:
             self.no_button.draw(screen)
 
         pg.display.update()
+
+    def run_button_press_animation(self, button):
+        dt = time = 0
+        duration = 250
+        self.game.clock.tick()
+        while time <= duration:
+            self.handle_events(CLOSE)
+            increasing = time/duration >= 0.5
+            button.update_size(dt, increasing, default_alpha=255)
+            self.draw(self.game.screen)
+            self.game.fps_manager.update(dt)
+            dt = self.game.clock.tick()
+            time += dt
+        self.game.clock.tick()
 
     def run_animation(self, animation_state, duration=400):
         self.game.clock.tick()

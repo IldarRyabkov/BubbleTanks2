@@ -18,7 +18,7 @@ class UpgradeMenuCaption:
         self.surface = None
 
     def set_language(self, language):
-        filename = UPGRADE_CAPTION_ENG_BG if language == "English" else UPGRADE_CAPTION_RUS_BG
+        filename = UPGRADE_CAPTION_ENG_BG if language == ENGLISH else UPGRADE_CAPTION_RUS_BG
         image = pg.image.load(filename).convert_alpha()
         self.surface = pg.transform.scale(image, (H(1184), H(112)))
 

@@ -6,6 +6,9 @@ from constants import WHITE, GLARE_COLORS
 from utils import calculate_angle, HF
 
 
+_min_radius = HF(6)  # if radius of circle is less than this radius, its glares aren't updated and drawn
+
+
 class Glare:
     """Effect of a circle. Each circle has 4 glares. """
     def __init__(self, color, angle, radius_coeff):
@@ -40,9 +43,9 @@ class Circle:
                  color: tuple,
                  dist: float,
                  angle: float,
-                 is_scaling: bool,
-                 scaling_amplitude:float,
-                 is_visible: bool,
+                 is_scaling=False,
+                 scaling_amplitude=0,
+                 is_visible=True,
                  is_aiming=False,
                  aiming_dist=0,
                  aiming_angle=0,
@@ -164,7 +167,7 @@ class Circle:
         self.x += self.dx
         self.y += self.dy
 
-        if self.radius >= 8:
+        if self.radius >= _min_radius:
             self.update_glares(angle)
 
     def draw(self, surface, dx, dy):
@@ -175,7 +178,7 @@ class Circle:
 
         pg.draw.circle(surface, self.color, pos, r - round(self.edge))
 
-        if self.radius >= 8:
+        if self.radius >= _min_radius:
             for glare in self.glares:
                 glare.draw(surface, dx, dy)
 

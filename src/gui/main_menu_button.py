@@ -1,6 +1,6 @@
 import pygame as pg
 
-from gui.text import Text
+from gui.text_widget import TextWidget
 from gui.scaling_button import ScalingButton
 from constants import *
 from data.paths import *
@@ -9,15 +9,15 @@ from utils import H
 
 class MainMenuButton(ScalingButton):
     """Parent class for all Main menu buttons. """
-    def __init__(self, x, texts, radius, image, sound_player, aspect_ratio):
+    def __init__(self, x, texts, radius, image, sound_player, aspect_ratio, y_min):
         """Radius is half the height of the button. """
-        super().__init__(x, SCR_H + radius, 2*radius*aspect_ratio, 2*radius, 0.7, 210, texts, sound_player)
+        super().__init__(x, SCR_H + radius, 2*radius*aspect_ratio, 2*radius, 0.7, 210, texts, sound_player, 150)
 
-        self.Y_MIN = H(840)  # y-coord when button is shown
+        self.Y_MIN = y_min  # y-coord when button is shown
         self.Y_MAX = SCR_H + radius  # y-coord when button is hidden
         self.vel = (self.Y_MAX - self.Y_MIN) / 250
 
-        self.text_widget = Text(x, self.Y_MIN - 2.2 * radius, FONT_3, round(0.7 * radius), WHITE, 1)
+        self.text_widget = TextWidget(SCR_W2, H(820) - 2.2 * radius, FONT_1, round(0.6 * radius), WHITE, 1)
 
         self.text_alpha = 0
         self.TEXT_ALPHA_MIN = 0

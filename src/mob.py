@@ -5,6 +5,7 @@ from pygame import Rect
 from utils import *
 from mob_guns import get_gun
 from base_mob import BaseMob
+from data.mobs import FROZEN_BODY
 
 
 class Mob(BaseMob):
@@ -23,7 +24,7 @@ class Mob(BaseMob):
                  trajectory,
                  random_shift=0):
 
-        super().__init__(health, health, health_states, radius, body)
+        super().__init__(health, health, health_states, radius, body, FROZEN_BODY)
         self.name = name
         self.gun = get_gun(gun_type)
         self.pos_0 = np.array([x, y], dtype=float)
@@ -36,8 +37,6 @@ class Mob(BaseMob):
         self.bubbles = bubbles
         self.body_rect = Rect(0, 0, body_size, body_size)
         self.is_paralysed = False
-        self.is_frozen = False
-        self.frost_time = 0
         self.paralyzed_time = 0
 
     def randomize_pos(self, shift):
@@ -68,18 +67,11 @@ class Mob(BaseMob):
     def update_body(self, screen_rect, dt, target=(0, 0)):
         if self.body_rect.colliderect(screen_rect):
             self.body.update(*self.pos, dt, target)
+        self.body.update_frozen_state(dt)
 
     def make_paralysed(self):
         self.is_paralysed = True
         self.paralyzed_time = 0
-
-    def make_body_frozen(self):
-        for i in range(-10, 0):
-            self.body.circles[i].is_visible = True
-
-    def make_body_unfrozen(self):
-        for i in range(-10, 0):
-            self.body.circles[i].is_visible = False
 
     def update_paralysed_state(self, dt):
         if self.is_paralysed:
@@ -90,7 +82,7 @@ class Mob(BaseMob):
 
     def update(self, target, bullets, screen_rect, dt):
         if not self.is_paralysed:
-            if not self.is_frozen:
+            if not self.body.is_frozen:
                 self.update_pos(dt)
 
             self.gun.update_time(dt)
@@ -99,8 +91,7 @@ class Mob(BaseMob):
 
         self.update_body(screen_rect, dt, target)
         self.update_paralysed_state(dt)
-        self.update_frozen_state(dt)
 
-    def draw(self, surface, dx, dy, screen_rect):
+    def draw(self, screen, dx, dy, screen_rect):
         if self.body_rect.colliderect(screen_rect):
-            self.body.draw(surface, dx, dy)
+            self.body.draw(screen, dx, dy)

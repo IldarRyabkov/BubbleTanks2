@@ -3,12 +3,13 @@ from math import cos, sin, pi, hypot
 import numpy as np
 
 from constants import *
-from data.player import PLAYER_PARAMS
+from data.player import *
 from data.paths import PLAYER_BULLET_SHOT
 
 from player_guns import get_gun
 from superpowers import *
 from special_effects import add_effect
+from body import PlayerBody
 
 from bullets import FrangibleBullet
 from gun import GunAutomatic
@@ -27,20 +28,27 @@ class Player(BaseMob):
 
         self.pos = np.array([SCR_W2, SCR_H2], dtype=float)
         self.bg_radius = bg_radius
+        self.body = PlayerBody(body, body_is_rotating, self)
+
         self.max_vel = max_vel
         self.vel_x = self.vel_y = 0
         self.max_acc = max_acc
         self.acc_x= self.acc_y = 0
-        self.DECELERATION = HF(0.00064)
+
+        self.max_angular_vel = 0.00024 * pi
+        self.max_angular_acc = 0.000002
+        self.angular_vel = 0
+        self.angular_acc = self.max_angular_acc
 
         self.moving_left = False
         self.moving_right = False
         self.moving_up = False
         self.moving_down = False
-        self.body_is_rotating = body_is_rotating
         self.shooting = False
 
         self.superpower = get_superpower(superpower)
+        self.superpower.game = game
+        self.superpower.player = self
         self.gun = get_gun(gun_type)
 
         self.bullets = []
@@ -146,21 +154,47 @@ class Player(BaseMob):
                 destination_angle = 0
 
         if destination_angle is not None:
-            self.body.rotate(destination_angle, dt)
+            angle = self.body.get_angle_of_rotation(destination_angle, dt)
+            self.angular_acc = np.sign(angle) * self.max_angular_acc
+
+            self.angular_vel += self.angular_acc * dt
+            if abs(self.angular_vel) > self.max_angular_vel:
+                self.angular_vel = np.sign(self.angular_vel) * self.max_angular_vel
+
+            d_angle = self.angular_vel * dt + self.angular_acc * dt*dt/2
+            if abs(d_angle) > abs(angle):
+                d_angle = angle
+                self.angular_vel = 0
+                self.angular_acc = 0
+            self.body.angle += d_angle
+        else:
+            self.angular_acc = -np.sign(self.angular_vel) * self.max_angular_acc * 0.2
+
+            self.angular_vel += self.angular_acc * dt
+            if abs(self.angular_vel) > self.max_angular_vel:
+                self.angular_vel = np.sign(self.angular_vel) * self.max_angular_vel
+            d_angle = self.angular_vel * dt + self.angular_acc * dt*dt/2
+            self.body.angle += d_angle
 
     def update_body(self, dt):
-        if self.body_is_rotating:
+        if self.body.is_rotating:
             self.rotate_body(dt)
 
         mouse_pos = self.get_mouse_pos()
         self.body.update(*self.pos, dt, mouse_pos)
+        self.body.update_frozen_state(dt)
 
     def setup(self, max_health, health_states, radius, body, body_is_rotating,
               max_vel, max_acc, gun_type, bg_radius, superpower):
-        super().__init__(0, max_health, health_states, radius, body)
-        self.body_is_rotating = body_is_rotating
+        self.health = 0
+        self.max_health = max_health
+        self.health_states = health_states
+        self.radius = radius
+        self.body = PlayerBody(body, body_is_rotating, self)
         self.gun = get_gun(gun_type)
         self.superpower = get_superpower(superpower)
+        self.superpower.game = self.game
+        self.superpower.player = self
         self.bg_radius = bg_radius
         self.max_vel = max_vel
         self.max_acc = max_acc
@@ -181,26 +215,6 @@ class Player(BaseMob):
         self.health += bubble_health
         self.delta_health += bubble_health
         self.update_body_look()
-
-    def make_body_frozen(self):
-        for i in range(-6, 0):
-            self.body.circles[i].is_visible = True
-
-    def make_body_unfrozen(self):
-        for i in range(-6, 0):
-            self.body.circles[i].is_visible = False
-
-    def make_frozen(self):
-        if not self.is_frozen:
-            self.max_vel *= 0.2
-            self.max_acc *= 0.2
-        super().make_frozen()
-
-    def make_unfrozen(self):
-        if self.is_frozen:
-            self.max_vel *= 5
-            self.max_acc *= 5
-        super().make_unfrozen()
 
     def set_transportation_vel(self, angle, velocity):
         self.vel_x = velocity * cos(angle)
@@ -230,12 +244,9 @@ class Player(BaseMob):
         if tank_is_new:
             self.shooting = False
 
-        if self.is_frozen:
+        if self.body.is_frozen:
             self.max_vel *= 0.2
             self.max_acc *= 0.2
-            self.make_body_frozen()
-        else:
-            self.make_body_unfrozen()
 
     def downgrade(self):
         self.shurikens = []
@@ -245,12 +256,9 @@ class Player(BaseMob):
             self.health = self.max_health - 1
             self.update_body_look()
 
-            if self.is_frozen:
+            if self.body.is_frozen:
                 self.max_vel *= 0.2
                 self.max_acc *= 0.2
-                self.make_body_frozen()
-            else:
-                self.make_body_unfrozen()
         else:
             self.health = 0
 
@@ -287,7 +295,7 @@ class Player(BaseMob):
                 self.homing_bullets[i] = None
                 add_effect('RedHitCircle', self.game.room.top_effects, bullet.x, bullet.y)
 
-        self.homing_bullets = list(filter(lambda bullet: bullet is not None, self.homing_bullets))
+        self.homing_bullets = list(filter(lambda b: b is not None, self.homing_bullets))
 
     def update_shurikens(self, dt, transportation=False):
         mobs = [] if transportation else self.game.room.mobs
@@ -302,7 +310,7 @@ class Player(BaseMob):
             # If the left and right movement keys are not pressed
             # (or are pressed together), acceleration must be opposite
             # to speed in order to slow down the player's movement.
-            self.acc_x = -np.sign(self.vel_x) * self.DECELERATION
+            self.acc_x = -np.sign(self.vel_x) * 0.2 * self.max_acc
         elif abs(self.vel_x) == self.max_vel:
             # If the player has reached maximum speed, he must stop accelerating
             self.acc_x = 0
@@ -313,7 +321,7 @@ class Player(BaseMob):
 
         # Same thing with acc_y
         if not self.moving_up ^ self.moving_down:
-            self.acc_y = -np.sign(self.vel_y) * self.DECELERATION
+            self.acc_y = -np.sign(self.vel_y) * 0.2 * self.max_acc
         elif abs(self.vel_y) == self.max_vel:
                 self.acc_y = 0
         else:
@@ -339,69 +347,42 @@ class Player(BaseMob):
         elif abs(self.vel_y) > self.max_vel:
             self.vel_y = np.sign(self.vel_y) * self.max_vel
 
-    def update_superpower(self, dt):
-        args = []
-        if isinstance(self.superpower, Armor):
-            args = self.game.room.top_effects,
-        elif isinstance(self.superpower, (Bombs, ExplosionStar, StickyExplosion)):
-            args = self.pos, self.bullets
-        elif isinstance(self.superpower, (ParalysingExplosion, PowerfulExplosion)):
-            args = (self.pos, self.game.room.mobs, self.game.room.top_effects,
-                    self.game.room.bottom_effects, self.game.camera, self.game.sound_player)
-        elif isinstance(self.superpower, Teleportation):
-            args = self.pos, self.game.room.top_effects, self.game.camera
-        elif isinstance(self.superpower, Ghost):
-            args = self.body,
-        elif isinstance(self.superpower, HomingMissiles):
-            args = self.pos, self.homing_bullets, self.health, self.body.angle
-        elif isinstance(self.superpower, Shurikens):
-            args = self.pos, self.shurikens
-        elif isinstance(self.superpower, StickyCannon):
-            args = *self.pos, self.body.angle, self.get_mouse_pos(), self.bullets
-        elif isinstance(self.superpower, PowerfulCannon):
-            args = *self.pos, self.get_mouse_pos(), self.bullets
-        elif isinstance(self.superpower, GiantCannon):
-            args = *self.pos, self.bullets, self.game.camera
-        self.superpower.update(dt, *args)
-
     def update_during_transportation(self, dt):
         """Updates player's params during transportation. """
         self.move(self.vel_x * dt, self.vel_y * dt)
         self.update_body(dt)
         self.update_shurikens(dt, True)
-        self.update_frozen_state(dt)
         self.gun.update_time(dt)
         if isinstance(self.superpower, Ghost):
-            self.superpower.update(dt, self.body)
+            self.superpower.update(dt)
         else:
             self.superpower.update_time(dt)
 
     def update(self, dt):
         self.update_pos(dt)
-        self.update_superpower(dt)
+        self.superpower.update(dt)
         self.update_body(dt)
         self.update_gun(dt)
         self.update_bullets(dt)
         self.update_homing_bullets(dt)
         self.update_shurikens(dt)
-        self.update_frozen_state(dt)
 
-    def draw(self, surface, dx, dy):
+    def draw(self, screen, dx, dy):
         for bullet in self.bullets:
             if bullet.vel == 0:
-                bullet.draw(surface, dx, dy)
+                bullet.draw(screen, dx, dy)
 
-        self.body.draw(surface, dx, dy)
+        self.body.draw(screen, dx, dy)
 
         for bullet in self.bullets:
             if bullet.vel != 0:
-                bullet.draw(surface, dx, dy)
+                bullet.draw(screen, dx, dy)
 
         for bullet in self.homing_bullets:
-            bullet.draw(surface, dx, dy)
+            bullet.draw(screen, dx, dy)
 
         for shuriken in self.shurikens:
-            shuriken.draw(surface, dx, dy)
+            shuriken.draw(screen, dx, dy)
 
 
 __all__ = ["Player"]

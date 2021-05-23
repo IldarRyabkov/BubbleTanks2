@@ -9,11 +9,16 @@ but I saved them here just in case.
 
 import pygame as pg
 import numpy as np
-from math import hypot, cos, sin, pi
+import os
+from math import hypot, cos, sin, pi, sqrt
 
 from constants import *
 from data.paths import *
-from data.gui_texts import UPGRADE_MENU_CAPTION
+from languages.texts import TEXTS
+
+
+def save_image(surface, filename):
+    pg.image.save(surface, os.path.join(ROOT_DIR, "images\%s.png" % filename))
 
 
 def background() -> pg.Surface:
@@ -105,12 +110,12 @@ def room_aim() -> pg.Surface:
     return surface
 
 
-def popup_window(w, h) -> pg.Surface:
+def popup_window(w, h, color=(255, 255, 255, 100)) -> pg.Surface:
     surface = pg.Surface((w, h), pg.SRCALPHA)
-    surface.fill((255, 255, 255, 100))
+    surface.fill(color)
     transparent_color = (0, 0, 0, 0)
     pixels = pg.PixelArray(surface)
-    r = h // 8
+    r = w // 20
     for x in range(0, w // 2):
         for y in range(0, h // 2):
             if x <= r and y <= r and (x - r) * (x - r) + (y - r) * (y - r) >= r * r:
@@ -128,6 +133,18 @@ def cooldown_window() -> pg.Surface:
 
 def health_window() -> pg.Surface:
     return popup_window(1710, 198)
+
+
+def credits_bg_1() -> pg.Surface:
+    return popup_window(960, 380, color=(125, 199, 240, 120))
+
+
+def credits_bg_2() -> pg.Surface:
+    return popup_window(960, 180, color=(125, 199, 240, 120))
+
+
+def credits_bg_3() -> pg.Surface:
+    return popup_window(960, 140, color=(125, 199, 240, 120))
 
 
 def paralyzing_explosion() -> pg.Surface:
@@ -319,8 +336,8 @@ def side_button_pressed() -> pg.Surface:
     return side_button(alpha=125)
 
 
-def start_menu_caption() -> pg.Surface:
-    color = (125, 199, 240, 200)
+def main_menu_caption() -> pg.Surface:
+    color = (125, 199, 240, 120)
     w, h = 2400, 480
     r = h // 2
     surface = pg.Surface((2400, 480), pg.SRCALPHA)
@@ -338,7 +355,7 @@ def start_menu_caption() -> pg.Surface:
     return surface
 
 
-def upgrade_caption_eng(text=UPGRADE_MENU_CAPTION[ENGLISH]) -> pg.Surface:
+def upgrade_caption_eng(text=TEXTS["upgrade menu caption"][ENGLISH]) -> pg.Surface:
     w, h = 2220, 210
     surface = pg.Surface((w, h))
     surface.fill(COLOR_KEY)
@@ -354,7 +371,24 @@ def upgrade_caption_eng(text=UPGRADE_MENU_CAPTION[ENGLISH]) -> pg.Surface:
 
 
 def upgrade_caption_rus() -> pg.Surface:
-    return upgrade_caption_eng(text=UPGRADE_MENU_CAPTION[RUSSIAN])
+    return upgrade_caption_eng(text=TEXTS["upgrade menu caption"][RUSSIAN])
+
+
+def exit_button(color_1=(23, 41, 52), color_2=(200, 200, 200)) -> pg.Surface:
+    r = 150
+    d = int(r / sqrt(2))
+    surface = pg.Surface((2 * r, 2 * r), pg.SRCALPHA)
+    pg.draw.circle(surface, color_2, (r, r), r)
+    pg.draw.circle(surface, color_1, (r, r), r - 14)
+    pg.draw.line(surface, color_2, (r - d + 5, r + d - 5),
+                 (r + d - 5, r - d + 5), 21)
+    pg.draw.line(surface, color_2, (r - d + 5, r - d + 5),
+                 (r + d - 5, r + d - 5), 21)
+    return surface
+
+
+def exit_button_pressed() -> pg.Surface:
+    return exit_button((110, 130, 130), WHITE)
 
 
 def upgrade_button(w=660, bg_color=(230, 230, 230)) -> pg.Surface:
@@ -488,4 +522,4 @@ def scroll_button() -> pg.Surface:
     return main_surface
 
 
-#save(scroll_button(), 'scroll_button')
+save_image(main_menu_caption(), 'main_menu_caption')

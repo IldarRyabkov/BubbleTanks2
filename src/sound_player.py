@@ -37,7 +37,11 @@ class SoundPlayer:
     @staticmethod
     def play_music(music):
         mixer.music.load(music)
-        mixer.music.play(-1, 0.0)
+        mixer.music.play(-1, 0.0, fade_ms=2000)
+
+    @staticmethod
+    def fade_out(time):
+        mixer.music.fadeout(time)
 
     def update_data(self, music_on, sound_on):
         if self.music_on and not music_on:

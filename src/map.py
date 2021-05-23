@@ -56,7 +56,7 @@ class Map:
     def __init__(self, xo):
         # surface on which all elements of the map will be drawn
         self.surface = pg.Surface((self.w, self.h))
-        self.surface.set_colorkey(COLOR_KEY)
+        self.surface.set_colorkey(BLACK)
         self.rect = pg.Rect(xo + H(136), H(264), self.w, self.h)
 
         # position of room the player is currently in
@@ -108,7 +108,6 @@ class Map:
     def add_visited_room(self, room_pos: tuple):
         """ Adds new room position to the graph and updates map parameters."""
         self.graph[room_pos].append(self.cur_pos)
-        self.graph[self.cur_pos].append(room_pos)
         self.cur_pos = room_pos
         self.topleft = (
             min(self.topleft[0], room_pos[0]),
@@ -195,6 +194,8 @@ class Map:
         if self.boss_aim.pos is not None:
             self.boss_aim.draw(self.surface, *self.room_coords(self.boss_aim.pos))
 
-        self.surface.set_colorkey(BLACK)
         screen.blit(self.surface, self.rect)
         pg.draw.rect(screen, WHITE, self.rect, H(2))
+
+
+__all__ = ["Map"]

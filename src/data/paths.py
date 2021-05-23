@@ -18,6 +18,7 @@ def img_path(filename: str): return path("images", filename)
 def font_path(filename: str): return path("fonts", filename)
 def music_path(filename: str):  return path("music", filename)
 def sound_path(filename: str): return path("sounds", filename)
+def language_path(filename: str): return path("sounds", filename)
 
 
 ROOT_DIR = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
@@ -26,7 +27,7 @@ ROOT_DIR = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
 # images
 BG = img_path("bg.png")
 ROOM_BG = img_path("room_bg.png")
-START_MENU_CAPTION_BG = img_path("start_menu_caption.png")
+MAIN_MENU_CAPTION_BG = img_path("main_menu_caption.png")
 UPGRADE_CAPTION_RUS_BG = img_path("upgrade_caption_rus.png")
 UPGRADE_CAPTION_ENG_BG = img_path("upgrade_caption_eng.png")
 UPGRADE_BUTTON_PRESSED_BG = img_path("upgrade_button_pressed.png")
@@ -46,8 +47,13 @@ COOLDOWN_WINDOW_BG = img_path("cooldown_window_bg.png")
 BUBBLE_HALO = img_path("bubble_halo.png")
 PLAY_BUTTON_BG = img_path("play_button.png")
 SETTINGS_BUTTON_BG = img_path("settings_button.png")
-INFO_BUTTON_BG = img_path("info_button.png")
+CREDITS_BUTTON_BG = img_path("info_button.png")
 SCROLL_BUTTON_BG = img_path("scroll_button.png")
+EXIT_BUTTON = img_path("exit_button.png")
+EXIT_BUTTON_PRESSED = img_path("exit_button_pressed.png")
+CREDITS_BG_1 = img_path("credits_bg_1.png")
+CREDITS_BG_2 = img_path("credits_bg_2.png")
+CREDITS_BG_3 = img_path("credits_bg_3.png")
 
 
 # fonts
@@ -77,9 +83,10 @@ WATER_SPLASH = sound_path('water_splash.wav')
 
 __all__ = [
 
+    "ROOT_DIR",
     "BG",
     "ROOM_BG",
-    "START_MENU_CAPTION_BG",
+    "MAIN_MENU_CAPTION_BG",
     "UPGRADE_CAPTION_RUS_BG",
     "UPGRADE_CAPTION_ENG_BG",
     "UPGRADE_BUTTON_PRESSED_BG",
@@ -97,6 +104,9 @@ __all__ = [
     "HEALTH_WINDOW_BG",
     "COOLDOWN_WINDOW_BG",
     "BUBBLE_HALO",
+    "CREDITS_BG_1",
+    "CREDITS_BG_2",
+    "CREDITS_BG_3",
     "FONT_1",
     "FONT_2",
     "FONT_3",
@@ -114,8 +124,10 @@ __all__ = [
     "UI_CLICK",
     "WATER_SPLASH",
     "SETTINGS_BUTTON_BG",
-    "INFO_BUTTON_BG",
+    "CREDITS_BUTTON_BG",
     "PLAY_BUTTON_BG",
     "SCROLL_BUTTON_BG",
+    "EXIT_BUTTON",
+    "EXIT_BUTTON_PRESSED"
 
 ]

@@ -6,10 +6,11 @@ from map import Map
 from gui.side_button import SideButton
 from gui.slider import Slider
 from gui.text_button import TextButton
-from gui.text import Text
+from gui.text_widget import TextWidget
+from gui.exit_button import ExitButton
 from data.paths import *
 from constants import *
-from data.gui_texts import *
+from languages.texts import TEXTS
 from data.tank_bodies import TANK_BODIES
 from utils import H
 
@@ -41,24 +42,23 @@ class PauseMenu:
         # gui elements of Stats window
         self.tank_body = None
         self.tank_body_pos = (xo + H(940), H(370))
-
         self.stats_widgets = (
-            Text(xo + H(150), H(268), FONT_3, H(48), WHITE, 0, H(470)),
-            Text(xo + H(150), H(575), CALIBRI_BOLD, H(42), WHITE, 0, H(480)),
-            Text(xo + H(656), H(575), CALIBRI_BOLD, H(42), WHITE, 0, H(480)),
-            Text(xo + H(150), H(344), CALIBRI, H(34), WHITE, 0, H(630)),
-            Text(xo + H(150), H(668), CALIBRI, H(34), WHITE, 0, H(470)),
-            Text(xo + H(656), H(668), CALIBRI, H(34), WHITE, 0, H(470)),
+            TextWidget(xo + H(150), H(268), FONT_3, H(48), WHITE, 0, H(470)),
+            TextWidget(xo + H(150), H(575), CALIBRI_BOLD, H(42), WHITE, 0, H(480)),
+            TextWidget(xo + H(656), H(575), CALIBRI_BOLD, H(42), WHITE, 0, H(480)),
+            TextWidget(xo + H(150), H(344), CALIBRI, H(34), WHITE, 0, H(630)),
+            TextWidget(xo + H(150), H(668), CALIBRI, H(34), WHITE, 0, H(470)),
+            TextWidget(xo + H(656), H(668), CALIBRI, H(34), WHITE, 0, H(470)),
         )
         self.stats_labels = (
-            Text(xo + H(150), H(508), FONT_3, H(48), WHITE),
-            Text(xo + H(656), H(508), FONT_3, H(48), WHITE),
-            Text(xo + H(150), H(842), FONT_3, H(39), WHITE),
-            Text(xo + H(656), H(842), FONT_3, H(39), WHITE),
+            TextWidget(xo + H(150), H(508), FONT_3, H(48), WHITE),
+            TextWidget(xo + H(656), H(508), FONT_3, H(48), WHITE),
+            TextWidget(xo + H(150), H(842), FONT_3, H(39), WHITE),
+            TextWidget(xo + H(656), H(842), FONT_3, H(39), WHITE),
         )
         self.counters = (
-            Text(xo + H(440), H(840), FONT_3, H(43), WHITE),
-            Text(xo + H(990), H(840), FONT_3, H(43), WHITE)
+            TextWidget(xo + H(440), H(840), FONT_3, H(43), WHITE),
+            TextWidget(xo + H(990), H(840), FONT_3, H(43), WHITE)
         )
 
         # gui elements of Map window
@@ -66,18 +66,20 @@ class PauseMenu:
 
         # gui elements of Options window
         sp = game.sound_player
-        self.music_slider = Slider(SCR_W2, H(400), MUSIC_VOLUME_TEXT, FONT_3, H(48), sp)
-        self.sound_slider = Slider(SCR_W2, H(485), SOUND_VOLUME_TEXT, FONT_3, H(48), sp)
-        self.to_menu_button = TextButton(SCR_W2, H(580), EXIT_TO_MENU_TEXT, FONT_3, H(48), 210, sp)
-        self.to_desktop_button = TextButton(SCR_W2, H(665), EXIT_TO_DESKTOP_TEXT, FONT_3, H(48), 210, sp)
-        self.yes_button = TextButton(SCR_W2 - H(140), H(600), YES_BUTTON_TEXT, FONT_3, H(54), 210, sp, H(200))
-        self.no_button = TextButton(SCR_W2 + H(140), H(600), NO_BUTTON_TEXT, FONT_3, H(54), 210, sp, H(200))
+        self.music_slider = Slider(SCR_W2, H(400), TEXTS["music volume text"], FONT_3, H(48), sp)
+        self.sound_slider = Slider(SCR_W2, H(485), TEXTS["sound volume text"], FONT_3, H(48), sp)
+        self.to_menu_button = TextButton(SCR_W2, H(580), TEXTS["exit to menu text"], FONT_3, H(48), 210, sp)
+        self.to_desktop_button = TextButton(SCR_W2, H(665), TEXTS["exit to desktop text"], FONT_3, H(48), 210, sp)
+        self.yes_button = TextButton(SCR_W2 - H(140), H(600), TEXTS["yes button text"], FONT_3, H(54), 210, sp, H(200))
+        self.no_button = TextButton(SCR_W2 + H(140), H(600), TEXTS["no button text"], FONT_3, H(54), 210, sp, H(200))
 
         # Base gui elements of Pause menu
+        self.exit_button = ExitButton(xo, sp)
+
         self.side_buttons = (
-            SideButton(xo, H(160), STATS_SIDE_BUTTON_CAPTION, sp, True),
-            SideButton(xo, H(352), MAP_SIDE_BUTTON_CAPTION, sp),
-            SideButton(xo, H(544), OPTIONS_SIDE_BUTTON_CAPTION, sp)
+            SideButton(xo, H(160), TEXTS["stats side button caption"], sp, True),
+            SideButton(xo, H(352), TEXTS["map side button caption"], sp),
+            SideButton(xo, H(544), TEXTS["options side button caption"], sp)
         )
         self.screen_mask = pg.Surface(SCR_SIZE)
         self.screen_mask.set_alpha(175)
@@ -85,14 +87,14 @@ class PauseMenu:
         self.menu_mask.set_alpha(125)
 
         self.bg_surface = pg.Surface(SCR_SIZE)
-        self.caption = Text(SCR_W2, H(50), FONT_1, H(56), WHITE, 1)
-        self.window_caption = Text(SCR_W2, H(176), FONT_3, H(58), WHITE, 1)
+        self.caption = TextWidget(SCR_W2, H(50), FONT_1, H(56), WHITE, 1)
+        self.window_caption = TextWidget(SCR_W2, H(176), FONT_3, H(58), WHITE, 1)
 
     def set_stats_widgets(self, tank=(0, 0)):
         for i, widget in enumerate(self.stats_widgets):
-            widget.set_text(TANK_DESCRIPTIONS[self.game.language][tank][i])
+            widget.set_text(TEXTS["tank descriptions"][self.game.language][tank][i])
         for i, label in enumerate(self.stats_labels):
-            label.set_text(STATS_WINDOW_LABELS[self.game.language][i])
+            label.set_text(TEXTS["stats window labels"][self.game.language][i])
 
     def set_tank_stats(self, tank=(0, 0)):
         self.set_stats_widgets(tank)
@@ -103,8 +105,8 @@ class PauseMenu:
         self.counters[counter_index].set_text(str(new_value))
 
     def set_language(self, language):
-        self.caption.set_text(PAUSE_MENU_CAPTION[language])
-        self.window_caption.set_text(PAUSE_MENU_WINDOW_CAPTIONS[language][State.STATS_WINDOW])
+        self.caption.set_text(TEXTS["pause menu caption"][language])
+        self.window_caption.set_text(TEXTS["pause menu window captions"][language][State.STATS_WINDOW])
         self.set_stats_widgets()
         self.to_menu_button.set_language(language)
         self.to_desktop_button.set_language(language)
@@ -143,7 +145,8 @@ class PauseMenu:
             self.run_animation(CLOSE)
 
         self.state = state
-        self.window_caption.set_text(PAUSE_MENU_WINDOW_CAPTIONS[self.game.language][self.state])
+        caption = TEXTS["pause menu window captions"][self.game.language][self.state]
+        self.window_caption.set_text(caption)
         if state in (State.EXIT_TO_MENU_CONFIRMATION, State.EXIT_TO_DESKTOP_CONFIRMATION):
             self.window_caption.y = H(400)
             self.yes_button.reset()
@@ -181,6 +184,15 @@ class PauseMenu:
                 self.set_state(state)
                 return
 
+        if self.exit_button.clicked:
+            self.running = False
+            if self.state in (State.EXIT_TO_MENU_CONFIRMATION,
+                              State.EXIT_TO_DESKTOP_CONFIRMATION):
+                self.set_state(State.OPTIONS_WINDOW)
+            elif self.state == State.MAP_WINDOW:
+                self.map.reset_offset()
+            return
+
         if self.state == State.OPTIONS_WINDOW:
             self.music_slider.handle(e_type)
             self.sound_slider.handle(e_type)
@@ -194,6 +206,7 @@ class PauseMenu:
 
         elif self.state == State.EXIT_TO_DESKTOP_CONFIRMATION:
             if self.yes_button.clicked:
+                self.game.sound_player.fade_out(650)
                 self.run_button_press_animation(self.yes_button)
                 self.run_animation(CLOSE)
                 sys.exit()
@@ -202,6 +215,7 @@ class PauseMenu:
 
         elif self.state == State.EXIT_TO_MENU_CONFIRMATION:
             if self.yes_button.clicked:
+                self.game.sound_player.fade_out(250)
                 self.run_button_press_animation(self.yes_button)
                 self.running = self.game.running = False
             elif self.no_button.clicked:
@@ -264,6 +278,7 @@ class PauseMenu:
         self.window_caption.draw(screen)
         for button in self.side_buttons:
             button.draw(screen)
+        self.exit_button.draw(screen)
 
         if self.state == State.STATS_WINDOW:
             for widget in self.stats_widgets:

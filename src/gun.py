@@ -121,7 +121,7 @@ class GunAutomatic(GunSingle):
 
             # find the exact position of the target in order to
             # calculate the angle of movement of the bullet
-            if mob.is_paralysed or mob.is_frozen:
+            if mob.is_paralysed or mob.body.is_frozen:
                 target = mob.pos
             else:
                 # if the target is moving we must take into account

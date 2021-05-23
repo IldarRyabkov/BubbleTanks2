@@ -2,8 +2,8 @@ import pygame as pg
 
 from data.paths import *
 from constants import *
-from data.gui_texts import UPGRADE_BUTTON_LABELS, TANK_DESCRIPTIONS
-from gui.text import Text
+from languages.texts import TEXTS
+from gui.text_widget import TextWidget
 from utils import H, HF
 
 
@@ -67,15 +67,16 @@ class UpgradeButton:
         # Then we create text widget to be blitted on background surfaces of button
         width = self.w - HF(30)
         text_widgets = (
-            Text(self.w / 2, HF(6),   FONT_1,  H(48), UPG_LABEL_COLOR, 1, width),  # button caption
-            Text(self.w / 2, HF(264), CALIBRI_BOLD, H(35), BLACK, 1, width),  # main weapon caption
-            Text(self.w / 2, HF(384), CALIBRI_BOLD, H(35), BLACK, 1, width),  # second weapon caption
-            Text(self.w / 2, HF(166), CALIBRI_BOLD,  H(35), BLACK, 1, width),  # tank name
-            Text(self.w / 2, HF(312), CALIBRI,  H(31), BLACK, 1, width),  # main weapon name
-            Text(self.w / 2, HF(432), CALIBRI,  H(31), BLACK, 1, width),  # second weapon name
-            Text(HF(15), HF(536), CALIBRI, H(31), BLACK, 0, width),  # tank description
+            TextWidget(self.w / 2, HF(6), FONT_1, H(48), UPG_LABEL_COLOR, 1, width),  # button caption
+            TextWidget(self.w / 2, HF(264), CALIBRI_BOLD, H(35), BLACK, 1, width),  # main weapon caption
+            TextWidget(self.w / 2, HF(384), CALIBRI_BOLD, H(35), BLACK, 1, width),  # second weapon caption
+            TextWidget(self.w / 2, HF(166), CALIBRI_BOLD, H(35), BLACK, 1, width),  # tank name
+            TextWidget(self.w / 2, HF(312), CALIBRI, H(31), BLACK, 1, width),  # main weapon name
+            TextWidget(self.w / 2, HF(432), CALIBRI, H(31), BLACK, 1, width),  # second weapon name
+            TextWidget(HF(15), HF(536), CALIBRI, H(31), BLACK, 0, width),  # tank description
         )
-        texts = UPGRADE_BUTTON_LABELS[language] + list(TANK_DESCRIPTIONS[language][tank][:4])
+        texts = (TEXTS["upgrade button labels"][language] +
+                 TEXTS["tank descriptions"][language][tank][:4])
         for widget, text in zip(text_widgets, texts):
             widget.set_text(text)
 

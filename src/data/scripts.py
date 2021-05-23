@@ -9,8 +9,7 @@ import json
 import os
 from json.decoder import JSONDecodeError
 from pygame import display
-
-from data.gui_texts import LANGUAGES
+from languages.texts import TEXTS
 
 
 def _max_available_resolution():
@@ -112,6 +111,7 @@ default_resolutions = [
 ]
 max_res = _max_available_resolution()
 SUPPORTED_RESOLUTIONS = [res for res in default_resolutions if res < max_res] + [max_res]
+LANGUAGES = TEXTS["language"]
 
 
 __all__ = [

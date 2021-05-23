@@ -175,7 +175,7 @@ class Room:
         target = (player_x, player_y)
         for mob in self.new_mobs:
             mob.update_pos(dt)
-            mob.gamma = mob.update_body_angle()
+            mob.update_body_angle()
             mob.update_body(self.rect, dt, target)
 
     def set_screen_rect(self, pos):

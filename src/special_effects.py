@@ -141,17 +141,22 @@ class Armor(SpecialEffect):
 
 class ParalyzingExplosion(SpecialEffect):
     def __init__(self, x, y, max_diam):
-        super().__init__(x, y, duration=300)
-        self.surface_0 = pg.image.load(PARALYZING_EXPLOSION).convert_alpha()
-        self.surface = None
+        super().__init__(x, y, duration=500)
         self.max_diam = max_diam
         self.diam = None
+        self.img = pg.image.load(PARALYZING_EXPLOSION).convert_alpha()
+        self.img = pg.transform.scale(self.img, (max_diam, max_diam))
+        self.surface = None
+        self.alpha_effect_duration = 300
 
     def update(self, dt):
         super().update(dt)
-        if self.t <= self.duration:
-            self.diam = round(self.max_diam * self.t / self.duration)
-            self.surface = pg.transform.scale(self.surface_0, (self.diam, self.diam))
+        if self.t <= self.duration - self.alpha_effect_duration:
+            self.diam = round(self.max_diam * self.t / (self.duration - self.alpha_effect_duration))
+            self.surface = pg.transform.scale(self.img, (self.diam, self.diam))
+        else:
+            alpha = 255 * (self.duration - self.t) / self.alpha_effect_duration
+            self.surface.set_alpha(alpha)
 
     def draw(self, screen, dx, dy):
         screen.blit(self.surface, (self.x - self.diam/2 - dx,
@@ -179,7 +184,7 @@ class PowerfulExplosion(SpecialEffect):
 
 class Flash(SpecialEffect):
     def __init__(self):
-        super().__init__(0, 0, duration=250)
+        super().__init__(0, 0, duration=200)
         self.surface = pg.Surface((SCR_W, SCR_H))
         self.surface.fill(WHITE)
 
@@ -270,8 +275,8 @@ def add_effect(name, effects, x=0, y=0, radius=0):
     elif name == 'RedHitCircle': effect = BulletHitCircle(x, y, RED)
     elif name == 'VioletHitCircle': effect = BulletHitCircle(x, y, VIOLET)
     elif name == 'Armor': effect = Armor(x, y, radius)
-    elif name == 'ParalyzingExplosion': effect = ParalyzingExplosion(x, y, HF(960))
-    elif name == 'BigParalyzingExplosion': effect = ParalyzingExplosion(x, y, HF(1440))
+    elif name == 'ParalyzingExplosion': effect = ParalyzingExplosion(x, y, H(960))
+    elif name == 'BigParalyzingExplosion': effect = ParalyzingExplosion(x, y, H(1440))
     elif name == 'PowerfulExplosion': effect = PowerfulExplosion(x, y)
     elif name == 'Flash': effect = Flash()
     elif name == 'StarsAroundMob': effect = StarsAroundMob(x, y, radius)

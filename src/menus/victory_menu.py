@@ -5,9 +5,9 @@ from constants import *
 from data.paths import FONT_1, FONT_3
 from bubble import Bubble
 from gui.text_button import TextButton
-from gui.text import Text
+from gui.text_widget import TextWidget
 from utils import H
-from data.gui_texts import VICTORY_MENU_LABELS, EXIT_TO_MENU_TEXT
+from languages.texts import TEXTS
 
 
 class VictoryMenu:
@@ -22,11 +22,11 @@ class VictoryMenu:
         self.mask = pg.Surface(SCR_SIZE)
         self.mask.set_alpha(195)
 
-        self.exit_button = TextButton(SCR_W2, H(688), EXIT_TO_MENU_TEXT,
+        self.exit_button = TextButton(SCR_W2, H(688), TEXTS["exit to menu text"],
                                       FONT_3, H(52), 200, self.game.sound_player)
         self.labels = (
-            Text(SCR_W2, H(128), FONT_1, H(90), WHITE, 1),
-            Text(SCR_W2, H(232), FONT_1, H(50), WHITE, 1),
+            TextWidget(SCR_W2, H(128), FONT_1, H(90), WHITE, 1),
+            TextWidget(SCR_W2, H(232), FONT_1, H(50), WHITE, 1),
         )
         self.bubbles = (
             Bubble(SCR_W2 - H(192), SCR_H2 - H(80), 0, 0, "big"),
@@ -41,7 +41,7 @@ class VictoryMenu:
 
     def set_language(self, language):
         for i, label in enumerate(self.labels):
-            label.set_text(VICTORY_MENU_LABELS[language][i])
+            label.set_text(TEXTS["victory menu labels"][language][i])
         self.exit_button.set_language(language)
 
     def handle_events(self):

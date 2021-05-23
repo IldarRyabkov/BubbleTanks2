@@ -91,7 +91,7 @@ class ExplodingBullet(RegularBullet):
             self.color_time -= self.T
 
 
-class BombBullet(Bullet):
+class Mine(Bullet):
     """A bullet which is not moving and has a specific body update"""
     def __init__(self, x, y, body):
         Bullet.__init__(self, x, y, HF(18), -10, 0, 0, body)
@@ -289,7 +289,7 @@ __all__ = [
 
     "RegularBullet",
     "ExplodingBullet",
-    "BombBullet",
+    "Mine",
     "Shuriken",
     "HomingMissile",
     "DrillingBullet",

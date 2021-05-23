@@ -1,6 +1,6 @@
 import pygame as pg
 
-from gui.text import Text
+from gui.text_widget import TextWidget
 from gui.scaling_button import ScalingButton
 from constants import *
 from utils import H
@@ -24,7 +24,7 @@ class Slider(ScalingButton):
         self.zoom_area.w -= H(100)
         self.zoom_area.x += H(50)
 
-        self.text_widget = Text(self.w//2 - H(40), 0, font, font_size, WHITE, 2)
+        self.text_widget = TextWidget(self.w // 2 - H(40), 0, font, font_size, WHITE, 2)
 
         self.pressed = False
 

@@ -44,8 +44,8 @@ class Game:
 
         # Set the types of events that are allowed to appear in the event queue.
         # This will improve the performance of the game.
-        pg.event.set_allowed([pg.QUIT, pg.KEYDOWN, pg.KEYUP,
-                              pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP])
+        pg.event.set_blocked(None)
+        pg.event.set_allowed([pg.QUIT, pg.KEYDOWN, pg.KEYUP, pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP])
 
         # Try to make sure the game will display correctly on high DPI monitors on Windows.
         if platform.system() == 'Windows':
@@ -112,10 +112,6 @@ class Game:
                                self.player.max_health)
         self.cooldown_window.set(self.player.gun.cooldown_time,
                                  self.player.superpower.cooldown_time)
-
-    def update_windows(self, dt):
-        self.health_window.update(dt)
-        self.cooldown_window.update(dt, self.player, self.transportation)
 
     def handle(self, e_type, e_key):
         if e_key == pg.K_a:
@@ -301,7 +297,8 @@ class Game:
         self.camera.update(*self.player.pos, dt)
         self.room.set_screen_rect(self.player.pos)
         self.room.update_new_mobs(*self.player.pos, dt)
-        self.update_windows(dt)
+        self.health_window.update(dt)
+        self.cooldown_window.update(dt, self.player, True)
 
     def draw_transportation(self, time, dist_between_rooms):
         """ Draw all objects during transportation. """
@@ -443,7 +440,8 @@ class Game:
             self.running = False
             self.victory_menu.run()
         else:
-            self.update_windows(dt)
+            self.health_window.update(dt)
+            self.cooldown_window.update(dt, self.player)
             self.check_transportation()
 
     def draw_background(self, surface):
@@ -475,7 +473,7 @@ class Game:
         animating them in the background in the Pause menu/Victory menu.
         """
         if isinstance(self.player.superpower, Ghost):
-            self.player.superpower.update_body(self.player.body)
+            self.player.superpower.update_body()
         self.player.update_body(dt)
         for mob in self.room.mobs:
             mob.update_body(self.room.rect, dt, self.player.pos)

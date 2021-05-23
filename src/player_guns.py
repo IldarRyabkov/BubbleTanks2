@@ -279,25 +279,25 @@ class Gun53(Gun00):
 class Gun54(GunAutomatic):
     def __init__(self):
         coords = (
-            (HF(216), 0.09 * pi), (HF(216), -0.09 * pi),
-            (HF(194), 0.29 * pi), (HF(194), -0.29 * pi),
-            (HF(194), 0.79 * pi), (HF(194), -0.79 * pi)
+            (HF(173), 0.22 * pi), (HF(173), -0.22 * pi),
+            (HF(248), 0.43 * pi), (HF(248), -0.43 * pi),
+            (HF(248), 0.6 * pi), (HF(248), -0.6 * pi)
         )
         super().__init__(0, HF(1.1), -5, 'BigBullet_1', 220, 0, 300, coords)
-        self.bullets_coords = ((HF(171), 0.55 * pi), (HF(171), -0.55 * pi), (HF(178), pi))
+        self.bullets_coords = (HF(256), 0.815 * pi), (HF(256), -0.815 * pi), (HF(173), pi)
 
     def generate_bullets(self, x, y, target, body_angle):
         bullets = []
-        r1, r2 = HF(57), HF(178)
+        r1, r2 = HF(57), self.bullets_coords[2][0]
         for radius, angle in self.bullets_coords:
             xo = x + radius * cos(body_angle + angle)
             yo = y - radius * sin(body_angle + angle)
             bullet_angle = calculate_angle(xo, yo, *target)
             bullet_pos = (xo + r1 * cos(bullet_angle), yo - r1 * sin(bullet_angle))
             if radius != r2:
-                bullets.append(AirBullet(*bullet_pos, bullet_angle))
-            else:
                 bullets.append(RegularBullet(*bullet_pos, self.bul_dmg, self.bul_vel, bullet_angle, self.bul_body))
+            else:
+                bullets.append(AirBullet(*bullet_pos, bullet_angle))
         return bullets
 
 

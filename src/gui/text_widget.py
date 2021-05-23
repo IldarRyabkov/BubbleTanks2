@@ -3,7 +3,7 @@ import pygame as pg
 from constants import OPEN
 
 
-class Text:
+class TextWidget:
     """Widget that stores text on multiple lines. """
     def __init__(self, x, y, font, font_size, color, align=0, width_limit=9001):
         pg.font.init()
@@ -81,4 +81,4 @@ class Text:
             screen.blit(surface, (round(self.x + x - dx), round(self.y + y - dy)))
 
 
-__all__ = ["Text"]
+__all__ = ["TextWidget"]

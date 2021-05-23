@@ -8,14 +8,14 @@ class ScalingButton:
     """Parent class for all buttons that change their size
     and transparency, when a cursor is on them.
     """
-    def __init__(self, x, y, w, h, min_scale, min_alpha, texts, sound_player):
+    def __init__(self, x, y, w, h, min_scale, min_alpha, texts, sound_player, scaling_time=100):
         """(x, y) is the center of the button. """
         self.x = x
         self.y = y
         self.w = w
         self.h = h
 
-        self.scaling_time = 100
+        self.scaling_time = scaling_time
 
         self.scale = min_scale
         self.SCALE_MIN = min_scale

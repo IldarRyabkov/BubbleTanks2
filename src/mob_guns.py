@@ -114,7 +114,7 @@ class GunBenLaden(Gun):
         bullets = []
         coords = self.get_bullets_coords(x, y, body_angle)
         for i in range(6):
-            bullets.append(BombBullet(*coords[i], self.bul_body))
+            bullets.append(Mine(*coords[i], self.bul_body))
         return bullets
 
 
@@ -140,7 +140,7 @@ class GunBomberShooter(Gun):
     def append_bomb_bullet(x, y, bullets, gamma):
         r = HF(64)
         xo, yo = x - r*cos(gamma), y + r*sin(gamma)
-        bullets.append(BombBullet(xo, yo, BULLET_BODIES["BombBullet_2"]))
+        bullets.append(Mine(xo, yo, BULLET_BODIES["BombBullet_2"]))
 
     def add_bullets(self, x, y, target, bullets, gamma=0):
         if self.time == self.cooldown_time:

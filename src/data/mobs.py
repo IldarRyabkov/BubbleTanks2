@@ -3,6 +3,22 @@ from constants import *
 from utils import *
 
 
+FROZEN_BODY = [
+
+    [19,  1, VIOLET, 19,  -0.15 * pi,  False, 1,  True, False, 1,  0],
+    [15,  1, VIOLET, 31,  -0.35 * pi,  False, 1,  True, False, 1,  0],
+    [15,  1, VIOLET, 45,  0.22 * pi,   False, 1,  True, False, 1,  0],
+    [15,  1, VIOLET, 45,  -0.22 * pi,  False, 1,  True, False, 1,  0],
+    [15,  1, VIOLET, 42,  -0.75 * pi,  False, 1,  True, False, 1,  0],
+    [18,  1, VIOLET, 56,  -0.8 * pi,   False, 1,  True, False, 1,  0],
+    [24,  1, VIOLET, 41,  0.82 * pi,   False, 1,  True, False, 1,  0],
+    [15,  1, VIOLET, 11,  0.5 * pi,    False, 1,  True, False, 1,  0],
+    [15,  1, VIOLET, 54,  0.6 * pi,    False, 1,  True, False, 1,  0],
+    [17,  1, VIOLET, 31,  0.65 * pi,   False, 1,  True, False, 1,  0]
+
+]
+
+
 BOSS_HEAD_BODY = [
     [68,  2, BLUE,   1,   -0.5 * pi,   True,  25, True,  False],
     [49,  5, BLUE,   327, -0.445 * pi, True,  45, True,  False],
@@ -39,17 +55,8 @@ BOSS_HEAD_BODY = [
     [39,  4, ORANGE, 298, -0.5 * pi,   True,  36, True,  True,  1,  0],
     [17,  1, ORANGE, 298, -0.5 * pi,   True,  14, True,  True,  42, -1.0 * pi],
     [17,  1, ORANGE, 298, -0.5 * pi,   True,  14, True,  True,  42, -0.667 * pi],
-    [17,  1, ORANGE, 298, -0.5 * pi,   True,  14, True,  True,  42, 0.667 * pi],
-    [19,  1, VIOLET, 19,  -0.15 * pi,  False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 31,  -0.35 * pi,  False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 45,  0.22 * pi,   False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 45,  -0.22 * pi,  False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 42,  -0.75 * pi,  False, 1,  False, False, 1,  0],
-    [18,  1, VIOLET, 56,  -0.8 * pi,   False, 1,  False, False, 1,  0],
-    [24,  1, VIOLET, 41,  0.82 * pi,   False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 11,  0.5 * pi,    False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 54,  0.6 * pi,    False, 1,  False, False, 1,  0],
-    [17,  1, VIOLET, 31,  0.65 * pi,   False, 1,  False, False, 1,  0]
+    [17,  1, ORANGE, 298, -0.5 * pi,   True,  14, True,  True,  42, 0.667 * pi]
+
 ]
 
 BOSS_HEAD_PARAMS = {
@@ -99,17 +106,7 @@ BOSS_LEG_BODY = [
     [14, 1, ORANGE, 243, 0.562 * pi, True,  14, True,  False],
     [14, 1, ORANGE, 243, 0.438 * pi, True,  14, True,  False],
     [15, 1, ORANGE, 193, 0.615 * pi, True,  14, True,  False],
-    [15, 1, ORANGE, 193, 0.385 * pi, True,  14, True,  False],
-    [19, 1, VIOLET, 19,  0.35 * pi,  False, 1,  False, False, 1, 0],
-    [15, 1, VIOLET, 31,  0.15 * pi,  False, 1,  False, False, 1, 0],
-    [15, 1, VIOLET, 45,  0.72 * pi,  False, 1,  False, False, 1, 0],
-    [15, 1, VIOLET, 45,  0.28 * pi,  False, 1,  False, False, 1, 0],
-    [15, 1, VIOLET, 42,  -0.25 * pi, False, 1,  False, False, 1, 0],
-    [18, 1, VIOLET, 56,  -0.3 * pi,  False, 1,  False, False, 1, 0],
-    [24, 1, VIOLET, 41,  1.32 * pi,  False, 1,  False, False, 1, 0],
-    [15, 1, VIOLET, 11,  pi,         False, 1,  False, False, 1, 0],
-    [15, 1, VIOLET, 54,  1.1 * pi,   False, 1,  False, False, 1, 0],
-    [17, 1, VIOLET, 31,  1.15 * pi,  False, 1,  False, False, 1, 0]]
+    [15, 1, ORANGE, 193, 0.385 * pi, True,  14, True,  False]]
 
 BOSS_LEG_PARAMS = {
     "name": "BossLeg",
@@ -143,17 +140,7 @@ BOSS_HAND_BODY = [
     [8,   1, ORANGE, 1,   0,          True,  8,  True,  True,  41, 0.22 * pi],
     [8,   1, ORANGE, 1,   0,          True,  8,  True,  True,  41, -0.22 * pi],
     [8,   1, ORANGE, 1,   0,          True,  8,  True,  True,  52, 0.17 * pi],
-    [8,   1, ORANGE, 1,   0,          True,  8,  True,  True,  52, -0.17 * pi],
-    [19,  1, VIOLET, 19,  -0.65 * pi, False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 31,  -0.85 * pi, False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 45,  -0.28 * pi, False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 45,  -0.72 * pi, False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 42,  0.75 * pi,  False, 1,  False, False, 1,  0],
-    [18,  1, VIOLET, 56,  0.7 * pi,   False, 1,  False, False, 1,  0],
-    [24,  1, VIOLET, 41,  0.32 * pi,  False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 11,  0,          False, 1,  False, False, 1,  0],
-    [15,  1, VIOLET, 54,  0.1 * pi,   False, 1,  False, False, 1,  0],
-    [17,  1, VIOLET, 31,  0.15 * pi,  False, 1,  False, False, 1,  0]
+    [8,   1, ORANGE, 1,   0,          True,  8,  True,  True,  52, -0.17 * pi]
 
 ]
 
@@ -375,17 +362,7 @@ TURTLE_BODY =  [
     [39, 4, ORANGE, 0,   0,           True,  25, True,  True,  0,  0],
     [17, 2, ORANGE, 0,   0,           True,  11, True,  True,  42, -1.0 * pi],
     [17, 2, ORANGE, 0,   0,           True,  11, True,  True,  42, -0.667 * pi],
-    [17, 2, ORANGE, 0,   0,           True,  11, True,  True,  42, 0.667 * pi],
-    [19, 1, VIOLET, 19,  -0.15 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31,  -0.35 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45,  0.22 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45,  -0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42,  -0.75 * pi,  False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56,  -0.8 * pi,   False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41,  0.82 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11,  0.5 * pi,    False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54,  0.6 * pi,    False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31,  0.65 * pi,   False, 0,  False, False, 0,  0]]
+    [17, 2, ORANGE, 0,   0,           True,  11, True,  True,  42, 0.667 * pi]]
 
 TURTLE_HEALTH_STATES = (
     (21, (0, 4), (10, 12)),
@@ -458,17 +435,7 @@ TERRORIST_BODY = [    [56, 2, BLUE,         85,  0.5 * pi,   True,  21, True,  F
     [17, 2, BLUE,         62,  -0.25 * pi, False, 0,  True,  False],
     [17, 2, BLUE,         59,  0.12 * pi,  False, 0,  True,  False],
     [17, 2, BLUE,         59,  -0.12 * pi, False, 0,  True,  False],
-    [17, 2, BLUE,         58,  0,          False, 0,  True,  False],
-    [19, 1, VIOLET,       19,  -0.15 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       31,  -0.35 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       45,  0.22 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       45,  -0.22 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       42,  -0.75 * pi, False, 0,  False, False, 0, 0],
-    [18, 1, VIOLET,       56,  -0.8 * pi,  False, 0,  False, False, 0, 0],
-    [24, 1, VIOLET,       41,  0.82 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       11,  0.5 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       54,  0.6 * pi,   False, 0,  False, False, 0, 0],
-    [17, 1, VIOLET,       31,  0.65 * pi,  False, 0,  False, False, 0, 0]]
+    [17, 2, BLUE,         58,  0,          False, 0,  True,  False]]
 
 TERRORIST_HEALTH_STATES = (
     (18,),
@@ -596,17 +563,7 @@ BENLADEN_BODY = [
     [22,  2, BLUE,         65,  0,           True,  18, True,  False],
     [34,  3, BLUE,         130, 0,           True,  25, True,  False],
     [17,  1, BLUE,         164, 0.04 * pi,   True,  14, True,  False],
-    [17,  1, BLUE,         164, -0.04 * pi,  True,  14, True,  False],
-    [19,  1, VIOLET,       19,  -0.15 * pi,  False, 0,  False, False, 0, 0],
-    [15,  1, VIOLET,       31,  -0.35 * pi,  False, 0,  False, False, 0, 0],
-    [15,  1, VIOLET,       45,  0.22 * pi,   False, 0,  False, False, 0, 0],
-    [15,  1, VIOLET,       45,  -0.22 * pi,  False, 0,  False, False, 0, 0],
-    [15,  1, VIOLET,       42,  -0.75 * pi,  False, 0,  False, False, 0, 0],
-    [18,  1, VIOLET,       56,  -0.8 * pi,   False, 0,  False, False, 0, 0],
-    [24,  1, VIOLET,       41,  0.82 * pi,   False, 0,  False, False, 0, 0],
-    [15,  1, VIOLET,       11,  0.5 * pi,    False, 0,  False, False, 0, 0],
-    [15,  1, VIOLET,       54,  0.6 * pi,    False, 0,  False, False, 0, 0],
-    [17,  1, VIOLET,       31,  0.65 * pi,   False, 0,  False, False, 0, 0]]
+    [17,  1, BLUE,         164, -0.04 * pi,  True,  14, True,  False]]
 
 BENLADEN_PARAMS = {
     "name": "BenLaden",
@@ -630,17 +587,7 @@ ANT_BODY = [    [24, 2, BLUE,   0,  0,          True,  18, True,  True],
     [14, 1, BLUE,   55, 0.1 * pi,   True,  11, True,  False],
     [14, 1, BLUE,   55, -0.1 * pi,  True,  11, True,  False],
     [19, 2, ORANGE, 0,  0,          True,  21, True,  True],
-    [7,  1, ORANGE, 0,  0,          True,  7,  True,  True,  25],
-    [19, 1, VIOLET, 19, -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [7,  1, ORANGE, 0,  0,          True,  7,  True,  True,  25]]
 
 ANT_PARAMS = {
     "name": "Ant",
@@ -664,17 +611,7 @@ SCARAB_BODY = [    [39, 4, BLUE,   0,  0,          True,  31, True,  False],
     [22, 2, BLUE,   54, -0.25 * pi, True,  17, True,  False],
     [22, 2, BLUE,   54, 0.75 * pi,  True,  17, True,  False],
     [22, 2, BLUE,   54, -0.75 * pi, True,  17, True,  False],
-    [17, 2, BLUE,   51, pi,         True,  12, True,  False],
-    [19, 1, VIOLET, 19, -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [17, 2, BLUE,   51, pi,         True,  12, True,  False]]
 
 SCARAB_HEALTH_STATES = (
     (6, ),
@@ -703,17 +640,7 @@ GULL_BODY = [    [45, 4, BLUE,   8,  0,          True,  28, True,  False],
     [18, 1, BLUE,   93, 0.72 * pi,  True,  15, True,  False],
     [18, 1, BLUE,   93, -0.72 * pi, True,  15, True,  False],
     [28, 2, ORANGE, 0,  0,          True,  25, True,  True],
-    [11, 1, ORANGE, 0,  0,          True,  11, True,  True,  32],
-    [19, 1, VIOLET, 19, -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [11, 1, ORANGE, 0,  0,          True,  11, True,  True,  32]]
 
 GULL_HEALTH_STATES = (
     (5, (3, 4)),
@@ -766,17 +693,7 @@ MOTHER_BODY = [    [17, 1, BLUE,         200, 0.95 * pi,  True,  17, True,  Fals
     [18, 1, ORANGE,       79,  0.74 * pi,  True,  14, True,  False],
     [18, 1, ORANGE,       79,  -0.74 * pi, True,  14, True,  False],
     [7,  1, LIGHT_ORANGE, 0,   0,          False, 0,  True,  False, 0, 0, False, 0, True, 56, 0],
-    [7,  1, LIGHT_ORANGE, 0,   0,          False, 0,  True,  False, 0, 0, False, 0, True, 56, 0.65 * pi],
-    [19, 1, VIOLET,       19,  -0.15 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       31,  -0.35 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       45,  0.22 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       45,  -0.22 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       42,  -0.75 * pi, False, 0,  False, False, 0, 0],
-    [18, 1, VIOLET,       56,  -0.8 * pi,  False, 0,  False, False, 0, 0],
-    [24, 1, VIOLET,       41,  0.82 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       11,  0.5 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET,       54,  0.6 * pi,   False, 0,  False, False, 0, 0],
-    [17, 1, VIOLET,       31,  0.65 * pi,  False, 0,  False, False, 0, 0]]
+    [7,  1, LIGHT_ORANGE, 0,   0,          False, 0,  True,  False, 0, 0, False, 0, True, 56, 0.65 * pi]]
 
 MOTHER_HEALTH_STATES = (
     (90, ),
@@ -815,17 +732,7 @@ COCKROACH_BODY = [    [17, 1, BLUE,   31, 0.66 * pi,  True,  14, True,  False],
     [14, 1, BLUE,   79, -0.2 * pi,  True,  9,  True,  False],
     [25, 2, BLUE,   5,  0,          True,  17, True,  False],
     [21, 2, ORANGE, 0,  0,          True,  14, True,  True],
-    [8,  1, ORANGE, 0,  0,          True,  8,  True,  True,  27],
-    [19, 1, VIOLET, 19, -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [8,  1, ORANGE, 0,  0,          True,  8,  True,  True,  27]]
 
 COCKROACH_HEALTH_STATES = (
     (10, ),
@@ -885,17 +792,7 @@ BOMBERSHOOTER_BODY = [    [25, 2, BLUE,         54,  0.54 * pi,   True,  22, Tru
     [11, 1, ORANGE,       123, -0.944 * pi, True,  7,  True,  False],
     [18, 2, LIGHT_ORANGE, 46,  0.85 * pi,   False, 0,  True,  False, 0,  0, True, pi],
     [18, 2, LIGHT_ORANGE, 46,  -0.85 * pi,  False, 0,  True,  False, 0,  0, True, pi],
-    [19, 2, ORANGE,       42,  pi,          True,  17, True,  False],
-    [19, 1, VIOLET,       19,  -0.15 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET,       31,  -0.35 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET,       45,  0.22 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET,       45,  -0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET,       42,  -0.75 * pi,  False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET,       56,  -0.8 * pi,   False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET,       41,  0.82 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET,       11,  0.5 * pi,    False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET,       54,  0.6 * pi,    False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET,       31,  0.65 * pi,   False, 0,  False, False, 0,  0]]
+    [19, 2, ORANGE,       42,  pi,          True,  17, True,  False]]
 
 BOMBERSHOOTER_HEALTH_STATES = (
     (27, ),
@@ -927,17 +824,7 @@ BUG_BODY = [    [21, 2, BLUE,   41, 0.5 * pi,   True,  15, True,  False],
     [29, 3, BLUE,   0,  0,          True,  21, True,  False],
     [21, 2, BLUE,   38, pi,         True,  15, True,  False],
     [24, 2, ORANGE, 0,  0,          True,  25, True,  True],
-    [9,  1, ORANGE, 0,  0,          True,  8,  True,  True,  24],
-    [19, 1, VIOLET, 5,  -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [9,  1, ORANGE, 0,  0,          True,  8,  True,  True,  24]]
 
 BUG_PARAMS = {
     "name": "Bug",
@@ -977,17 +864,7 @@ AMEBA_BODY = [
     [7,  1, BLUE,   39, 2.0 * pi,    False, 0,  True,  False],
     [15, 2, BLUE,   15, 0,           True,  11, True,  False],
     [15, 2, BLUE,   15, 0.667 * pi,  True,  11, True,  False],
-    [15, 2, BLUE,   15, -0.667 * pi, True,  11, True,  False],
-    [19, 1, VIOLET, 19, -0.15 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 31, -0.35 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, 0.22 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, -0.22 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 42, -0.75 * pi,  False, 0,  False, False, 0, 0],
-    [18, 1, VIOLET, 56, -0.8 * pi,   False, 0,  False, False, 0, 0],
-    [24, 1, VIOLET, 41, 0.82 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 11, 0.5 * pi,    False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 54, 0.6 * pi,    False, 0,  False, False, 0, 0],
-    [17, 1, VIOLET, 31, 0.65 * pi,   False, 0,  False, False, 0, 0]]
+    [15, 2, BLUE,   15, -0.667 * pi, True,  11, True,  False]]
 
 AMEBA_HEALTH_STATES = (
     (4,),
@@ -1023,17 +900,7 @@ CELL_BODY = [    [8,  1, BLUE,   28, 0.167 * pi, False, 0,  True,  False],
     [8,  1, BLUE,   28, 1.667 * pi, False, 0,  True,  False],
     [8,  1, BLUE,   28, 1.833 * pi, False, 0,  True,  False],
     [8,  1, BLUE,   28, 2.0 * pi,   False, 0,  True,  False],
-    [19, 2, BLUE,   0,  0,          True,  11, True,  False],
-    [19, 1, VIOLET, 19, -0.15 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0, 0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0, 0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0, 0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0, 0]]
+    [19, 2, BLUE,   0,  0,          True,  11, True,  False]]
 
 CELL_HEALTH_STATES = (
     (4,),
@@ -1060,17 +927,7 @@ CELL_PARAMS = {
 INFUSORIA_BODY = [    [14, 1, BLUE,   36, 0.833 * pi,  True,  9,  True,  False],
     [14, 1, BLUE,   36, -0.833 * pi, True,  9,  True,  False],
     [25, 2, BLUE,   0,  0,           True,  14, True,  False],
-    [11, 1, BLUE,   31, 0,           True,  7,  True,  False],
-    [19, 1, VIOLET, 19, -0.15 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 31, -0.35 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, 0.22 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, -0.22 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 42, -0.75 * pi,  False, 0,  False, False, 0, 0],
-    [18, 1, VIOLET, 56, -0.8 * pi,   False, 0,  False, False, 0, 0],
-    [24, 1, VIOLET, 41, 0.82 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 11, 0.5 * pi,    False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 54, 0.6 * pi,    False, 0,  False, False, 0, 0],
-    [17, 1, VIOLET, 31, 0.65 * pi,   False, 0,  False, False, 0, 0]]
+    [11, 1, BLUE,   31, 0,           True,  7,  True,  False]]
 
 INFUSORIA_HEALTH_STATES = (
     (2,),
@@ -1094,17 +951,7 @@ INFUSORIA_PARAMS = {
 
 BABY_BODY = [    [11, 1, BLUE,   19, 0.8 * pi,   True,  8,  True,  False],
     [15, 1, BLUE,   0,  0,          True,  11, True,  False],
-    [11, 1, BLUE,   19, -0.8 * pi,  True,  8,  True,  False],
-    [19, 1, VIOLET, 19, -0.15 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0, 0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0, 0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0, 0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0, 0]]
+    [11, 1, BLUE,   19, -0.8 * pi,  True,  8,  True,  False]]
 
 BABY_PARAMS = {
     "name": "Baby",
@@ -1149,17 +996,7 @@ BEETLE_BODY = [    [17, 1, BLUE,   160, 0.075 * pi,  True,  17, True,  False],
     [28, 2, ORANGE, 82,  0,           True,  27, True,  True],
     [12, 1, ORANGE, 82,  0,           True,  12, True,  True,  35],
     [38, 3, ORANGE, 49,  pi,          True,  35, True,  True],
-    [15, 1, ORANGE, 49,  pi,          True,  14, True,  True,  49],
-    [19, 1, VIOLET, 5,   -0.15 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31,  -0.35 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45,  0.22 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45,  -0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42,  -0.75 * pi,  False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56,  -0.8 * pi,   False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41,  0.82 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11,  0.5 * pi,    False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54,  0.6 * pi,    False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31,  0.65 * pi,   False, 0,  False, False, 0,  0]]
+    [15, 1, ORANGE, 49,  pi,          True,  14, True,  True,  49]]
 
 BEETLE_HEALTH_STATES = (
     (30, ),
@@ -1219,17 +1056,7 @@ SPREADER_BODY = [    [19, 2, BLUE,   64, 0.1 * pi,   False, 0,  True,  False],
     [9,  1, ORANGE, 38, -0.4 * pi,  True,  9,  True,  False],
     [9,  1, ORANGE, 54, -0.4 * pi,  True,  9,  True,  False],
     [9,  1, ORANGE, 38, -0.2 * pi,  True,  9,  True,  False],
-    [9,  1, ORANGE, 54, -0.2 * pi,  True,  9,  True,  False],
-    [19, 1, VIOLET, 5,  -0.15 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0, 0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0, 0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0, 0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0, 0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0, 0]]
+    [9,  1, ORANGE, 54, -0.2 * pi,  True,  9,  True,  False]]
 
 SPREADER_HEALTH_STATES = (
     (18, ),
@@ -1258,17 +1085,7 @@ SPREADER_PARAMS = {
 BIGEGG_BODY = [    [113, 5, RED,    0,  0,          True,  8,  True,  False],
     [61,  2, BLUE,   0,  0,          True,  24, True,  True],
     [28,  3, ORANGE, 0,  0,          True,  21, True,  True],
-    [11,  1, ORANGE, 0,  0,          True,  9,  True,  True,  38],
-    [19,  1, VIOLET, 5,  -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15,  1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15,  1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15,  1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15,  1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18,  1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24,  1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15,  1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15,  1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17,  1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [11,  1, ORANGE, 0,  0,          True,  9,  True,  True,  38]]
 
 BIGEGG_PARAMS = {
     "name": "BigEgg",
@@ -1315,17 +1132,7 @@ SPIDER_BODY = [    [32, 3, BLUE,   143, 0.5 * pi,   True,  27, True,  False],
     [17, 1, ORANGE, 99,  pi,         True,  14, True,  True,  54, -0.78 * pi],
     [17, 1, ORANGE, 99,  pi,         True,  14, True,  True,  54, 0.78 * pi],
     [27, 3, ORANGE, 36,  0,          True,  21, True,  True],
-    [11, 1, ORANGE, 36,  0,          True,  9,  True,  True,  34],
-    [19, 1, VIOLET, 5,   -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31,  -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45,  0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45,  -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42,  -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56,  -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41,  0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11,  0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54,  0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31,  0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [11, 1, ORANGE, 36,  0,          True,  9,  True,  True,  34]]
 
 SPIDER_HEALTH_STATES = (
     (130, (19, 22)),
@@ -1362,17 +1169,7 @@ MACHINEGUNNER_BODY = [    [14, 1, BLUE,   89, 0.07 * pi,  True,  11, True,  Fals
     [25, 3, ORANGE, 0,  0,          True,  19, True,  True],
     [11, 1, ORANGE, 0,  0,          True,  9,  True,  True,  32],
     [14, 1, ORANGE, 0,  0,          True,  11, True,  True,  35, 0.77 * pi],
-    [14, 1, ORANGE, 0,  0,          True,  11, True,  True,  35, -0.77 * pi],
-    [19, 1, VIOLET, 5,  -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31, -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, 0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45, -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42, -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56, -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41, 0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11, 0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54, 0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31, 0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [14, 1, ORANGE, 0,  0,          True,  11, True,  True,  35, -0.77 * pi]]
 
 MACHINEGUNNER_HEALTH_STATES = (
     (50, ),
@@ -1427,17 +1224,7 @@ TURRET_BODY = [
     [8,  1, ORANGE, 0,   0,          True,  8,  True,  True,  48, 0.06 * pi],
     [8,  1, ORANGE, 0,   0,          True,  8,  True,  True,  48, -0.06 * pi],
     [28, 3, ORANGE, 0,   0,          True,  21, True,  True],
-    [12, 1, ORANGE, 0,   0,          True,  11, True,  True,  59],
-    [19, 1, VIOLET, 5,   -0.15 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 31,  -0.35 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45,  0.22 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 45,  -0.22 * pi, False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 42,  -0.75 * pi, False, 0,  False, False, 0,  0],
-    [18, 1, VIOLET, 56,  -0.8 * pi,  False, 0,  False, False, 0,  0],
-    [24, 1, VIOLET, 41,  0.82 * pi,  False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 11,  0.5 * pi,   False, 0,  False, False, 0,  0],
-    [15, 1, VIOLET, 54,  0.6 * pi,   False, 0,  False, False, 0,  0],
-    [17, 1, VIOLET, 31,  0.65 * pi,  False, 0,  False, False, 0,  0]]
+    [12, 1, ORANGE, 0,   0,          True,  11, True,  True,  59]]
 
 TURRET_PARAMS = {
     "name": "Turret",
@@ -1457,6 +1244,7 @@ TURRET_PARAMS = {
 
 __all__ = [
 
+    "FROZEN_BODY",
     "BOSS_SKELETON_BODY",
     "BOSS_HEAD_PARAMS",
     "BOSS_HAND_LEFT_PARAMS",

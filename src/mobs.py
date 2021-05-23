@@ -26,6 +26,7 @@ class BossHead(Mob):
                 if circle.is_visible:
                     target = self.gun.target if 16 <= i < 24 else player_pos
                     circle.update(*self.pos, dt, target)
+        self.body.update_frozen_state(dt)
 
 
 class MobTerrorist(Mob):
@@ -99,6 +100,7 @@ class Turret(Mob):
     def update_body(self, screen_rect, dt, target=(0, 0)):
         if self.body_rect.colliderect(screen_rect):
             self.body.update(*self.pos, dt, self.gun.target)
+        self.body.update_frozen_state(dt)
 
 
 def get_mob(name):

@@ -1,8 +1,8 @@
 from gui.status_bar import StatusBar
 from gui.popup_window import PopupWindow
-from gui.text import Text
+from gui.text_widget import TextWidget
 from constants import SCR_W, WHITE
-from data.gui_texts import COOLDOWN_WINDOW_LABELS
+from languages.texts import TEXTS
 from data.paths import COOLDOWN_WINDOW_BG, CALIBRI_BOLD
 from superpowers import *
 from utils import H, HF
@@ -22,12 +22,13 @@ class CooldownWindow(PopupWindow):
                          COOLDOWN_WINDOW_BG)
         self.status_bar_1 = StatusBar(self.x + HF(56), self.y + HF(11), self.w - HF(72), H(32), 300)
         self.status_bar_2 = StatusBar(self.x + HF(56), self.y + HF(53), self.w - HF(72), H(32), 0)
-        self.label_1 = Text(self.x + HF(16), self.y + HF(14), CALIBRI_BOLD, H(27), WHITE)
-        self.label_2 = Text(self.x + HF(16), self.y + HF(56), CALIBRI_BOLD, H(27), WHITE)
+        self.label_1 = TextWidget(self.x + HF(16), self.y + HF(14), CALIBRI_BOLD, H(27), WHITE)
+        self.label_2 = TextWidget(self.x + HF(16), self.y + HF(56), CALIBRI_BOLD, H(27), WHITE)
 
     def set_language(self, language):
-        self.label_1.set_text(COOLDOWN_WINDOW_LABELS[language][0])
-        self.label_2.set_text(COOLDOWN_WINDOW_LABELS[language][1])
+        label_1, label_2 = TEXTS["cooldown window labels"][language]
+        self.label_1.set_text(label_1)
+        self.label_2.set_text(label_2)
 
     def reset(self):
         super().reset()
@@ -42,7 +43,7 @@ class CooldownWindow(PopupWindow):
         self.status_bar_2.set_max_value(cooldown_time_2)
         self.status_bar_2.set_value(0)
 
-    def update(self, dt, player, transportation):
+    def update(self, dt, player, transportation=False):
         yo = self.y
         self.update_state(dt)
         dy = self.y - yo

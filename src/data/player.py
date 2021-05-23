@@ -3,6 +3,30 @@ from constants import *
 from utils import *
 
 
+FROZEN_BODY = [
+
+    [24, 1, VIOLET, 0, 0, False, 0,  True, True, 36,  0.8 * pi],
+    [11, 1, VIOLET, 0, 0, False, 0,  True, True, 33,  0.55 * pi],
+    [11, 1, VIOLET, 0, 0, False, 0,  True, True, 37,  -0.45 * pi],
+    [11, 1, VIOLET, 0, 0, False, 0,  True, True, 38,  pi],
+    [11, 1, VIOLET, 0, 0, False, 0,  True, True, 24,  -0.9 * pi],
+    [14, 1, VIOLET, 0, 0, False, 0,  True, True, 41,  0.25 * pi]
+
+]
+
+
+FROZEN_BODY_ROTATING = [
+
+    [24, 1, VIOLET, 36,  0.8 * pi,    False, 0,  True, False, 0,  0],
+    [11, 1, VIOLET, 32,  0.55 * pi,   False, 0,  True, False, 0,  0],
+    [11, 1, VIOLET, 36,  -0.45 * pi,  False, 0,  True, False, 0,  0],
+    [11, 1, VIOLET, 38,  pi,          False, 0,  True, False, 0,  0],
+    [11, 1, VIOLET, 24,  -0.9 * pi,   False, 0,  True, False, 0,  0],
+    [14, 1, VIOLET, 41,  0.25 * pi,   False, 0,  True, False, 0,  0]
+
+]
+
+
 BODY_00 = [
 
     [46, 6, BLUE,   0, 0, True,  28, True,  True, 0,   0],
@@ -48,13 +72,8 @@ BODY_00 = [
     [16, 3, BLUE,   0, 0, True,  14, False, True, 55,  0.89 * pi],
     [16, 3, BLUE,   0, 0, True,  14, False, True, 55,  -0.89 * pi],
     [20, 3, BLUE,   0, 0, True,  17, False, True, 58,  0.89 * pi],
-    [20, 3, BLUE,   0, 0, True,  17, False, True, 58,  -0.89 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [20, 3, BLUE,   0, 0, True,  17, False, True, 58,  -0.89 * pi]
+]
 
 
 HEALTH_STATES_00 = (
@@ -91,10 +110,10 @@ params_00 = {
     "radius": HF(64),
     "body": scaled_body(BODY_00),
     "body_is_rotating": False,
-    "max_vel": HF(0.95),
-    "max_acc": HF(0.0031),
+    "max_vel": HF(1),
+    "max_acc": HF(0.0036),
     "gun_type": 'Gun00',
-    "bg_radius": HF(160),
+    "bg_radius": HF(172),
     "superpower": None
 }
 
@@ -151,13 +170,9 @@ BODY_10 = [
     [16, 3, BLUE,   0, 0, True,  13, False, True, 101, 0.95 * pi],
     [16, 3, BLUE,   0, 0, True,  13, False, True, 102, -0.95 * pi],
     [16, 3, BLUE,   0, 0, True,  13, False, True, 111, 0.68 * pi],
-    [16, 3, BLUE,   0, 0, True,  13, False, True, 111, -0.68 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [16, 3, BLUE,   0, 0, True,  13, False, True, 111, -0.68 * pi]
+
+]
 
 HEALTH_STATES_10 = (
     (125, (9, 13), (15, 28), (30, 32), (36, 44), (46, 47)),
@@ -295,13 +310,9 @@ BODY_11 = [
     [10, 1, ORANGE, 0, 0, True,  9,  True,  True, 28,  -0.1 * pi],
     [13, 1, ORANGE, 0, 0, True,  10, True,  True, 31,  0.75 * pi],
     [13, 1, ORANGE, 0, 0, True,  10, True,  True, 31,  -0.75 * pi],
-    [13, 1, ORANGE, 0, 0, True,  10, True,  True, 31,  pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [13, 1, ORANGE, 0, 0, True,  10, True,  True, 31,  pi]
+
+]
 
 HEALTH_STATES_11 = (
     (125, (1, 26), (30, 48), (50, 60), (64, 68)),
@@ -338,7 +349,7 @@ params_11 = {
     "body": scaled_body(BODY_11),
     "body_is_rotating": False,
     "max_vel": HF(0.89),
-    "max_acc": HF(0.0027),
+    "max_acc": HF(0.0032),
     "gun_type": 'Gun11',
     "bg_radius": HF(190),
     "superpower": None
@@ -451,13 +462,9 @@ BODY_12 = [
     [14, 1, ORANGE, 0, 0, True,  10, True,  True, 58,  -0.14 * pi],
     [36, 6, ORANGE, 0, 0, True,  28, True,  True, 0,   0],
     [14, 1, ORANGE, 0, 0, True,  10, True,  True, 46,  0.79 * pi],
-    [14, 1, ORANGE, 0, 0, True,  10, True,  True, 46,  -0.79 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [14, 1, ORANGE, 0, 0, True,  10, True,  True, 46,  -0.79 * pi]
+
+]
 
 HEALTH_STATES_12 = (
     (125, (0, 1), (2, 45), (47, 49), (50, 70), (80, 86), (89, 91)),
@@ -592,13 +599,9 @@ BODY_20 = [
     [10, 1, ORANGE, 0, 0, True,  7,  True,  True, 27,  0.23 * pi],
     [10, 1, ORANGE, 0, 0, True,  7,  True,  True, 27,  -0.23 * pi],
     [13, 1, ORANGE, 0, 0, True,  10, True,  True, 30,  0.76 * pi],
-    [13, 1, ORANGE, 0, 0, True,  10, True,  True, 30,  -0.76 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [13, 1, ORANGE, 0, 0, True,  10, True,  True, 30,  -0.76 * pi]
+
+]
 
 HEALTH_STATES_20 = (
     (200, (1, 34), (35, 49), (59, 61), (67, 78)),
@@ -721,13 +724,9 @@ BODY_21 = [    [14, 1, BLUE,   0, 0, True,  11, True,  True, 67,  0.06 * pi],
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 33,  0.23 * pi],
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 33,  -0.23 * pi],
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 44,  0.17 * pi],
-    [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 44,  -0.17 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 44,  -0.17 * pi]
+
+]
 
 HEALTH_STATES_21 = (
     (200, (0, 2), (4, 14), (17, 18), (21, 37), (39, 40), (41, 51)),
@@ -873,13 +872,9 @@ BODY_22 = [
     [11, 1, ORANGE,       0, 0, True,  10, True,  True, 124, -0.944 * pi],
     [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  0.85 * pi,   True, pi],
     [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  -0.85 * pi,  True, pi],
-    [20, 3, ORANGE,       0, 0, True,  17, True,  True, 43,  pi],
-    [24, 1, VIOLET,       0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET,       0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET,       0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET,       0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET,       0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET,       0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [20, 3, ORANGE,       0, 0, True,  17, True,  True, 43,  pi]
+
+]
 
 HEALTH_STATES_22 = (
     (200, (0, 6), (7, 19), (21, 25), (32, 36), (38, 50), (54, 56), (58, 66)),
@@ -1047,13 +1042,9 @@ BODY_23 = [
     [11, 1, ORANGE,       0, 0, True,  10, True,  True, 124, -0.944 * pi],
     [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  0.85 * pi,   True, pi],
     [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  -0.85 * pi,  True, pi],
-    [20, 3, ORANGE,       0, 0, True,  17, True,  True, 43,  pi],
-    [24, 1, VIOLET,       0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET,       0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET,       0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET,       0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET,       0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET,       0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [20, 3, ORANGE,       0, 0, True,  17, True,  True, 43,  pi]
+
+]
 
 HEALTH_STATES_23 = (
     (200, (0, 10), (14, 30), (37, 39), (41, 47), (48, 76), (78, 84)),
@@ -1214,13 +1205,9 @@ BODY_30 = [
     [13, 1, ORANGE, 0, 0, True,  10, False, True, 67,  0.86 * pi],
     [13, 1, ORANGE, 0, 0, True,  10, False, True, 67,  -0.86 * pi],
     [10, 1, ORANGE, 0, 0, True,  7,  False, True, 85,  0.84 * pi],
-    [10, 1, ORANGE, 0, 0, True,  7,  False, True, 85,  -0.84 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [10, 1, ORANGE, 0, 0, True,  7,  False, True, 85,  -0.84 * pi]
+
+]
 
 HEALTH_STATES_30 = (
     (400, (0, 78), (94, 98), (100, 109)),
@@ -1314,13 +1301,9 @@ BODY_31 = [
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 80,  0.34 * pi],
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 80,  -0.34 * pi],
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 117, 0.39 * pi],
-    [11, 1, ORANGE, 0, 0, True,  10, True,  True, 117, -0.39 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [11, 1, ORANGE, 0, 0, True,  10, True,  True, 117, -0.39 * pi]
+
+]
 
 HEALTH_STATES_31 = (
     (98, (13, 23)),
@@ -1374,13 +1357,10 @@ BODY_32 = [
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 51,  -0.19 * pi],
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 63,  -0.185 * pi],
     [26, 4, ORANGE, 0, 0, True,  21, True,  True, 65,  pi],
-    [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 65,  pi,          False, 0, True, 71],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 65,  pi,          False, 0, True, 71]
+
+]
+
 
 params_32 = {
     "max_health": 400,
@@ -1428,13 +1408,9 @@ BODY_33 = [
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 98,  0.11 * pi],
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 85,  -0.1 * pi],
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 98,  -0.11 * pi],
-    [26, 4, ORANGE, 0, 0, True,  24, True,  True, 70,  pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [26, 4, ORANGE, 0, 0, True,  24, True,  True, 70,  pi]
+
+]
 
 params_33 = {
     "max_health": 400,
@@ -1486,13 +1462,9 @@ BODY_34 = [
     [40, 6, ORANGE, 102, 0,          True,  37, True,  True,  0,  0],
     [17, 1, ORANGE, 102, 0,          True,  14, True,  True,  43, -1.0 * pi],
     [17, 1, ORANGE, 102, 0,          True,  14, True,  True,  43, -0.667 * pi],
-    [17, 1, ORANGE, 102, 0,          True,  14, True,  True,  43, 0.667 * pi],
-    [24, 1, VIOLET, 36,  0.8 * pi,   False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 33,  0.55 * pi,  False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 37,  -0.45 * pi, False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 38,  pi,         False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 24,  -0.9 * pi,  False, 0,  False, False, 0,  0],
-    [14, 1, VIOLET, 41,  0.25 * pi,  False, 0,  False, False, 0,  0]]
+    [17, 1, ORANGE, 102, 0,          True,  14, True,  True,  43, 0.667 * pi]
+
+]
 
 params_34 = {
     "max_health": 400,
@@ -1547,13 +1519,9 @@ BODY_35 = [
     [11, 1, ORANGE, 149, 0.75 * pi,  True,  10, True,  False, 0,  0],
     [11, 1, ORANGE, 149, -0.75 * pi, True,  10, True,  False, 0,  0],
     [11, 1, ORANGE, 151, 0.83 * pi,  True,  10, True,  False, 0,  0],
-    [11, 1, ORANGE, 151, -0.83 * pi, True,  10, True,  False, 0,  0],
-    [24, 1, VIOLET, 0,   0,          False, 0,  False, True,  36, 0.8 * pi],
-    [11, 1, VIOLET, 0,   0,          False, 0,  False, True,  33, 0.55 * pi],
-    [11, 1, VIOLET, 0,   0,          False, 0,  False, True,  37, -0.45 * pi],
-    [11, 1, VIOLET, 0,   0,          False, 0,  False, True,  38, pi],
-    [11, 1, VIOLET, 0,   0,          False, 0,  False, True,  24, -0.9 * pi],
-    [14, 1, VIOLET, 0,   0,          False, 0,  False, True,  41, 0.25 * pi]]
+    [11, 1, ORANGE, 151, -0.83 * pi, True,  10, True,  False, 0,  0]
+
+]
 
 params_35 = {
     "max_health": 400,
@@ -1635,13 +1603,9 @@ BODY_40 = [
     [10, 1, ORANGE, 0, 0, True,  9,  True,  True, 13,  0.75 * pi],
     [10, 1, ORANGE, 0, 0, True,  9,  True,  True, 13,  -0.75 * pi],
     [10, 1, ORANGE, 0, 0, True,  9,  True,  True, 13,  0.25 * pi],
-    [10, 1, ORANGE, 0, 0, True,  9,  True,  True, 13,  -0.25 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [10, 1, ORANGE, 0, 0, True,  9,  True,  True, 13,  -0.25 * pi]
+
+]
 
 HEALTH_STATES_40 = (
     (500, (4, 5),  (9, 20),  (21, 35), (37, 40), (45, 55)),
@@ -1722,13 +1686,9 @@ BODY_41 = [
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 110, -0.06 * pi],
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 94,  0.07 * pi],
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 94,  -0.07 * pi],
-    [23, 3, ORANGE, 0, 0, True,  20, True,  True, 73,  0],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [23, 3, ORANGE, 0, 0, True,  20, True,  True, 73,  0]
+
+]
 
 params_41 = {
     "max_health": 500,
@@ -1772,13 +1732,9 @@ BODY_42 = [
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 117, 0.92 * pi],
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 117, -0.92 * pi],
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 111, 0.82 * pi],
-    [11, 1, ORANGE, 0, 0, True,  10, True,  True, 111, -0.82 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [11, 1, ORANGE, 0, 0, True,  10, True,  True, 111, -0.82 * pi]
+
+]
 
 params_42 = {
     "max_health": 500,
@@ -1832,13 +1788,9 @@ BODY_43 = [
     [16, 1, ORANGE, 0, 0, True,  14, True,  True, 117, 0.93 * pi],
     [16, 1, ORANGE, 0, 0, True,  14, True,  True, 117, -0.93 * pi],
     [14, 1, ORANGE, 0, 0, True,  13, True,  True, 94,  0.82 * pi],
-    [14, 1, ORANGE, 0, 0, True,  13, True,  True, 94,  -0.82 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [14, 1, ORANGE, 0, 0, True,  13, True,  True, 94,  -0.82 * pi]
+
+]
 
 params_43 = {
     "max_health": 500,
@@ -1889,13 +1841,9 @@ BODY_44 = [
     [20, 3, ORANGE, 137, 0.23 * pi,  True,  18, True,  False, 0,  0],
     [20, 3, ORANGE, 137, -0.23 * pi, True,  18, True,  False, 0,  0],
     [10, 1, ORANGE, 156, 0.2 * pi,   True,  10, True,  False, 0,  0],
-    [10, 1, ORANGE, 156, -0.2 * pi,  True,  10, True,  False, 0,  0],
-    [24, 1, VIOLET, 0,   0,          False, 0,  False, True,  36, 0.8 * pi],
-    [11, 1, VIOLET, 0,   0,          False, 0,  False, True,  33, 0.55 * pi],
-    [11, 1, VIOLET, 0,   0,          False, 0,  False, True,  37, -0.45 * pi],
-    [11, 1, VIOLET, 0,   0,          False, 0,  False, True,  38, pi],
-    [11, 1, VIOLET, 0,   0,          False, 0,  False, True,  24, -0.9 * pi],
-    [14, 1, VIOLET, 0,   0,          False, 0,  False, True,  41, 0.25 * pi]]
+    [10, 1, ORANGE, 156, -0.2 * pi,  True,  10, True,  False, 0,  0]
+
+]
 
 params_44 = {
     "max_health": 500,
@@ -1980,13 +1928,7 @@ BODY_45 = [
     [17, 1, ORANGE, 142, -0.78 * pi,  True,  15, True,  True,  51, -0.77 * pi],
     [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, True, 71],
     [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, True, 71, 0.667 * pi],
-    [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, True, 71, 1.333 * pi],
-    [24, 1, VIOLET, 36,  0.8 * pi,    False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 32,  0.55 * pi,   False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 36,  -0.45 * pi,  False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 38,  pi,          False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 24,  -0.9 * pi,   False, 0,  False, False, 0,  0],
-    [14, 1, VIOLET, 41,  0.25 * pi,   False, 0,  False, False, 0,  0]
+    [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, True, 71, 1.333 * pi]
 
 ]
 
@@ -2024,13 +1966,9 @@ BODY_50 = [
     [23, 3, ORANGE, 0, 0, True,  21, True,  True, 0,  0],
     [13, 1, ORANGE, 0, 0, True,  10, True,  True, 23, pi],
     [13, 1, ORANGE, 0, 0, True,  10, True,  True, 33, 0],
-    [13, 1, ORANGE, 0, 0, True,  10, True,  True, 53, 0],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36, 0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33, 0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37, -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38, pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24, -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41, 0.25 * pi]]
+    [13, 1, ORANGE, 0, 0, True,  10, True,  True, 53, 0]
+
+]
 
 params_50 = {
     "max_health": 1,
@@ -2085,13 +2023,9 @@ BODY_51 = [
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 53,  -0.17 * pi],
     [17, 1, ORANGE, 0, 0, True,  14, True,  True, 78,  pi],
     [11, 1, ORANGE, 0, 0, True,  10, True,  True, 100, 0.93 * pi],
-    [11, 1, ORANGE, 0, 0, True,  10, True,  True, 100, -0.93 * pi],
-    [24, 1, VIOLET, 0, 0, False, 0,  False, True, 36,  0.8 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 33,  0.55 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 37,  -0.45 * pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 38,  pi],
-    [11, 1, VIOLET, 0, 0, False, 0,  False, True, 24,  -0.9 * pi],
-    [14, 1, VIOLET, 0, 0, False, 0,  False, True, 41,  0.25 * pi]]
+    [11, 1, ORANGE, 0, 0, True,  10, True,  True, 100, -0.93 * pi]
+
+]
 
 params_51 = {
     "max_health": 1,
@@ -2109,110 +2043,100 @@ params_51 = {
 
 BODY_54 = [
 
-    [22,  3, BLUE,   107, pi,         True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.9 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.9 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.8 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.8 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.7 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.7 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.6 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.6 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.5 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.5 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.4 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.4 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.3 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.3 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.2 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.2 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0.1 * pi,   True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, -0.1 * pi,  True,  22, True,  False, 1,  0],
-    [22,  3, BLUE,   107, 0,          True,  22, True,  False, 1,  0],
-    [100, 3, BLUE,   1,   0,          True,  24, True,  False, 1,  0],
-    [60,  3, BLUE,   171, 0.55 * pi,  True,  26, True,  False, 1,  0],
-    [60,  3, BLUE,   171, -0.55 * pi, True,  26, True,  False, 1,  0],
-    [68,  3, BLUE,   178, pi,         True,  32, True,  False, 1,  0],
-    [8,   1, ORANGE, 171, 0.55 * pi,  False, 1,  True,  True,  74, 0.17 * pi],
-    [8,   1, ORANGE, 171, 0.55 * pi,  False, 1,  True,  True,  74, -0.17 * pi],
-    [11,  1, ORANGE, 171, 0.55 * pi,  True,  11, True,  True,  40, 0.195 * pi],
-    [11,  1, ORANGE, 171, 0.55 * pi,  True,  11, True,  True,  40, -0.195 * pi],
-    [11,  1, ORANGE, 171, 0.55 * pi,  True,  11, True,  True,  58, 0.135 * pi],
-    [11,  1, ORANGE, 171, 0.55 * pi,  True,  11, True,  True,  58, -0.135 * pi],
-    [11,  1, ORANGE, 171, 0.55 * pi,  True,  11, True,  True,  76, 0.102 * pi],
-    [11,  1, ORANGE, 171, 0.55 * pi,  True,  11, True,  True,  76, -0.102 * pi],
-    [36,  4, ORANGE, 171, 0.55 * pi,  True,  30, True,  True,  1,  0],
-    [11,  1, ORANGE, 171, 0.55 * pi,  True,  11, True,  True,  62, 0.93 * pi],
-    [11,  1, ORANGE, 171, 0.55 * pi,  True,  11, True,  True,  62, -0.93 * pi],
-    [12,  1, ORANGE, 171, 0.55 * pi,  True,  12, True,  True,  62, 0.84 * pi],
-    [12,  1, ORANGE, 171, 0.55 * pi,  True,  12, True,  True,  62, -0.84 * pi],
-    [16,  2, ORANGE, 171, 0.55 * pi,  True,  15, True,  True,  44, pi],
-    [8,   1, ORANGE, 171, -0.55 * pi, False, 1,  True,  True,  74, 0.17 * pi],
-    [8,   1, ORANGE, 171, -0.55 * pi, False, 1,  True,  True,  74, -0.17 * pi],
-    [11,  1, ORANGE, 171, -0.55 * pi, True,  11, True,  True,  40, 0.195 * pi],
-    [11,  1, ORANGE, 171, -0.55 * pi, True,  11, True,  True,  40, -0.195 * pi],
-    [11,  1, ORANGE, 171, -0.55 * pi, True,  11, True,  True,  58, 0.135 * pi],
-    [11,  1, ORANGE, 171, -0.55 * pi, True,  11, True,  True,  58, -0.135 * pi],
-    [11,  1, ORANGE, 171, -0.55 * pi, True,  11, True,  True,  76, 0.102 * pi],
-    [11,  1, ORANGE, 171, -0.55 * pi, True,  11, True,  True,  76, -0.102 * pi],
-    [36,  4, ORANGE, 171, -0.55 * pi, True,  30, True,  True,  1,  0],
-    [11,  1, ORANGE, 171, -0.55 * pi, True,  11, True,  True,  62, 0.93 * pi],
-    [11,  1, ORANGE, 171, -0.55 * pi, True,  11, True,  True,  62, -0.93 * pi],
-    [12,  1, ORANGE, 171, -0.55 * pi, True,  12, True,  True,  62, 0.84 * pi],
-    [12,  1, ORANGE, 171, -0.55 * pi, True,  12, True,  True,  62, -0.84 * pi],
-    [16,  2, ORANGE, 171, -0.55 * pi, True,  15, True,  True,  44, pi],
-    [11,  1, ORANGE, 178, pi,         True,  11, True,  True,  40, 0.195 * pi],
-    [11,  1, ORANGE, 178, pi,         True,  11, True,  True,  40, -0.195 * pi],
-    [11,  1, ORANGE, 178, pi,         True,  11, True,  True,  58, 0.135 * pi],
-    [11,  1, ORANGE, 178, pi,         True,  11, True,  True,  58, -0.135 * pi],
-    [36,  4, ORANGE, 178, pi,         True,  30, True,  True,  1,  0],
-    [15,  2, ORANGE, 178, pi,         True,  15, True,  True,  44, 0.79 * pi],
-    [15,  2, ORANGE, 178, pi,         True,  15, True,  True,  44, -0.79 * pi],
-    [11,  1, ORANGE, 1,   0,          True,  11, True,  True,  67, 0.26 * pi],
-    [11,  1, ORANGE, 1,   0,          True,  11, True,  True,  67, -0.26 * pi],
-    [14,  1, ORANGE, 1,   0,          True,  14, True,  True,  62, 0.36 * pi],
-    [14,  1, ORANGE, 1,   0,          True,  14, True,  True,  62, -0.36 * pi],
-    [17,  1, ORANGE, 1,   0,          True,  17, True,  True,  55, 0.48 * pi],
-    [17,  1, ORANGE, 1,   0,          True,  17, True,  True,  55, -0.48 * pi],
-    [20,  3, ORANGE, 1,   0,          True,  17, True,  True,  50, 0.65 * pi],
-    [20,  3, ORANGE, 1,   0,          True,  17, True,  True,  50, -0.65 * pi],
-    [20,  4, ORANGE, 1,   0,          True,  24, True,  True,  64, pi],
-    [28,  4, ORANGE, 1,   0,          True,  24, True,  True,  45, 0.85 * pi],
-    [28,  4, ORANGE, 1,   0,          True,  24, True,  True,  45, -0.85 * pi],
-    [18,  3, BLUE,   133, 0,          True,  12, True,  False, 1,  0],
-    [15,  1, BLUE,   159, 0,          True,  12, True,  False, 1,  0],
-    [15,  1, BLUE,   173, 0.04 * pi,  True,  12, True,  False, 1,  0],
-    [15,  1, BLUE,   173, -0.04 * pi, True,  12, True,  False, 1,  0],
-    [34,  3, BLUE,   193, 0.09 * pi,  True,  27, True,  False, 1,  0],
-    [20,  3, ORANGE, 193, 0.09 * pi,  True,  18, True,  False, 1,  0],
-    [10,  1, ORANGE, 216, 0.09 * pi,  True,  10, True,  False, 1,  0],
-    [34,  3, BLUE,   193, -0.09 * pi, True,  27, True,  False, 1,  0],
-    [20,  3, ORANGE, 193, -0.09 * pi, True,  18, True,  False, 1,  0],
-    [10,  1, ORANGE, 216, -0.09 * pi, True,  10, True,  False, 1,  0],
-    [18,  1, BLUE,   133, 0.29 * pi,  True,  12, True,  False, 1,  0],
-    [34,  3, BLUE,   171, 0.29 * pi,  True,  27, True,  False, 1,  0],
-    [20,  3, ORANGE, 171, 0.29 * pi,  True,  18, True,  False, 1,  0],
-    [10,  1, ORANGE, 193, 0.29 * pi,  True,  10, True,  False, 1,  0],
-    [18,  1, BLUE,   133, -0.29 * pi, True,  12, True,  False, 1,  0],
-    [34,  3, BLUE,   171, -0.29 * pi, True,  27, True,  False, 1,  0],
-    [20,  3, ORANGE, 171, -0.29 * pi, True,  18, True,  False, 1,  0],
-    [10,  1, ORANGE, 193, -0.29 * pi, True,  10, True,  False, 1,  0],
-    [18,  1, BLUE,   133, 0.79 * pi,  True,  12, True,  False, 1,  0],
-    [15,  1, BLUE,   155, 0.79 * pi,  True,  12, True,  False, 1,  0],
-    [34,  3, BLUE,   193, 0.79 * pi,  True,  27, True,  False, 1,  0],
-    [20,  3, ORANGE, 193, 0.79 * pi,  True,  18, True,  False, 1,  0],
-    [10,  1, ORANGE, 216, 0.79 * pi,  True,  10, True,  False, 1,  0],
-    [18,  1, BLUE,   133, -0.79 * pi, True,  12, True,  False, 1,  0],
-    [15,  1, BLUE,   155, -0.79 * pi, True,  12, True,  False, 1,  0],
-    [34,  3, BLUE,   193, -0.79 * pi, True,  27, True,  False, 1,  0],
-    [20,  3, ORANGE, 193, -0.79 * pi, True,  18, True,  False, 1,  0],
-    [10,  1, ORANGE, 216, -0.79 * pi, True,  10, True,  False, 1,  0],
-    [24,  1, VIOLET, 36,  0.8 * pi,   False, 1,  False, False, 1,  0],
-    [11,  1, VIOLET, 32,  0.55 * pi,  False, 1,  False, False, 1,  0],
-    [11,  1, VIOLET, 36,  -0.45 * pi, False, 1,  False, False, 1,  0],
-    [11,  1, VIOLET, 38,  pi,         False, 1,  False, False, 1,  0],
-    [11,  1, VIOLET, 24,  -0.9 * pi,  False, 1,  False, False, 1,  0],
-    [14,  1, VIOLET, 41,  0.25 * pi,  False, 1,  False, False, 1,  0]
+    [19, 2, BLUE,   196, 0.79 * pi,   True,  18],
+    [19, 2, BLUE,   196, -0.79 * pi,  True,  18],
+    [16, 2, BLUE,   200, 0.14 * pi,   True,  16],
+    [16, 2, BLUE,   200, -0.14 * pi,  True,  16],
+    [16, 2, BLUE,   223, 0.23 * pi,   True,  16],
+    [16, 2, BLUE,   223, -0.23 * pi,  True,  16],
+    [19, 2, BLUE,   206, 0.85 * pi,   True,  18],
+    [19, 2, BLUE,   206, -0.85 * pi,  True,  18],
+    [35, 3, BLUE,   146, 0.69 * pi],
+    [35, 3, BLUE,   146, -0.69 * pi],
+    [30, 2, BLUE,   102, 0.69 * pi],
+    [30, 2, BLUE,   102, -0.69 * pi],
+    [36, 3, BLUE,   160, 0.34 * pi],
+    [36, 3, BLUE,   160, -0.34 * pi],
+    [30, 2, BLUE,   192, 0.445 * pi],
+    [30, 2, BLUE,   192, -0.445 * pi],
+    [30, 2, BLUE,   188, 0.57 * pi],
+    [30, 2, BLUE,   188, -0.57 * pi],
+    [15, 2, BLUE,   124, 0.335 * pi,  True,  16],
+    [15, 2, BLUE,   124, -0.335 * pi, True,  16],
+    [62, 4, BLUE,   126, 0.5 * pi],
+    [62, 4, BLUE,   126, -0.5 * pi],
+    [62, 4, BLUE,   136, 0.87 * pi],
+    [62, 4, BLUE,   136, -0.87 * pi],
+    [50, 3, BLUE,   173, 0.22 * pi],
+    [23, 3, ORANGE, 173, 0.22 * pi,   True,  26],
+    [11, 1, ORANGE, 200, 0.22 * pi,   True,  11],
+    [50, 3, BLUE,   173, -0.22 * pi],
+    [23, 3, ORANGE, 173, -0.22 * pi,  True,  26],
+    [11, 1, ORANGE, 200, -0.22 * pi,  True,  11],
+    [50, 3, BLUE,   248, 0.43 * pi],
+    [23, 3, ORANGE, 248, 0.43 * pi,   True,  26],
+    [11, 1, ORANGE, 275, 0.43 * pi,   True,  11],
+    [50, 3, BLUE,   248, -0.43 * pi],
+    [23, 3, ORANGE, 248, -0.43 * pi,  True,  26],
+    [11, 1, ORANGE, 275, -0.43 * pi,  True,  11],
+    [50, 3, BLUE,   248, 0.6 * pi],
+    [23, 3, ORANGE, 248, 0.6 * pi,    True,  26],
+    [11, 1, ORANGE, 275, 0.6 * pi,    True,  11],
+    [50, 3, BLUE,   248, -0.6 * pi],
+    [23, 3, ORANGE, 248, -0.6 * pi,   True,  26],
+    [11, 1, ORANGE, 275, -0.6 * pi,   True,  11],
+    [69, 5, BLUE,   173, pi],
+    [56, 4, BLUE,   256, 0.815 * pi],
+    [56, 4, BLUE,   256, -0.815 * pi],
+    [16, 2, BLUE,   218, 0.92 * pi,   True,  16],
+    [16, 2, BLUE,   218, -0.92 * pi,  True,  16],
+    [15, 2, ORANGE, 64,  0.91 * pi,   True,  16],
+    [15, 2, ORANGE, 64,  -0.91 * pi,  True,  16],
+    [15, 2, ORANGE, 76,  0.77 * pi,   True,  16],
+    [15, 2, ORANGE, 76,  -0.77 * pi,  True,  16],
+    [15, 2, ORANGE, 86,  0.67 * pi,   True,  16],
+    [15, 2, ORANGE, 86,  -0.67 * pi,  True,  16],
+    [26, 4, ORANGE, 82,  pi,          True,  24],
+    [16, 2, ORANGE, 47,  pi,          True,  16],
+    [20, 3, ORANGE, 18,  pi,          True,  19],
+    [8,  1, ORANGE, 173, pi,          False, 1,  True, True, 74, 0.17 * pi],
+    [8,  1, ORANGE, 173, pi,          False, 1,  True, True, 74, -0.17 * pi],
+    [12, 1, ORANGE, 173, pi,          True,  11, True, True, 40, 0.195 * pi],
+    [12, 1, ORANGE, 173, pi,          True,  11, True, True, 40, -0.195 * pi],
+    [12, 1, ORANGE, 173, pi,          True,  11, True, True, 58, 0.135 * pi],
+    [12, 1, ORANGE, 173, pi,          True,  11, True, True, 58, -0.135 * pi],
+    [12, 1, ORANGE, 173, pi,          True,  11, True, True, 76, 0.102 * pi],
+    [12, 1, ORANGE, 173, pi,          True,  11, True, True, 76, -0.102 * pi],
+    [36, 5, ORANGE, 173, pi,          True,  30, True, True, 1,  0],
+    [12, 1, ORANGE, 173, pi,          True,  11, True, True, 62, 0.93 * pi],
+    [12, 1, ORANGE, 173, pi,          True,  11, True, True, 62, -0.93 * pi],
+    [13, 1, ORANGE, 173, pi,          True,  12, True, True, 62, 0.84 * pi],
+    [13, 1, ORANGE, 173, pi,          True,  12, True, True, 62, -0.84 * pi],
+    [16, 2, ORANGE, 173, pi,          True,  15, True, True, 44, pi],
+    [11, 1, ORANGE, 256, 0.815 * pi,  True,  11, True, True, 40, 0.195 * pi],
+    [11, 1, ORANGE, 256, 0.815 * pi,  True,  11, True, True, 40, -0.195 * pi],
+    [11, 1, ORANGE, 256, 0.815 * pi,  True,  11, True, True, 58, 0.135 * pi],
+    [11, 1, ORANGE, 256, 0.815 * pi,  True,  11, True, True, 58, -0.135 * pi],
+    [36, 5, ORANGE, 256, 0.815 * pi,  True,  30, True, True, 1,  0],
+    [15, 2, ORANGE, 256, 0.815 * pi,  True,  15, True, True, 44, 0.79 * pi],
+    [15, 2, ORANGE, 256, 0.815 * pi,  True,  15, True, True, 44, -0.79 * pi],
+    [11, 1, ORANGE, 256, -0.815 * pi, True,  11, True, True, 40, 0.195 * pi],
+    [11, 1, ORANGE, 256, -0.815 * pi, True,  11, True, True, 40, -0.195 * pi],
+    [11, 1, ORANGE, 256, -0.815 * pi, True,  11, True, True, 58, 0.135 * pi],
+    [11, 1, ORANGE, 256, -0.815 * pi, True,  11, True, True, 58, -0.135 * pi],
+    [36, 5, ORANGE, 256, -0.815 * pi, True,  30, True, True, 1,  0],
+    [15, 2, ORANGE, 256, -0.815 * pi, True,  15, True, True, 44, 0.79 * pi],
+    [15, 2, ORANGE, 256, -0.815 * pi, True,  15, True, True, 44, -0.79 * pi],
+    [16, 2, BLUE,   302, 0.42 * pi,   True,  16],
+    [16, 2, BLUE,   302, -0.42 * pi,  True,  16],
+    [16, 2, BLUE,   304, 0.62 * pi,   True,  16],
+    [16, 2, BLUE,   304, -0.62 * pi,  True,  16],
+    [16, 2, BLUE,   176, 0.455 * pi,  True,  16],
+    [16, 2, BLUE,   176, -0.455 * pi, True,  16],
+    [16, 2, BLUE,   171, 0.56 * pi,   True,  16],
+    [16, 2, BLUE,   171, -0.56 * pi,  True,  16],
+    [16, 2, BLUE,   154, 0.38 * pi,   True,  16],
+    [16, 2, BLUE,   154, -0.38 * pi,  True,  16]
 
 ]
 
@@ -2225,7 +2149,7 @@ params_54 = {
     "max_vel": HF(0.25),
     "max_acc": HF(0.0008),
     "gun_type": 'Gun54',
-    "bg_radius": HF(320),
+    "bg_radius": HF(370),
     "superpower": 'GiantCannon'
 }
 
@@ -2334,13 +2258,7 @@ BODY_55 = [
     [11, 1, ORANGE, 102, 0,           True,  11, True,  True,  62, -0.93 * pi],
     [12, 1, ORANGE, 102, 0,           True,  12, True,  True,  62, 0.84 * pi],
     [12, 1, ORANGE, 102, 0,           True,  12, True,  True,  62, -0.84 * pi],
-    [16, 2, ORANGE, 102, 0,           True,  15, True,  True,  44, pi],
-    [24, 1, VIOLET, 36,  0.8 * pi,    False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 32,  0.55 * pi,   False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 36,  -0.45 * pi,  False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 38,  pi,          False, 0,  False, False, 0,  0],
-    [11, 1, VIOLET, 24,  -0.9 * pi,   False, 0,  False, False, 0,  0],
-    [14, 1, VIOLET, 41,  0.25 * pi,   False, 0,  False, False, 0,  0]]
+    [16, 2, ORANGE, 102, 0,           True,  15, True,  True,  44, pi]]
 
 
 params_55 = {
@@ -2387,4 +2305,10 @@ PLAYER_PARAMS = {
 }
 
 
-__all__ = ["PLAYER_PARAMS"]
+__all__ = [
+
+    "PLAYER_PARAMS",
+    "FROZEN_BODY",
+    "FROZEN_BODY_ROTATING"
+
+]

@@ -17,6 +17,7 @@ def _init_texts() -> defaultdict(list):
     for file_path in (english_file_path, russian_file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
+
             for key, value in data.items():
                 texts[key].append(value)
 

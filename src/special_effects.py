@@ -4,8 +4,17 @@ from math import pi, sin, cos
 
 from circle import Circle
 from constants import *
-from data.paths import PARALYZING_EXPLOSION, POWERFUL_EXPLOSION, TELEPORTATION
+from data.paths import *
 from utils import H, HF
+
+
+# load all images at once, to increase game performance
+images = {
+    "drone_conversion": pg.image.load(DRONE_CONVERSION).convert_alpha(),
+    "teleportation": pg.image.load(TELEPORTATION).convert_alpha(),
+    "powerful_explosion": pg.image.load(POWERFUL_EXPLOSION).convert_alpha(),
+    "paralyzing_explosion": pg.image.load(PARALYZING_EXPLOSION).convert_alpha()
+}
 
 
 class Line:
@@ -53,6 +62,10 @@ class SpecialEffect:
         self.duration = duration
         self.running = True
 
+    @staticmethod
+    def set_image(name, size):
+        return pg.transform.scale(images[name], (size, size))
+
     def update(self, dt):
         self.t = min(self.t + dt, self.duration)
         if self.t >= self.duration:
@@ -92,7 +105,7 @@ class BulletHitCircle(SpecialEffect):
         duration = HF(128)
         super().__init__(x, y, duration)
         self.r = HF(96)
-        self.circle = Circle(2/3*self.r, HF(3), color, 0, 0, True, 4/3*self.r, True)
+        self.circle = Circle(2/3*self.r, HF(7), color, 0, 0, True, 4/3*self.r, True)
         self.circle.scaling_phase = 0.75
         self.circle.scaling_phase_speed = 0.5 / duration
         self.surface = pg.Surface((2 * self.r, 2 * self.r))
@@ -143,9 +156,8 @@ class ParalyzingExplosion(SpecialEffect):
     def __init__(self, x, y, max_diam):
         super().__init__(x, y, duration=500)
         self.max_diam = max_diam
-        self.diam = None
-        self.img = pg.image.load(PARALYZING_EXPLOSION).convert_alpha()
-        self.img = pg.transform.scale(self.img, (max_diam, max_diam))
+        self.diam = 0
+        self.img = self.set_image("paralyzing_explosion", max_diam)
         self.surface = None
         self.alpha_effect_duration = 300
 
@@ -166,16 +178,39 @@ class ParalyzingExplosion(SpecialEffect):
 class PowerfulExplosion(SpecialEffect):
     def __init__(self, x, y):
         super().__init__(x, y, duration=300)
-        self.surface_0 = pg.image.load(POWERFUL_EXPLOSION).convert_alpha()
+        self.max_diam = H(1200)
+        self.diam = 0
+        self.img = self.set_image("powerful_explosion", self.max_diam)
         self.surface = None
-        self.max_diam = HF(1200)
-        self.diam = None
 
     def update(self, dt):
         super().update(dt)
         if self.t <= self.duration:
             self.diam = round(self.max_diam * self.t / self.duration)
-            self.surface = pg.transform.scale(self.surface_0, (self.diam, self.diam))
+            self.surface = pg.transform.scale(self.img, (self.diam, self.diam))
+
+    def draw(self, screen, dx, dy):
+        screen.blit(self.surface, (self.x - self.diam // 2 - dx,
+                                   self.y - self.diam // 2 - dy))
+
+
+class DroneConversion(SpecialEffect):
+    def __init__(self, x, y):
+        super().__init__(x, y, duration=300)
+        self.max_diam = H(1900)
+        self.diam = 0
+        self.img = self.set_image("drone_conversion", self.max_diam)
+        self.surface = None
+        self.alpha_effect_duration = 60
+
+    def update(self, dt):
+        super().update(dt)
+        if self.t <= self.duration:
+            self.diam = round(self.max_diam * self.t / self.duration)
+            self.surface = pg.transform.scale(self.img, (self.diam, self.diam))
+            if self.t >= self.duration - self.alpha_effect_duration:
+                alpha = 255 * (self.duration - self.t) / self.alpha_effect_duration
+                self.surface.set_alpha(alpha)
 
     def draw(self, screen, dx, dy):
         screen.blit(self.surface, (self.x - self.diam // 2 - dx,
@@ -184,7 +219,7 @@ class PowerfulExplosion(SpecialEffect):
 
 class Flash(SpecialEffect):
     def __init__(self):
-        super().__init__(0, 0, duration=200)
+        super().__init__(0, 0, duration=250)
         self.surface = pg.Surface((SCR_W, SCR_H))
         self.surface.fill(WHITE)
 
@@ -254,16 +289,16 @@ class StarsAroundMob(SpecialEffect):
 class TeleportationFlash(SpecialEffect):
     def __init__(self, x, y):
         super().__init__(x, y, duration=250)
-        self.surface_0 = pg.image.load(TELEPORTATION).convert_alpha()
-        self.surface = None
         self.diam = 0
-        self.max_diam = HF(320)
+        self.max_diam = H(320)
+        self.img = pg.transform.scale(images["teleportation"], (self.max_diam, self.max_diam))
+        self.surface = None
 
     def update(self, dt):
         super().update(dt)
         if self.t <= self.duration:
             self.diam = int(self.max_diam * (1 - self.t/self.duration))
-            self.surface = pg.transform.scale(self.surface_0, (self.diam, self.diam))
+            self.surface = pg.transform.scale(self.img, (self.diam, self.diam))
 
     def draw(self, screen, dx, dy):
         screen.blit(self.surface, (self.x - self.diam/2 - dx,
@@ -278,7 +313,11 @@ def add_effect(name, effects, x=0, y=0, radius=0):
     elif name == 'ParalyzingExplosion': effect = ParalyzingExplosion(x, y, H(960))
     elif name == 'BigParalyzingExplosion': effect = ParalyzingExplosion(x, y, H(1440))
     elif name == 'PowerfulExplosion': effect = PowerfulExplosion(x, y)
+    elif name == 'DroneConversion': effect = DroneConversion(x, y)
     elif name == 'Flash': effect = Flash()
     elif name == 'StarsAroundMob': effect = StarsAroundMob(x, y, radius)
     else: effect = TeleportationFlash(x, y)
     effects.append(effect)
+
+
+__all__ = ["add_effect"]

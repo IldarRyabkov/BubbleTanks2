@@ -41,6 +41,7 @@ ROOM_AIM = img_path("room_aim.png")
 BOSS_AIM = img_path("boss_aim.png")
 PARALYZING_EXPLOSION = img_path("paralyzing_explosion.png")
 POWERFUL_EXPLOSION = img_path("powerful_explosion.png")
+DRONE_CONVERSION = img_path("drone_conversion.png")
 TELEPORTATION = img_path("teleportation.png")
 HEALTH_WINDOW_BG = img_path("health_window_bg.png")
 COOLDOWN_WINDOW_BG = img_path("cooldown_window_bg.png")
@@ -100,6 +101,7 @@ __all__ = [
     "BOSS_AIM",
     "PARALYZING_EXPLOSION",
     "POWERFUL_EXPLOSION",
+    "DRONE_CONVERSION",
     "TELEPORTATION",
     "HEALTH_WINDOW_BG",
     "COOLDOWN_WINDOW_BG",

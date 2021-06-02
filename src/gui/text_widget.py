@@ -1,6 +1,6 @@
 import pygame as pg
 
-from constants import OPEN
+from constants import *
 
 
 class TextWidget:
@@ -63,10 +63,9 @@ class TextWidget:
 
     def update_alpha(self, animation_state, time_elapsed):
         if animation_state == OPEN:
-            alpha = round(255 * time_elapsed)
-        else:
-            alpha = round(255 - 255 * time_elapsed)
-        self.set_alpha(alpha)
+            self.set_alpha(round(255 * time_elapsed))
+        elif animation_state == CLOSE:
+            self.set_alpha(round(255 - 255 * time_elapsed))
 
     def move(self, dx, dy):
         self.x += dx
@@ -75,6 +74,14 @@ class TextWidget:
     def move_to(self, x, y):
         self.x = x
         self.y = y
+
+    def update(self, dt, animation_state, time_elapsed):
+        if animation_state == WAIT:
+            return
+        if animation_state == OPEN:
+            self.set_alpha(round(255 * time_elapsed))
+        elif animation_state == CLOSE:
+            self.set_alpha(round(255 - 255 * time_elapsed))
 
     def draw(self, screen, dx=0, dy=0):
         for surface, x, y in self.lines:

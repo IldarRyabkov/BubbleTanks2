@@ -41,7 +41,7 @@ class HealthWindow(PopupWindow):
     def set_bubbles_label(self, player_health, player_level):
         labels = TEXTS["health window labels"][self.game.language]
         if player_level != 5:
-            text = str(self.max_health - player_health) + labels[0]
+            text = '%d %s' % (self.max_health - player_health, labels[0])
         else:
             text = labels[1]
         self.bubbles_label.set_text(text)

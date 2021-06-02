@@ -46,8 +46,8 @@ class Bubble:
                 -self.radius <= self.y - dy <= SCR_H + self.radius)
 
     def maximize_gravity(self):
-        self.max_gravity_vel = 3 * BUBBLE_MAX_VEL
-        self.gravity_acc = 10 * BUBBLE_ACC
+        self.max_gravity_vel = 2 * BUBBLE_MAX_VEL
+        self.gravity_acc = 5 * BUBBLE_ACC
         self.gravity_radius = 2 * ROOM_RADIUS
 
     def move(self, dx, dy):

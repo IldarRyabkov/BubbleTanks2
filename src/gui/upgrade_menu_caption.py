@@ -22,7 +22,7 @@ class UpgradeMenuCaption:
         image = pg.image.load(filename).convert_alpha()
         self.surface = pg.transform.scale(image, (H(1184), H(112)))
 
-    def update(self, dt, animation_state=WAIT):
+    def update(self, dt, animation_state=WAIT, time_elapsed=0):
         if animation_state == OPEN:
             dy = self.vel * dt
             self.y = min(self.y + dy, self.Y1) if self.vel > 0 else max(self.y + dy, self.Y1)

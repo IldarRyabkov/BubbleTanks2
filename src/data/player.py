@@ -212,7 +212,7 @@ HEALTH_STATES_10 = (
 )
 
 params_10 = {
-    "max_health": 125,
+    "max_health": 75,
     "health_states": HEALTH_STATES_10,
     "radius": HF(93),
     "body": scaled_body(BODY_10),
@@ -503,8 +503,8 @@ params_12 = {
     "radius": HF(95),
     "body": scaled_body(BODY_12),
     "body_is_rotating": False,
-    "max_vel": HF(0.6),
-    "max_acc": HF(0.002),
+    "max_vel": HF(0.72),
+    "max_acc": HF(0.0024),
     "gun_type": 'Gun12',
     "bg_radius": HF(190),
     "superpower": None
@@ -870,8 +870,8 @@ BODY_22 = [
     [11, 1, ORANGE,       0, 0, True,  10, True,  True, 108, -0.935 * pi],
     [11, 1, ORANGE,       0, 0, True,  10, True,  True, 124, 0.944 * pi],
     [11, 1, ORANGE,       0, 0, True,  10, True,  True, 124, -0.944 * pi],
-    [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  0.85 * pi,   True, pi],
-    [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  -0.85 * pi,  True, pi],
+    [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  0.85 * pi,   True, pi, 92],
+    [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  -0.85 * pi,  True, pi, 92],
     [20, 3, ORANGE,       0, 0, True,  17, True,  True, 43,  pi]
 
 ]
@@ -1040,8 +1040,8 @@ BODY_23 = [
     [11, 1, ORANGE,       0, 0, True,  10, True,  True, 108, -0.935 * pi],
     [11, 1, ORANGE,       0, 0, True,  10, True,  True, 124, 0.944 * pi],
     [11, 1, ORANGE,       0, 0, True,  10, True,  True, 124, -0.944 * pi],
-    [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  0.85 * pi,   True, pi],
-    [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  -0.85 * pi,  True, pi],
+    [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  0.85 * pi,   True, pi, 92],
+    [18, 3, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 47,  -0.85 * pi,  True, pi, 92],
     [20, 3, ORANGE,       0, 0, True,  17, True,  True, 43,  pi]
 
 ]
@@ -1078,8 +1078,8 @@ params_23 = {
     "radius": HF(120),
     "body": scaled_body(BODY_23),
     "body_is_rotating": False,
-    "max_vel": HF(0.5),
-    "max_acc": HF(0.0013),
+    "max_vel": HF(0.7),
+    "max_acc": HF(0.0023),
     "gun_type": 'Gun23',
     "bg_radius": HF(230),
     "superpower": 'Bombs'
@@ -1357,7 +1357,7 @@ BODY_32 = [
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 51,  -0.19 * pi],
     [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 63,  -0.185 * pi],
     [26, 4, ORANGE, 0, 0, True,  21, True,  True, 65,  pi],
-    [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 65,  pi,          False, 0, True, 71]
+    [9,  1, ORANGE, 0, 0, True,  9,  True,  True, 65,  pi,          False, 0, 0, True, 71]
 
 ]
 
@@ -1926,9 +1926,9 @@ BODY_45 = [
     [39, 6, ORANGE, 142, -0.78 * pi,  True,  36, True,  True,  0,  0],
     [17, 1, ORANGE, 142, -0.78 * pi,  True,  15, True,  True,  51, 0.77 * pi],
     [17, 1, ORANGE, 142, -0.78 * pi,  True,  15, True,  True,  51, -0.77 * pi],
-    [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, True, 71],
-    [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, True, 71, 0.667 * pi],
-    [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, True, 71, 1.333 * pi]
+    [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, 0, True, 71],
+    [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, 0, True, 71, 0.667 * pi],
+    [8,  1, ORANGE, 0,   0,           True,  8,  True,  False, 0,  0,          False, 0, 0, True, 71, 1.333 * pi]
 
 ]
 
@@ -2038,6 +2038,78 @@ params_51 = {
     "gun_type": 'Gun51',
     "bg_radius": HF(160),
     "superpower": 'Shurikens'
+}
+
+
+BODY_52 = [
+
+]
+
+
+params_52 = {
+    "max_health": 1,
+    "health_states": ((0, ),),
+    "radius": HF(110),
+    "body": scaled_body(BODY_51),
+    "body_is_rotating": False,
+    "max_vel": HF(0.89),
+    "max_acc": HF(0.0036),
+    "gun_type": 'Gun51',
+    "bg_radius": HF(160),
+    "superpower": None
+}
+
+
+BODY_53 = [
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 77,  0.77 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 60,  0.69 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 77,  -0.77 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 60,  -0.69 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 16,  0.5 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 16,  -0.5 * pi],
+    [42, 3, BLUE,   1,   0,  True,  26, True, True, 45,  pi],
+    [20, 3, BLUE,   1,   0,  True,  20, True, True, 64,  0],
+    [22, 3, BLUE,   1,   0,  True,  21, True, True, 26,  0],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 88,  0],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 92,  0.51 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 92,  -0.51 * pi],
+    [22, 3, BLUE,   1,   0,  True,  21, True, True, 70,  0.42 * pi],
+    [22, 3, BLUE,   1,   0,  True,  21, True, True, 70,  -0.42 * pi],
+    [22, 3, BLUE,   1,   0,  True,  21, True, True, 110, 0.07 * pi],
+    [22, 3, BLUE,   1,   0,  True,  21, True, True, 110, -0.07 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 132, 0.87 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 132, -0.87 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 180, 0.86 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 180, -0.86 * pi],
+    [30, 4, BLUE,   1,   0,  True,  26, True, True, 154, 0.81 * pi],
+    [30, 4, BLUE,   1,   0,  True,  26, True, True, 154, -0.81 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 136, 0.74 * pi],
+    [16, 2, BLUE,   1,   0,  True,  16, True, True, 136, -0.74 * pi],
+    [36, 5, BLUE,   1,   0,  True,  28, True, True, 103, 0.65 * pi],
+    [36, 5, BLUE,   1,   0,  True,  28, True, True, 103, -0.65 * pi],
+    [22, 3, BLUE,   1,   0,  True,  21, True, True, 147, 0.63 * pi],
+    [22, 3, BLUE,   1,   0,  True,  21, True, True, 147, -0.63 * pi],
+    [17, 2, BLUE,   1,   0,  True,  17, True, True, 176, 0.645 * pi],
+    [17, 2, BLUE,   1,   0,  True,  17, True, True, 176, -0.645 * pi],
+    [20, 3, ORANGE, 1,   0,  True,  20, True, True, 130, 0],
+    [10, 1, ORANGE, 1,   0,  True,  10, True, True, 149, 0.04 * pi],
+    [10, 1, ORANGE, 1,   0,  True,  10, True, True, 149, -0.04 * pi],
+    [24, 4, ORANGE, 1,   0,  True,  22, True, True, 160, pi],
+    [10, 1, ORANGE, 160, pi, False, 1,  True, True, 1,   0,           True, 0,           90],
+    [10, 1, ORANGE, 160, pi, False, 1,  True, True, 1,   0,           True, -0.667 * pi, 90],
+    [10, 1, ORANGE, 160, pi, False, 1,  True, True, 1,   0,           True, 0.667 * pi,  90]]
+
+params_53 = {
+    "max_health": 1,
+    "health_states": ((0, ),),
+    "radius": HF(130),
+    "body": scaled_body(BODY_53),
+    "body_is_rotating": False,
+    "max_vel": HF(0.8),
+    "max_acc": HF(0.0027),
+    "gun_type": 'Gun53',
+    "bg_radius": HF(250),
+    "superpower": 'DroneConversion'
 }
 
 
@@ -2270,7 +2342,7 @@ params_55 = {
     "max_vel": HF(0.21),
     "max_acc": HF(0.0005),
     "gun_type": 'Gun55',
-    "bg_radius": HF(360),
+    "bg_radius": HF(380),
     "superpower": 'SixHomingMissiles'
 }
 
@@ -2298,8 +2370,8 @@ PLAYER_PARAMS = {
     (4, 5): params_45,
     (5, 0): params_50,
     (5, 1): params_51,
-    (5, 2): params_00,
-    (5, 3): params_00,
+    (5, 2): params_52,
+    (5, 3): params_53,
     (5, 4): params_54,
     (5, 5): params_55
 }
@@ -2312,3 +2384,5 @@ __all__ = [
     "FROZEN_BODY_ROTATING"
 
 ]
+
+#print_pretty(BODY_53)

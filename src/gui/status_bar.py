@@ -27,7 +27,7 @@ class StatusBar:
 
     def set_value(self, value: float, reset=False):
         """Sets new value to the status bar. """
-        self.value = 0 if reset and value >= self.max_value else value
+        self.value = self.max_value if reset and value >= self.max_value else value
         self.scaled_w = self.w * self.value/self.max_value if self.max_value else 0
 
     def set_max_value(self, max_value: int):

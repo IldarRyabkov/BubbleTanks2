@@ -7,13 +7,12 @@ from data.paths import MAIN_MENU_CAPTION_BG, FONT_1
 from utils import H
 
 
-class State:
-    MAIN_PAGE = 0
-    SETTINGS = 1
-    CREDITS = 2
-    LANGUAGES = 3
-    RESOLUTIONS = 4
-    EXIT_CONFIRMATION = 5
+MAIN_PAGE = 0
+SETTINGS = 1
+CREDITS = 2
+LANGUAGES = 3
+RESOLUTIONS = 4
+EXIT_CONFIRMATION = 5
 
 
 class MainMenuCaption:
@@ -26,19 +25,19 @@ class MainMenuCaption:
         self.surface = pg.transform.scale(self.image, (H(1280), H(240)))
         self.alpha = 255
 
-    def set_format(self):
-        if self.menu.state == State.MAIN_PAGE:
+    def set_state(self, state):
+        if state == MAIN_PAGE:
             self.text.y = H(405)
             self.text.set_font_size(H(112))
-        elif self.menu.state == State.EXIT_CONFIRMATION:
+        elif state == EXIT_CONFIRMATION:
             self.text.y = H(320)
             self.text.set_font_size(H(70))
         else:
             self.text.y = H(60)
             self.text.set_font_size(H(80))
 
-        self.text.set_text(TEXTS["main menu captions"][self.game.language][self.menu.state])
-        if self.menu.state == State.MAIN_PAGE:
+        self.text.set_text(TEXTS["main menu captions"][self.game.language][state])
+        if state == MAIN_PAGE:
             scaled_h = 2*self.text.h + H(60)
         else:
             scaled_h = round(1.3 * self.text.h) + H(20)
@@ -46,7 +45,9 @@ class MainMenuCaption:
         self.text.set_alpha(self.alpha)
         self.surface.set_alpha(self.alpha)
 
-    def update_alpha(self, animation_state, time_elapsed):
+    def update(self, dt, animation_state, time_elapsed):
+        if animation_state == WAIT:
+            return
         if animation_state == OPEN:
             alpha = round(255 * time_elapsed)
         else:
@@ -62,4 +63,4 @@ class MainMenuCaption:
         self.text.draw(screen)
 
 
-__all__ = ["MainMenuCaption", "State"]
+__all__ = ["MainMenuCaption"]

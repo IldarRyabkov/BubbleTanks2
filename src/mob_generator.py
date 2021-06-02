@@ -3,11 +3,9 @@ import itertools
 from collections import defaultdict
 from math import sqrt
 
-from mobs import get_mob
-
 
 PEACEFUL_MOBS = ['Infusoria', 'Cell', 'Ameba', 'Baby']
-WEAK_SLOW_MOBS = ["Turtle", "Turtle_dmg", "Terrorist"]
+WEAK_SLOW_MOBS = ["Turtle", "TurtleDamaging", "Terrorist"]
 WEAK_FAST_MOBS = ["Scarab", "Bug", "Gull", "Ant", "Cockroach"]
 STRONG_MOBS = ["Spider", "Spreader", "Beetle", "BomberShooter", "BenLaden"]
 EPIC_MOBS = ["MachineGunner", "Turret"]
@@ -29,6 +27,7 @@ def generate_compensation(mobs, delta_health):
 
 def generate_peaceful_mobs(mobs):
     add_peaceful_mobs(mobs, 2, 3)
+    #mobs["BossLeg"] = 1
     return mobs
 
 
@@ -69,7 +68,7 @@ def generate_level_6(mobs):
             mobs[random.choice(WEAK_FAST_MOBS)] += 1
     else:
         for _ in range(4):
-            mobs[random.choice(["Turtle", "Turtle_dmg",
+            mobs[random.choice(["Turtle", "TurtleDamaging",
                                 "Beetle", "BomberShooter"])] += 1
         for _ in range(2):
             mobs[random.choice(WEAK_FAST_MOBS)] += 1
@@ -110,26 +109,24 @@ def generate_level_8(mobs):
 
 class MobGenerator:
     """Saves mobs in all visited rooms and also generates mobs for the next room. """
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.mobs = {(0, 0): defaultdict(int)}  # stores mobs in all visited rooms
         self.cur_room = (0, 0)  # current room the player is in
         self.boss_generated = False  # flag to make sure boss was generated only once
 
+    @property
+    def current_mobs(self):
+        return self.mobs[self.cur_room]
+
     def reset(self):
-        self.__init__()
+        self.__init__(self.game)
 
     def save_mobs(self, mobs: list):
         mobs_dict = defaultdict(int)
         for mob in mobs:
             mobs_dict[mob.name] += 1
         self.mobs[self.cur_room] = mobs_dict
-
-    def load_mobs(self) -> list:
-        """Returns list of mobs in current room. """
-        mobs = []
-        for name, n in self.mobs[self.cur_room].items():
-            mobs.extend([get_mob(name) for _ in range(n)])
-        return mobs
 
     def generate_level(self, player) -> defaultdict(int):
         mobs = defaultdict(int)

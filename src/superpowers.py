@@ -1,31 +1,30 @@
 import pygame as pg
 from math import cos, sin, hypot, pi
-import numpy as np
 
 from bullets import *
 from constants import *
 from data.bullets import *
-from data.paths import THUNDER, MOB_DEATH, PLAYER_BULLET_SHOT
-from special_effects import add_effect
-from utils import calculate_angle, HF
+from data.paths import *
+from special_effects import *
+from utils import *
 
 
-TWO_MISSILES_COORDS = (
+two_seekers_coords = (
     (HF(92), 0.43*pi),
     (HF(92), -0.43*pi)
 )
-THREE_MISSILES_COORDS = (
+three_seekers_coords = (
     (HF(94), 0.88*pi),
     (HF(94), -0.88*pi),
     (HF(90), 0)
 )
-FOUR_MISSILES_COORDS = (
+four_seekers_coords = (
     (HF(101), 0.55 * pi),
     (HF(101), -0.55 * pi),
     (HF(131), 0.8 * pi),
     (HF(131), -0.8 * pi)
 )
-SIX_MISSILES_COORDS = (
+six_seekers_coords = (
     (HF(142), 0.5 * pi),
     (HF(132), 0.65 * pi),
     (HF(132), 0.35 * pi),
@@ -34,6 +33,7 @@ SIX_MISSILES_COORDS = (
     (HF(132), -0.35 * pi),
 )
 
+#_________________________________________________________________________________________________
 
 class SuperPower:
     """Parent class for all superpowers. """
@@ -43,21 +43,23 @@ class SuperPower:
         self.on = False
         self.game = None
         self.player = None
+        self.update_during_transportation = self.update_time
 
     def update_time(self, dt):
-        self.time = min([self.time + dt, self.cooldown_time])
+        self.time += dt
 
     def activate(self):
         pass
 
     def update(self, dt):
         self.update_time(dt)
-        if self.time == self.cooldown_time and self.on:
+        if self.time >= self.cooldown_time and self.on:
             self.time = 0
             self.activate()
 
+#_________________________________________________________________________________________________
 
-class HomingMissiles(SuperPower):
+class Seekers(SuperPower):
     def __init__(self, coords):
         super().__init__(cooldown_time=2000)
         self.coords = coords
@@ -65,11 +67,12 @@ class HomingMissiles(SuperPower):
     def activate(self):
         for r, angle in self.coords:
             start_angle = self.player.body.angle + angle
-            start_pos = self.player.pos + np.array([r * cos(start_angle), -r * sin(start_angle)])
-            bullet = HomingMissile(*start_pos, start_angle, 0.05, HF(10), -5,
-                                   HF(0.75), BULLET_BODIES["HomingMissile_1"])
-            self.player.homing_bullets.append(bullet)
+            x = self.player.x + r * cos(start_angle)
+            y = self.player.y - r * sin(start_angle)
+            seeker = PlayerSeeker(x, y, start_angle)
+            self.player.seekers.append(seeker)
 
+#_________________________________________________________________________________________________
 
 class NoneSuperPower(SuperPower):
     def __init__(self):
@@ -78,28 +81,36 @@ class NoneSuperPower(SuperPower):
     def update(self, *args, **kwargs):
         pass
 
+#_________________________________________________________________________________________________
 
-class Armor(SuperPower):
+class Shield(SuperPower):
     def __init__(self):
         SuperPower.__init__(self, cooldown_time=1000)
         self.r = HF(160)
 
+    @property
+    def shield_on(self) -> bool:
+        return self.time < 0.4 * self.cooldown_time
+
     def activate(self):
         add_effect('Armor', self.game.room.top_effects, SCR_W2 - self.r, SCR_H2 - self.r, self.r)
 
+#_________________________________________________________________________________________________
 
 class Mines(SuperPower):
     def __init__(self):
         SuperPower.__init__(self, cooldown_time=1000)
-        self.dist = HF(91)
+        self.dist = -HF(91)
+        self.mine_body = BULLET_BODIES["BombBullet_1"]
 
     def activate(self):
-        angle = calculate_angle(SCR_W2, SCR_H2, *pg.mouse.get_pos())
-        offset = np.array([-self.dist * cos(angle), self.dist * sin(angle)])
-        mine_pos = self.player.pos + offset
-        self.player.bullets.append(Mine(*mine_pos, BULLET_BODIES["BombBullet_1"]))
+        angle = self.player.body.angle
+        x = self.player.x + self.dist * cos(angle)
+        y = self.player.y - self.dist * sin(angle)
+        self.player.mines.append(Mine(x, y, self.mine_body))
         self.game.sound_player.play_sound(PLAYER_BULLET_SHOT)
 
+#_________________________________________________________________________________________________
 
 class ParalysingExplosion(SuperPower):
     def __init__(self, dist, radius, effect):
@@ -110,60 +121,62 @@ class ParalysingExplosion(SuperPower):
 
     def activate(self):
         angle = calculate_angle(SCR_W2, SCR_H2, *pg.mouse.get_pos())
-        offset = np.array([-self.dist * cos(angle), self.dist * sin(angle)])
-        explosion_pos = self.player.pos + offset
-
+        x = self.player.x + self.dist * cos(angle)
+        y = self.player.y - self.dist *  sin(angle)
         for mob in self.game.room.mobs:
-            if hypot(*(explosion_pos - mob.pos)) <= self.radius:
-                mob.make_paralysed()
-                add_effect('StarsAroundMob', self.game.room.top_effects, *mob.pos, mob.radius)
-
-        add_effect(self.effect, self.game.room.bottom_effects, *explosion_pos)
+            if hypot(x - mob.x, y - mob.y) <= self.radius:
+                mob.make_paralyzed()
+                add_effect('StarsAroundMob', self.game.room.top_effects, mob.x, mob.y, mob.radius)
+        add_effect(self.effect, self.game.room.bottom_effects, x, y)
         add_effect('Flash', self.game.room.top_effects)
         self.game.camera.start_shaking(250)
         self.game.sound_player.play_sound(THUNDER)
 
+#_________________________________________________________________________________________________
 
 class PowerfulExplosion(SuperPower):
     def __init__(self):
         super().__init__(cooldown_time=2000)
-        self.dist = HF(69)
+        self.dist = -HF(69)
 
     def activate(self):
-        alpha = calculate_angle(SCR_W2, SCR_H2, *pg.mouse.get_pos())
-        offset = np.array([-self.dist * cos(alpha), self.dist * sin(alpha)])
-        explosion_pos = self.player.pos + offset
-
+        angle = self.player.body.angle
+        x = self.player.x + self.dist * cos(angle)
+        y = self.player.y - self.dist *  sin(angle)
         self.game.sound_player.unlock()
         for mob in self.game.room.mobs:
-            if hypot(*(explosion_pos - mob.pos)) <= HF(600):
+            if hypot(x - mob.x, y - mob.y) <= HF(600):
                 mob.health -= 30
                 mob.update_body_look()
                 if mob.health <= 0:
                     self.game.sound_player.play_sound(MOB_DEATH, False)
-                add_effect('BigHitLines', self.game.room.top_effects, *mob.pos)
+                add_effect('BigHitLines', self.game.room.top_effects, mob.x, mob.y)
 
-        add_effect('PowerfulExplosion', self.game.room.bottom_effects, *explosion_pos)
+        add_effect('PowerfulExplosion', self.game.room.bottom_effects, x, y)
         add_effect('Flash', self.game.room.top_effects)
         self.game.camera.start_shaking(250)
         self.game.sound_player.play_sound(THUNDER)
 
+#_________________________________________________________________________________________________
 
 class Teleportation(SuperPower):
     def __init__(self, cooldown):
         super().__init__(cooldown_time=cooldown)
 
     def activate(self):
-        add_effect('TeleportationFlash', self.game.room.top_effects, *self.player.pos)
+        add_effect('TeleportationFlash', self.game.room.top_effects, self.player.x, self.player.y)
         add_effect('Flash', self.game.room.top_effects)
-        offset = np.array(pg.mouse.get_pos()) - np.array([SCR_W2, SCR_H2])
-        self.player.pos += offset
-        self.game.camera.update(*self.player.pos, 0)
+        x, y = pg.mouse.get_pos()
+        self.player.x += x - SCR_W2
+        self.player.y += y - SCR_H2
+        self.game.camera.update(dt=0)
 
+#_________________________________________________________________________________________________
 
 class Ghost(SuperPower):
     def __init__(self):
         super().__init__(cooldown_time=0)
+        self.update_during_transportation = self.update
         self.dist = 0
         self.vel = HF(0.7)
         self.offsets = (
@@ -187,6 +200,10 @@ class Ghost(SuperPower):
             (0.3,  -0.3 * pi)
         )
 
+    @property
+    def disassembled(self):
+        return self.on or self.dist != 0
+
     def update_body(self):
         body = self.player.body
         for i, (k, angle) in enumerate(self.offsets):
@@ -201,6 +218,7 @@ class Ghost(SuperPower):
             self.dist = max(self.dist - self.vel * dt, 0)
             self.update_body()
 
+#_________________________________________________________________________________________________
 
 class ExplosionStar(SuperPower):
     def __init__(self):
@@ -209,39 +227,41 @@ class ExplosionStar(SuperPower):
 
     def activate(self):
         body_angle = self.player.body.angle
-        offset = np.array([self.dist * cos(body_angle), -self.dist * sin(body_angle)])
-        pos = self.player.pos + offset
-        self.player.bullets.append(FrangibleBullet(*pos, body_angle, BULLET_BODIES["BigBullet_1"]))
+        x = self.player.x + self.dist * cos(body_angle)
+        y = self.player.y - self.dist * sin(body_angle)
+        self.player.bullets.append(FrangibleBullet(x, y, body_angle, BULLET_BODIES["BigBullet_1"]))
 
 
-class Shurikens(SuperPower):
+class OrbitalSeekers(SuperPower):
     def __init__(self):
-        super().__init__(cooldown_time=0)
-        self.shurikens_cooldown = 200
+        super().__init__(cooldown_time=200)
 
     def update(self, dt):
-        self.time = min(self.shurikens_cooldown, self.time + dt)
-        if len(self.player.shurikens) < 5 and self.time == self.shurikens_cooldown:
-            self.player.shurikens.append(Shuriken(*self.player.pos))
+        self.update_time(dt)
+        if self.time >= self.cooldown_time and len(self.player.orbital_seekers) < 5:
             self.time = 0
+            self.player.orbital_seekers.append(OrbitalSeeker(self.player.x, self.player.y))
 
+#_________________________________________________________________________________________________
 
 class StickyCannon(SuperPower):
     def __init__(self):
         super().__init__(cooldown_time=350)
-        self.gun_dist = HF(114)
+        self.cannon_dist = HF(102)
         self.dist = HF(48)
 
     def activate(self):
-        gun_offset =  np.array([self.gun_dist * cos(self.player.body.angle),
-                                      -self.gun_dist * sin(self.player.body.angle)])
-        gun_pos = self.player.pos + gun_offset
-        angle = calculate_angle(*gun_pos, *self.player.get_mouse_pos())
-        offset = np.array([self.dist * cos(angle), -self.dist * sin(angle)])
-        pos = gun_pos + offset
-        self.player.bullets.append(RegularBullet(*pos, 0, HF(1.1), angle, BULLET_BODIES["StickyBullet"]))
+        body_angle = self.player.body.angle
+        cannon_x = self.player.x + self.cannon_dist * cos(body_angle)
+        cannon_y = self.player.y - self.cannon_dist * sin(body_angle)
+        angle = calculate_angle(cannon_x, cannon_y, *self.player.get_mouse_pos())
+        cannon_x += self.dist * cos(angle)
+        cannon_y -= self.dist * sin(angle)
+        self.player.bullets.append(RegularBullet(cannon_x, cannon_y, 0, HF(1.1),
+                                                 angle, BULLET_BODIES["StickyBullet"]))
         self.game.sound_player.play_sound(PLAYER_BULLET_SHOT)
 
+#_________________________________________________________________________________________________
 
 class PowerfulCannon(SuperPower):
     def __init__(self):
@@ -250,70 +270,96 @@ class PowerfulCannon(SuperPower):
 
     def activate(self):
         angle = self.player.body.angle
-        offset = np.array([self.dist * cos(angle), -self.dist * sin(angle)])
-        pos = self.player.pos + offset
-        self.player.bullets.append(ExplodingBullet(*pos, angle))
+        x = self.player.x + self.dist * cos(angle)
+        y = self.player.y - self.dist * sin(angle)
+        self.player.bullets.append(ExplodingBullet(x, y, angle))
 
+#_________________________________________________________________________________________________
 
 class StickyExplosion(SuperPower):
     def __init__(self):
         super().__init__(cooldown_time=2000)
 
     def activate(self):
-        x, y = self.player.pos
+        x = self.player.x
+        y = self.player.y
         for i in range(36):
             angle = i * pi/18
             bullet = RegularBullet(x, y, 0, HF(1.1), angle, BULLET_BODIES["StickyBullet"])
             self.player.bullets.append(bullet)
 
+#_________________________________________________________________________________________________
+
+class DroneConversion(SuperPower):
+    def __init__(self):
+        super().__init__(cooldown_time=2000)
+        self.dist = -HF(160)
+        self.effect_radius = HF(950)
+
+    def activate(self):
+        for seeker in self.game.room.seekers:
+            seeker.hit_the_target = True
+            player_seeker = PlayerSeeker(seeker.x, seeker.y, seeker.body.angle)
+            self.player.seekers.append(player_seeker)
+
+        angle = self.player.body.angle
+        x = self.player.x + self.dist * cos(angle)
+        y = self.player.y - self.dist * sin(angle)
+        add_effect("DroneConversion", self.game.room.top_effects, x, y)
+        add_effect('Flash', self.game.room.top_effects)
+        self.game.camera.start_shaking(900)
+
+#_________________________________________________________________________________________________
 
 class GiantCannon(SuperPower):
     def __init__(self):
         super().__init__(cooldown_time=3000)
 
     def activate(self):
-        bullet = RegularBullet(*self.player.pos, -50, HF(0.8),
-                               self.player.body.angle,
-                               BULLET_BODIES["GiantBullet"])
+        bullet = RegularBullet(self.player.x, self.player.y, -50, HF(0.8),
+                               self.player.body.angle, BULLET_BODIES["GiantBullet"])
         self.player.bullets.append(bullet)
         add_effect("Flash", self.game.room.top_effects)
-        self.game.camera.start_shaking(250)
+        self.game.camera.start_shaking(750)
+        self.game.sound_player.play_sound(PLAYER_BULLET_SHOT)
 
+#_________________________________________________________________________________________________
 
 def get_superpower(name):
     if name is None: return NoneSuperPower()
-    if name == 'Armor': return Armor()
+    if name == 'Armor': return Shield()
     if name == 'Bombs': return Mines()
-    if name == 'ParalyzingExplosion': return ParalysingExplosion(HF(67), HF(480), name)
+    if name == 'ParalyzingExplosion': return ParalysingExplosion(-HF(67), HF(480), name)
     if name == 'BigParalyzingExplosion': return ParalysingExplosion(0, HF(720), name)
     if name == 'Powerful_explosion': return PowerfulExplosion()
     if name == 'Fast_teleportation': return Teleportation(350)
     if name == 'Teleportation': return Teleportation(1200)
     if name == 'Ghost': return Ghost()
-    if name == 'TwoHomingMissiles': return HomingMissiles(TWO_MISSILES_COORDS)
-    if name == 'ThreeHomingMissiles': return HomingMissiles(THREE_MISSILES_COORDS)
-    if name == 'FourHomingMissiles': return HomingMissiles(FOUR_MISSILES_COORDS)
-    if name == 'SixHomingMissiles': return HomingMissiles(SIX_MISSILES_COORDS)
+    if name == 'TwoHomingMissiles': return Seekers(two_seekers_coords)
+    if name == 'ThreeHomingMissiles': return Seekers(three_seekers_coords)
+    if name == 'FourHomingMissiles': return Seekers(four_seekers_coords)
+    if name == 'SixHomingMissiles': return Seekers(six_seekers_coords)
     if name == 'ExplosionStar': return ExplosionStar()
-    if name == 'Shurikens': return Shurikens()
+    if name == 'Shurikens': return OrbitalSeekers()
     if name == 'StickyCannon': return StickyCannon()
     if name == 'PowerfulCannon': return PowerfulCannon()
     if name == 'StickyExplosion': return StickyExplosion()
+    if name == 'DroneConversion': return DroneConversion()
     if name == 'GiantCannon': return GiantCannon()
 
 
 __all__ = [
 
-    "HomingMissiles",
+    "Seekers",
     "NoneSuperPower",
-    "Armor",
+    "Shield",
     "Mines",
     "ParalysingExplosion",
     "PowerfulExplosion",
     "Teleportation",
     "Ghost",
     "ExplosionStar",
-    "Shurikens",
+    "OrbitalSeekers",
     "StickyCannon",
     "PowerfulCannon",
     "StickyExplosion",

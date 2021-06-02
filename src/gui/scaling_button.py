@@ -1,22 +1,30 @@
 import pygame as pg
 
-from data.paths import UI_CHOOSE, UI_CLICK
+from data.paths import *
+from gui.button import Button
 from constants import WAIT, OPEN
 
 
-class ScalingButton:
+class ScalingButton(Button):
     """Parent class for all buttons that change their size
     and transparency, when a cursor is on them.
     """
-    def __init__(self, x, y, w, h, min_scale, min_alpha, texts, sound_player, scaling_time=100):
-        """(x, y) is the center of the button. """
+    def __init__(self, x, y, w, h,
+                 min_scale, min_alpha,
+                 texts, sound_player, scaling_time=100,
+                 cursor=pg.SYSTEM_CURSOR_HAND,
+                 click_sound=UI_CLICK,
+                 action=lambda: None):
+
+        super().__init__(cursor, sound_player, click_sound, action)
+
+        # (x, y) is the center of the button
         self.x = x
         self.y = y
         self.w = w
         self.h = h
 
         self.scaling_time = scaling_time
-
         self.scale = min_scale
         self.SCALE_MIN = min_scale
         self.SCALE_MAX = 1
@@ -32,31 +40,13 @@ class ScalingButton:
         self.scaled_surface = None
         self.set_scaled_surface()
 
-        self.zoom_area = pg.Rect(self.x - self.w // 2,
-                                 self.y - self.h // 2,
-                                 self.w, self.h)
+        self.rect = pg.Rect(self.x - self.w // 2,
+                            self.y - self.h // 2,
+                            self.w, self.h)
 
-        self.sound_player = sound_player
         self.sound_lock = False
-
         self.texts = texts
         self.text_widget = None
-
-    @property
-    def cursor_on_button(self) -> bool:
-        return bool(self.zoom_area.collidepoint(pg.mouse.get_pos()))
-
-    @property
-    def clicked(self):
-        """Handles left mouse button press event.
-        Returns True, if scaling button was clicked. """
-        if self.cursor_on_button:
-            self.handle_click()
-            return True
-        return False
-
-    def handle_click(self):
-        self.sound_player.play_sound(UI_CLICK)
 
     def set_scaled_surface(self):
         size = (round(self.w * self.scale), round(self.h * self.scale))
@@ -79,6 +69,7 @@ class ScalingButton:
         self.alpha = self.ALPHA_MIN
         self.scale = self.SCALE_MIN
         self.sound_lock = False
+        self.is_pressed = False
         self.render_surface()
 
     def increase(self, dt):
@@ -102,12 +93,8 @@ class ScalingButton:
             self.set_scaled_surface()
 
     def update_wait(self, dt):
-        if not self.cursor_on_button:
-            self.sound_lock = False
-        elif not self.sound_lock:
-            self.sound_player.play_sound(UI_CHOOSE)
-            self.sound_lock = True
-        self.update_size(dt, self.cursor_on_button)
+        increasing = False if self.is_pressed else self.cursor_on_button
+        self.update_size(dt, increasing)
 
     def update_open(self, time_elapsed, dt):
         self.scaled_surface.set_alpha(self.ALPHA_MIN * time_elapsed)

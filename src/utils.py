@@ -1,5 +1,5 @@
 from math import pi, hypot, cos, sin, atan2
-import numpy as np
+import pygame as pg
 
 from constants import *
 
@@ -20,42 +20,56 @@ def circle_collidepoint(x0, y0, r, x, y) -> bool:
     return hypot(x - x0, y - y0) <= r
 
 
-def no_trajectory(pos: np.array, angle: float) -> np.array:
-    return pos
+def no_trajectory(xo, yo, angle):
+    return xo, yo
 
 
-def rose_curve_1(pos: np.array, angle: float) -> np.array:
+def rose_curve_1(xo, yo, angle):
     dist = HF(272)
     x = dist * (cos(9/4 * angle) + 7/3) * cos(angle)
     y = dist * (cos(9/4 * angle) + 7/3) * sin(angle)
-    return np.array([x, y]) + pos
+    return xo + x, yo + y
 
-def rose_curve_2(pos: np.array, angle: float) -> np.array:
+def rose_curve_2(xo, yo, angle):
     dist = HF(800)
     x = dist * sin(3/4 * angle) * cos(angle)
     y = dist * sin(3/4 * angle) * sin(angle)
-    return np.array([x, y]) + pos
+    return xo + x, yo + y
 
 
-def rose_curve_3(pos: np.array, angle: float) -> np.array:
+def rose_curve_3(xo, yo, angle):
     dist, r = HF(600), HF(30)
     x = dist * cos(angle) + r * cos(5 * angle)
     y = dist * sin(angle) + r * sin(5 * angle)
-    return np.array([x, y]) + pos
+    return xo + x, yo + y
 
 
-def rose_curve_4(pos: np.array, angle: float) -> np.array:
+def rose_curve_4(xo, yo, angle):
     dist = HF(400)
     x = dist * sin(2/3 * angle) * cos(angle)
     y = dist * sin(2/3 * angle) * sin(angle)
-    return np.array([x, y]) + pos
+    return xo + x, yo + y
 
 
-def epicycloid(pos: np.array, angle: float) -> np.array:
+def epicycloid(xo, yo, angle):
     dist, r = HF(400), HF(20)
     x = dist * cos(angle) + r * cos(5 * angle)
     y = dist * sin(angle) + r * sin(5 * angle)
-    return np.array([x, y]) + pos
+    return xo + x, yo + y
+
+
+def set_cursor_grab(grab):
+    """A game scene wrapper. Sets the state of grabbing the cursor for the
+    duration of the game scene, and then returns it to its original state.
+    """
+    def decorator(game_scene):
+        def wrapper(*args, **kwargs):
+            old_grab = pg.event.get_grab()
+            pg.event.set_grab(grab)
+            game_scene(*args, **kwargs)
+            pg.event.set_grab(old_grab)
+        return wrapper
+    return decorator
 
 
 def print_pretty(ugly_body, scale=1.0):
@@ -74,10 +88,10 @@ def print_pretty(ugly_body, scale=1.0):
                 elif body[j][2] == BUBBLE_COLOR_2: body[j][2] = 'BUBBLE_COLOR_2'
                 elif body[j][2] == BUBBLE_COLOR: body[j][2] = 'BUBBLE_COLOR'
 
-            elif i in (0, 1, 3, 6, 9, 14):
+            elif i in (0, 1, 3, 6, 9, 13, 15):
                 body[j][i] = str(max(1, round(body[j][i] / scale)))
 
-            elif i in (4, 10, 12, 15):
+            elif i in (4, 10, 12, 16):
                 sign = '' if body[j][i] > 0 else '-'
                 if body[j][i] == 0:
                     body[j][i] = '0'
@@ -107,7 +121,7 @@ def scaled_body(body: list) -> list:
     scaled = [row.copy() for row in body]
     for row in scaled:
         for i in range(len(row)):
-            if i in (0, 1, 3, 6, 9, 14):
+            if i in (0, 1, 3, 6, 9, 13, 15):
                 row[i] = HF(row[i])
     return scaled
 
@@ -144,6 +158,11 @@ def WF(v: float):
     return v * W_SCALE_FACTOR
 
 
+def pretty_resolution(resolution) -> str:
+    """Returns text representation of game resolution."""
+    return '%d x %d' % tuple(resolution)
+
+
 __all__ = [
 
     "calculate_angle",
@@ -159,6 +178,8 @@ __all__ = [
     "W",
     "HF",
     "WF",
-    "scaled_body"
+    "scaled_body",
+    "set_cursor_grab",
+    "pretty_resolution"
 
 ]

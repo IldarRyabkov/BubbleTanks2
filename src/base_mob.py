@@ -1,14 +1,19 @@
 from body import Body
+from utils import circle_collidepoint
 
 
 class BaseMob:
     def __init__(self,
+                 x,
+                 y,
                  health,
                  max_health,
                  health_states,
                  radius,
                  body,
                  frozen_body=()):
+        self.x = x
+        self.y = y
         self.health = health
         self.max_health = max_health
         self.health_states = health_states
@@ -26,6 +31,9 @@ class BaseMob:
             for j in range(self.health_states[k][i][0], self.health_states[k][i][1]):
                 self.body.circles[j].is_visible = False
 
+    def collide_bullet(self, bul_x, bul_y, bul_r) -> bool:
+        return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
+
     def handle_injure(self, damage):
         if damage:
             self.health += damage
@@ -33,3 +41,5 @@ class BaseMob:
         else:
             self.body.make_frozen()
 
+
+__all__ = ["BaseMob"]

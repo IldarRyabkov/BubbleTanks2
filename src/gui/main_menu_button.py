@@ -9,9 +9,20 @@ from utils import H
 
 class MainMenuButton(ScalingButton):
     """Parent class for all Main menu buttons. """
-    def __init__(self, x, texts, radius, image, sound_player, aspect_ratio, y_min):
+    def __init__(self,
+                 x,
+                 texts,
+                 radius,
+                 image,
+                 sound_player,
+                 aspect_ratio,
+                 y_min,
+                 action,
+                 click_sound=UI_CLICK):
         """Radius is half the height of the button. """
-        super().__init__(x, SCR_H + radius, 2*radius*aspect_ratio, 2*radius, 0.7, 210, texts, sound_player, 150)
+
+        super().__init__(x, SCR_H + radius, 2*radius*aspect_ratio, 2*radius, 0.7, 210,
+                         texts, sound_player, 140, click_sound=click_sound, action=action)
 
         self.Y_MIN = y_min  # y-coord when button is shown
         self.Y_MAX = SCR_H + radius  # y-coord when button is hidden
@@ -32,9 +43,6 @@ class MainMenuButton(ScalingButton):
         x, y = pg.mouse.get_pos()
         a, b = self.scaled_surface.get_width()//2, self.scaled_surface.get_height()//2
         return (self.x - x) * (self.x - x) / (a * a) + (self.y - y) * (self.y - y) / (b * b) <= 1
-
-    def handle_click(self):
-        super().handle_click()
 
     def set_alpha(self, default_alpha=None):
         super().set_alpha(default_alpha)
@@ -58,9 +66,10 @@ class MainMenuButton(ScalingButton):
         self.text_alpha = max(self.TEXT_ALPHA_MIN, self.text_alpha - self.TEXT_ALPHA_DELTA * dt)
 
     def update_close(self, time_elapsed, dt):
+        if time_elapsed >= 0.3:
+            self.update_size(dt, False)
         if time_elapsed >= 0.5:
             self.y = min(self.Y_MAX, self.y + self.vel * dt)
-        self.update_size(dt, False)
 
     def update_open(self, time_elapsed, dt):
         if time_elapsed >= 0.5:

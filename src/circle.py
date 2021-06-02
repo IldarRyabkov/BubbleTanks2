@@ -51,6 +51,7 @@ class Circle:
                  aiming_angle=0,
                  is_swinging=False,
                  swing_angle=0,
+                 swing_dist=0,
                  is_rotating=False,
                  rotating_dist=0,
                  rotating_angle=0):
@@ -88,9 +89,9 @@ class Circle:
         # of the body of a mob that releases mines.
         self.is_swinging = is_swinging
         self.swing_distance = 0
-        self.swing_distance_max = HF(92)
+        self.swing_distance_max = swing_dist
         self.swing_angle = swing_angle
-        self.swing_vel = HF(0.57)
+        self.swing_vel = swing_dist / 160
 
         # The rotating circle additionally performs an automatic rotating movement
         self.is_rotating = is_rotating
@@ -140,7 +141,7 @@ class Circle:
         dy = -self.swing_distance * sin(self.swing_angle + angle)
         self.move(dx, dy)
 
-    def update(self, body_x, body_y, dt=0, target=(0, 0), angle_to_target=0, body_angle=0):
+    def update(self, body_x, body_y, dt=0, target_x=0, target_y=0, angle_to_target=0, body_angle=0):
         if not self.is_visible:
             return
 
@@ -152,7 +153,7 @@ class Circle:
         self.y = body_y - self.distance * sin(angle)
 
         if self.is_aiming:
-            angle = calculate_angle(self.x, self.y, *target) + self.aiming_angle
+            angle = calculate_angle(self.x, self.y, target_x, target_y) + self.aiming_angle
             self.x += self.aiming_distance * cos(angle)
             self.y -= self.aiming_distance * sin(angle)
 

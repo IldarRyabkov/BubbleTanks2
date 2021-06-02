@@ -242,6 +242,44 @@ def powerful_explosion() -> pg.Surface:
     return surface
 
 
+def drone_conversion() -> pg.Surface:
+    radius = 1000
+    d = 2 * radius
+    edge_0 = radius - 25
+    edge_1 = radius - 60
+    edge_2 = radius - 310
+
+    surface = pg.Surface((d, d), pg.SRCALPHA)
+    arr = pg.PixelArray(surface)
+    green = 230
+    blue = 155
+
+    for x in range(0, radius):
+        for y in range(0, radius):
+            dist = hypot(x - radius, y - radius)
+            if edge_0 < dist <= radius:
+                color = (255, 255, 255, 255)
+            elif edge_1 < dist <= edge_0:
+                new_blue = int(blue + (dist - edge_1) / (edge_0 - edge_1) * 100)
+                new_green = int(green + (dist - edge_1) / (edge_0 - edge_1) * 25)
+                alpha = int(235 + (dist - edge_1) / (edge_0 - edge_1) * 20)
+                color = (255, new_green, new_blue, alpha)
+            elif edge_2 < dist <= edge_1:
+                alpha = int((dist - edge_2) /  (edge_1 - edge_2) * 235)
+                color = (255, green, blue, alpha)
+            elif dist <= edge_2:
+                alpha = int(160 - dist / edge_2 * 160)
+                color = (255, green, blue, alpha)
+            else:
+                continue
+            arr[x, y] = color
+            arr[d - 1 - x, y] = color
+            arr[x, d - 1 - y] = color
+            arr[d - 1 - x, d - 1 - y] = color
+    surface = arr.make_surface()
+    return surface
+
+
 def teleportation() -> pg.Surface:
     radius = 300
     d = 2 * radius
@@ -316,7 +354,7 @@ def room_glare() -> pg.Surface:
     return surface
 
 
-def side_button(alpha=70) -> pg.Surface:
+def side_button(alpha=60) -> pg.Surface:
     w, h = 180, 300
     surface = pg.Surface((w, h))
     surface.fill(COLOR_KEY)
@@ -374,43 +412,53 @@ def upgrade_caption_rus() -> pg.Surface:
     return upgrade_caption_eng(text=TEXTS["upgrade menu caption"][RUSSIAN])
 
 
-def exit_button(color_1=(23, 41, 52), color_2=(200, 200, 200)) -> pg.Surface:
+def exit_button(color_1=(40, 40, 40), color_2=(255, 255, 255)) -> pg.Surface:
     r = 150
     d = int(r / sqrt(2))
+    edge = 7
     surface = pg.Surface((2 * r, 2 * r), pg.SRCALPHA)
     pg.draw.circle(surface, color_2, (r, r), r)
-    pg.draw.circle(surface, color_1, (r, r), r - 14)
-    pg.draw.line(surface, color_2, (r - d + 5, r + d - 5),
-                 (r + d - 5, r - d + 5), 21)
-    pg.draw.line(surface, color_2, (r - d + 5, r - d + 5),
-                 (r + d - 5, r + d - 5), 21)
+    pg.draw.circle(surface, color_1, (r, r), r - 18)
+    pg.draw.line(surface, color_2, (r - d + edge, r + d - edge),
+                 (r + d - edge, r - d + edge), 26)
+    pg.draw.line(surface, color_2, (r - d + edge, r - d + edge),
+                 (r + d - edge, r + d - edge), 26)
     return surface
 
 
 def exit_button_pressed() -> pg.Surface:
-    return exit_button((110, 130, 130), WHITE)
+    return exit_button((110, 110, 110), WHITE)
 
 
 def upgrade_button(w=660, bg_color=(230, 230, 230)) -> pg.Surface:
     h = 1380
     w2 = w // 2
-    surface = pg.Surface((w, h))
-    surface.fill(COLOR_KEY)
-    pg.draw.rect(surface, bg_color, surface.get_rect(), 0, 30)
+    color_key = (42, 42, 42)
     color_1 = np.array((151, 217, 251), dtype=float)
     color_2 = np.array((58, 170, 231), dtype=float)
     color_delta = color_2 - color_1
+
+    surface = pg.Surface((w, h))
+    surface.fill(color_key)
+    pg.draw.rect(surface, bg_color, surface.get_rect(), 0, 30)
+
     for i in range(24):
         color = color_1 + color_delta * i / 23
         pg.draw.circle(surface, color, (w2, 198), 99 - i)
-    pg.draw.polygon(surface, (196, 230, 248),
-                    ((w2, 150), (w2 + 33, 195), (w2 + 12, 195), (w2 + 12, 240),
-                     (w2 - 12, 240), (w2 - 12, 195), (w2 - 33, 195)))
-    surface.set_colorkey(COLOR_KEY)
+
+    dots = ((w2, 150),      (w2 + 33, 195),
+            (w2 + 12, 195), (w2 + 12, 240),
+            (w2 - 12, 240), (w2 - 12, 195),
+            (w2 - 33, 195))
+
+    pg.draw.polygon(surface, (196, 230, 248), dots)
+
+    surface.set_colorkey(color_key)
+
     main_surface = pg.Surface((w, h), pg.SRCALPHA)
     main_surface.blit(surface, (0, 0))
     return main_surface
-
+pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
 
 def upgrade_button_pressed() -> pg.Surface:
     return upgrade_button(660, WHITE)
@@ -522,4 +570,4 @@ def scroll_button() -> pg.Surface:
     return main_surface
 
 
-save_image(main_menu_caption(), 'main_menu_caption')
+#save_image(side_button(), 'side_button')

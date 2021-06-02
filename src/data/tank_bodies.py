@@ -173,8 +173,8 @@ body_22 =  [
     [10, 1, ORANGE,       0, 0, True,  8,  True, True, 99,  -0.935 * pi],
     [10, 1, ORANGE,       0, 0, True,  8,  True, True, 113, 0.944 * pi],
     [10, 1, ORANGE,       0, 0, True,  8,  True, True, 113, -0.944 * pi],
-    [17, 2, LIGHT_ORANGE, 0, 0, False, 0,  True, True, 38,  0.82 * pi,   True, pi],
-    [17, 2, LIGHT_ORANGE, 0, 0, False, 0,  True, True, 38,  -0.82 * pi,  True, pi],
+    [17, 2, LIGHT_ORANGE, 0, 0, False, 0,  True, True, 38,  0.82 * pi,   True, pi, 80],
+    [17, 2, LIGHT_ORANGE, 0, 0, False, 0,  True, True, 38,  -0.82 * pi,  True, pi, 80],
     [18, 2, ORANGE,       0, 0, True,  16, True, True, 39,  pi]
 ]
 
@@ -294,8 +294,8 @@ body_23 = [    [17, 2, BLUE,         0, 0, True,  14, False, True, 70,  0.38 * p
     [10, 1, ORANGE,       0, 0, True,  8,  True,  True, 95,  -0.935 * pi],
     [10, 1, ORANGE,       0, 0, True,  8,  True,  True, 108, 0.944 * pi],
     [10, 1, ORANGE,       0, 0, True,  8,  True,  True, 108, -0.944 * pi],
-    [16, 2, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 41,  0.85 * pi,   True, pi],
-    [16, 2, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 41,  -0.85 * pi,  True, pi],
+    [16, 2, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 41,  0.85 * pi,   True, pi, 76],
+    [16, 2, LIGHT_ORANGE, 0, 0, False, 0,  True,  True, 41,  -0.85 * pi,  True, pi, 76],
     [17, 2, ORANGE,       0, 0, True,  14, True,  True, 37,  pi]]
 
 body_30 = [    [42, 5, BLUE,   0, 0, True, 34, True, True, 0,   0],
@@ -366,7 +366,7 @@ body_32 = [    [23, 2, BLUE,   0, 0, True, 21, True, True, 95, 0],
     [8,  1, ORANGE, 0, 0, True, 8,  True, True, 47, -0.19 * pi],
     [8,  1, ORANGE, 0, 0, True, 8,  True, True, 57, -0.185 * pi],
     [23, 3, ORANGE, 0, 0, True, 20, True, True, 60, pi],
-    [8,  1, ORANGE, 0, 0, True, 8,  True, True, 60, pi,          False, 0, True, 65]]
+    [8,  1, ORANGE, 0, 0, True, 8,  True, True, 60, pi,          False, 0, 0, True, 65]]
 
 body_33 = [    [21, 2, BLUE,   0, 0, True, 18, True, True, 43, pi],
     [21, 2, BLUE,   0, 0, True, 18, True, True, 94, 0.9 * pi],
@@ -683,9 +683,9 @@ body_45 = [    [13, 2, BLUE,   86,  0,           True, 14, True, False, 0,  0],
     [26, 4, ORANGE, 96,  -0.78 * pi,  True, 25, True, True,  0,  0],
     [11, 1, ORANGE, 96,  -0.78 * pi,  True, 11, True, True,  34, 0.77 * pi],
     [11, 1, ORANGE, 96,  -0.78 * pi,  True, 11, True, True,  34, -0.77 * pi],
-    [5,  1, ORANGE, 0,   0,           True, 5,  True, False, 0,  0,          False, 0, True, 48],
-    [5,  1, ORANGE, 0,   0,           True, 5,  True, False, 0,  0,          False, 0, True, 48, 0.667 * pi],
-    [5,  1, ORANGE, 0,   0,           True, 5,  True, False, 0,  0,          False, 0, True, 48, 1.333 * pi]]
+    [5,  1, ORANGE, 0,   0,           True, 5,  True, False, 0,  0,          False, 0, 0, True, 48],
+    [5,  1, ORANGE, 0,   0,           True, 5,  True, False, 0,  0,          False, 0, 0, True, 48, 0.667 * pi],
+    [5,  1, ORANGE, 0,   0,           True, 5,  True, False, 0,  0,          False, 0, 0, True, 48, 1.333 * pi]]
 
 
 body_50 = [    [36, 4, BLUE,   0, 0, True, 31, True, True, 0,  0],
@@ -747,6 +747,48 @@ body_51 = [    [10, 1, BLUE,   0, 0, True, 9,  True, True, 87, 0.91 * pi],
     [16, 1, ORANGE, 0, 0, True, 13, True, True, 72, pi],
     [10, 1, ORANGE, 0, 0, True, 9,  True, True, 91, 0.93 * pi],
     [10, 1, ORANGE, 0, 0, True, 9,  True, True, 91, -0.93 * pi]]
+
+
+body_53 = [
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 51,  0.77 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 40,  0.69 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 51,  -0.77 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 40,  -0.69 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 11,  0.5 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 11,  -0.5 * pi],
+    [28, 4, BLUE,   1, 0, True, 17, True, True, 30,  pi],
+    [13, 2, BLUE,   1, 0, True, 13, True, True, 43,  0],
+    [15, 2, BLUE,   1, 0, True, 14, True, True, 17,  0],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 59,  0],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 61,  0.51 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 61,  -0.51 * pi],
+    [15, 2, BLUE,   1, 0, True, 14, True, True, 47,  0.42 * pi],
+    [15, 2, BLUE,   1, 0, True, 14, True, True, 47,  -0.42 * pi],
+    [15, 2, BLUE,   1, 0, True, 14, True, True, 73,  0.07 * pi],
+    [15, 2, BLUE,   1, 0, True, 14, True, True, 73,  -0.07 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 88,  0.87 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 88,  -0.87 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 120, 0.86 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 120, -0.86 * pi],
+    [20, 3, BLUE,   1, 0, True, 17, True, True, 103, 0.81 * pi],
+    [20, 3, BLUE,   1, 0, True, 17, True, True, 103, -0.81 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 91,  0.74 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 91,  -0.74 * pi],
+    [24, 3, BLUE,   1, 0, True, 19, True, True, 69,  0.65 * pi],
+    [24, 3, BLUE,   1, 0, True, 19, True, True, 69,  -0.65 * pi],
+    [15, 2, BLUE,   1, 0, True, 14, True, True, 98,  0.63 * pi],
+    [15, 2, BLUE,   1, 0, True, 14, True, True, 98,  -0.63 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 117, 0.645 * pi],
+    [11, 1, BLUE,   1, 0, True, 11, True, True, 117, -0.645 * pi],
+    [13, 2, ORANGE, 1, 0, True, 13, True, True, 87,  0],
+    [7,  1, ORANGE, 1, 0, True, 7,  True, True, 99,  0.04 * pi],
+    [7,  1, ORANGE, 1, 0, True, 7,  True, True, 99,  -0.04 * pi],
+    [16, 3, ORANGE, 1, 0, True, 15, True, True, 107, pi],
+
+    [7, 1, ORANGE, 107, pi, False, 0, True, True, 0, 0, True, 0, 69],
+    [7, 1, ORANGE, 107, pi, False, 0, True, True, 0, 0, True, -0.667 * pi, 60],
+    [7, 1, ORANGE, 107, pi, False, 0, True, True, 0, 0, True, 0.667 * pi, 60],
+]
 
 
 body_54 = [
@@ -978,7 +1020,7 @@ TANK_BODIES = {
     (5, 0): scaled_body(body_50),
     (5, 1): scaled_body(body_51),
     (5, 2): scaled_body(body_00),
-    (5, 3): scaled_body(body_00),
+    (5, 3): scaled_body(body_53),
     (5, 4): scaled_body(body_54),
     (5, 5): scaled_body(body_55)
 }

@@ -52,9 +52,9 @@ class CooldownWindow(PopupWindow):
         self.label_1.move(0, dy)
         self.label_2.move(0, dy)
 
-        shooting_active = player.shooting and not player.invisible
+        shooting_active = player.shooting and not player.disassembled
         superpower_active = (player.superpower.on and
-                             not isinstance(player.superpower, (NoneSuperPower, Ghost, Shurikens)))
+                             not isinstance(player.superpower, (NoneSuperPower, Ghost, OrbitalSeekers)))
         if (shooting_active or superpower_active) and not transportation:
             self.activate()
 

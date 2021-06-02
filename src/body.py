@@ -13,7 +13,7 @@ class Body:
         self.is_frozen = False
         self.frost_time = 0
 
-    def get_angle_of_rotation(self, destination_angle, dt):
+    def get_angle_of_rotation(self, destination_angle):
         """Method is called when player's tank body should be
         rotated due to tank movement.
         Returns the maximum angle body can be rotated.
@@ -58,14 +58,14 @@ class Body:
             if self.frost_time >= 3000:
                 self.make_unfrozen()
 
-    def update(self, x, y, dt=0, target=(0, 0)):
-        angle_to_target = calculate_angle(x, y, *target)
+    def update(self, x, y, dt=0, target_x=0, target_y=0):
+        angle_to_target = calculate_angle(x, y, target_x, target_y)
         for circle in self.circles:
-            circle.update(x, y, dt, target, angle_to_target, self.angle)
+            circle.update(x, y, dt, target_x, target_y, angle_to_target, self.angle)
 
         if self.is_frozen:
             for circle in self.sticky_circles:
-                circle.update(x, y, dt, target, angle_to_target, self.angle)
+                circle.update(x, y, dt, target_x, target_y, angle_to_target, self.angle)
 
 
     def draw(self, surface, dx=0, dy=0):
@@ -78,18 +78,20 @@ class Body:
 
 
 class PlayerBody(Body):
-    def __init__(self, circles, is_rotating, player):
+    def __init__(self, circles, is_rotating, player, is_frozen=False):
         sticky_circles = FROZEN_BODY_ROTATING if is_rotating else FROZEN_BODY
         super().__init__(circles, sticky_circles)
         self.player = player
         self.is_rotating = is_rotating
+        if is_frozen:
+            self.make_frozen()
 
     def make_frozen(self):
         if not self.is_frozen:
-            self.player.max_vel *= 0.25
-            self.player.max_acc *= 0.25
-            self.player.max_angular_acc *= 0.25
-            self.player.max_angular_vel *= 0.25
+            self.player.max_vel /= 4
+            self.player.max_acc /= 4
+            self.player.max_angular_acc /= 4
+            self.player.max_angular_vel /= 4
         super().make_frozen()
 
     def make_unfrozen(self):
@@ -100,17 +102,19 @@ class PlayerBody(Body):
             self.player.max_angular_vel *= 4
         super().make_unfrozen()
 
-    def update(self, x, y, dt=0, target=(0, 0)):
-        angle_to_target = calculate_angle(x, y, *target)
+    def update_pos(self, dt):
+        x, y = self.player.x, self.player.y
+        target_x, target_y = self.player.get_mouse_pos()
+        angle_to_target = calculate_angle(x, y, target_x, target_y)
         if not self.is_rotating:
             self.angle = angle_to_target
 
         for circle in self.circles:
-            circle.update(x, y, dt, target, angle_to_target, self.angle)
+            circle.update(x, y, dt, target_x, target_y, angle_to_target, self.angle)
 
         if self.is_frozen:
             for circle in self.sticky_circles:
-                circle.update(x, y, dt, target, angle_to_target, self.angle)
+                circle.update(x, y, dt, target_x, target_y, angle_to_target, self.angle)
 
 
 

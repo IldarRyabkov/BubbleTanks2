@@ -14,23 +14,31 @@ class Bullet:
         self.x = x
         self.y = y
         self.radius = radius
-        self.vel = vel
+        self.VELOCITY = vel
         self.vel_x = vel * cos(angle)
         self.vel_y = -vel * sin(angle)
         self.damage = damage
         self.hit_effect = self.set_hit_effect(damage)
-        self.body = Body(body) if isinstance(body, list) else body
+        self.body = body if isinstance(body, pg.Surface) else Body(body)
         self.hit_the_target = False
 
     @property
     def is_outside(self):
         return not circle_collidepoint(SCR_W2, SCR_H2, ROOM_RADIUS, self.x, self.y)
 
+    @property
+    def killed(self):
+        return self.hit_the_target or self.is_outside
+
     @staticmethod
     def set_hit_effect(damage):
         if damage <= -5: return 'BigHitLines'
         if damage: return 'SmallHitLines'
         return 'VioletHitCircle'
+
+    def update_vel(self, angle):
+        self.vel_x = self.VELOCITY * cos(angle)
+        self.vel_y = -self.VELOCITY * sin(angle)
 
     def update_pos(self, dt):
         self.x += self.vel_x * dt
@@ -51,8 +59,8 @@ class Bullet:
 class RegularBullet(Bullet):
     """ A bullet with uniform rectilinear motion """
     def __init__(self, x, y, damage, vel, angle, body):
-        Bullet.__init__(self, x, y, 0.8 * body[0][0], damage, vel, angle, body)
-        self.body.update(self.x, self.y, 0)
+        super().__init__(x, y, 0.8 * body[0][0], damage, vel, angle, body)
+        self.body.update(x, y, 0)
 
     def update_color(self, dt):
         pass
@@ -60,7 +68,6 @@ class RegularBullet(Bullet):
     def update(self, dt):
         self.update_pos(dt)
         self.update_body(dt)
-        self.update_color(dt)
 
 
 class ExplodingBullet(RegularBullet):
@@ -72,7 +79,6 @@ class ExplodingBullet(RegularBullet):
     def __init__(self, x, y, angle):
         super().__init__(x, y, -20, HF(1.1), angle, BULLET_BODIES["BigBullet_1"])
 
-        # bullet switches colors periodically
         self.colors = {1: DARK_RED, -1: LIGHT_RED}
         self.color_switch = 1
         self.T = 80
@@ -82,7 +88,8 @@ class ExplodingBullet(RegularBullet):
         self.color_switch *= -1
         self.body.circles[0].color = self.colors[self.color_switch]
 
-    def update_color(self, dt):
+    def update(self, dt):
+        super().update(dt)
         self.color_time += dt
         if self.color_time >= 0.75 * self.T and self.color_switch == 1:
             self.change_color()
@@ -92,14 +99,14 @@ class ExplodingBullet(RegularBullet):
 
 
 class Mine(Bullet):
-    """A bullet which is not moving and has a specific body update"""
+    """Mine doesn't move and deals damage to a tank that moved too close. """
     def __init__(self, x, y, body):
-        Bullet.__init__(self, x, y, HF(18), -10, 0, 0, body)
+        super().__init__(x, y, HF(18), -10, 0, 0, body)
 
         angle = uniform(0, 2 * pi)
         for circle in self.body.circles:
             circle.angle += angle
-        self.body.update(self.x, self.y, 0)
+        self.body.update(x, y, 0)
 
         # bullet switches colors periodically
         self.colors = {1: self.body.circles[0].color, -1: LIGHT_RED}
@@ -123,7 +130,7 @@ class Mine(Bullet):
         self.update_color(dt)
 
 
-class Shuriken(Bullet):
+class OrbitalSeeker(Bullet):
     """
     Bullet has two states: 'orbiting', when it rotates around the player;
                            'not orbiting', when it moves as a regular bullet.
@@ -132,48 +139,48 @@ class Shuriken(Bullet):
 
     """
     def __init__(self, x, y):
-        Bullet.__init__(self, x, y, HF(12), -7, HF(1.6), 0, BULLET_BODIES["Shuriken"])
+        super().__init__(x, y, HF(12), -7, HF(1.6), 0, BULLET_BODIES["Shuriken"])
         self.dist = HF(128)
         self.is_orbiting = True
         self.angle = 0
         self.angular_vel = -0.002 * pi
         self.health = 1
-        self.search_area_rect = pg.Rect(self.x - H(250), self.y - H(250), H(500), H(500))
+        self.search_area_rect = pg.Rect(x - H(250), y - H(250), H(500), H(500))
         self.update_polar_coords(x, y)
         self.hit_effect = 'RedHitCircle'
+
+    @property
+    def killed(self):
+        return self.hit_the_target or (not self.is_orbiting and self.is_outside)
 
     def is_near_mob(self, mob):
         return self.search_area_rect.colliderect(mob.body_rect)
 
     def update_polar_coords(self, x, y, dt=0):
         self.angle += self.angular_vel * dt
-        while self.angle < 0:
-            self.angle += 2 * pi
-
+        self.angle %= 2 * pi
         self.x = x + self.dist * cos(self.angle)
-        self.y = y -  self.dist * sin(self.angle)
-        self.search_area_rect.center = (self.x, self.y)
+        self.y = y - self.dist * sin(self.angle)
+        self.search_area_rect.center = self.x, self.y
         self.body.update(self.x, self.y, 0)
 
     def set_vel(self, mob):
         """
-        Method is called when a target intersected with shiriken searching area.
+        Method is called when a target intersected with orbital seeker searching area.
         Sets x- and y- velocity components according to target position.
 
         """
 
-        if mob.is_paralysed or mob.is_frozen:
-            target = mob.pos
+        if mob.is_paralyzed or mob.body.is_frozen:
+            angle = calculate_angle(self.x, self.y, mob.x, mob.y)
         else:
-            dt = hypot(self.x - mob.pos[0], self.y - mob.pos[1]) / self.vel
-            target = mob.trajectory(mob.pos_0, mob.polar_angle + mob.angular_vel * dt)
-        angle = calculate_angle(self.x, self.y, *target)
-        self.vel_x = self.vel * cos(angle)
-        self.vel_y = -self.vel * sin(angle)
+            dt = hypot(self.x - mob.x, self.y - mob.y) / self.VELOCITY
+            angle = calculate_angle(self.x, self.y, *mob.shift(mob.angular_vel * dt))
+        self.update_vel(angle)
 
     def update_pos(self, dt):
         super().update_pos(dt)
-        self.search_area_rect.center = (self.x, self.y)
+        self.search_area_rect.center = self.x, self.y
         self.body.update(self.x, self.y, 0)
 
     def check_targets(self, mobs):
@@ -183,39 +190,44 @@ class Shuriken(Bullet):
                 self.set_vel(mob)
                 break
 
-    def update(self, dt, x, y, mobs):
+    def update(self, dt, player_x, player_y, mobs):
         if self.is_orbiting:
-            self.update_polar_coords(x, y, dt)
+            self.update_polar_coords(player_x, player_y, dt)
             self.check_targets(mobs)
         else:
             self.update_pos(dt)
 
 
-class HomingMissile(Bullet):
+class Seeker(Bullet):
     """ A bullet which moves with constant velocity and follows a moving target.
         Therefore, the x- and y-components of velocity are changing. """
     def __init__(self, x, y, start_angle, maneuvering_angle, radius, damage, vel, body):
-        Bullet.__init__(self, x, y, radius, damage, vel, 0, body)
+        super().__init__(x, y, radius, damage, vel, 0, body)
 
-        self.body.update(self.x, self.y, 0)
+        self.body.update(x, y, 0)
         self.update_vel(start_angle)
         self.rearrangement_angle = choice((-maneuvering_angle, maneuvering_angle))
         self.maneuvering_angle = maneuvering_angle
         self.health = 1
         self.hit_effect = 'RedHitCircle'
+        self.target = None
 
-    def collide_bullet(self, x, y, r):
-        return circle_collidepoint(self.x, self.y, self.radius + r, x, y)
+    @property
+    def killed(self) -> bool:
+        return self.hit_the_target or self.health <= 0
+
+    @property
+    def no_target(self):
+        return self.target is None or self.target.health <= 0
+
+    def collide_bullet(self, bul_x, bul_y, bul_r):
+        return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
 
     def handle_injure(self, damage):
         self.health += damage
 
-    def update_vel(self, angle):
-        self.vel_x = self.vel * cos(angle)
-        self.vel_y = -self.vel * sin(angle)
-
-    def update(self, dt, target_x=0, target_y=0):
-        angle = calculate_angle(self.x, self.y, target_x, target_y)
+    def update(self, dt):
+        angle = calculate_angle(self.x, self.y, self.target.x, self.target.y)
         vel_angle = calculate_angle(0, 0, self.vel_x, self.vel_y)
         if abs(vel_angle - angle) > pi/2:
             self.update_vel(vel_angle - self.rearrangement_angle)
@@ -224,14 +236,49 @@ class HomingMissile(Bullet):
         else:
             self.update_vel(vel_angle + self.maneuvering_angle)
         self.update_pos(dt)
-        self.body.update(self.x, self.y, dt, [self.x + self.vel_x, self.y + self.vel_y])
+        self.body.update(self.x, self.y, dt, self.x + self.vel_x, self.y + self.vel_y)
+
+
+class PlayerSeeker(Seeker):
+    def __init__(self, x, y, start_angle, body="HomingMissile_1", vel=HF(0.75)):
+        super().__init__(x, y, start_angle, 0.04, HF(10), -5, vel, BULLET_BODIES[body])
+
+
+class Drone(Bullet):
+    def __init__(self, x, y, angle, name, player):
+        super().__init__(x, y, 0, 0, HF(0.7), angle, BULLET_BODIES[name])
+        self.player = player
+        self.name = name
+        self.time = 0
+        self.mitosis_time = 300
+        self.is_divided = False
+        self.angle = angle
+
+    def divide(self):
+        self.is_divided = True
+        if self.name == "TinyDrone":
+            self.player.seekers.append(Seeker(self.x, self.y, self.angle, 0.06, 0,
+                                              -7, HF(1.1), BULLET_BODIES["TinyDrone"]))
+        else:
+            if self.name == "BigDrone": child_name = "MediumDrone"
+            elif self.name == "MediumDrone": child_name = "SmallDrone"
+            else: child_name = "TinyDrone"
+            for k in (-1, 1):
+                angle = self.angle + k * uniform(0.2*pi, 0.8*pi)
+                self.player.drones.append(Drone(self.x, self.y, angle, child_name, self.player))
+
+    def update(self, dt):
+        self.update_pos(dt)
+        self.body.update(self.x, self.y, dt, self.x + self.vel_x, self.y + self.vel_y)
+        self.time += dt
+        if self.time >= self.mitosis_time:
+            self.divide()
 
 
 class DrillingBullet(Bullet):
     """ A bullet that can pass through many enemies. """
     def __init__(self, x, y, damage, vel, angle, body):
-        Bullet.__init__(self, x, y, HF(12), damage, vel, angle, body)
-
+        super().__init__(x, y, HF(12), damage, vel, angle, body)
         self.body = pg.transform.rotate(body, angle * 180 / pi)
         self.x = x - self.body.get_width() / 2
         self.y = y - self.body.get_height() / 2
@@ -248,7 +295,7 @@ class DrillingBullet(Bullet):
         self.update_pos(dt)
 
     def draw(self, surface, dx, dy):
-        surface.blit(self.body, (int(self.x-dx), int(self.y-dy)))
+        surface.blit(self.body, (int(self.x - dx), int(self.y - dy)))
 
 
 class FrangibleBullet(Bullet):
@@ -261,7 +308,7 @@ class FrangibleBullet(Bullet):
     """
     def __init__(self, x, y, angle, body):
         Bullet.__init__(self, x, y, HF(20), -40, HF(0.8), angle, body)
-        self.body.update(self.x, self.y, 0)
+        self.body.update(x, y, 0)
         self.time = 0
         self.fragmentation_time = 1000
 
@@ -290,10 +337,12 @@ __all__ = [
     "RegularBullet",
     "ExplodingBullet",
     "Mine",
-    "Shuriken",
-    "HomingMissile",
+    "OrbitalSeeker",
+    "Seeker",
+    "PlayerSeeker",
     "DrillingBullet",
     "FrangibleBullet",
-    "AirBullet"
+    "AirBullet",
+    "Drone"
 
 ]

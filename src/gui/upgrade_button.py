@@ -5,6 +5,7 @@ from constants import *
 from languages.texts import TEXTS
 from gui.text_widget import TextWidget
 from gui.button import Button
+from gui.tank_body import TankBody
 from utils import H, HF
 from states import UpgradeButtonType as Bt
 
@@ -24,7 +25,7 @@ class UpgradeButton(Button):
         self.tank = tank
 
         self.w = HF(480) if button_type in (Bt.WIDE_LEFT, Bt.WIDE_RIGHT) else HF(352)
-        self.h = HF(736)
+        self.h = HF(770)
 
         if button_type == Bt.LEFT:
             self.X0, self.Y0 = -self.w, HF(160)
@@ -48,33 +49,29 @@ class UpgradeButton(Button):
 
         self.x, self.y = self.X0, self.Y0
         self.rect = pg.Rect(self.x, self.y, self.w, self.h)
-        self.vel_x = (self.X1 - self.X0) / menu.animation_time
-        self.vel_y = (self.Y1 - self.Y0) / menu.animation_time
+
+        self.tank_body = TankBody(self.x + self.w//2, self.y + H(211))
+        self.tank_body.set_body(tank)
 
         # Now we set button background surfaces.
         # First we load background images of button.
-        size = (round(self.w), round(self.h))
+        size = round(self.w), round(self.h)
         if button_type in (Bt.WIDE_LEFT, Bt.WIDE_RIGHT):
-            image = pg.image.load(UPGRADE_BUTTON_WIDE_BG).convert_alpha()
-            image_pressed = pg.image.load(UPGRADE_BUTTON_WIDE_PRESSED_BG).convert_alpha()
+            bg_images = UPGRADE_BUTTON_WIDE_BG, UPGRADE_BUTTON_WIDE_PRESSED_BG
         else:
-            image = pg.image.load(UPGRADE_BUTTON_BG).convert_alpha()
-            image_pressed = pg.image.load(UPGRADE_BUTTON_PRESSED_BG).convert_alpha()
-        self.bg = (
-            pg.transform.scale(image, size),
-            pg.transform.scale(image_pressed, size),
-        )
+            bg_images = UPGRADE_BUTTON_BG, UPGRADE_BUTTON_PRESSED_BG
+        self.bg = [pg.image.load(image).convert_alpha() for image in bg_images]
+        self.bg = [pg.transform.scale(image, size) for image in self.bg]
 
         # Then we create text widget to be blitted on background surfaces of button
         width = self.w - HF(30)
         text_widgets = (
-            TextWidget(self.w / 2, HF(6), FONT_1, H(48), UPG_LABEL_COLOR, 1, width),  # button caption
-            TextWidget(self.w / 2, HF(264), CALIBRI_BOLD, H(35), BLACK, 1, width),  # main weapon caption
-            TextWidget(self.w / 2, HF(384), CALIBRI_BOLD, H(35), BLACK, 1, width),  # second weapon caption
-            TextWidget(self.w / 2, HF(166), CALIBRI_BOLD, H(35), BLACK, 1, width),  # tank name
-            TextWidget(self.w / 2, HF(312), CALIBRI, H(31), BLACK, 1, width),  # main weapon name
-            TextWidget(self.w / 2, HF(432), CALIBRI, H(31), BLACK, 1, width),  # second weapon name
-            TextWidget(HF(15), HF(536), CALIBRI, H(31), BLACK, 0, width),  # tank description
+            TextWidget(self.w / 2, HF(347), CALIBRI_BOLD, H(35), BLACK, 1, width),  # main weapon caption
+            TextWidget(self.w / 2, HF(464), CALIBRI_BOLD, H(35), BLACK, 1, width),  # second weapon caption
+            TextWidget(self.w / 2, HF(15), CALIBRI_BOLD, H(35), BLACK, 1, width),  # tank name
+            TextWidget(self.w / 2, HF(390), CALIBRI, H(31), BLACK, 1, width),  # main weapon name
+            TextWidget(self.w / 2, HF(507), CALIBRI, H(31), BLACK, 1, width),  # second weapon name
+            TextWidget(HF(15), HF(584), CALIBRI, H(31), BLACK, 0, width),  # tank description
         )
         texts = (TEXTS["upgrade button labels"][menu.game.language] +
                  TEXTS["tank descriptions"][menu.game.language][tank][:4])
@@ -93,29 +90,23 @@ class UpgradeButton(Button):
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
         if animation_state == OPEN:
-            dx = self.vel_x * dt
-            dy = self.vel_y * dt
-            self.x = min(self.x + dx, self.X1) if self.vel_x > 0 else max(self.x + dx, self.X1)
-            self.y = min(self.y + dy, self.Y1) if self.vel_y > 0 else max(self.y + dy, self.Y1)
-            self.rect.topleft = self.x, self.y
-
+            self.x = self.X0 + (self.X1 - self.X0) * time_elapsed
+            self.y = self.Y0 + (self.Y1 - self.Y0) * time_elapsed
         elif animation_state == CLOSE:
-            dx = -self.vel_x * dt
-            dy = -self.vel_y * dt
-            self.x = max(self.x + dx, self.X0) if self.vel_x > 0 else min(self.x + dx, self.X0)
-            self.y = max(self.y + dy, self.Y0) if self.vel_y > 0 else min(self.y + dy, self.Y0)
-            self.rect.topleft = self.x, self.y
-
+            self.x = self.X1 + (self.X0 - self.X1) * time_elapsed
+            self.y = self.Y1 + (self.Y0 - self.Y1) * time_elapsed
         elif animation_state == WAIT:
+            self.x = self.X1
+            self.y = self.Y1
             self.is_chosen = self.cursor_on_button
+
+        self.rect.topleft = self.x, self.y
+        self.tank_body.set_pos(self.x + self.w//2, self.y + H(211))
+        self.tank_body.update(dt, animation_state, time_elapsed)
 
     def draw(self, screen):
         screen.blit(self.bg[self.is_chosen], (round(self.x), round(self.y)))
+        self.tank_body.draw(screen)
 
 
-__all__ = [
-
-    "Bt",
-    "UpgradeButton"
-
-]
+__all__ = ["UpgradeButton"]

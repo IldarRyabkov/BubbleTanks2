@@ -28,14 +28,12 @@ ROOT_DIR = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
 BG = img_path("bg.png")
 ROOM_BG = img_path("room_bg.png")
 MAIN_MENU_CAPTION_BG = img_path("main_menu_caption.png")
-UPGRADE_CAPTION_RUS_BG = img_path("upgrade_caption_rus.png")
-UPGRADE_CAPTION_ENG_BG = img_path("upgrade_caption_eng.png")
+UPGRADE_CAPTION = img_path("upgrade_menu_caption.png")
 UPGRADE_BUTTON_PRESSED_BG = img_path("upgrade_button_pressed.png")
 UPGRADE_BUTTON_WIDE_PRESSED_BG = img_path("upgrade_button_wide_pressed.png")
 UPGRADE_BUTTON_BG = img_path("upgrade_button.png")
 UPGRADE_BUTTON_WIDE_BG = img_path("upgrade_button_wide.png")
 SIDE_BUTTON_BG = img_path("side_button.png")
-SIDE_BUTTON_PRESSED_BG = img_path("side_button_pressed.png")
 ROOM_GLARE_BG = img_path("room_glare.png")
 ROOM_AIM = img_path("room_aim.png")
 BOSS_AIM = img_path("boss_aim.png")
@@ -50,8 +48,8 @@ PLAY_BUTTON_BG = img_path("play_button.png")
 SETTINGS_BUTTON_BG = img_path("settings_button.png")
 CREDITS_BUTTON_BG = img_path("info_button.png")
 SCROLL_BUTTON_BG = img_path("scroll_button.png")
-EXIT_BUTTON = img_path("exit_button.png")
-EXIT_BUTTON_PRESSED = img_path("exit_button_pressed.png")
+EXIT_BUTTON_BG = img_path("exit_button.png")
+EXIT_BUTTON_PRESSED_BG = img_path("exit_button_pressed.png")
 CREDITS_BG_1 = img_path("credits_bg_1.png")
 CREDITS_BG_2 = img_path("credits_bg_2.png")
 CREDITS_BG_3 = img_path("credits_bg_3.png")
@@ -88,14 +86,12 @@ __all__ = [
     "BG",
     "ROOM_BG",
     "MAIN_MENU_CAPTION_BG",
-    "UPGRADE_CAPTION_RUS_BG",
-    "UPGRADE_CAPTION_ENG_BG",
+    "UPGRADE_CAPTION",
     "UPGRADE_BUTTON_PRESSED_BG",
     "UPGRADE_BUTTON_WIDE_PRESSED_BG",
     "UPGRADE_BUTTON_BG",
     "UPGRADE_BUTTON_WIDE_BG",
     "SIDE_BUTTON_BG",
-    "SIDE_BUTTON_PRESSED_BG",
     "ROOM_GLARE_BG",
     "ROOM_AIM",
     "BOSS_AIM",
@@ -109,6 +105,12 @@ __all__ = [
     "CREDITS_BG_1",
     "CREDITS_BG_2",
     "CREDITS_BG_3",
+    "SETTINGS_BUTTON_BG",
+    "CREDITS_BUTTON_BG",
+    "PLAY_BUTTON_BG",
+    "SCROLL_BUTTON_BG",
+    "EXIT_BUTTON_BG",
+    "EXIT_BUTTON_PRESSED_BG",
     "FONT_1",
     "FONT_2",
     "FONT_3",
@@ -124,12 +126,6 @@ __all__ = [
     "THUNDER",
     "UI_CHOOSE",
     "UI_CLICK",
-    "WATER_SPLASH",
-    "SETTINGS_BUTTON_BG",
-    "CREDITS_BUTTON_BG",
-    "PLAY_BUTTON_BG",
-    "SCROLL_BUTTON_BG",
-    "EXIT_BUTTON",
-    "EXIT_BUTTON_PRESSED"
+    "WATER_SPLASH"
 
 ]

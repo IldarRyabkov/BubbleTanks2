@@ -76,7 +76,7 @@ class Seekers(SuperPower):
 
 class NoneSuperPower(SuperPower):
     def __init__(self):
-        SuperPower.__init__(self, cooldown_time=0)
+        super().__init__(cooldown_time=0)
 
     def update(self, *args, **kwargs):
         pass
@@ -85,7 +85,7 @@ class NoneSuperPower(SuperPower):
 
 class Shield(SuperPower):
     def __init__(self):
-        SuperPower.__init__(self, cooldown_time=1000)
+        super().__init__(cooldown_time=1000)
         self.r = HF(160)
 
     @property
@@ -99,7 +99,7 @@ class Shield(SuperPower):
 
 class Mines(SuperPower):
     def __init__(self):
-        SuperPower.__init__(self, cooldown_time=1000)
+        super().__init__(cooldown_time=1000)
         self.dist = -HF(91)
         self.mine_body = BULLET_BODIES["BombBullet_1"]
 
@@ -206,9 +206,10 @@ class Ghost(SuperPower):
 
     def update_body(self):
         body = self.player.body
+        body_angle = body.angle
         for i, (k, angle) in enumerate(self.offsets):
-            body.circles[i + 1].dx = k * self.dist * cos(body.angle + angle)
-            body.circles[i + 1].dy = -k * self.dist * sin(body.angle + angle)
+            body.circles[i + 1].dx = k * self.dist * cos(body_angle + angle)
+            body.circles[i + 1].dy = -k * self.dist * sin(body_angle + angle)
 
     def update(self, dt):
         if self.on:

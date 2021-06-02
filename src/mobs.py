@@ -175,23 +175,27 @@ class BomberShooter(Mob):
 class Mother(Mob):
     def __init__(self, game, screen_rect):
         super().__init__(game, screen_rect, *MOTHER_PARAMS.values())
-        self.generation_time = 5000
+        self.generation_time = 6000
         self.generation_cooldown = 7000
         self.child_params = choice([GULL_PARAMS, BUG_PARAMS, SCARAB_PARAMS])
 
-    def generate_mob(self, dt):
-        self.generation_time += dt
-        if self.generation_time >= self.generation_cooldown:
-            self.generation_time -= self.generation_cooldown
-            mob = Mob(*self.child_params.values())
-            mob.xo = self.xo
-            mob.yo = self.yo
-            mob.x = self.x
-            mob.y = self.y
-            mob.polar_angle = self.polar_angle
-            mob.body.update(mob.x, mob.y, 0)
-            return [mob]
-        return []
+    def update(self, dt):
+        super().update(dt)
+        if not self.is_paralyzed:
+            self.generation_time += dt
+            if self.generation_time >= self.generation_cooldown:
+                self.generation_time = 0
+                self.generate_mob()
+
+    def generate_mob(self):
+        mob = Mob(self.game, self.screen_rect, *self.child_params.values())
+        mob.xo = self.xo
+        mob.yo = self.yo
+        mob.x = self.x
+        mob.y = self.y
+        mob.polar_angle = self.polar_angle
+        mob.body.update(mob.x, mob.y, 0)
+        self.game.room.mobs.append(mob)
 
 #_________________________________________________________________________________________________
 

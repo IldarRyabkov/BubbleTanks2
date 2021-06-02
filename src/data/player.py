@@ -3,7 +3,7 @@ from constants import *
 from utils import *
 
 
-FROZEN_BODY = [
+frozen_body = [
 
     [24, 1, VIOLET, 0, 0, False, 0,  True, True, 36,  0.8 * pi],
     [11, 1, VIOLET, 0, 0, False, 0,  True, True, 33,  0.55 * pi],
@@ -14,8 +14,10 @@ FROZEN_BODY = [
 
 ]
 
+FROZEN_BODY = scaled_body(frozen_body)
 
-FROZEN_BODY_ROTATING = [
+
+frozen_body_rotaing = [
 
     [24, 1, VIOLET, 36,  0.8 * pi,    False, 0,  True, False, 0,  0],
     [11, 1, VIOLET, 32,  0.55 * pi,   False, 0,  True, False, 0,  0],
@@ -25,6 +27,8 @@ FROZEN_BODY_ROTATING = [
     [14, 1, VIOLET, 41,  0.25 * pi,   False, 0,  True, False, 0,  0]
 
 ]
+
+FROZEN_BODY_ROTATING = scaled_body(frozen_body_rotaing)
 
 
 BODY_00 = [

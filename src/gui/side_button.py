@@ -1,6 +1,6 @@
 import pygame as pg
 
-from constants import WHITE
+from constants import *
 from data.paths import *
 from gui.button import Button
 from utils import H
@@ -26,11 +26,8 @@ class SideButton(Button):
         self.text_surface = None
         self.text_pos = None
 
-        size = (self.w, self.h)
-        self.bg = {
-            False: pg.transform.scale(pg.image.load(SIDE_BUTTON_BG).convert_alpha(), size),
-            True: pg.transform.scale(pg.image.load(SIDE_BUTTON_PRESSED_BG).convert_alpha(), size)
-        }
+        self.bg_surface = pg.image.load(SIDE_BUTTON_BG).convert_alpha()
+        self.bg_surface = pg.transform.scale(self.bg_surface, (self.w, self.h))
 
     def set_language(self, language):
         pg.font.init()
@@ -40,8 +37,21 @@ class SideButton(Button):
         self.text_pos = (self.x + (self.w - self.text_surface.get_width()) // 2,
                          self.y + (self.h - self.text_surface.get_height()) // 2)
 
+    def set_alpha(self, alpha):
+        self.text_surface.set_alpha(alpha)
+        self.bg_surface.set_alpha(alpha)
+
+    def update(self, dt, animation_state=WAIT, time_elapsed=0):
+        if animation_state == WAIT:
+            self.set_alpha(255)
+        if animation_state == OPEN and self.menu.is_opening:
+            self.set_alpha(round(255 * time_elapsed))
+        elif animation_state == CLOSE and self.menu.is_closing:
+            self.set_alpha(round(255 - 255 * time_elapsed))
+
     def draw(self, screen):
-        screen.blit(self.bg[self.selected], (self.x, self.y))
+        if self.selected:
+            screen.blit(self.bg_surface, (self.x, self.y))
         screen.blit(self.text_surface, self.text_pos)
 
 

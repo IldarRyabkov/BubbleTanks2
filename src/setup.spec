@@ -9,10 +9,11 @@ block_cipher = None
 
 
 added_files = [
-	('data\\images', 'images'),
-	('data\\music', 'music'),
-	('data\\sounds', 'sounds'), 
-	('data\\fonts', 'fonts')
+	(os.path.join('data', 'images'), 'images'),
+	(os.path.join('data', 'music'),  'music'),
+	(os.path.join('data', 'sounds'), 'sounds'), 
+	(os.path.join('data', 'fonts'),  'fonts'),
+	(os.path.join('languages'),      'languages')
 ]
 
 
@@ -44,4 +45,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False)
+          console=True)

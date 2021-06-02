@@ -299,8 +299,8 @@ class BackgroundEnvironment:
     def draw_new_hint(self, surface, dx, dy):
         self.new_hint_widget.draw(surface, dx, dy)
 
-    def draw_player_halo(self, screen, offset, offset_new=None):
-        self.player_halo.draw(screen, offset, offset_new)
+    def draw_player_halo(self, screen, offset_old, offset_new=None):
+        self.player_halo.draw(screen, offset_old, offset_new)
 
     def draw_room_glares(self, surface, dx, dy):
         for glare in self.room_glares:

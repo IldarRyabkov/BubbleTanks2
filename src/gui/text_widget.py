@@ -77,7 +77,7 @@ class TextWidget:
 
     def update(self, dt, animation_state, time_elapsed):
         if animation_state == WAIT:
-            return
+            self.set_alpha(255)
         if animation_state == OPEN:
             self.set_alpha(round(255 * time_elapsed))
         elif animation_state == CLOSE:

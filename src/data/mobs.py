@@ -3,7 +3,7 @@ from constants import *
 from utils import *
 
 
-FROZEN_BODY = [
+frozen_body = [
 
     [19,  1, VIOLET, 19,  -0.15 * pi,  False, 1,  True, False, 1,  0],
     [15,  1, VIOLET, 31,  -0.35 * pi,  False, 1,  True, False, 1,  0],
@@ -17,6 +17,8 @@ FROZEN_BODY = [
     [17,  1, VIOLET, 31,  0.65 * pi,   False, 1,  True, False, 1,  0]
 
 ]
+
+FROZEN_BODY = scaled_body(frozen_body)
 
 
 BOSS_HEAD_BODY = [
@@ -727,7 +729,7 @@ MOTHER_PARAMS = {
     "body": scaled_body(MOTHER_BODY),
     "gun_type": 'GunPeaceful',
     "angular_vel": 0.00015,
-    "body_size": HF(370),
+    "body_size": HF(410),
     "trajectory": rose_curve_1
 }
 

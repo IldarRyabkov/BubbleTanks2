@@ -14,7 +14,8 @@ class Room:
 
         - mobs;
         - bullets of mobs;
-        - homing bullets of mobs;
+        - mines of mobs;
+        - seekers of mobs;
         - bubbles;
         - special effects.
 

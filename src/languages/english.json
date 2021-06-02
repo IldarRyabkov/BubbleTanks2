@@ -1,1 +1,293 @@
-{"tank descriptions": {"0 0": ["Basic tank", "Basic cannon", "None", "This is your starting tank.", "Fires single bubble rounds.", "-"], "1 0": ["Fighter #1", "Machine Gun", "None", "A small, fast and agile tank with fast fire rate.", "Fires single bubble rounds in rapid succession.", "-"], "1 1": ["Balanced #1", "2 Shots Parallel", "None", "A balance between speed and strength.", "Fires 2 rounds in side by side fashion.", "-"], "1 2": ["Heavy  #1", "Heavy cannon", "None", "Slightly slower and less agile, but packs a bigger punch.", "Fires a single, heavy bubble round that does substantial damage.", "-"], "2 0": ["Fighter #2", "3 Bullet Spread", "Shield", "An even better version of the fighter, speed and agility are its trademarks.", "Fires 3 bullets spread out.", "The shield can be summoned in rapid bursts to protect you from all incoming damage."], "2 1": ["Balanced Fighter #1", "3 Shots Parallel", "Shield", "A balanced tank slightly in favor of speed and agility.", "Fires 3 bullets in side by side fashion.", "The shield can be summoned in rapid bursts to protect you from all incoming damage."], "2 2": ["Balanced Heavy #1", "3 parallel shots", "Mines", "A balanced tank slightly in favor of heavy weaponry, but lighter than the Heavy Tank.", "Fires 3 bullets in side by side fashion.", "Mines can be laid and will dish out heavy damage when an enemy wanders over them."], "2 3": ["Heavy #2", "5 Shot Parallel", "Mines", "A large and slow tank, but heavily armed.", "Fires 5 bullets in side by side fashion.", "Mines can be laid and will dish out heavy damage when an enemy wanders over them."], "3 0": ["Sniper #1", "Pierce Shot", "Teleport", "A nimble hunter that fires single, powerful rounds.", "The pierce shot has a long recharge rate, but deals a lot of damage and can pass through multiple enemies.", "Pressing the secondary fire button will instantly transport you to wherever your mouse cursor is located."], "3 1": ["Fighter #3", "Upgraded Machine Gun", "Seekers", "3rd generation fighter. Focus is on speed and agility.", "The upgraded machine gun has a very fast fire with increased damage over the standard machine gun.", "Launch 2 bubble missiles that will seek out and follow your enemies."], "3 2": ["Bal. Fighter #2", "5 Bullets Spread", "Short Stun Burst", "A balanced tank slightly in favor of speed and agility.", "Shoots 5 bullets scattered.", "A pulse is issued out from the tank that stuns surrounding enemies for a short period of time."], "3 3": ["Bal. Heavy #2", "5 Bullets Spread", "Area Burst", "A balanced tank slightly in favor of heavy weaponry, but lighter than the Heavy Tank.", "Shoots 5 bullets scattered.", "A burst is emitted from the tank that damages all nearby enemies."], "3 4": ["Heavy #3", "2 Large Cannons", "Sticky Cannon", "Large and slow tank, that boasts heavy weaponry and brute force.", "Fires 2 large bullets simultaneously", "Secondary fire button launches sticky bullets that render the target immobile."], "3 5": ["BFT #1", "1 B. Shot, 2 Sm. auto", "Seekers", "Very large and slow tank that seeks enemies to destroy.", "You have control of a large cannon while 2 smaller cannons will seek out enemy targets and fire automatically.", "Pressing the secondary fire button will launch 4 seeking bubble missiles at the nearest enemy."], "4 0": ["Sniper #2", "Strong Pierce", "Upgraded Teleport", "A nimble hunter that fires single, powerful rounds.", "The pierce shot has a long recharge rate, but deals a lot of damage and can pass through multiple enemies.", "Pressing the secondary fire button will instantly transport you to wherever your mouse cursor is located."], "4 1": ["Fighter #4", "2 shot MG", "Star Burst Cannon", "A small and agile tank that can dish out rapid fire.", "2 small bullets are fired side by side in rapid succession.", "The Star Burst Cannon fires a bullet that explodes after a short timer, emitting 360 degrees of pierce shots."], "4 2": ["Bal. Fighter #3", "2 Sm., 1 B. Gun", "Seekers", "A medium sized tank that's fast yet powerful.", "Fire 2 small guns and 1 large cannon simultaneously", "Launch 3 bubble missiles that will seek out and follow your enemies."], "4 3": ["Bal. Heavy #3", "2 Large Shell MG", "Area Burst Cannon", "A balanced tank slightly in favor of heavy weaponry, but lighter than the Heavy Tank.", "Fires two large cannons in side by side fashion at a a rapid speed.", "A large shell is fired that explodes upon contact with the enemy, damaging others nearby."], "4 4": ["Heavy #4", "2 B. Shot, 2 Sm. Auto", "Sticky Burst", "Large and slow tank, that boasts heavy weaponry and brute force.", "You have control of 2 large cannons while 2 smaller cannons will seek out enemy targets and fire automatically.", "Many sticky bullets are launched from the tank in all directions making enemies immobile."], "4 5": ["BFT #2", "2 B. Shot, 3 Sm. Auto", "Large Stun Burst", "Very large and slow tank that stuns and kills.", "You have control 2 large cannons while 3 smaller cannons will seek out enemy targets and fire automatically.", "A pulse is issued out from the tank that stuns surrounding enemies for a short period of time."], "5 0": ["Ghost sniper", "Explosive Pierce Shot", "Disassemble", "Very fast and agile tank, that can come apart and reform at will.", "Long recharge rate, but deals a lot of damage, explodes on impact and can pass through multiple enemies.", "Hold secondary fire to cause the tank to break apart, making it invincible, but incapable of firing. Release to reassemble."], "5 1": ["Super Fighter", "3 Shot MG", "Orbital Seekers", "A small and agile tank that can dish out rapid fire and seekers.", "Fires 3 shots side by side in rapid succession.", "Drones will automatically spawn and surround you. They will leave you and damage enemies that get to close."], "5 2": ["Leecher Tank", "Leeching Bullets", "Doomsday Infect", "This tank sucks life from enemies and can infect them with virus bubbles.", "Whenever these bullets hit, they send the life taken from the enemy back to you.", "Pressing the secondary fire button will launch a virus drone. It will attack, infect, then explode the enemy to death."], "5 3": ["Drone tank", "Mitosis Seekers", "Drone conversion", "This tank is a master of seeker drones.", "Mitosis seekers split to form many more seeker drones.", "A pulse is emitted from your tank that converts all enemy drones into seekers that turn on your enemies."], "5 4": ["Super Heavy", "2 B. S, 6 Sm. A, 1 BB", "Massive Cannon", "A massive behemoth of a bubble-tank.", "6 small cannons fire automatically while you control the 2 large cannons and 'bullet booster'.", "Pressing the secondary fire button will fire the biggest bubble cannon in the game!"], "5 5": ["BFT Carrier", "1 B. S, 4 Sm. A, 1 BB", "Ally Swarm", "Giant tank that sends out swarms of fighters.", "4 small cannons fire automatically while you control the one large cannon and 'bullet booster'.", "Launch ally fighter tanks which will swarm around your mouse pointer and destroy nearby enemies."]}, "room hints": ["~~~~~~~~~~~~~~~W~~~~~~ ~~~~~Use A S D~~ to move. Use your mouse to aim, hold to shoot. Try moving outside of this bubble...", "You have jumped to a new bubblefield! Destroy enemy bubble tanks to steal their bubbles and GROW!", "Receiving damage from enemy weapons will weaken your tanks. If you are hit and you have no bubbles collected, you'll be ejected to the safest adjacent bubblefield.", "Sometimes the best course is to simply run! ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ press 'p' to pause. This also brings up the menu.", "The farther out away from your starting bubblefield, the harder the enemies get! So be careful, and... Good Luck!", "Your new state has a secondary ability! To activate this ability, press 'SPACE'. You can learn more about your abilities for each state from the pause screen."], "pause menu caption": "Game paused", "pause menu window captions": ["Stats", "Map", "Options", "Exit to main menu?", "Exit to desktop?"], "stats side button caption": "Statistics", "map side button caption": "Map", "options side button caption": "Options", "stats window labels": ["Primary weapon", "Secondary weapon", "Enemies Killed:", "Bubbles Collected:"], "play button label": "play", "settings button label": "settings", "credits button label": "credits", "upgrade menu caption": "Please choose your upgrade path...", "cooldown window labels": ["P:", "S:"], "health window labels": ["bubbles left", "Maximum tank"], "upgrade button labels": ["Upgrade!", "- Primary weapon -", "- Secondary weapon -"], "yes button text": "Yes", "no button text": "No", "victory menu labels": ["CONGRATULATIONS!", "You passed the game!"], "main menu captions": ["Bubble Tanks II", "Settings", "Credits", "Language", "Resolution", "Exit to desktop"], "language": "English", "resolution warning": "Restart the game to apply the new resolution", "exit to menu text": "Exit to main menu", "exit to desktop text": "Exit to desktop", "back button text": "Back", "master volume text": "Master volume", "sound volume text": "Sound volume", "music volume text": "Music volume", "resolution label": "Resolution", "language label": "Language", "credits widgets": ["Created by:", "Music by:", "Remastered by:", "Hero Interactive, LLC", "http://www.herointeractive.com", "Jared Riley - and - Eric Ottati", "Special Thanks to", "~~~Stephanie~Riley~~~ ~~~Adam~Schroeder~~~~", "~~~~~Jim~Lester~~~~~", "Calvin 'Calkutta' Winbush II", "Calkutta Productions", "calkutta1@gmail.com", "Ildar Ryabkov", "ildar.239@mail.ru"]}
+{
+	"tank descriptions": {
+		"0 0": [
+			"Basic tank",
+			"Basic cannon",
+			"None",
+			"This is your starting tank.",
+			"Fires single bubble rounds.",
+			"-"
+		],
+		"1 0": [
+			"Fighter #1",
+			"Machine Gun",
+			"None",
+			"A small, fast and agile tank with fast fire rate.",
+			"Fires single bubble rounds in rapid succession.",
+			"-"
+		],
+		"1 1": [
+			"Balanced #1",
+			"2 Shots Parallel",
+			"None",
+			"A balance between speed and strength.",
+			"Fires 2 rounds in side by side fashion.",
+			"-"
+		],
+		"1 2": [
+			"Heavy  #1",
+			"Heavy cannon",
+			"None",
+			"Slightly slower and less agile, but packs a bigger punch.",
+			"Fires a single, heavy bubble round that does substantial damage.",
+			"-"
+		],
+		"2 0": [
+			"Fighter #2",
+			"3 Bullet Spread",
+			"Shield",
+			"An even better version of the fighter, speed and agility are its trademarks.",
+			"Fires 3 bullets spread out.",
+			"The shield can be summoned in rapid bursts to protect you from all incoming damage."
+		],
+		"2 1": [
+			"Balanced Fighter #1",
+			"3 Shots Parallel",
+			"Shield",
+			"A balanced tank slightly in favor of speed and agility.",
+			"Fires 3 bullets in side by side fashion.",
+			"The shield can be summoned in rapid bursts to protect you from all incoming damage."
+		],
+		"2 2": [
+			"Balanced Heavy #1",
+			"3 parallel shots",
+			"Mines",
+			"A balanced tank slightly in favor of heavy weaponry, but lighter than the Heavy Tank.",
+			"Fires 3 bullets in side by side fashion.",
+			"Mines can be laid and will dish out heavy damage when an enemy wanders over them."
+		],
+		"2 3": [
+			"Heavy #2",
+			"5 Shot Parallel",
+			"Mines",
+			"A large and slow tank, but heavily armed.",
+			"Fires 5 bullets in side by side fashion.",
+			"Mines can be laid and will dish out heavy damage when an enemy wanders over them."
+		],
+		"3 0": [
+			"Sniper #1",
+			"Pierce Shot",
+			"Teleport",
+			"A nimble hunter that fires single, powerful rounds.",
+			"The pierce shot has a long recharge rate, but deals a lot of damage and can pass through multiple enemies.",
+			"Pressing the secondary fire button will instantly transport you to wherever your mouse cursor is located."
+		],
+		"3 1": [
+			"Fighter #3",
+			"Upgraded Machine Gun",
+			"Seekers",
+			"3rd generation fighter. Focus is on speed and agility.",
+			"The upgraded machine gun has a very fast fire with increased damage over the standard machine gun.",
+			"Launch 2 bubble missiles that will seek out and follow your enemies."
+		],
+		"3 2": [
+			"Balanced Fighter #2",
+			"5 Bullets Spread",
+			"Short Stun Burst",
+			"A balanced tank slightly in favor of speed and agility.",
+			"Shoots 5 bullets scattered.",
+			"A pulse is issued out from the tank that stuns surrounding enemies for a short period of time."
+		],
+		"3 3": [
+			"Balanced Heavy #2",
+			"5 Bullets Spread",
+			"Area Burst",
+			"A balanced tank slightly in favor of heavy weaponry, but lighter than the Heavy Tank.",
+			"Shoots 5 bullets scattered.",
+			"A burst is emitted from the tank that damages all nearby enemies."
+		],
+		"3 4": [
+			"Heavy #3",
+			"2 Large Cannons",
+			"Sticky Cannon",
+			"Large and slow tank, that boasts heavy weaponry and brute force.",
+			"Fires 2 large bullets simultaneously",
+			"Secondary fire button launches sticky bullets that render the target immobile."
+		],
+		"3 5": [
+			"BFT #1",
+			"1 B. Shot, 2 Sm. auto",
+			"Seekers",
+			"Very large and slow tank that seeks enemies to destroy.",
+			"You have control of a large cannon while 2 smaller cannons will seek out enemy targets and fire automatically.",
+			"Pressing the secondary fire button will launch 4 seeking bubble missiles at the nearest enemy."
+		],
+		"4 0": [
+			"Sniper #2",
+			"Strong Pierce",
+			"Upgraded Teleport",
+			"A nimble hunter that fires single, powerful rounds.",
+			"The pierce shot has a long recharge rate, but deals a lot of damage and can pass through multiple enemies.",
+			"Pressing the secondary fire button will instantly transport you to wherever your mouse cursor is located."
+		],
+		"4 1": [
+			"Fighter #4",
+			"2 shot MG",
+			"Star Burst Cannon",
+			"A small and agile tank that can dish out rapid fire.",
+			"2 small bullets are fired side by side in rapid succession.",
+			"The Star Burst Cannon fires a bullet that explodes after a short timer, emitting 360 degrees of pierce shots."
+		],
+		"4 2": [
+			"Balanced Fighter #3",
+			"2 Sm., 1 B. Gun",
+			"Seekers",
+			"A medium sized tank that's fast yet powerful.",
+			"Fire 2 small guns and 1 large cannon simultaneously",
+			"Launch 3 bubble missiles that will seek out and follow your enemies."
+		],
+		"4 3": [
+			"Balanced Heavy #3",
+			"2 Large Shell MG",
+			"Area Burst Cannon",
+			"A balanced tank slightly in favor of heavy weaponry, but lighter than the Heavy Tank.",
+			"Fires two large cannons in side by side fashion at a a rapid speed.",
+			"A large shell is fired that explodes upon contact with the enemy, damaging others nearby."
+		],
+		"4 4": [
+			"Heavy #4",
+			"2 B. Shot, 2 Sm. Auto",
+			"Sticky Burst",
+			"Large and slow tank, that boasts heavy weaponry and brute force.",
+			"You have control of 2 large cannons while 2 smaller cannons will seek out enemy targets and fire automatically.",
+			"Many sticky bullets are launched from the tank in all directions making enemies immobile."
+		],
+		"4 5": [
+			"BFT #2",
+			"2 B. Shot, 3 Sm. Auto",
+			"Large Stun Burst",
+			"Very large and slow tank that stuns and kills.",
+			"You have control 2 large cannons while 3 smaller cannons will seek out enemy targets and fire automatically.",
+			"A pulse is issued out from the tank that stuns surrounding enemies for a short period of time."
+		],
+		"5 0": [
+			"Ghost sniper",
+			"Explosive Pierce Shot",
+			"Disassemble",
+			"Very fast and agile tank, that can come apart and reform at will.",
+			"Long recharge rate, but deals a lot of damage, explodes on impact and can pass through multiple enemies.",
+			"Hold secondary fire to cause the tank to break apart, making it invincible, but incapable of firing. Release to reassemble."
+		],
+		"5 1": [
+			"Super Fighter",
+			"3 Shot MG",
+			"Orbital Seekers",
+			"A small and agile tank that can dish out rapid fire and seekers.",
+			"Fires 3 shots side by side in rapid succession.",
+			"Drones will automatically spawn and surround you. They will leave you and damage enemies that get to close."
+		],
+		"5 2": [
+			"Leecher Tank",
+			"Leeching Bullets",
+			"Doomsday Infect",
+			"This tank sucks life from enemies and can infect them with virus bubbles.",
+			"Whenever these bullets hit, they send the life taken from the enemy back to you.",
+			"Pressing the secondary fire button will launch a virus drone. It will attack, infect, then explode the enemy to death."
+		],
+		"5 3": [
+			"Drone Tank",
+			"Mitosis Seekers",
+			"Drone conversion",
+			"This tank is a master of seeker drones.",
+			"Mitosis seekers split to form many more seeker drones.",
+			"A pulse is emitted from your tank that converts all enemy drones into seekers that turn on your enemies."
+		],
+		"5 4": [
+			"Super Heavy",
+			"2 B. S, 6 Sm. A, 1 BB",
+			"Massive Cannon",
+			"A massive behemoth of a bubble-tank.",
+			"6 small cannons fire automatically while you control the 2 large cannons and 'bullet booster'.",
+			"Pressing the secondary fire button will fire the biggest bubble cannon in the game!"
+		],
+		"5 5": [
+			"BFT Carrier",
+			"1 B. S, 4 Sm. A, 1 BB",
+			"Ally Swarm",
+			"Giant tank that sends out swarms of fighters.",
+			"4 small cannons fire automatically while you control the one large cannon and 'bullet booster'.",
+			"Launch ally fighter tanks which will swarm around your mouse pointer and destroy nearby enemies."
+		]
+	},
+	"room hints": [
+		"~~~~~~~~~~~~~~~W~~~~~~ ~~~~~Use A S D~~ to move. Use your mouse to aim, hold to shoot. Try moving outside of this bubble...",
+		"You have jumped to a new bubblefield! Destroy enemy bubble tanks to steal their bubbles and GROW!",
+		"Receiving damage from enemy weapons will weaken your tanks. If you are hit and you have no bubbles collected, you'll be ejected to the safest adjacent bubblefield.",
+		"Sometimes the best course is to simply run! ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ press 'p' to pause. This also brings up the menu.",
+		"The farther out away from your starting bubblefield, the harder the enemies get! So be careful, and... Good Luck!",
+		"Your new state has a secondary ability! To activate this ability, press 'SPACE'. You can learn more about your abilities for each state from the pause screen."
+	],
+	"pause menu caption": "Game paused",
+	"pause menu window captions": [
+		"Stats",
+		"Map",
+		"Options",
+		"Exit to main menu?",
+		"Exit to desktop?"
+	],
+	"stats side button caption": "Statistics",
+	"map side button caption": "Map",
+	"options side button caption": "Options",
+	"stats window labels": [
+		"Primary weapon",
+		"Secondary weapon",
+		"Enemies Killed:",
+		"Bubbles Collected:"
+	],
+	"play button label": "play",
+	"settings button label": "settings",
+	"credits button label": "credits",
+	"upgrade menu caption": "Choose your upgrade path...",
+	"cooldown window labels": [
+		"P:",
+		"S:"
+	],
+	"health window labels": [
+		"bubbles left",
+		"maximum tank"
+	],
+	"upgrade button labels": [
+		"- Primary weapon -",
+		"- Secondary weapon -"
+	],
+	"yes button text": "Yes",
+	"no button text": "No",
+	"victory menu labels": [
+		"CONGRATULATIONS!",
+		"You passed the game!"
+	],
+	"main menu captions": [
+		"Bubble Tanks II",
+		"Settings",
+		"Credits",
+		"Language",
+		"Resolution",
+		"Exit to desktop"
+	],
+	"language": "English",
+	"resolution warning": "Restart the game to apply the new resolution",
+	"exit to menu text": "Exit to main menu",
+	"exit to desktop text": "Exit to desktop",
+	"back button text": "Back",
+	"master volume text": "Master volume",
+	"sound volume text": "Sound volume",
+	"music volume text": "Music volume",
+	"resolution label": "Resolution",
+	"language label": "Language",
+	"credits widgets": [
+		"Created by:",
+		"Music by:",
+		"Remastered by:",
+		"Hero Interactive, LLC",
+		"http://www.herointeractive.com",
+		"Jared Riley - and - Eric Ottati",
+		"Special Thanks to",
+		"~~~Stephanie~Riley~~~ ~~~Adam~Schroeder~~~~",
+		"~~~~~Jim~Lester~~~~~",
+		"Calvin 'Calkutta' Winbush II",
+		"Calkutta Productions",
+		"calkutta1@gmail.com",
+		"Ildar Ryabkov",
+		"ildar.239@mail.ru"
+	]
+}

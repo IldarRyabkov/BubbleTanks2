@@ -19,7 +19,7 @@ class UpgradeMenu(Menu):
         super().__init__(game)
         self.bg_surface = pg.Surface(SCR_SIZE)
 
-        self.caption = UpgradeMenuCaption(self.animation_time)
+        self.caption = UpgradeMenuCaption()
         self.widgets = {St.MAIN_STATE: (self.caption,)}
 
         self.upgrade_buttons = None
@@ -71,6 +71,7 @@ class UpgradeMenu(Menu):
     @set_cursor_grab(False)
     def run(self):
         self.set_buttons()
+        self.caption.reset()
         self.bg_surface.blit(self.game.screen, (0, 0))
         self.animation(OPEN)
         super().run()

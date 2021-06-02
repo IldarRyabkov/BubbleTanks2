@@ -354,7 +354,7 @@ def room_glare() -> pg.Surface:
     return surface
 
 
-def side_button(alpha=60) -> pg.Surface:
+def side_button(alpha=72) -> pg.Surface:
     w, h = 180, 300
     surface = pg.Surface((w, h))
     surface.fill(COLOR_KEY)
@@ -368,10 +368,6 @@ def side_button(alpha=60) -> pg.Surface:
     main_surface = pg.Surface((w, h), pg.SRCALPHA)
     main_surface.blit(surface, (0, 0))
     return main_surface
-
-
-def side_button_pressed() -> pg.Surface:
-    return side_button(alpha=125)
 
 
 def main_menu_caption() -> pg.Surface:
@@ -393,23 +389,11 @@ def main_menu_caption() -> pg.Surface:
     return surface
 
 
-def upgrade_caption_eng(text=TEXTS["upgrade menu caption"][ENGLISH]) -> pg.Surface:
+def upgrade_menu_caption() -> pg.Surface:
     w, h = 2220, 210
-    surface = pg.Surface((w, h))
-    surface.fill(COLOR_KEY)
-    pg.draw.rect(surface, WHITE, surface.get_rect(), 0, 30)
-    pg.font.init()
-    font = pg.font.Font(FONT_1, 156)
-    text = font.render(text, True, UPG_LABEL_COLOR)
-    surface.blit(text, ((w - text.get_width()) // 2, (h - text.get_height()) // 2 + 8))
-    surface.set_colorkey(COLOR_KEY)
     main_surface = pg.Surface((w, h), pg.SRCALPHA)
-    main_surface.blit(surface, (0, 0))
+    pg.draw.rect(main_surface, (255, 255, 255, 200), main_surface.get_rect(), 0, 30)
     return main_surface
-
-
-def upgrade_caption_rus() -> pg.Surface:
-    return upgrade_caption_eng(text=TEXTS["upgrade menu caption"][RUSSIAN])
 
 
 def exit_button(color_1=(40, 40, 40), color_2=(255, 255, 255)) -> pg.Surface:
@@ -430,38 +414,15 @@ def exit_button_pressed() -> pg.Surface:
     return exit_button((110, 110, 110), WHITE)
 
 
-def upgrade_button(w=660, bg_color=(230, 230, 230)) -> pg.Surface:
-    h = 1380
-    w2 = w // 2
-    color_key = (42, 42, 42)
-    color_1 = np.array((151, 217, 251), dtype=float)
-    color_2 = np.array((58, 170, 231), dtype=float)
-    color_delta = color_2 - color_1
-
-    surface = pg.Surface((w, h))
-    surface.fill(color_key)
-    pg.draw.rect(surface, bg_color, surface.get_rect(), 0, 30)
-
-    for i in range(24):
-        color = color_1 + color_delta * i / 23
-        pg.draw.circle(surface, color, (w2, 198), 99 - i)
-
-    dots = ((w2, 150),      (w2 + 33, 195),
-            (w2 + 12, 195), (w2 + 12, 240),
-            (w2 - 12, 240), (w2 - 12, 195),
-            (w2 - 33, 195))
-
-    pg.draw.polygon(surface, (196, 230, 248), dots)
-
-    surface.set_colorkey(color_key)
-
+def upgrade_button(w=660, alpha=200) -> pg.Surface:
+    h = 1444
     main_surface = pg.Surface((w, h), pg.SRCALPHA)
-    main_surface.blit(surface, (0, 0))
+    pg.draw.rect(main_surface, (255, 255, 255, alpha), main_surface.get_rect(), 0, 30)
     return main_surface
-pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
+
 
 def upgrade_button_pressed() -> pg.Surface:
-    return upgrade_button(660, WHITE)
+    return upgrade_button(alpha=240)
 
 
 def upgrade_button_wide() -> pg.Surface:
@@ -469,7 +430,7 @@ def upgrade_button_wide() -> pg.Surface:
 
 
 def upgrade_button_wide_pressed() -> pg.Surface:
-    return upgrade_button(900, WHITE)
+    return upgrade_button(900, 240)
 
 
 def settings_button() -> pg.Surface:
@@ -543,31 +504,16 @@ def play_button() -> pg.Surface:
     return main_surface
 
 
-def scroll_button() -> pg.Surface:
-    w = 340 * 2
-    h = 56 * 2
-    surface = pg.Surface((w, h))
-    surface.fill(RED)
+def screen_mask() -> pg.Surface:
+    surface = pg.Surface((1920, 1080), pg.SRCALPHA)
+    surface.fill((0, 0, 0, 175))
+    return surface
 
-    triangle_w = round(0.05 * w)
-    triangle_h = round(0.8 * h)
-    triangles = (
-        (
-            (1, h // 2),
-            (triangle_w, (h - triangle_h) // 2),
-            (triangle_w, (h + triangle_h) // 2)),
-        (
-            (w - triangle_w, (h - triangle_h) // 2),
-            (w - triangle_w, (h + triangle_h) // 2),
-            (w - 1, h // 2))
-    )
-    for triangle in triangles:
-        pg.draw.polygon(surface, WHITE, triangle)
 
-    surface.set_colorkey(RED)
-    main_surface = pg.Surface((w, h), pg.SRCALPHA)
-    main_surface.blit(surface, (0, 0))
-    return main_surface
+def menu_mask() -> pg.Surface:
+    surface = pg.Surface((1072, 760), pg.SRCALPHA)
+    surface.fill((0, 0, 0, 125))
+    return surface
 
 
 #save_image(side_button(), 'side_button')

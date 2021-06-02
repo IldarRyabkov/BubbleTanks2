@@ -27,7 +27,6 @@ def generate_compensation(mobs, delta_health):
 
 def generate_peaceful_mobs(mobs):
     add_peaceful_mobs(mobs, 2, 3)
-    #mobs["BossLeg"] = 1
     return mobs
 
 

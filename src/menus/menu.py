@@ -13,14 +13,21 @@ class Menu:
         self.state = 0
         self.buttons = dict()
         self.widgets = dict()
-
-    @property
-    def button_is_pressed(self):
-        return self.pressed_button is not None
+        self.is_opening = False
+        self.is_closing = False
 
     @property
     def animation_time(self):
         return 0
+
+    def close(self):
+        self.running = False
+        self.is_closing = True
+        for button in self.buttons[self.state]:
+            button.reset()
+        self.animation(CLOSE)
+        pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
+        self.is_closing = False
 
     def set_language(self, language):
         pass

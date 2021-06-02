@@ -229,10 +229,10 @@ class Game:
         self.health_window.update(dt)
         self.cooldown_window.update(dt, self.player, True)
 
-    def draw_transportation(self, time, offset):
+    def draw_transportation(self, time, dx, dy):
         """ Draw all objects during transportation. """
-        offset_new = self.camera.offset + offset
         offset_old = self.camera.offset
+        offset_new = self.camera.dx + dx, self.camera.dy + dy
 
         self.bg_environment.draw_bg(self.screen)
         self.bg_environment.draw_room_bg(self.screen, *offset_new)
@@ -262,13 +262,13 @@ class Game:
         self.health_window.draw(self.screen)
         self.cooldown_window.draw(self.screen)
 
-    def run_transportation(self, offset):
+    def run_transportation(self, dx, dy):
         self.sound_player.play_sound(WATER_SPLASH)
         time = dt = 0
         while time < TRANSPORTATION_TIME and self.running:
             self.handle_events()
             self.update_transportation(dt)
-            self.draw_transportation(time, offset)
+            self.draw_transportation(time, dx, dy)
             pg.display.update()
             dt = self.clock.tick()
             self.fps_manager.update(dt)
@@ -311,7 +311,7 @@ class Game:
         self.bg_environment.set_player_trace(*player_pos, distance, angle)
         self.bg_environment.set_destination_circle(destination_pos)
 
-        self.run_transportation(offset)
+        self.run_transportation(*offset)
 
         self.player.move(*offset)
         self.player.body.update_pos(0)
@@ -394,7 +394,7 @@ class Game:
         """
         if isinstance(self.player.superpower, Ghost):
             self.player.superpower.update_body()
-        self.player.update_body(dt)
+        self.player.body.update_pos(dt)
 
         for obj in chain(self.player.mines, self.player.bullets, self.room.mobs,
                          self.room.bubbles, self.room.mines, self.room.bullets):

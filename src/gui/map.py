@@ -54,13 +54,18 @@ class Map(Button):
     h = H(616)  # height of map
     d = H(50)  # distance between rooms on map
 
-    def __init__(self, xo):
+    def __init__(self, menu, xo):
         super().__init__(pg.SYSTEM_CURSOR_SIZEALL)
+
+        self.menu = menu
 
         # surface on which all elements of the map will be drawn
         self.surface = pg.Surface((self.w, self.h))
         self.surface.set_colorkey(BLACK)
         self.rect = pg.Rect(xo + H(136), H(264), self.w, self.h)
+
+        # transparent surface, on which all elements of the map will be drawn during opening/closing animation
+        self.transparent_surface = pg.Surface((self.w, self.h), pg.SRCALPHA)
 
         # position of room the player is currently in
         self.cur_pos = (0, 0)
@@ -178,6 +183,14 @@ class Map(Button):
         if self.is_pressed:
             self.update_moving_offset()
 
+        if self.menu.is_opening:
+            alpha = round(255 * time_elapsed)
+        elif self.menu.is_closing:
+            alpha = round(255 - 255 * time_elapsed)
+        else:
+            alpha = 255
+        self.transparent_surface.set_alpha(alpha)
+
     def draw_line(self, screen, room_pos_1, room_pos_2):
         """Draws a line between two neighbour rooms. """
         coords_1 = self.room_coords(room_pos_1)
@@ -194,20 +207,25 @@ class Map(Button):
 
     def draw(self, screen):
         """Draws all map objects: visited rooms, traversed paths between rooms etc. """
-        self.surface.fill(BLACK)
+        if self.menu.is_opening or self.menu.is_closing:
+            surface = self.transparent_surface
+        else:
+            surface = self.surface
+
+        surface.fill((0, 0, 0, 0))
 
         for room_pos in self.graph:
-            self.draw_visited_room(self.surface, room_pos)
+            self.draw_visited_room(surface, room_pos)
             for neighbour_pos in self.graph[room_pos]:
-                self.draw_line(self.surface, room_pos, neighbour_pos)
+                self.draw_line(surface, room_pos, neighbour_pos)
 
-        self.room_aim.draw(self.surface, *self.room_coords(self.cur_pos))
+        self.room_aim.draw(surface, *self.room_coords(self.cur_pos))
 
         if self.boss_aim.pos is not None:
-            self.boss_aim.draw(self.surface, *self.room_coords(self.boss_aim.pos))
+            self.boss_aim.draw(surface, *self.room_coords(self.boss_aim.pos))
 
-        screen.blit(self.surface, self.rect)
-        pg.draw.rect(screen, WHITE, self.rect, H(2))
+        pg.draw.rect(surface, WHITE, self.surface.get_rect(), H(2))
+        screen.blit(surface, self.rect)
 
 
 __all__ = ["Map"]

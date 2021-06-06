@@ -81,7 +81,7 @@ def generate_level_7(mobs):
     else:
         for _ in range(3):
             mobs[random.choice(STRONG_MOBS)] += 1
-        for _ in  range(random.randint(2, 3)):
+        for _ in range(random.randint(2, 3)):
             mobs[random.choice(WEAK_FAST_MOBS)] += 1
     return mobs
 
@@ -127,7 +127,7 @@ class MobGenerator:
             mobs_dict[mob.name] += 1
         self.mobs[self.cur_room] = mobs_dict
 
-    def generate_level(self, player) -> defaultdict(int):
+    def generate_level(self, player) -> defaultdict[int]:
         mobs = defaultdict(int)
 
         if player.delta_health <= -75:
@@ -142,7 +142,7 @@ class MobGenerator:
 
         # the difficulty of level depends on the player's distance from the starting room.
         distance = int(round(sqrt(self.cur_room[0] ** 2 + self.cur_room[1] ** 2)))
-        if distance  <= 2:
+        if distance <= 2:
             return generate_peaceful_mobs(mobs)
         if distance == 3:
             return generate_level_3(mobs)
@@ -166,4 +166,4 @@ class MobGenerator:
             self.mobs[self.cur_room] = new_mobs
 
 
-__all__ = ["MobGenerator"]
+__all__ = ["MobGenerator", "BOSS_PIECES"]

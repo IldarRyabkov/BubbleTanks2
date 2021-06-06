@@ -1,5 +1,5 @@
-from gui.text_widget import TextWidget
-from gui.scaling_button import ScalingButton
+from gui.widgets.text_widget import TextWidget
+from gui.buttons.scaling_button import ScalingButton
 from constants import *
 from utils import H
 
@@ -20,8 +20,8 @@ class TextButton(ScalingButton):
 
 
 class DoubleTextButton(ScalingButton):
-    def __init__(self, x, y, texts, value, font, font_size, min_alpha, sound_player, action):
-        super().__init__(x, y, H(700), font_size, 0.88, min_alpha, texts, sound_player, action=action)
+    def __init__(self, x, y, texts, value, font, font_size, sound_player, action):
+        super().__init__(x, y, H(700), font_size, 0.88, 200, texts, sound_player, action=action)
 
         self.text_widget = TextWidget(self.w // 2 - H(40), 0, font, font_size, WHITE, 2)
         self.value_widget = TextWidget(self.w // 2 + H(40), 0, font, font_size, WHITE, 0)
@@ -37,5 +37,6 @@ class DoubleTextButton(ScalingButton):
         self.value_widget.draw(self.surface)
         self.set_alpha()
         self.set_scaled_surface()
+
 
 __all__ = ["TextButton", "DoubleTextButton"]

@@ -3,6 +3,7 @@ from math import pi
 from circle import Circle
 from utils import calculate_angle
 from data.player import FROZEN_BODY, FROZEN_BODY_ROTATING
+from constants import *
 
 
 class Body:
@@ -12,6 +13,13 @@ class Body:
         self.sticky_circles = [Circle(*circle_params) for circle_params in sticky_circles]
         self.is_frozen = False
         self.frost_time = 0
+
+    def become_infected(self):
+        for circle in self.circles:
+            circle.color = INFECTION_COLORS[circle.color]
+            circle.edge_color = INFECTION_EDGE_COLOR
+            for glare in circle.glares:
+                glare.color = INFECTION_GLARE_COLORS[glare.color]
 
     def get_angle_of_rotation(self, destination_angle):
         """Method is called when player's tank body should be

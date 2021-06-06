@@ -176,9 +176,9 @@ class ParalyzingExplosion(SpecialEffect):
 
 
 class PowerfulExplosion(SpecialEffect):
-    def __init__(self, x, y):
-        super().__init__(x, y, duration=300)
-        self.max_diam = H(1200)
+    def __init__(self, x, y, max_diam):
+        super().__init__(x, y, duration=200)
+        self.max_diam = max_diam
         self.diam = 0
         self.img = self.set_image("powerful_explosion", self.max_diam)
         self.surface = None
@@ -312,7 +312,8 @@ def add_effect(name, effects, x=0, y=0, radius=0):
     elif name == 'Armor': effect = Armor(x, y, radius)
     elif name == 'ParalyzingExplosion': effect = ParalyzingExplosion(x, y, H(960))
     elif name == 'BigParalyzingExplosion': effect = ParalyzingExplosion(x, y, H(1440))
-    elif name == 'PowerfulExplosion': effect = PowerfulExplosion(x, y)
+    elif name == 'PowerfulExplosion': effect = PowerfulExplosion(x, y, H(1200))
+    elif name == 'SmallPowerfulExplosion': effect = PowerfulExplosion(x, y, H(300))
     elif name == 'DroneConversion': effect = DroneConversion(x, y)
     elif name == 'Flash': effect = Flash()
     elif name == 'StarsAroundMob': effect = StarsAroundMob(x, y, radius)

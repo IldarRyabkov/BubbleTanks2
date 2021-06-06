@@ -1,11 +1,13 @@
 import pygame as pg
 
 from constants import *
+from gui.widgets.animated_widget import AnimatedWidget
 
 
-class TextWidget:
+class TextWidget(AnimatedWidget):
     """Widget that stores text on multiple lines. """
     def __init__(self, x, y, font, font_size, color, align=0, width_limit=9001):
+        super().__init__()
         pg.font.init()
         self.font_name = font
         self.font = pg.font.Font(font, font_size)
@@ -18,7 +20,6 @@ class TextWidget:
         self.width_limit = width_limit
         self.lines = []   # list of text surfaces with their coords
         self.text = None
-
 
     def set_font_size(self, font_size):
         pg.font.init()
@@ -45,16 +46,19 @@ class TextWidget:
                 # make new surface with line of text and append it with its coords to the list of surfaces
                 line = self.font.render(current_string.replace('~', ' '), True, self.color)
 
-                if self.align == 0: x = 0
-                elif self.align == 1: x = -line.get_width() / 2
-                else: x = -line.get_width()
+                if self.align == 0:
+                    x = 0
+                elif self.align == 1:
+                    x = -line.get_width() / 2
+                else:
+                    x = -line.get_width()
                 y = len(self.lines) * letter_height
                 self.lines.append([line, x, y])
                 current_string = word
             else:
                 current_string += new_word
         self.h = letter_height * len(self.lines)
-        self.w = max(line.get_width() for line,_,_ in self.lines)
+        self.w = max(line.get_width() for line, _, _ in self.lines)
 
     def set_alpha(self, alpha):
         """Sets alpha-value for all text surfaces. """
@@ -75,7 +79,7 @@ class TextWidget:
         self.x = x
         self.y = y
 
-    def update(self, dt, animation_state, time_elapsed):
+    def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         if animation_state == WAIT:
             self.set_alpha(255)
         if animation_state == OPEN:

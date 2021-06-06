@@ -252,10 +252,15 @@
 	],
 	"yes button text": "Yes",
 	"no button text": "No",
-	"victory menu labels": [
-		"CONGRATULATIONS!",
-		"You passed the game!"
+	"victory menu caption": "Congratulations!",
+	"victory menu texts": [
+		"You have defeated the ultimate adversary and have completed normal mode!",
+		"There are likely many more tanks to fight as and more enemies to discover!",
+		"Would you like to...",
+		"-or-"
 	],
+	"return to main menu text": "Return to Main Menu",
+	"continue playing text": "Continue Playing in Endless Mode!",
 	"main menu captions": [
 		"Bubble Tanks II",
 		"Settings",

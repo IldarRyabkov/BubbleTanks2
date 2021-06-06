@@ -77,7 +77,9 @@ def print_pretty(ugly_body, scale=1.0):
     max_sizes = [0] * 20
     for j in range(len(body)):
         for i in range(len(body[j])):
-            if i == 2:
+            if i == 1:
+                body[j][i] = str(max(1, round(body[j][i] / scale)))
+            elif i == 2:
                 if body[j][2] == ORANGE: body[j][2] = 'ORANGE'
                 elif body[j][2] == BLUE: body[j][2] = 'BLUE'
                 elif body[j][2] == VIOLET: body[j][2] = 'VIOLET'
@@ -88,8 +90,8 @@ def print_pretty(ugly_body, scale=1.0):
                 elif body[j][2] == BUBBLE_COLOR_2: body[j][2] = 'BUBBLE_COLOR_2'
                 elif body[j][2] == BUBBLE_COLOR: body[j][2] = 'BUBBLE_COLOR'
 
-            elif i in (0, 1, 3, 6, 9, 13, 15):
-                body[j][i] = str(max(1, round(body[j][i] / scale)))
+            elif i in (0, 3, 6, 9, 13, 15):
+                body[j][i] = str(round(body[j][i] / scale))
 
             elif i in (4, 10, 12, 16):
                 sign = '' if body[j][i] > 0 else '-'

@@ -1,16 +1,19 @@
 import sys
 import pygame as pg
 
-from gui.map import Map
 from menus.menu import Menu
-from gui.side_button import SideButton
-from gui.slider_button import SliderButton
-from gui.text_button import TextButton
-from gui.text_widget import TextWidget
-from gui.exit_button import ExitButton
-from gui.tank_body_smooth import TankBodySmooth
-from gui.mask import Mask
-from gui.menu_caption import MenuCaption
+
+from gui.buttons.map import Map
+from gui.buttons.side_button import SideButton
+from gui.buttons.slider_button import SliderButton
+from gui.buttons.text_button import TextButton
+from gui.buttons.exit_button import ExitButton
+
+from gui.widgets.text_widget import TextWidget
+from gui.widgets.tank_body_smooth import TankBodySmooth
+from gui.widgets.mask import Mask
+from gui.widgets.menu_caption import MenuCaption
+
 from data.paths import *
 from constants import *
 from states import PauseMenuStates as St
@@ -94,7 +97,7 @@ class PauseMenu(Menu):
             TextWidget(xo + H(150), H(268), CALIBRI_BOLD, H(47), WHITE, 0),
             TextWidget(xo + H(150), H(565), CALIBRI, H(42), WHITE, 0, H(480)),
             TextWidget(xo + H(656), H(565), CALIBRI, H(42), WHITE, 0, H(480)),
-            TextWidget(xo + H(150), H(334), CALIBRI, H(32), WHITE, 0, H(630)),
+            TextWidget(xo + H(150), H(334), CALIBRI, H(35), WHITE, 0, H(630)),
             TextWidget(xo + H(150), H(628), CALIBRI, H(32), WHITE, 0, H(470)),
             TextWidget(xo + H(656), H(628), CALIBRI, H(32), WHITE, 0, H(470)),
         )
@@ -163,16 +166,9 @@ class PauseMenu(Menu):
         self.select_side_button(St.STATS)
 
     def close(self):
-        self.running = False
-        self.is_closing = True
-        for button in self.buttons[self.state]:
-            button.reset()
+        super().close()
         if self.state in (St.DIALOG_MENU, St.DIALOG_DESKTOP):
             self.set_state(St.OPTIONS, animation=False)
-        self.animation(CLOSE)
-        pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
-        self.pressed_button = None
-        self.is_closing = False
 
     def dialog_menu(self):
         """Action of 'to menu' button. """
@@ -242,14 +238,16 @@ class PauseMenu(Menu):
 
     @property
     def animation_time(self):
-        return 170
+        return 200
 
     def handle_event(self, event):
         super().handle_event(event)
         if event.type == pg.KEYDOWN and event.key in [pg.K_ESCAPE, pg.K_p]:
-            if self.state in (St.DIALOG_DESKTOP, St.DIALOG_MENU):
-                self.set_state(St.OPTIONS, animation=False)
             self.close()
+        elif event.type in [pg.KEYDOWN, pg.KEYUP]:
+            self.game.player.handle(event.type, event.key)
+        elif event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP]:
+            self.game.player.handle(event.type, event.button)
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
         self.game.update_scaling_objects(dt)
@@ -261,9 +259,6 @@ class PauseMenu(Menu):
 
     @set_cursor_grab(False)
     def run(self):
-        self.is_opening = True
-        self.animation(OPEN)
-        self.is_opening = False
         super().run()
 
 

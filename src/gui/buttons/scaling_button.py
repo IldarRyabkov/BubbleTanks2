@@ -1,7 +1,7 @@
 import pygame as pg
 
 from data.paths import *
-from gui.button import Button
+from gui.buttons.button import Button
 from constants import WAIT, OPEN
 
 
@@ -32,7 +32,7 @@ class ScalingButton(Button):
 
         self.alpha = min_alpha
         self.ALPHA_MIN = min_alpha
-        self.ALPHA_MAX = min_alpha * 1.4
+        self.ALPHA_MAX = 255
         self.ALPHA_DELTA = (self.ALPHA_MAX - self.ALPHA_MIN) / self.scaling_time
 
         self.surface = pg.Surface((self.w, self.h), pg.SRCALPHA)

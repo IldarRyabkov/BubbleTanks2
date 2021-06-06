@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from constants import *
 from utils import H
-from gui.button import Button
+from gui.buttons.button import Button
 from data.paths import ROOM_AIM, BOSS_AIM
 
 
@@ -201,9 +201,9 @@ class Map(Button):
         """Draws the visited room on the map. """
         coords = self.room_coords(room_pos)
         pg.draw.circle(screen, WHITE, coords, H(8))
-        pg.draw.circle(screen, GREY, coords, H(17), H(2))
-        if room_pos == (0, 0):
-            pg.draw.circle(screen, GREY, coords, H(26), H(2))
+        pg.draw.circle(screen, WHITE, coords, H(17), H(2))
+        if room_pos == (0, 0) and self.cur_pos != (0, 0):
+            pg.draw.circle(screen, WHITE, coords, H(26), H(2))
 
     def draw(self, screen):
         """Draws all map objects: visited rooms, traversed paths between rooms etc. """

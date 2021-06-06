@@ -2,19 +2,22 @@ import pygame as pg
 import sys
 
 from menus.menu import Menu
-from gui.text_widget import TextWidget
-from gui.text_button import *
-from gui.slider_button import SliderButton
-from gui.credits_label import CreditsLabel
-from gui.main_menu_caption import *
-from gui.main_menu_button import MainMenuButton
-from gui.background_bubbles import BackgroundBubbles
-from gui.language_button import LanguageButton
-from gui.resolution_button import ResolutionButton
+
+from gui.widgets.text_widget import TextWidget
+from gui.widgets.credits_label import CreditsLabel
+from gui.widgets.main_menu_caption import *
+from gui.widgets.background_bubbles import BackgroundBubbles
+
+from gui.buttons.text_button import *
+from gui.buttons.slider_button import SliderButton
+from gui.buttons.main_menu_button import MainMenuButton
+from gui.buttons.language_button import LanguageButton
+from gui.buttons.resolution_button import ResolutionButton
+
 from constants import *
 from states import MainMenuStates as St
-from data.scripts import *
 from languages.texts import TEXTS
+from data.scripts import *
 from data.paths import *
 from utils import *
 
@@ -50,7 +53,7 @@ class MainMenu(Menu):
             TextWidget(SCR_W2, H(894), CALIBRI_BOLD, H(34), WHITE, 1)
         )
         self.bubbles = BackgroundBubbles()
-        self.caption = MainMenuCaption(self, game)
+        self.caption = MainMenuCaption(self)
 
         # widgets dictionary
         base_widgets = self.bubbles, self.caption
@@ -70,13 +73,13 @@ class MainMenu(Menu):
         self.to_languages_button = DoubleTextButton(SCR_W2, H(325),
                                                     TEXTS["language label"],
                                                     TEXTS["language"][self.game.language],
-                                                    CALIBRI_BOLD, H(56), 200, sp,
+                                                    CALIBRI_BOLD, H(56), sp,
                                                     action=self.languages)
 
         self.to_resolutions_button = DoubleTextButton(SCR_W2, H(400),
                                                       TEXTS["resolution label"],
                                                       pretty_resolution([SCR_W, SCR_H]),
-                                                      CALIBRI_BOLD, H(56), 200, sp,
+                                                      CALIBRI_BOLD, H(56), sp,
                                                       action=self.resolutions)
 
         self.music_slider = SliderButton(SCR_W2, H(475),
@@ -124,8 +127,8 @@ class MainMenu(Menu):
         self.buttons = {
             St.MAIN_PAGE: (self.settings_button, self.play_button, self.credits_button),
             St.SETTINGS: (self.to_languages_button, self.to_resolutions_button,
-                       self.music_slider, self.sound_slider,
-                       self.back_button, self.exit_button),
+                          self.music_slider, self.sound_slider,
+                          self.back_button, self.exit_button),
             St.CREDITS: (),
             St.LANGUAGES: self.language_buttons,
             St.RESOLUTIONS: self.resolution_buttons,
@@ -149,10 +152,9 @@ class MainMenu(Menu):
 
     def start_game(self):
         """Action of the 'play' button. """
-        self.running = False
         self.game.sound_player.fade_out(1250)
         self.click_animation(self.play_button)
-        self.animation(CLOSE)
+        self.close()
 
     def settings(self):
         """Action of the 'settings' button. """
@@ -238,9 +240,9 @@ class MainMenu(Menu):
         self.game.clock.tick()
         while time <= duration:
             if state == OPEN:
-                mask.set_alpha(255 - 255 * time/duration)
+                mask.set_alpha(int(255 - 255 * time/duration))
             else:
-                mask.set_alpha(255 * time/duration)
+                mask.set_alpha(int(255 * time/duration))
             self.game.screen.blit(self.bg_surface, (0, 0))
             self.game.screen.blit(mask, (0, 0))
             pg.display.update()
@@ -253,12 +255,14 @@ class MainMenu(Menu):
         self.bubbles.update(dt)
         super().update_press_animation(button, dt)
 
-    @set_cursor_grab(False)
-    def run(self):
+    def open(self):
         self.bubbles.reset()
         self.game.sound_player.play_music(START_MUSIC)
         self.run_awake_animation(OPEN)
-        self.animation(OPEN)
+        super().open()
+
+    @set_cursor_grab(False)
+    def run(self):
         super().run()
 
 

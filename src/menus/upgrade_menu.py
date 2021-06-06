@@ -1,8 +1,8 @@
 import pygame as pg
 
 from menus.menu import Menu
-from gui.upgrade_button import *
-from gui.upgrade_menu_caption import UpgradeMenuCaption
+from gui.buttons.upgrade_button import *
+from gui.widgets.upgrade_menu_caption import UpgradeMenuCaption
 from constants import *
 from utils import *
 from states import UpgradeButtonType as Bt
@@ -68,12 +68,14 @@ class UpgradeMenu(Menu):
     def draw_background(self, screen):
         self.game.screen.blit(self.bg_surface, (0, 0))
 
-    @set_cursor_grab(False)
-    def run(self):
+    def open(self):
         self.set_buttons()
         self.caption.reset()
         self.bg_surface.blit(self.game.screen, (0, 0))
-        self.animation(OPEN)
+        super().open()
+
+    @set_cursor_grab(False)
+    def run(self):
         super().run()
 
 

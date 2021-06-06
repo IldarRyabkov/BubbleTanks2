@@ -9,10 +9,10 @@ class Menu:
     def __init__(self, game):
         self.game = game
         self.pressed_button = None
-        self.running = False
         self.state = 0
         self.buttons = dict()
         self.widgets = dict()
+        self.running = False
         self.is_opening = False
         self.is_closing = False
 
@@ -21,13 +21,21 @@ class Menu:
         return 0
 
     def close(self):
-        self.running = False
+        self.pressed_button = None
         self.is_closing = True
+        self.animation(CLOSE)
+        self.is_closing = False
+        pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
         for button in self.buttons[self.state]:
             button.reset()
-        self.animation(CLOSE)
-        pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
-        self.is_closing = False
+        self.running = False
+
+    def open(self):
+        for button in self.buttons[self.state]:
+            button.reset()
+        self.is_opening = True
+        self.animation(OPEN)
+        self.is_opening = False
 
     def set_language(self, language):
         pass
@@ -97,7 +105,7 @@ class Menu:
     def update_press_animation(self, button, dt):
         button.update_size(dt, True, default_alpha=255)
 
-    def update(self, dt, animation_state=WAIT, time_elapsed=0):
+    def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         for widget in self.widgets[self.state]:
             widget.update(dt, animation_state, time_elapsed)
 
@@ -141,6 +149,7 @@ class Menu:
         self.game.clock.tick()
 
     def run(self):
+        self.open()
         self.running = True
         dt = 0
         self.game.clock.tick()

@@ -1,6 +1,6 @@
 import pygame as pg
 
-from gui.text_widget import TextWidget
+from gui.widgets.text_widget import TextWidget
 from utils import H
 from constants import *
 from data.paths import FONT_1
@@ -13,7 +13,7 @@ class CreditsLabel(TextWidget):
         self.image = pg.transform.smoothscale(self.image, (int(8/9*SCR_H), image_height))
         self.image_pos = (SCR_W2 - self.image.get_width()//2, self.y - H(15))
 
-    def update(self, dt, animation_state, time_elapsed):
+    def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         super().update(dt, animation_state, time_elapsed)
         if animation_state == OPEN:
             self.image.set_alpha(round(255 * time_elapsed))

@@ -3,17 +3,19 @@ from random import uniform
 from constants import *
 from utils import *
 from bubble import Bubble
+from gui.widgets.animated_widget import AnimatedWidget
 
 
-class BackgroundBubbles:
+class BackgroundBubbles(AnimatedWidget):
     def __init__(self):
+        super().__init__()
         self.bubbles = []
         self.time = 0
 
     def reset(self):
         self.__init__()
 
-    def update(self, dt, animation_state=WAIT, time_elapsed=0):
+    def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         self.time += dt
         if self.time >= 150:
             self.time = 0

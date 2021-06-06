@@ -10,8 +10,6 @@ from constants import *
 from base_gun import BaseGun
 
 
-#_________________________________________________________________________________________________
-
 class Gun(BaseGun):
     def __init__(self, *args):
         super().__init__(*args)
@@ -28,8 +26,8 @@ class Gun(BaseGun):
         x, y = self.gun_pos(angle)
         bullet = self.make_bullet(x, y, angle, self.bullet_type)
         self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class AutoGun(Gun):
     def __init__(self, player, game, cooldown_time, distance, bullet_vel,
@@ -76,20 +74,20 @@ class AutoGun(Gun):
             self.time_auto = 0
             self.generate_bullets_auto()
             self.game.sound_player.play_sound(PLAYER_BULLET_SHOT)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun00(Gun):
     def __init__(self, player, game):
         super().__init__(player, game, 300, HF(23), HF(1.6), -1, 'SmallBullet_1')
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun10(Gun):
     def __init__(self, player, game):
         super().__init__(player, game, 100, HF(23), HF(1.6), -1, 'SmallBullet_1')
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun11(Gun):
     def __init__(self, player, game):
@@ -103,14 +101,14 @@ class Gun11(Gun):
         for k in (-1, 1):
             bullet = self.make_bullet(xo - k*dx, yo + k*dy, angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun12(Gun):
     def __init__(self, player, game):
         super().__init__(player, game, 300, HF(23), HF(1.2), -5, 'BigBullet_1')
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun20(Gun):
     def __init__(self, player, game):
@@ -125,8 +123,8 @@ class Gun20(Gun):
             dy, dx = self.offset(self.bullet_distance, bullet_angle)
             bullet = self.make_bullet(xo - k*dx, yo + k*dy, bullet_angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun21(Gun):
     def __init__(self, player, game):
@@ -140,8 +138,8 @@ class Gun21(Gun):
         for k in (-1, 0, 1):
             bullet = self.make_bullet(xo - k*dx, yo + k*dy, angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun23(Gun):
     def __init__(self, player, game):
@@ -156,21 +154,21 @@ class Gun23(Gun):
         for dx, dy in (0, 0), (-dx1, dy1), (dx1, -dy1), (-dx2-dx3, dy2-dy3), (dx2-dx3, -dy2-dy3):
             bullet = self.make_bullet(xo + dx, yo + dy, angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun30(Gun):
     def __init__(self, player, game):
         super().__init__(player, game, 350, HF(14), HF(2.1), -10, 'SniperBullet')
-        self.bullet_type = DrillingBullet
+        self.bullet_type = PierceBullet
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun31(Gun):
     def __init__(self, player, game):
         super().__init__(player, game, 75, HF(28), HF(1.6), -2, 'SmallBullet_1')
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun32(Gun):
     def __init__(self, player, game):
@@ -191,8 +189,8 @@ class Gun32(Gun):
             dy, dx = self.offset(distance, bullet_angle)
             bullet = self.make_bullet(xo - dx, yo + dy, bullet_angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun34(Gun):
     def __init__(self, player, game):
@@ -206,29 +204,29 @@ class Gun34(Gun):
             dx, dy = self.offset(HF(57), bullet_angle)
             bullet = self.make_bullet(xo + dx, yo + dy, bullet_angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun35(AutoGun):
     def __init__(self, player, game):
         coords = ((HF(124), 0.25 * pi), (HF(124), -0.25 * pi))
         super().__init__(player, game, 200, HF(43), HF(1.2), -5, 'BigBullet_1', 200, coords)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun40(Gun):
     def __init__(self, player, game):
         super().__init__(player, game, 425, HF(28), HF(2.1), -15, 'SniperBullet')
-        self.bullet_type = DrillingBullet
+        self.bullet_type = PierceBullet
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun41(Gun11):
     def __init__(self, player, game):
         super().__init__(player, game)
         self.cooldown_time = 80
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun42(Gun):
     def __init__(self, player, game):
@@ -244,8 +242,8 @@ class Gun42(Gun):
             dx, dy = self.offset(self.bullet_distance, angle + k * 0.48 * pi)
             bullet = self.make_bullet(xo + dx, yo + dy, angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun43(Gun):
     def __init__(self, player, game):
@@ -257,8 +255,8 @@ class Gun43(Gun):
             xo, yo = self.gun_pos(angle + k * 0.74 * pi)
             bullet = self.make_bullet(xo, yo, angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun44(AutoGun):
     def __init__(self, player, game):
@@ -274,8 +272,8 @@ class Gun44(AutoGun):
             dx, dy = self.offset(HF(57), bullet_angle)
             bullet = self.make_bullet(xo + dx, yo + dy, bullet_angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun45(AutoGun):
     def __init__(self, player, game):
@@ -290,25 +288,36 @@ class Gun45(AutoGun):
             dx, dy = self.offset(HF(57), bullet_angle)
             bullet = self.make_bullet(xo + dx, yo + dy, bullet_angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
-class Gun50(Gun40):
+class Gun50(Gun):
     def __init__(self, player, game):
-        super().__init__(player, game)
-        self.cooldown_time = 500
-        self.distance = HF(57)
-        self.bullet_dmg = -15
+        super().__init__(player, game, 1000, HF(57), HF(2.1), -15, 'SniperBullet')
+        self.bullet_type = ExplosivePierceBullet
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun51(Gun21):
     def __init__(self, player, game):
         super().__init__(player, game)
         self.cooldown_time = 100
         self.distance = HF(21)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
+
+class Gun52(Gun):
+    def __init__(self, player, game):
+        super().__init__(player, game, 200, HF(18), HF(1.6), -7, 'LeecherBullet')
+
+    def generate_bullets(self):
+        angle = self.owner.body.angle
+        pos = self.gun_pos(angle)
+        bullet = LeecherBullet(*pos, angle)
+        self.owner.bullets.append(bullet)
+
+# _________________________________________________________________________________________________
+
 
 class Gun53(Gun):
     def __init__(self, player, game):
@@ -319,8 +328,8 @@ class Gun53(Gun):
         angle = uniform(0, 2*pi)
         drone = Drone(xo, yo, angle, "BigDrone", self.owner)
         self.owner.drones.append(drone)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun54(AutoGun):
     def __init__(self, player, game):
@@ -348,8 +357,8 @@ class Gun54(AutoGun):
         angle = calculate_angle(xo, yo, *cursor_pos)
         dx, dy = self.offset(self.bullet_distance, angle)
         self.owner.bullets.append(AirBullet(xo + dx, yo + dy, angle))
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 class Gun55(AutoGun):
     def __init__(self, player, game):
@@ -372,8 +381,8 @@ class Gun55(AutoGun):
             else:
                 bullet = self.make_bullet(xo + dx, yo + dy, angle, RegularBullet)
             self.owner.bullets.append(bullet)
+# _________________________________________________________________________________________________
 
-#_________________________________________________________________________________________________
 
 guns = {
     'Gun00': Gun00,
@@ -398,7 +407,7 @@ guns = {
     'Gun45': Gun45,
     'Gun50': Gun50,
     'Gun51': Gun51,
-    'Gun52': Gun00,
+    'Gun52': Gun52,
     'Gun53': Gun53,
     'Gun54': Gun54,
     'Gun55': Gun55

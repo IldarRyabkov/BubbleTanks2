@@ -2,7 +2,7 @@ import pygame as pg
 
 from constants import *
 from data.paths import *
-from gui.button import Button
+from gui.buttons.button import Button
 from utils import H
 
 
@@ -44,9 +44,9 @@ class SideButton(Button):
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
         if animation_state == WAIT:
             self.set_alpha(255)
-        if animation_state == OPEN and self.menu.is_opening:
+        if self.menu.is_opening:
             self.set_alpha(round(255 * time_elapsed))
-        elif animation_state == CLOSE and self.menu.is_closing:
+        elif self.menu.is_closing:
             self.set_alpha(round(255 - 255 * time_elapsed))
 
     def draw(self, screen):

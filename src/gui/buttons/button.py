@@ -33,10 +33,10 @@ class Button:
         self.is_pressed = False
         return clicked
 
-    def update_look(self, dt, animation_state=WAIT, time_elapsed=0):
+    def update_look(self, dt, animation_state=WAIT, time_elapsed=0.0):
         pass
 
-    def update(self, dt, animation_state=WAIT, time_elapsed=0):
+    def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         pass
 
     def reset(self):

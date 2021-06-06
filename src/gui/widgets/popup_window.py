@@ -2,17 +2,14 @@ import pygame as pg
 from utils import HF
 from numpy import sign
 
-
-class State:
-    CLOSED = 0
-    OPENING = 1
-    CLOSING = 2
-    OPENED = 3
+from states import PopupWindowStates as St
+from gui.widgets.widget import Widget
 
 
-class PopupWindow:
+class PopupWindow(Widget):
     """Base class for cooldown window and health window. """
     def __init__(self,
+                 game,
                  x: float,
                  y: float,
                  w: float,
@@ -20,6 +17,9 @@ class PopupWindow:
                  vel: float,
                  duration: int,
                  image: str):
+        super().__init__()
+        self.game = game
+        self.player = self.game.player
         self.x = x
         self.y = y
         self.Y_CLOSED = y
@@ -29,9 +29,10 @@ class PopupWindow:
         self.time = 0
         self.vel = vel
         self.duration = duration
-        self.state = State.CLOSED
+        self.state = St.CLOSED
         img = pg.image.load(image).convert_alpha()
         self.background = pg.transform.scale(img, (round(w), round(h)))
+        self.widgets = []
 
     @property
     def on_screen(self):
@@ -42,7 +43,7 @@ class PopupWindow:
         """Method is called when a new game is started.
         Resets popup window state and parameters.
         """
-        self.state = State.CLOSED
+        self.state = St.CLOSED
         self.time = 0
         self.y = self.Y_CLOSED
 
@@ -50,28 +51,42 @@ class PopupWindow:
         """Sets popup window parameters. """
         pass
 
-    def activate(self, *args, **kwargs):
-        if self.state != State.OPENED:
-            self.state = State.OPENING
+    def activate(self):
+        if self.state != St.OPENED:
+            self.state = St.OPENING
         self.time = 0
+
+    def update(self, dt):
+        yo = self.y
+        self.update_state(dt)
+        dy = self.y - yo
+        for widget in self.widgets:
+            widget.move(0, dy)
 
     def update_state(self, dt):
         k = sign(self.vel)
-        if self.state == State.OPENING:
+        if self.state == St.OPENING:
             self.y += self.vel * dt
             if k * self.y > k * self.Y_OPENED:
-                self.state = State.OPENED
+                self.state = St.OPENED
                 self.y = self.Y_OPENED
-        elif self.state == State.CLOSING:
+        elif self.state == St.CLOSING:
             self.y -= self.vel * dt
             if k * self.y < k * self.Y_CLOSED:
-                self.state = State.CLOSED
+                self.state = St.CLOSED
                 self.y = self.Y_CLOSED
-        elif self.state == State.OPENED:
+        elif self.state == St.OPENED:
             self.time += dt
             if self.time >= self.duration:
-                self.state = State.CLOSING
+                self.state = St.CLOSING
                 self.time = 0
+
+    def draw(self, screen):
+        if self.state == St.CLOSED:
+            return
+        screen.blit(self.background, (round(self.x), round(self.y)))
+        for widget in self.widgets:
+            widget.draw(screen)
 
 
 __all__ = ["PopupWindow"]

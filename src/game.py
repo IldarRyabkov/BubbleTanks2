@@ -12,8 +12,8 @@ from menus.victory_menu import VictoryMenu
 from menus.main_menu import MainMenu
 from menus.pause_menu import PauseMenu
 
-from gui.health_window import HealthWindow
-from gui.cooldown_window import CooldownWindow
+from gui.widgets.health_window import HealthWindow
+from gui.widgets.cooldown_window import CooldownWindow
 
 from player import Player
 from bullets import *
@@ -25,9 +25,9 @@ from sound_player import SoundPlayer
 from mob_generator import MobGenerator
 from fps_manager import FPSManager
 from superpowers import Ghost
+from bubble import Bubble
 from special_effects import *
 from utils import *
-
 
 
 class Game:
@@ -53,7 +53,7 @@ class Game:
         self.pause_menu = PauseMenu(self)
 
         self.health_window = HealthWindow(self)
-        self.cooldown_window = CooldownWindow()
+        self.cooldown_window = CooldownWindow(self)
         self.set_windows()
 
     def set_language(self, lang):
@@ -83,29 +83,16 @@ class Game:
         self.set_language(self.language)
 
     def set_windows(self):
-        self.health_window.set(self.player.tank,
-                               self.player.health,
-                               self.player.max_health)
-        self.cooldown_window.set(self.player.gun.cooldown_time,
-                                 self.player.superpower.cooldown_time)
+        self.health_window.set()
+        self.cooldown_window.set()
 
     def handle(self, e_type, e_key):
-        if e_key == pg.K_a:
-            self.player.moving_left = (e_type == pg.KEYDOWN)
-        elif e_key == pg.K_d:
-            self.player.moving_right = (e_type == pg.KEYDOWN)
-        elif e_key == pg.K_w:
-            self.player.moving_up = (e_type == pg.KEYDOWN)
-        elif e_key == pg.K_s:
-            self.player.moving_down = (e_type == pg.KEYDOWN)
-        elif e_key == pg.BUTTON_LEFT:
-            self.player.shooting = (e_type == pg.MOUSEBUTTONDOWN)
-        elif e_key == pg.K_SPACE:
-            self.player.superpower.on = (e_type == pg.KEYDOWN)
-        if e_type ==  pg.KEYDOWN and e_key in [pg.K_p, pg.K_ESCAPE]  and not self.transportation:
+        if e_type == pg.KEYDOWN and e_key in [pg.K_p, pg.K_ESCAPE] and not self.transportation:
             self.draw_background(self.pause_menu.bg_surface)
             self.player.stop_moving()
             self.pause_menu.run()
+        else:
+            self.player.handle(e_type, e_key)
 
     def handle_events(self):
         """Main events handler that handles pygame events
@@ -124,24 +111,22 @@ class Game:
         for i, bubble in enumerate(self.room.bubbles):
             if self.player.collide_bubble(bubble.x, bubble.y):
                 self.player.handle_bubble_eating(bubble.health)
-                self.health_window.activate(self.player.health, self.player.level)
+                self.health_window.activate()
                 self.room.bubbles[i] = None
                 eaten_bubbles += 1
         if eaten_bubbles:
             self.pause_menu.update_counter(1, eaten_bubbles)
             self.room.bubbles = list(filter(lambda b: b is not None, self.room.bubbles))
             self.sound_player.play_sound(BUBBLE_DEATH)
-        if self.player.is_ready_to_upgrade:
-            self.handle_player_upgrade()
 
-    def handle_player_downgrade(self):
+    def downgrade_player(self):
         self.player.downgrade()
         self.set_windows()
         self.pause_menu.update_tank_description()
         self.bg_environment.set_player_halo(self.player.bg_radius)
         self.room.set_gravity_radius(1.3 * self.player.bg_radius)
 
-    def handle_player_upgrade(self):
+    def upgrade_player(self):
         if self.player.last_tank_in_history:
             self.upgrade_menu.run()
             if not self.running:
@@ -157,69 +142,77 @@ class Game:
         self.bg_environment.set_player_halo(self.player.bg_radius)
         self.room.set_gravity_radius(1.3 * self.player.bg_radius)
 
-    def handle_enemy_injure(self, mob, bullet):
-        """
-        Method updates bullet's hit-flag, updates enemy's state according to damage,
-        adds a hit-effect to the list of effects and plays an appropriate sound.
-
-        """
-        if isinstance(bullet, (DrillingBullet, AirBullet)):
-            if mob in bullet.attacked_mobs:
-                return
-            bullet.attacked_mobs.append(mob)
-            if isinstance(bullet, AirBullet):
-                self.room.add_bubbles(bullet.x, bullet.y, bullet.bubbles)
-        else:
-            bullet.hit_the_target = True
-
-        mob.handle_injure(bullet.damage)
-
-        add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
-
-        if isinstance(bullet, ExplodingBullet):
-            self.room.handle_bullet_explosion(bullet.x, bullet.y)
-
-        if mob.health <= 0:
+    def handle_damage_to_enemy(self, enemy, bullet):
+        enemy.handle_injure(bullet.damage)
+        if enemy.health <= 0:
             self.pause_menu.update_counter(0, 1)
-            if not isinstance(mob, Seeker):
-                self.sound_player.play_sound(MOB_DEATH)
+            self.sound_player.play_sound(MOB_DEATH)
         else:
             self.sound_player.play_sound(PLAYER_BULLET_HIT, False)
 
-    def check_collisions(self, bullet, enemies):
-        for enemy in enemies:
-            if enemy.collide_bullet(bullet.x, bullet.y, bullet.radius) and enemy.health > 0:
-                self.handle_enemy_injure(enemy, bullet)
-                break
+    def handle_damage_to_ally(self, ally, bullet):
+        """Handles damage to player's tank/seeker made by enemy's bullet. """
+        bullet.hit_the_target = True
+        ally.handle_injure(bullet.damage)
+        add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
+
+    def handle_bullet_explosion(self, bullet):
+        """ Changes mobs' states according to their positions relative
+        to the explosion, and adds some special effects.
+        """
+        x, y, radius = bullet.x, bullet.y, bullet.explosion_radius
+        for enemy in chain(self.room.mobs, self.room.seekers):
+            if enemy.collide_bullet(x, y, radius):
+                self.handle_damage_to_enemy(enemy, bullet)
+        add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
+        add_effect('Flash', self.room.top_effects)
+        self.camera.start_shaking(500)
+
+    def handle_enemy_collision(self, attacked_enemy, bullet):
+        """Handles collision between enemy and player's bullet. """
+        if isinstance(bullet, ExplodingBullet):
+            self.handle_bullet_explosion(bullet)
+            bullet.hit_the_target = True
+        elif isinstance(bullet, ExplosivePierceBullet):
+            if attacked_enemy not in bullet.attacked_mobs:
+                bullet.attacked_mobs.append(attacked_enemy)
+                self.handle_bullet_explosion(bullet)
+        else:
+            self.handle_damage_to_enemy(attacked_enemy, bullet)
+            bullet.hit_the_target = True
+            add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
+            if isinstance(bullet, LeecherBullet):
+                bubble = Bubble(bullet.x, bullet.y, gravitation_radius=2*ROOM_RADIUS)
+                bubble.vel = 0
+                self.room.bubbles.append(bubble)
+            elif (isinstance(bullet, PlayerVirus) and
+                  not isinstance(attacked_enemy, Seeker) and
+                  not attacked_enemy.is_infected):
+                attacked_enemy.become_infected()
 
     def handle_enemies_collisions(self):
-        """Handles collisions between enemies tanks/seekers and all bullets of player. """
+        """Handles collisions between enemies player bullets. """
         self.sound_player.unlock()
-        mobs = self.room.mobs
-        for bullet in chain(self.player.bullets, self.player.mines,
-                            self.player.seekers, self.player.orbital_seekers):
-            self.check_collisions(bullet, mobs)
-            if not bullet.hit_the_target:
-                self.check_collisions(bullet, self.room.seekers)
-
-    def handle_player_injure(self, bullet):
-        bullet.hit_the_target = True
-        self.player.handle_injure(bullet.damage)
-        add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
+        bullets = chain(self.player.bullets, self.player.mines,
+                        self.player.seekers, self.player.orbital_seekers)
+        for bullet in bullets:
+            if isinstance(bullet, AirBullet):
+                continue
+            for enemy in chain(self.room.mobs, self.room.seekers):
+                if enemy.collide_bullet(bullet.x, bullet.y, bullet.radius):
+                    self.handle_enemy_collision(enemy, bullet)
 
     def handle_player_collisions(self):
         """Handles collisions between player's tank/seekers and all bullets of enemies. """
         self.sound_player.unlock()
-
-        for b in chain(self.room.bullets, self.room.mines, self.room.seekers):
-            if not self.player.disassembled and self.player.collide_bullet(b.x, b.y, b.radius):
-                self.handle_player_injure(b)
-                break
-            if not b.hit_the_target:
-                self.check_collisions(b, self.player.seekers)
-
-        if self.player.health < 0 and self.player.level > 0:
-            self.handle_player_downgrade()
+        bullets = chain(self.room.bullets, self.room.mines, self.room.seekers)
+        seekers = self.player.seekers
+        allies = seekers if self.player.disassembled else seekers + [self.player]
+        for b in bullets:
+            for ally in allies:
+                if ally.collide_bullet(b.x, b.y, b.radius):
+                    self.handle_damage_to_ally(ally, b)
+                    break
 
     def update_transportation(self, dt):
         """ Update all objects during transportation. """
@@ -227,7 +220,7 @@ class Game:
         self.camera.update(dt)
         self.room.update(dt)
         self.health_window.update(dt)
-        self.cooldown_window.update(dt, self.player, True)
+        self.cooldown_window.update(dt)
 
     def draw_transportation(self, time, dx, dy):
         """ Draw all objects during transportation. """
@@ -276,7 +269,7 @@ class Game:
 
     def get_destination_pos(self, direction):
         """Method returns player's destination point during transportation. """
-        distance = DIST_BETWEEN_ROOMS - (ROOM_RADIUS - self.player.radius - H(240))
+        distance = DIST_BETWEEN_ROOMS - (ROOM_RADIUS - self.player.bg_radius - H(240))
         destination_pos = np.array([SCR_W2, SCR_H2]) + direction * distance
         return destination_pos
 
@@ -336,13 +329,12 @@ class Game:
         if (self.camera.offset[0] / offset) ** 2 <= 0.5:
             return np.array([0, -1] if self.camera.offset[1] < 0 else [0, 1])
 
-        return np.array([1, 0] if self.camera.offset[0]  > 0 else [-1, 0])
+        return np.array([1, 0] if self.camera.offset[0] > 0 else [-1, 0])
 
     def check_transportation(self):
         """Checks if player is defeated or outside the room.
         If yes, determines the direction of transportation
         and transports player to the next room.
-
         """
         player_offset = hypot(*self.camera.offset)
         if self.player.defeated or player_offset > ROOM_RADIUS:
@@ -353,16 +345,24 @@ class Game:
         self.handle_bubble_eating()
         self.handle_enemies_collisions()
         self.handle_player_collisions()
+
+        if self.player.has_to_upgrade:
+            self.upgrade_player()
+        elif self.player.has_to_downgrade:
+            self.downgrade_player()
+
         self.player.update(dt)
         self.camera.update(dt)
         self.room.update(dt)
+
         if self.room.boss_defeated(self.bg_environment.boss_disposition):
-            self.running = False
             self.victory_menu.run()
-        else:
-            self.health_window.update(dt)
-            self.cooldown_window.update(dt, self.player)
-            self.check_transportation()
+        if not self.running:
+            return
+
+        self.health_window.update(dt)
+        self.cooldown_window.update(dt)
+        self.check_transportation()
 
     def draw_background(self, surface):
         """Draw all entities that should be drawn below player, mobs, bullets etc. """
@@ -411,15 +411,14 @@ class Game:
         self.clock.tick()
         dt = 0
         while self.running:
-            self.handle_events()
-
-            if self.running:
-                self.update(dt)
+            self.update(dt)
 
             if self.running:
                 self.draw_background(self.screen)
                 self.draw_foreground()
                 pg.display.update()
+
+            self.handle_events()
 
             dt = self.clock.tick()
             self.fps_manager.update(dt)

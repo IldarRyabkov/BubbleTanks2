@@ -15,7 +15,29 @@ def create_sniper_bullet():
     body.set_colorkey(COLOR_KEY)
     return body
 
+
 SNIPER_BULLET_BODY = create_sniper_bullet()
+
+
+LEECHER_BULLET = [
+    [12,  2, DARK_RED, 0, 0, False, 0, True, True, 18, 0],
+    [12,  2, DARK_RED, 0, 0, False, 0, True, True, 18, pi],
+    [16,  2, DARK_RED, 0, 0, False, 0, True, True, 0, 0]
+]
+
+
+PLAYER_VIRUS_BULLET = [
+    [9,  2, DARK_RED, 0, 0, False, 0, True, True, 23, 0.45 * pi],
+    [9,  2, DARK_RED, 0, 0, False, 0, True, True, 23, -0.45 * pi],
+    [7,  2, DARK_RED, 0, 0, False, 0, True, True, 34, 0.48 * pi,  True, -0.9 * pi, 12],
+    [7,  2, DARK_RED, 0, 0, False, 0, True, True, 34, -0.48 * pi, True, 0.9 * pi,  12],
+    [9,  2, DARK_RED, 0, 0, False, 0, True, True, 22, 0.87 * pi],
+    [9,  2, DARK_RED, 0, 0, False, 0, True, True, 22, -0.87 * pi],
+    [7,  2, DARK_RED, 0, 0, False, 0, True, True, 34, 0.93 * pi,  True, 0.4 * pi,  14],
+    [7,  2, DARK_RED, 0, 0, False, 0, True, True, 34, -0.93 * pi, True, -0.4 * pi, 14],
+    [18, 4, DARK_RED, 0, 0, True, 12, True, True]
+]
+
 
 AIR_BULLET_BODY = [
     [28, 4, BUBBLE_COLOR, 0, 0, True, 17, True, False]
@@ -157,7 +179,9 @@ BULLET_BODIES = {
     'BigDrone': scaled_body(BIG_DRONE_BODY),
     'MediumDrone': scaled_body(MEDIUM_DRONE_BODY),
     'SmallDrone': scaled_body(SMALL_DRONE_BODY),
-    'TinyDrone': scaled_body(TINY_DRONE_BODY)
+    'TinyDrone': scaled_body(TINY_DRONE_BODY),
+    'LeecherBullet': scaled_body(LEECHER_BULLET),
+    'PlayerVirus': scaled_body(PLAYER_VIRUS_BULLET)
 }
 
 

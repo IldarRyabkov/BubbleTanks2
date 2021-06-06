@@ -20,6 +20,10 @@ class BaseMob:
         self.radius = radius
         self.body = Body(body, frozen_body)
 
+        self.is_infected = False
+        self.infection_time = 0
+        self.infection_cooldown_time = 170
+
     def update_body_look(self):
         for circle in self.body.circles:
             circle.is_visible = True

@@ -1,11 +1,13 @@
 from random import uniform, choice
 from numpy import sign
 from pygame import Rect
+from math import pi
 
 from utils import *
 from mob_guns import get_gun
 from base_mob import BaseMob
 from data.mobs import FROZEN_BODY
+from bullets import PlayerVirus
 
 
 class Mob(BaseMob):
@@ -32,6 +34,21 @@ class Mob(BaseMob):
 
         self.is_paralyzed = False
         self.paralyzed_time = 0
+
+    def become_infected(self):
+        self.is_infected = True
+        self.infection_time = 0
+        self.body.become_infected()
+
+    def update_infection(self, dt):
+        self.infection_time += dt
+        if self.infection_time >= self.infection_cooldown_time:
+            self.infection_time = 0
+            self.health -= 1
+            self.update_body_look()
+        if self.health <= 0:
+            self.player.seekers.append(PlayerVirus(self.x, self.y, uniform(0, 2*pi)))
+            self.player.seekers.append(PlayerVirus(self.x, self.y, uniform(0, 2*pi)))
 
     def shift(self, delta_angle):
         return self.trajectory(self.xo, self.yo, self.polar_angle + delta_angle)
@@ -76,6 +93,8 @@ class Mob(BaseMob):
             self.is_paralyzed = False
 
     def update(self, dt):
+        if self.is_infected:
+            self.update_infection(dt)
         if not self.is_paralyzed:
             if not self.body.is_frozen:
                 self.update_pos(dt)

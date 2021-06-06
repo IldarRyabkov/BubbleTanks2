@@ -1,7 +1,7 @@
 import pygame as pg
 
-from gui.text_widget import TextWidget
-from gui.scaling_button import ScalingButton
+from gui.widgets.text_widget import TextWidget
+from gui.buttons.scaling_button import ScalingButton
 from constants import *
 from utils import H
 

@@ -63,6 +63,7 @@ class Circle:
         self.radius = radius
         self.edge = edge
         self.color = color
+        self.edge_color = WHITE
 
         # polar coordinates, which are used to calculate the
         # offset of the circle from the center of the body
@@ -175,7 +176,7 @@ class Circle:
         if not self.is_visible:
             return
         pos, r = (round(self.x - dx), round(self.y - dy)), round(self.radius)
-        pg.draw.circle(surface, WHITE, pos, r)
+        pg.draw.circle(surface, self.edge_color, pos, r)
 
         pg.draw.circle(surface, self.color, pos, r - round(self.edge))
 

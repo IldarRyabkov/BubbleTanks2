@@ -216,7 +216,7 @@ HEALTH_STATES_10 = (
 )
 
 params_10 = {
-    "max_health": 75,
+    "max_health": 125,
     "health_states": HEALTH_STATES_10,
     "radius": HF(93),
     "body": scaled_body(BODY_10),
@@ -2046,62 +2046,101 @@ params_51 = {
 
 
 BODY_52 = [
-
+    [20, 3, BLUE,   0, 0, True,  17, True, True, 107, 0.65 * pi],
+    [20, 3, BLUE,   0, 0, True,  17, True, True, 107, -0.65 * pi],
+    [16, 2, BLUE,   0, 0, True,  14, True, True, 142, 0.755 * pi],
+    [16, 2, BLUE,   0, 0, True,  14, True, True, 142, -0.755 * pi],
+    [16, 2, BLUE,   0, 0, True,  14, True, True, 123, 0.87 * pi],
+    [16, 2, BLUE,   0, 0, True,  14, True, True, 123, -0.87 * pi],
+    [13, 1, BLUE,   0, 0, True,  12, True, True, 78,  0.86 * pi],
+    [13, 1, BLUE,   0, 0, True,  12, True, True, 78,  -0.86 * pi],
+    [22, 3, BLUE,   0, 0, True,  13, True, True, 80,  pi],
+    [16, 2, BLUE,   0, 0, True,  14, True, True, 69,  0.76 * pi],
+    [16, 2, BLUE,   0, 0, True,  14, True, True, 69,  -0.76 * pi],
+    [11, 1, BLUE,   0, 0, True,  10, True, True, 37,  0.32 * pi],
+    [11, 1, BLUE,   0, 0, True,  10, True, True, 37,  -0.32 * pi],
+    [11, 1, BLUE,   0, 0, True,  10, True, True, 55,  0.215 * pi],
+    [11, 1, BLUE,   0, 0, True,  10, True, True, 55,  -0.215 * pi],
+    [14, 2, BLUE,   0, 0, True,  13, True, True, 71,  0.06 * pi],
+    [14, 2, BLUE,   0, 0, True,  13, True, True, 71,  -0.06 * pi],
+    [32, 2, BLUE,   0, 0, True,  16, True, True, 32,  0],
+    [44, 4, BLUE,   0, 0, True,  19, True, True, 30,  pi],
+    [19, 2, BLUE,   0, 0, True,  17, True, True, 60,  0.32 * pi],
+    [19, 2, BLUE,   0, 0, True,  17, True, True, 60,  -0.32 * pi],
+    [11, 1, BLUE,   0, 0, True,  10, True, True, 81,  0.27 * pi],
+    [11, 1, BLUE,   0, 0, True,  10, True, True, 81,  -0.27 * pi],
+    [11, 1, BLUE,   0, 0, True,  10, True, True, 63,  0.445 * pi],
+    [11, 1, BLUE,   0, 0, True,  10, True, True, 63,  -0.445 * pi],
+    [29, 4, BLUE,   0, 0, True,  23, True, True, 104, 0.77 * pi],
+    [29, 4, BLUE,   0, 0, True,  23, True, True, 104, -0.77 * pi],
+    [8,  1, ORANGE, 0, 0, False, 1,  True, True, 2,   pi],
+    [11, 1, ORANGE, 0, 0, True,  10, True, True, 13,  0],
+    [20, 3, ORANGE, 0, 0, True,  18, True, True, 26,  pi],
+    [13, 1, ORANGE, 0, 0, True,  12, True, True, 51,  0.85 * pi],
+    [13, 1, ORANGE, 0, 0, True,  12, True, True, 51,  -0.85 * pi],
+    [9,  1, ORANGE, 0, 0, True,  8,  True, True, 27,  0.16 * pi],
+    [9,  1, ORANGE, 0, 0, True,  8,  True, True, 27,  -0.16 * pi],
+    [15, 2, ORANGE, 0, 0, True,  14, True, True, 85,  0],
+    [9,  1, ORANGE, 0, 0, True,  8,  True, True, 106, 0.05 * pi],
+    [9,  1, ORANGE, 0, 0, True,  8,  True, True, 106, -0.05 * pi]
 ]
 
 
 params_52 = {
     "max_health": 1,
     "health_states": ((0, ),),
-    "radius": HF(110),
-    "body": scaled_body(BODY_51),
+    "radius": HF(95),
+    "body": scaled_body(BODY_52),
     "body_is_rotating": False,
-    "max_vel": HF(0.89),
-    "max_acc": HF(0.0036),
-    "gun_type": 'Gun51',
-    "bg_radius": HF(160),
-    "superpower": None
+    "max_vel": HF(0.9),
+    "max_acc": HF(0.003),
+    "gun_type": 'Gun52',
+    "bg_radius": HF(210),
+    "superpower": 'DoomsdayInfect'
 }
 
 
 BODY_53 = [
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 77,  0.77 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 60,  0.69 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 77,  -0.77 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 60,  -0.69 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 16,  0.5 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 16,  -0.5 * pi],
-    [42, 3, BLUE,   1,   0,  True,  26, True, True, 45,  pi],
-    [20, 3, BLUE,   1,   0,  True,  20, True, True, 64,  0],
-    [22, 3, BLUE,   1,   0,  True,  21, True, True, 26,  0],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 88,  0],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 92,  0.51 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 92,  -0.51 * pi],
-    [22, 3, BLUE,   1,   0,  True,  21, True, True, 70,  0.42 * pi],
-    [22, 3, BLUE,   1,   0,  True,  21, True, True, 70,  -0.42 * pi],
-    [22, 3, BLUE,   1,   0,  True,  21, True, True, 110, 0.07 * pi],
-    [22, 3, BLUE,   1,   0,  True,  21, True, True, 110, -0.07 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 132, 0.87 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 132, -0.87 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 180, 0.86 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 180, -0.86 * pi],
-    [30, 4, BLUE,   1,   0,  True,  26, True, True, 154, 0.81 * pi],
-    [30, 4, BLUE,   1,   0,  True,  26, True, True, 154, -0.81 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 136, 0.74 * pi],
-    [16, 2, BLUE,   1,   0,  True,  16, True, True, 136, -0.74 * pi],
-    [36, 5, BLUE,   1,   0,  True,  28, True, True, 103, 0.65 * pi],
-    [36, 5, BLUE,   1,   0,  True,  28, True, True, 103, -0.65 * pi],
-    [22, 3, BLUE,   1,   0,  True,  21, True, True, 147, 0.63 * pi],
-    [22, 3, BLUE,   1,   0,  True,  21, True, True, 147, -0.63 * pi],
-    [17, 2, BLUE,   1,   0,  True,  17, True, True, 176, 0.645 * pi],
-    [17, 2, BLUE,   1,   0,  True,  17, True, True, 176, -0.645 * pi],
-    [20, 3, ORANGE, 1,   0,  True,  20, True, True, 130, 0],
-    [10, 1, ORANGE, 1,   0,  True,  10, True, True, 149, 0.04 * pi],
-    [10, 1, ORANGE, 1,   0,  True,  10, True, True, 149, -0.04 * pi],
-    [24, 4, ORANGE, 1,   0,  True,  22, True, True, 160, pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 77,  0.77 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 60,  0.69 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 77,  -0.77 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 60,  -0.69 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 16,  0.5 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 16,  -0.5 * pi],
+    [42, 3, BLUE,   0,   0,  True,  26, True, True, 45,  pi],
+    [20, 3, BLUE,   0,   0,  True,  20, True, True, 64,  0],
+    [22, 3, BLUE,   0,   0,  True,  21, True, True, 26,  0],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 88,  0],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 92,  0.51 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 92,  -0.51 * pi],
+    [22, 3, BLUE,   0,   0,  True,  21, True, True, 70,  0.42 * pi],
+    [22, 3, BLUE,   0,   0,  True,  21, True, True, 70,  -0.42 * pi],
+    [22, 3, BLUE,   0,   0,  True,  21, True, True, 110, 0.07 * pi],
+    [22, 3, BLUE,   0,   0,  True,  21, True, True, 110, -0.07 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 132, 0.87 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 132, -0.87 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 180, 0.86 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 180, -0.86 * pi],
+    [30, 4, BLUE,   0,   0,  True,  26, True, True, 154, 0.81 * pi],
+    [30, 4, BLUE,   0,   0,  True,  26, True, True, 154, -0.81 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 136, 0.74 * pi],
+    [16, 2, BLUE,   0,   0,  True,  16, True, True, 136, -0.74 * pi],
+    [36, 5, BLUE,   0,   0,  True,  28, True, True, 103, 0.65 * pi],
+    [36, 5, BLUE,   0,   0,  True,  28, True, True, 103, -0.65 * pi],
+    [22, 3, BLUE,   0,   0,  True,  21, True, True, 147, 0.63 * pi],
+    [22, 3, BLUE,   0,   0,  True,  21, True, True, 147, -0.63 * pi],
+    [17, 2, BLUE,   0,   0,  True,  17, True, True, 176, 0.645 * pi],
+    [17, 2, BLUE,   0,   0,  True,  17, True, True, 176, -0.645 * pi],
+    [20, 3, ORANGE, 0,   0,  True,  20, True, True, 130, 0],
+    [10, 1, ORANGE, 0,   0,  True,  10, True, True, 149, 0.04 * pi],
+    [10, 1, ORANGE, 0,   0,  True,  10, True, True, 149, -0.04 * pi],
+    [24, 4, ORANGE, 0,   0,  True,  22, True, True, 160, pi],
     [10, 1, ORANGE, 160, pi, False, 1,  True, True, 1,   0,           True, 0,           90],
     [10, 1, ORANGE, 160, pi, False, 1,  True, True, 1,   0,           True, -0.667 * pi, 90],
-    [10, 1, ORANGE, 160, pi, False, 1,  True, True, 1,   0,           True, 0.667 * pi,  90]]
+    [10, 1, ORANGE, 160, pi, False, 1,  True, True, 1,   0,           True, 0.667 * pi,  90]
+
+]
+
 
 params_53 = {
     "max_health": 1,
@@ -2389,4 +2428,4 @@ __all__ = [
 
 ]
 
-#print_pretty(BODY_53)
+#print_pretty(BODY_52, 1.2)

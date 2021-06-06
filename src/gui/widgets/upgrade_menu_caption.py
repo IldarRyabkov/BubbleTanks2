@@ -1,17 +1,19 @@
 import pygame as pg
 
 from constants import *
-from gui.text_widget import TextWidget
+from gui.widgets.text_widget import TextWidget
+from gui.widgets.animated_widget import AnimatedWidget
 from data.paths import *
 from utils import H, HF
 from languages.texts import TEXTS
 
 
-class UpgradeMenuCaption:
+class UpgradeMenuCaption(AnimatedWidget):
     """Caption of the upgrade menu. It appears when
     upgrade menu opens and hides when it closes.
     """
     def __init__(self):
+        super().__init__()
         self.w = H(1184)
         self.h = H(112)
 

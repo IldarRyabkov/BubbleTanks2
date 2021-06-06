@@ -1,7 +1,7 @@
 import pygame as pg
 
 from data.paths import *
-from gui.button import Button
+from gui.buttons.button import Button
 from constants import *
 from utils import *
 

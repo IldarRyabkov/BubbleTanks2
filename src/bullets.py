@@ -10,7 +10,7 @@ from utils import circle_collidepoint, calculate_angle, H, HF
 
 class Bullet:
     """ a parent class for all bullets classes """
-    def __init__(self, x, y, radius, damage, vel, angle, body):
+    def __init__(self, x, y, radius, damage, vel, angle, body, hit_effect=None):
         self.x = x
         self.y = y
         self.radius = radius
@@ -18,7 +18,7 @@ class Bullet:
         self.vel_x = vel * cos(angle)
         self.vel_y = -vel * sin(angle)
         self.damage = damage
-        self.hit_effect = self.set_hit_effect(damage)
+        self.hit_effect = self.set_hit_effect(hit_effect, damage)
         self.body = body if isinstance(body, pg.Surface) else Body(body)
         self.hit_the_target = False
 
@@ -31,7 +31,9 @@ class Bullet:
         return self.hit_the_target or self.is_outside
 
     @staticmethod
-    def set_hit_effect(damage):
+    def set_hit_effect(hit_effect, damage):
+        if hit_effect is not None:
+            return hit_effect
         if damage <= -5: return 'BigHitLines'
         if damage: return 'SmallHitLines'
         return 'VioletHitCircle'
@@ -83,6 +85,7 @@ class ExplodingBullet(RegularBullet):
         self.color_switch = 1
         self.T = 80
         self.color_time = 0
+        self.explosion_radius = H(600)
 
     def change_color(self):
         self.color_switch *= -1
@@ -101,7 +104,7 @@ class ExplodingBullet(RegularBullet):
 class Mine(Bullet):
     """Mine doesn't move and deals damage to a tank that moved too close. """
     def __init__(self, x, y, body):
-        super().__init__(x, y, HF(18), -10, 0, 0, body)
+        super().__init__(x, y, HF(18), -10, 0, 0, body, hit_effect='RedHitCircle')
 
         angle = uniform(0, 2 * pi)
         for circle in self.body.circles:
@@ -211,6 +214,7 @@ class Seeker(Bullet):
         self.health = 1
         self.hit_effect = 'RedHitCircle'
         self.target = None
+        self.is_infected = False
 
     @property
     def killed(self) -> bool:
@@ -226,7 +230,13 @@ class Seeker(Bullet):
     def handle_injure(self, damage):
         self.health += damage
 
-    def update(self, dt):
+    def set_target(self, targets):
+        return min(targets, key=lambda t: hypot(self.x - t.x, self.y - t.y))
+
+    def update(self, dt, targets=()):
+        if self.no_target:
+            self.target = self.set_target(targets)
+
         angle = calculate_angle(self.x, self.y, self.target.x, self.target.y)
         vel_angle = calculate_angle(0, 0, self.vel_x, self.vel_y)
         if abs(vel_angle - angle) > pi/2:
@@ -239,9 +249,36 @@ class Seeker(Bullet):
         self.body.update(self.x, self.y, dt, self.x + self.vel_x, self.y + self.vel_y)
 
 
+class PlayerVirus(Seeker):
+    def __init__(self, x, y, start_angle):
+        super().__init__(x, y, start_angle, 0.04, HF(18), -1, 0.6, BULLET_BODIES['PlayerVirus'])
+
+    @property
+    def no_target(self):
+        return super().no_target or self.target.is_infected
+
+    def set_target(self, targets):
+        current_target = None
+        for target in targets:
+            current_target = target
+            if not target.is_infected:
+                return target
+        return current_target
+
 class PlayerSeeker(Seeker):
     def __init__(self, x, y, start_angle, body="HomingMissile_1", vel=HF(0.75)):
         super().__init__(x, y, start_angle, 0.04, HF(10), -5, vel, BULLET_BODIES[body])
+
+
+class LeecherBullet(Bullet):
+    def __init__(self, x, y, angle):
+        super().__init__(x, y, 18, -7, HF(1.6), angle,
+                         BULLET_BODIES['LeecherBullet'],
+                         hit_effect='RedHitCircle')
+
+    def update(self, dt):
+        self.update_pos(dt)
+        self.body.update(self.x, self.y, dt, self.x + self.vel_x, self.y + self.vel_y)
 
 
 class Drone(Bullet):
@@ -275,14 +312,14 @@ class Drone(Bullet):
             self.divide()
 
 
-class DrillingBullet(Bullet):
+class PierceBullet(Bullet):
     """ A bullet that can pass through many enemies. """
-    def __init__(self, x, y, damage, vel, angle, body):
-        super().__init__(x, y, HF(12), damage, vel, angle, body)
+    def __init__(self, x, y, damage, vel, angle, body, hit_effect=None):
+        super().__init__(x, y, HF(12), damage, vel, angle, body, hit_effect=hit_effect)
         self.body = pg.transform.rotate(body, angle * 180 / pi)
         self.x = x - self.body.get_width() / 2
         self.y = y - self.body.get_height() / 2
-        self.attacked_mobs = []  # contains IDs of mobs attacked by this bullet
+        self.attacked_mobs = []  # contains mobs attacked by this bullet
 
     def move(self, dx, dy):
         self.x += dx
@@ -298,6 +335,12 @@ class DrillingBullet(Bullet):
         surface.blit(self.body, (int(self.x - dx), int(self.y - dy)))
 
 
+class ExplosivePierceBullet(PierceBullet):
+    def __init__(self, *args):
+        super().__init__(*args, hit_effect='SmallPowerfulExplosion')
+        self.explosion_radius = H(150)
+
+
 class FrangibleBullet(Bullet):
     """
      Bullet moves evenly and rectilinearly until its timer achieves fragmentation time.
@@ -307,7 +350,7 @@ class FrangibleBullet(Bullet):
 
     """
     def __init__(self, x, y, angle, body):
-        Bullet.__init__(self, x, y, HF(20), -40, HF(0.8), angle, body)
+        super().__init__(x, y, HF(20), -40, HF(0.8), angle, body)
         self.body.update(x, y, 0)
         self.time = 0
         self.fragmentation_time = 1000
@@ -319,7 +362,7 @@ class FrangibleBullet(Bullet):
         if self.time == self.fragmentation_time:
             self.hit_the_target = True
             fragments = [
-                DrillingBullet(self.x, self.y, -8, HF(2.1), i * pi / 180, BULLET_BODIES["SniperBullet"])
+                PierceBullet(self.x, self.y, -8, HF(2.1), i * pi / 180, BULLET_BODIES["SniperBullet"])
                 for i in range(0, 360, 12)
             ]
             bullets.extend(fragments)
@@ -340,9 +383,12 @@ __all__ = [
     "OrbitalSeeker",
     "Seeker",
     "PlayerSeeker",
-    "DrillingBullet",
+    "LeecherBullet",
+    "PierceBullet",
+    "ExplosivePierceBullet",
     "FrangibleBullet",
     "AirBullet",
-    "Drone"
+    "Drone",
+    "PlayerVirus"
 
 ]

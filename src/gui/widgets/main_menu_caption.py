@@ -1,24 +1,19 @@
 import pygame as pg
 
-from gui.text_widget import TextWidget
+from gui.widgets.text_widget import TextWidget
+from gui.widgets.animated_widget import AnimatedWidget
 from constants import *
 from languages.texts import TEXTS
 from data.paths import MAIN_MENU_CAPTION_BG, FONT_1
 from utils import H
+from states import MainMenuStates as St
 
 
-MAIN_PAGE = 0
-SETTINGS = 1
-CREDITS = 2
-LANGUAGES = 3
-RESOLUTIONS = 4
-EXIT_CONFIRMATION = 5
-
-
-class MainMenuCaption:
-    def __init__(self, menu, game):
+class MainMenuCaption(AnimatedWidget):
+    def __init__(self, menu):
+        super().__init__()
         self.menu = menu
-        self.game = game
+        self.game = menu.game
 
         self.text = TextWidget(SCR_W2, H(405), FONT_1, H(112), WHITE, 1)
         self.image = pg.image.load(MAIN_MENU_CAPTION_BG).convert_alpha()
@@ -26,10 +21,10 @@ class MainMenuCaption:
         self.alpha = 255
 
     def set_state(self, state):
-        if state == MAIN_PAGE:
+        if state == St.MAIN_PAGE:
             self.text.y = H(405)
             self.text.set_font_size(H(112))
-        elif state == EXIT_CONFIRMATION:
+        elif state == St.DIALOG_EXIT:
             self.text.y = H(320)
             self.text.set_font_size(H(70))
         else:
@@ -37,7 +32,7 @@ class MainMenuCaption:
             self.text.set_font_size(H(80))
 
         self.text.set_text(TEXTS["main menu captions"][self.game.language][state])
-        if state == MAIN_PAGE:
+        if state == St.MAIN_PAGE:
             scaled_h = 2*self.text.h + H(60)
         else:
             scaled_h = round(1.3 * self.text.h) + H(20)
@@ -45,7 +40,7 @@ class MainMenuCaption:
         self.text.set_alpha(self.alpha)
         self.surface.set_alpha(self.alpha)
 
-    def update(self, dt, animation_state, time_elapsed):
+    def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         if animation_state == WAIT:
             return
         if animation_state == OPEN:

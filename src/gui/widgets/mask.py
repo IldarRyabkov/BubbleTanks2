@@ -2,7 +2,7 @@ from constants import *
 
 
 class Mask:
-    def __init__(self, menu, surface, pos):
+    def __init__(self, menu, surface, pos=(0, 0)):
         self.menu = menu
         self.surface = surface
         self.pos = pos

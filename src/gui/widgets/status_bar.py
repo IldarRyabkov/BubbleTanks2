@@ -2,9 +2,10 @@ import pygame as pg
 
 from constants import WHITE, STATUS_BAR_BG
 from utils import H
+from gui.widgets.widget import Widget
 
 
-class StatusBar:
+class StatusBar(Widget):
     """ The status bar is used in the cooldown window to show the cooldown
     of the player's weapon and superpower, and in the health window to show
     how many bubbles are left to collect to upgrade the tank.
@@ -15,6 +16,7 @@ class StatusBar:
                  w: float,
                  h: float,
                  max_value: int):
+        super().__init__()
         self.x = x
         self.y = y
         self.w = w

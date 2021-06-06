@@ -1,8 +1,7 @@
 import pygame as pg
-from math import cos, sin, pi, hypot
+from math import cos, sin, pi
 from numpy import sign
 from itertools import chain
-
 
 from constants import *
 from data.player import *
@@ -37,7 +36,7 @@ class Player(BaseMob):
         self.max_vel = max_vel
         self.vel_x = self.vel_y = 0
         self.max_acc = max_acc
-        self.acc_x= self.acc_y = 0
+        self.acc_x = self.acc_y = 0
 
         self.max_angular_vel = self.MAX_ANGULAR_VEL
         self.max_angular_acc = self.MAX_ANGULAR_ACC
@@ -72,11 +71,15 @@ class Player(BaseMob):
         return self.tank[0]
 
     @property
-    def is_ready_to_upgrade(self):
+    def has_to_upgrade(self) -> bool:
         return self.level < 5 and self.health >= self.max_health
 
     @property
-    def last_tank_in_history(self):
+    def has_to_downgrade(self) -> bool:
+        return self.level > 0 and self.health < 0
+
+    @property
+    def last_tank_in_history(self) -> bool:
         """ Called when player requests tank upgrade.
         Checks if player's current tank is last in his history of tanks.
         If so, there is a need to open upgrade menu to choose a new tank.
@@ -84,15 +87,15 @@ class Player(BaseMob):
         return self.tank == self.tanks_history[-1]
 
     @property
-    def defeated(self):
+    def defeated(self) -> bool:
         return self.health < 0 and self.level == 0
 
     @property
-    def shield_on(self):
+    def shield_on(self) -> bool:
         return isinstance(self.superpower, Shield) and self.superpower.shield_on
 
     @property
-    def disassembled(self):
+    def disassembled(self) -> bool:
         return isinstance(self.superpower, Ghost) and self.superpower.disassembled
 
     def reset(self):
@@ -194,6 +197,20 @@ class Player(BaseMob):
         self.superpower.game = self.game
         self.superpower.player = self
 
+    def handle(self, e_type, e_key):
+        if e_key == pg.K_a:
+            self.moving_left = (e_type == pg.KEYDOWN)
+        elif e_key == pg.K_d:
+            self.moving_right = (e_type == pg.KEYDOWN)
+        elif e_key == pg.K_w:
+            self.moving_up = (e_type == pg.KEYDOWN)
+        elif e_key == pg.K_s:
+            self.moving_down = (e_type == pg.KEYDOWN)
+        elif e_key == pg.BUTTON_LEFT:
+            self.shooting = (e_type == pg.MOUSEBUTTONDOWN)
+        elif e_key == pg.K_SPACE:
+            self.superpower.on = (e_type == pg.KEYDOWN)
+
     def collide_bullet(self, bul_x, bul_y, r):
         radius = self.bg_radius if self.shield_on else self.radius
         return circle_collidepoint(self.x, self.y, radius + r, bul_x, bul_y)
@@ -249,11 +266,9 @@ class Player(BaseMob):
         self.mines = list(filter(lambda m: not m.killed, self.mines))[-15:]
 
     def update_seekers(self, dt):
-        if self.game.room.mobs:
+        if self.game.room.mobs or self.game.room.seekers:
             for seeker in self.seekers:
-                if seeker.no_target:
-                    seeker.target = min(self.game.room.mobs, key=lambda m: hypot(seeker.x - m.x, seeker.y - m.y))
-                seeker.update(dt)
+                seeker.update(dt, targets=chain(self.game.room.mobs, self.game.room.seekers))
                 if seeker.killed:
                     add_effect('RedHitCircle', self.game.room.top_effects, seeker.x, seeker.y)
             self.seekers = list(filter(lambda s: not s.killed, self.seekers))

@@ -31,12 +31,20 @@ class UpgradeButtonType:
     WIDE_RIGHT = 4
 
 
+class PopupWindowStates:
+    CLOSED = 0
+    OPENING = 1
+    CLOSING = 2
+    OPENED = 3
+
+
 __all__ = [
 
     "MainMenuStates",
     "PauseMenuStates",
     "UpgradeMenuStates",
     "VictoryMenuStates",
-    "UpgradeButtonType"
+    "UpgradeButtonType",
+    "PopupWindowStates"
 
 ]

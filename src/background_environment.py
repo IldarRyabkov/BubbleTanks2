@@ -5,7 +5,7 @@ from numpy import array
 from body import Body
 from data.paths import *
 from constants import *
-from gui.text_widget import TextWidget
+from gui.widgets.text_widget import TextWidget
 from languages.texts import TEXTS
 from data.mobs import BOSS_SKELETON_BODY
 from mob_generator import BOSS_PIECES
@@ -237,7 +237,7 @@ class BackgroundEnvironment:
             self.new_boss_disposition = BOSS_IN_CURRENT_ROOM
             self.boss_pos = array(new_room_pos)
         elif (self.boss_disposition == BOSS_IN_CURRENT_ROOM or
-                  (self.boss_pos is not None and hypot(*(self.room_pos - self.boss_pos)) == 1)):
+              (self.boss_pos is not None and hypot(*(self.room_pos - self.boss_pos)) == 1)):
             self.new_boss_disposition = BOSS_IN_NEIGHBOUR_ROOM
         else:
             self.new_boss_disposition = BOSS_IS_FAR_AWAY
@@ -319,9 +319,9 @@ class BackgroundEnvironment:
                     self.new_boss_disposition == BOSS_IN_CURRENT_ROOM):
                 self.boss_skeleton.draw(surface, dx, dy)
 
-        elif (self.boss_disposition == BOSS_IN_CURRENT_ROOM or
-                  (self.boss_disposition == BOSS_IN_NEIGHBOUR_ROOM and
-                       self.boss_visible_from_neighbour_room(array([dx, dy])))):
+        elif (self.boss_disposition == BOSS_IN_CURRENT_ROOM
+              or (self.boss_disposition == BOSS_IN_NEIGHBOUR_ROOM and
+                  self.boss_visible_from_neighbour_room(array([dx, dy])))):
             self.boss_skeleton.draw(surface, dx, dy)
 
 

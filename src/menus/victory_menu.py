@@ -2,9 +2,11 @@ import pygame as pg
 from constants import *
 from data.paths import *
 from menus.menu import Menu
-from gui.text_button import TextButton
-from gui.text_widget import TextWidget
-from gui.victory_menu_bubbles import VictoryMenuBubbles
+from gui.buttons.text_button import TextButton
+from gui.widgets.text_widget import TextWidget
+from gui.widgets.victory_menu_bubbles import VictoryMenuBubbles
+from gui.widgets.menu_caption import MenuCaption
+from gui.widgets.mask import Mask
 from utils import *
 from languages.texts import TEXTS
 from states import VictoryMenuStates as St
@@ -17,37 +19,65 @@ class VictoryMenu(Menu):
         super().__init__(game)
         # background
         self.bg_surface = pg.Surface(SCR_SIZE)
-        self.mask = pg.Surface(SCR_SIZE)
-        self.mask.set_alpha(195)
+        mask_surface = pg.Surface(SCR_SIZE, pg.SRCALPHA)
+        mask_surface.fill((0, 0, 0, 175))
+        self.mask = Mask(self, mask_surface)
 
         # widgets
-        self.bubbles = VictoryMenuBubbles()
-        self.labels = (
-            TextWidget(SCR_W2, H(128), FONT_1, H(90), WHITE, 1),
-            TextWidget(SCR_W2, H(232), FONT_1, H(50), WHITE, 1),
+        self.bubbles = VictoryMenuBubbles(self, H(335))
+        self.caption = MenuCaption(self, SCR_W2, H(50), FONT_1, H(90), WHITE, 1)
+        self.texts = (
+            TextWidget(SCR_W2, H(170), CALIBRI, H(45), WHITE, 1, H(960)),
+            TextWidget(SCR_W2, H(410), CALIBRI, H(45), WHITE, 1, H(960)),
+            TextWidget(SCR_W2, H(580), CALIBRI, H(45), WHITE, 1, H(960)),
+            TextWidget(SCR_W2, H(720), CALIBRI, H(45), WHITE, 1, H(960)),
         )
         # widgets dictionary
-        self.widgets = { St.MAIN_STATE: (self.bubbles, *self.labels)}
+        self.widgets = { St.MAIN_STATE: (self.mask, self.caption, self.bubbles, *self.texts)}
 
         # buttons
-        self.exit_button = TextButton(SCR_W2, H(628),
-                                      TEXTS["exit to menu text"],
-                                      CALIBRI_BOLD, H(58), 200,
+        self.exit_button = TextButton(SCR_W2, H(670),
+                                      TEXTS["return to main menu text"],
+                                      CALIBRI_BOLD, H(50), 255,
                                       self.game.sound_player,
-                                      action=self.exit, w=H(600))
+                                      action=self.exit, w=H(620))
+
+        self.continue_button = TextButton(SCR_W2, H(810),
+                                          TEXTS["continue playing text"],
+                                          CALIBRI_BOLD, H(50), 255,
+                                          self.game.sound_player,
+                                          action=self.continue_playing, w=H(980))
+
         # buttons dictionary
-        self.buttons = {St.MAIN_STATE: (self.exit_button,)}
+        base_buttons = self.exit_button, self.continue_button
+        self.buttons = {St.MAIN_STATE: (*base_buttons,)}
 
     def exit(self):
         """Action of the 'exit' button. """
-        self.game.sound_player.fade_out(250)
+        self.game.sound_player.fade_out(200)
         self.click_animation(self.exit_button)
         self.running = False
+        self.game.running = False
+
+    def continue_playing(self):
+        """Action of the 'continue playing' button. """
+        self.game.bg_environment.boss_disposition = BOSS_IS_FAR_AWAY
+        self.game.bg_environment.new_boss_disposition = BOSS_IS_FAR_AWAY
+        self.game.bg_environment.boss_pos = None
+        self.game.pause_menu.map_button.boss_aim.pos = None
+        self.click_animation(self.continue_button)
+        self.close()
+
+    @property
+    def animation_time(self):
+        return 500
 
     def set_language(self, language):
-        for i, label in enumerate(self.labels):
-            label.set_text(TEXTS["victory menu labels"][language][i])
+        self.caption.set_text(TEXTS["victory menu caption"][language])
+        for i, label in enumerate(self.texts):
+            label.set_text(TEXTS["victory menu texts"][language][i])
         self.exit_button.set_language(language)
+        self.continue_button.set_language(language)
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
         self.game.update_scaling_objects(dt)
@@ -57,14 +87,14 @@ class VictoryMenu(Menu):
         """Draws all objects in the background and victory menu items. """
         screen.blit(self.bg_surface, (0, 0))
         self.game.draw_foreground()
-        screen.blit(self.mask, (0, 0))
+
+    def open(self):
+        self.game.draw_background(self.bg_surface)
+        super().open()
 
     @set_cursor_grab(False)
     def run(self):
-        """Victory menu loop which starts after the Boss is defeated. """
-        self.game.draw_background(self.bg_surface)
-        self.exit_button.reset()
         super().run()
 
-__all__ = ["VictoryMenu"]
 
+__all__ = ["VictoryMenu"]

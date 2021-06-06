@@ -1,9 +1,8 @@
-from math import pi, hypot
+from math import pi
 import pygame as pg
 from random import uniform
 
 from bubble import Bubble
-from special_effects import add_effect
 from constants import *
 from utils import HF
 from mobs import get_mob
@@ -46,7 +45,7 @@ class Room:
         self.game = game
         self.player = game.player
 
-    def boss_defeated(self, boss_disposition):
+    def boss_defeated(self, boss_disposition) -> bool:
         return boss_disposition == BOSS_IN_CURRENT_ROOM and not self.mobs
 
     def reset(self):
@@ -113,19 +112,6 @@ class Room:
         self.top_effects = list(filter(lambda e: e.running, self.top_effects))
         self.bottom_effects = list(filter(lambda e: e.running, self.bottom_effects))
 
-    def handle_bullet_explosion(self, bul_x, bul_y):
-        """ Changes mobs' states according to their positions relative
-        to the explosion, and adds some special effects.
-        """
-        for mob in self.mobs:
-            if hypot(bul_x - mob.x, bul_y - mob.y) <= 500:
-                mob.health -= 25
-                mob.update_body_look()
-                add_effect('BigHitLines', self.top_effects, mob.x, mob.y)
-        add_effect('PowerfulExplosion', self.bottom_effects, bul_x, bul_y)
-        add_effect('Flash', self.top_effects)
-        self.game.camera.start_shaking(500)
-
     def set_gravity_radius(self, gravitation_radius):
         """Method is called when the player is being upgraded.
         Sets the new radius of player's gravitational field.
@@ -143,7 +129,7 @@ class Room:
         for mob in self.mobs:
             mob.update(dt)
             if mob.health <= 0:
-                self.add_bubbles(mob.x, mob.y, mob.bubbles)
+                self.add_bubbles(mob)
         self.mobs = list(filter(lambda m: m.health > 0, self.mobs))
 
     def update_new_mobs(self, dt):
@@ -166,13 +152,13 @@ class Room:
         self.update_seekers(dt)
         self.update_effects(dt)
 
-    def add_bubbles(self, x, y, bubbles):
-        """Method is called when a mob is killed or an Air bullet hit the target.
+    def add_bubbles(self, obj):
+        """Method is called when an object is killed.
         Adds new bubbles to the list of bubbles.
         """
-        for bubble_name, n in bubbles.items():
+        for bubble_name, n in obj.bubbles.items():
             for i in range(n):
-                bubble = Bubble(x, y, uniform(0, 2 * pi), self.gravitation_radius, bubble_name)
+                bubble = Bubble(obj.x, obj.y, uniform(0, 2 * pi), self.gravitation_radius, bubble_name)
                 self.bubbles.append(bubble)
 
     def draw_bubbles(self, surface, dx, dy):

@@ -1,4 +1,4 @@
-from gui.text_button import TextButton
+from gui.buttons.text_button import TextButton
 from constants import *
 from data.paths import CALIBRI_BOLD
 from data.scripts import save_resolution

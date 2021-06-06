@@ -3,9 +3,9 @@ import pygame as pg
 from data.paths import *
 from constants import *
 from languages.texts import TEXTS
-from gui.text_widget import TextWidget
-from gui.button import Button
-from gui.tank_body import TankBody
+from gui.widgets.text_widget import TextWidget
+from gui.buttons.button import Button
+from gui.widgets.tank_body import TankBody
 from utils import H, HF
 from states import UpgradeButtonType as Bt
 
@@ -85,8 +85,7 @@ class UpgradeButton(Button):
 
     def choose_upgrade(self):
         self.menu.chosen_tank = self.tank
-        self.menu.running = False
-        self.menu.animation(CLOSE)
+        self.menu.close()
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
         if animation_state == OPEN:

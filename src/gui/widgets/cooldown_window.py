@@ -1,11 +1,11 @@
-from gui.widgets.status_bar import StatusBar
-from gui.widgets.popup_window import PopupWindow
-from gui.widgets.text_widget import TextWidget
-from constants import SCR_W, WHITE
-from languages.texts import TEXTS
-from data.paths import COOLDOWN_WINDOW_BG, CALIBRI_BOLD
-from superpowers import *
-from utils import H, HF
+from .status_bar import StatusBar
+from .popup_window import PopupWindow
+from .text_widget import TextWidget
+from data.constants import SCR_W, WHITE
+from data.languages.texts import TEXTS
+from assets.paths import COOLDOWN_WINDOW_BG, CALIBRI_BOLD
+from components.superpowers import *
+from components.utils import H, HF
 
 
 class CooldownWindow(PopupWindow):

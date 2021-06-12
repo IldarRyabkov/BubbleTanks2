@@ -1,6 +1,5 @@
 """
-Module contains scripts used to load data from 'config.json'
-and save data to 'config.json' during game.
+Module contains scripts used to load/save data from/to files during game.
 
 """
 
@@ -9,7 +8,18 @@ import json
 import os
 from json.decoder import JSONDecodeError
 from pygame import display
-from languages.texts import TEXTS
+from datetime import datetime
+
+from .languages.texts import TEXTS
+
+
+def load_save_data(save_name: str):
+    file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
+    try:
+        file = open(file_path, 'r')
+    except (IOError, FileNotFoundError):
+        return None
+    return json.load(file)
 
 
 def _max_available_resolution():
@@ -26,14 +36,13 @@ def _validate_config():
     """
     def is_valid(data) -> bool:
         return (type(data) == dict and
-                "language" in data and
-                "resolution" in data and
-                data["language"] in LANGUAGES and
-                data["resolution"] in SUPPORTED_RESOLUTIONS)
+                "save" in data and data["save"] in (None, "save_1", "save_2", "save_3") and
+                "language" in data and data["language"] in LANGUAGES and
+                "resolution" in data and data["resolution"] in SUPPORTED_RESOLUTIONS)
 
     def write_default_data():
         with open(_CONFIG_FILE, "w", encoding='utf-8') as f:
-            data = {"language": LANGUAGES[0], "resolution": _max_available_resolution()}
+            data = {"language": LANGUAGES[0], "resolution": [1024, 768], "save": None}
             json.dump(data, f)
 
     try:
@@ -49,20 +58,22 @@ def _validate_config():
         write_default_data()
 
 
-def load_resolution():
-    """Returns game resolution loaded from 'config.json'."""
+def load_config():
     _validate_config()
     with open(_CONFIG_FILE, 'r', encoding='utf-8') as file:
-        data = json.load(file)
-        return data["resolution"]
+        return json.load(file)
+
+
+def load_resolution():
+    return load_config()["resolution"]
 
 
 def load_language():
-    """Returns game language loaded from 'config.json'."""
-    _validate_config()
-    with open(_CONFIG_FILE, 'r', encoding='utf-8') as file:
-        data = json.load(file)
-        return LANGUAGES.index(data["language"])
+    return LANGUAGES.index(load_config()["language"])
+
+
+def load_current_save():
+    return load_config()["save"]
 
 
 def save_resolution(text_resolution: str):
@@ -87,12 +98,78 @@ def save_language(language: int):
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
-# Make sure that the directory for config file exists
-user_dir = os.path.join(os.path.abspath(os.path.expanduser("~")), f".Underwater_Battles")
-if not os.path.exists(user_dir):
-    os.mkdir(user_dir)
+def save_current_save_name(save_name):
+    _validate_config()
+    with open(_CONFIG_FILE, 'r+', encoding='utf-8') as file:
+        data = json.load(file)
+        data["save"] = save_name
+        file.seek(0)
+        file.truncate(0)
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
-_CONFIG_FILE = os.path.join(user_dir, 'config.json')
+
+def update_save_file(save_name,
+                     tank, tanks_history, health,
+                     enemies_killed, bubbles_collected,
+                     visited_rooms, enemies_dict, current_room,
+                     boss_generated, boss_disposition, boss_position,
+                     hints_history):
+    if save_name is None:
+        return
+    data = {
+        "tank": list(tank),
+        "tanks history": [list(tank) for tank in tanks_history],
+        "health": health,
+        "enemies killed": enemies_killed,
+        "bubbles collected": bubbles_collected,
+        "visited rooms": {"%d %d" % room: [list(neighbour) for neighbour in neighbours]
+                          for room, neighbours in visited_rooms.items()},
+        "enemies": {"%d %d" % room: dict(enemies) for room, enemies in enemies_dict.items()},
+        "current room": list(current_room),
+        "boss generated": boss_generated,
+        "boss disposition": boss_disposition,
+        "boss position": None if boss_position is None else list(boss_position),
+        "hints history": {"%d %d" % room: hint for room, hint in hints_history.items()},
+        "time": datetime.today().isoformat(sep=' ', timespec='minutes')
+    }
+    file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
+    with open(file_path, 'w') as file:
+        json.dump(data, file)
+
+
+def create_save_file(name):
+    data = {
+        "tank": [0, 0],
+        "tanks history": [[0, 0]],
+        "health": 0,
+        "enemies killed": "0",
+        "bubbles collected": "0",
+        "visited rooms": {"0 0": []},
+        "enemies": {"0 0": {}},
+        "current room": [0, 0],
+        "boss generated": False,
+        "boss killed": False,
+        "boss position": None,
+        "boss disposition": 0,
+        "hints history": {"0 0": 0},
+        "time": datetime.today().isoformat(sep=' ', timespec='minutes')
+    }
+    file_path = os.path.join(_USER_DIR, "%s.json" % name)
+    with open(file_path, 'w') as file:
+        json.dump(data, file)
+
+
+def delete_save_file(name):
+    file_path = os.path.join(_USER_DIR, "%s.json" % name)
+    os.remove(file_path)
+
+
+# Make sure that the directory for config file exists
+_USER_DIR = os.path.join(os.path.abspath(os.path.expanduser("~")), f".Underwater_Battles")
+if not os.path.exists(_USER_DIR):
+    os.mkdir(_USER_DIR)
+
+_CONFIG_FILE = os.path.join(_USER_DIR, 'config.json')
 
 
 # Find out what game resolutions are supported by computer
@@ -119,7 +196,13 @@ __all__ = [
     "SUPPORTED_RESOLUTIONS",
     "load_resolution",
     "load_language",
+    "load_current_save",
+    "load_save_data",
     "save_resolution",
     "save_language",
+    "save_current_save_name",
+    "create_save_file",
+    "update_save_file",
+    "delete_save_file"
 
 ]

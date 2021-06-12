@@ -3,10 +3,9 @@ import pygame as pg
 from menus.menu import Menu
 from gui.buttons.upgrade_button import *
 from gui.widgets.upgrade_menu_caption import UpgradeMenuCaption
-from constants import *
-from utils import *
-from states import UpgradeButtonType as Bt
-from states import UpgradeMenuStates as St
+from data.constants import *
+from data.states import UpgradeButtonType as Bt, UpgradeMenuStates as St
+from components.utils import *
 
 
 class UpgradeMenu(Menu):

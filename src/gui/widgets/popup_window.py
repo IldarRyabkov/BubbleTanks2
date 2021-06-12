@@ -1,9 +1,10 @@
 import pygame as pg
-from utils import HF
 from numpy import sign
 
-from states import PopupWindowStates as St
-from gui.widgets.widget import Widget
+from data.states import PopupWindowStates as St
+from data.constants import WAIT
+from components.utils import HF
+from .widget import Widget
 
 
 class PopupWindow(Widget):
@@ -51,6 +52,10 @@ class PopupWindow(Widget):
         """Sets popup window parameters. """
         pass
 
+    def set_data(self):
+        self.reset()
+        self.set()
+
     def activate(self):
         if self.state != St.OPENED:
             self.state = St.OPENING
@@ -81,7 +86,7 @@ class PopupWindow(Widget):
                 self.state = St.CLOSING
                 self.time = 0
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         if self.state == St.CLOSED:
             return
         screen.blit(self.background, (round(self.x), round(self.y)))

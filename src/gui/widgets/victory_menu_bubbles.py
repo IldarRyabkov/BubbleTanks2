@@ -1,8 +1,8 @@
 import pygame as pg
 
-from bubble import Bubble
-from utils import *
-from constants import *
+from components.bubble import Bubble
+from components.utils import *
+from data.constants import *
 
 
 class VictoryMenuBubbles:

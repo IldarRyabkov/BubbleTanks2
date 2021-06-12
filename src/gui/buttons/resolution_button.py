@@ -1,9 +1,9 @@
 from gui.buttons.text_button import TextButton
-from constants import *
-from data.paths import CALIBRI_BOLD
+from data.constants import *
 from data.scripts import save_resolution
-from utils import *
-from states import MainMenuStates as St
+from data.states import MainMenuStates as St
+from assets.paths import CALIBRI_BOLD
+from components.utils import *
 
 
 class ResolutionButton(TextButton):

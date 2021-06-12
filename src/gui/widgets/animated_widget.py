@@ -1,5 +1,5 @@
 from gui.widgets.widget import Widget
-from constants import *
+from data.constants import *
 
 
 class AnimatedWidget(Widget):

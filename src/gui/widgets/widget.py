@@ -1,4 +1,4 @@
-from constants import *
+from data.constants import *
 
 
 class Widget:
@@ -8,7 +8,7 @@ class Widget:
     def update(self, dt):
         pass
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         pass
 
 

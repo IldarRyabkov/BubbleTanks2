@@ -1,12 +1,12 @@
 import pygame as pg
 
-from gui.widgets.text_widget import TextWidget
-from gui.widgets.animated_widget import AnimatedWidget
-from constants import *
-from languages.texts import TEXTS
-from data.paths import MAIN_MENU_CAPTION_BG, FONT_1
-from utils import H
-from states import MainMenuStates as St
+from .text_widget import TextWidget
+from .animated_widget import AnimatedWidget
+from data.constants import *
+from data.languages.texts import TEXTS
+from data.states import MainMenuStates as St
+from assets.paths import MAIN_MENU_CAPTION_BG, FONT_1
+from components.utils import H
 
 
 class MainMenuCaption(AnimatedWidget):
@@ -15,16 +15,16 @@ class MainMenuCaption(AnimatedWidget):
         self.menu = menu
         self.game = menu.game
 
-        self.text = TextWidget(SCR_W2, H(405), FONT_1, H(112), WHITE, 1)
+        self.text = TextWidget(SCR_W2, H(405), FONT_1, H(96), WHITE, 1)
         self.image = pg.image.load(MAIN_MENU_CAPTION_BG).convert_alpha()
         self.surface = pg.transform.scale(self.image, (H(1280), H(240)))
         self.alpha = 255
 
     def set_state(self, state):
         if state == St.MAIN_PAGE:
-            self.text.y = H(405)
-            self.text.set_font_size(H(112))
-        elif state == St.DIALOG_EXIT:
+            self.text.y = H(150)
+            self.text.set_font_size(H(96))
+        elif state in (St.EXIT, St.OVERRIDE_SAVE, St.DELETE_SAVE):
             self.text.y = H(320)
             self.text.set_font_size(H(70))
         else:
@@ -35,7 +35,7 @@ class MainMenuCaption(AnimatedWidget):
         if state == St.MAIN_PAGE:
             scaled_h = 2*self.text.h + H(60)
         else:
-            scaled_h = round(1.3 * self.text.h) + H(20)
+            scaled_h = round(1.5 * self.text.h) + H(20)
         self.surface = pg.transform.scale(self.image, (self.text.w + H(60), scaled_h))
         self.text.set_alpha(self.alpha)
         self.surface.set_alpha(self.alpha)
@@ -51,7 +51,7 @@ class MainMenuCaption(AnimatedWidget):
         self.text.set_alpha(alpha)
         self.surface.set_alpha(alpha)
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         x = SCR_W2 - self.surface.get_width() // 2
         y = self.text.y - (self.surface.get_height() - self.text.h) // 1.9
         screen.blit(self.surface, (x, y))

@@ -1,15 +1,16 @@
 import pygame as pg
-from constants import *
-from data.paths import *
+
+from data.constants import *
+from data.languages.texts import TEXTS
+from data.states import VictoryMenuStates as St
+from assets.paths import *
 from menus.menu import Menu
 from gui.buttons.text_button import TextButton
 from gui.widgets.text_widget import TextWidget
 from gui.widgets.victory_menu_bubbles import VictoryMenuBubbles
 from gui.widgets.menu_caption import MenuCaption
 from gui.widgets.mask import Mask
-from utils import *
-from languages.texts import TEXTS
-from states import VictoryMenuStates as St
+from components.utils import *
 
 
 class VictoryMenu(Menu):
@@ -70,7 +71,7 @@ class VictoryMenu(Menu):
 
     @property
     def animation_time(self):
-        return 500
+        return 400
 
     def set_language(self, language):
         self.caption.set_text(TEXTS["victory menu caption"][language])

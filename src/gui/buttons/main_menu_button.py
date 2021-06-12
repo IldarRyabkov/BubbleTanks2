@@ -2,9 +2,9 @@ import pygame as pg
 
 from gui.widgets.text_widget import TextWidget
 from gui.buttons.scaling_button import ScalingButton
-from constants import *
-from data.paths import *
-from utils import H
+from data.constants import *
+from assets.paths import *
+from components.utils import H
 
 
 class MainMenuButton(ScalingButton):
@@ -18,7 +18,7 @@ class MainMenuButton(ScalingButton):
                  aspect_ratio,
                  y_min,
                  action,
-                 click_sound=UI_CLICK):
+                 click_sound=BUTTON_CLICK):
         """Radius is half the height of the button. """
 
         super().__init__(x, SCR_H + radius, 2*radius*aspect_ratio, 2*radius, 0.7, 210,
@@ -52,10 +52,10 @@ class MainMenuButton(ScalingButton):
         self.set_alpha()
         self.set_scaled_surface()
 
-    def reset(self):
+    def reset(self, state):
         self.y = self.Y_MAX
         self.text_alpha = self.TEXT_ALPHA_MIN
-        super().reset()
+        super().reset(state)
 
     def increase(self, dt):
         super().increase(dt)
@@ -75,7 +75,7 @@ class MainMenuButton(ScalingButton):
         if time_elapsed >= 0.5:
             self.y = max(self.Y_MIN, self.y - self.vel * dt)
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         super().draw(screen)
         self.text_widget.draw(screen)
 

@@ -1,5 +1,5 @@
 import pygame as pg
-from constants import *
+from data.constants import *
 
 
 class Button:
@@ -33,16 +33,22 @@ class Button:
         self.is_pressed = False
         return clicked
 
+    def set_language(self, language):
+        pass
+
     def update_look(self, dt, animation_state=WAIT, time_elapsed=0.0):
         pass
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         pass
 
-    def reset(self):
+    def update_click_animation(self, dt):
+        pass
+
+    def reset(self, state):
         self.is_pressed = False
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         pass
 
 

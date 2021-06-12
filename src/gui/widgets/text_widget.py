@@ -1,6 +1,6 @@
 import pygame as pg
 
-from constants import *
+from data.constants import *
 from gui.widgets.animated_widget import AnimatedWidget
 
 
@@ -87,7 +87,7 @@ class TextWidget(AnimatedWidget):
         elif animation_state == CLOSE:
             self.set_alpha(round(255 - 255 * time_elapsed))
 
-    def draw(self, screen, dx=0, dy=0):
+    def draw(self, screen, dx=0, dy=0, animation_state=WAIT):
         for surface, x, y in self.lines:
             screen.blit(surface, (round(self.x + x - dx), round(self.y + y - dy)))
 

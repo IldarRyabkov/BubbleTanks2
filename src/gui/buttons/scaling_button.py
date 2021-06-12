@@ -1,8 +1,8 @@
 import pygame as pg
 
-from data.paths import *
+from assets.paths import *
 from gui.buttons.button import Button
-from constants import WAIT, OPEN
+from data.constants import *
 
 
 class ScalingButton(Button):
@@ -13,7 +13,7 @@ class ScalingButton(Button):
                  min_scale, min_alpha,
                  texts, sound_player, scaling_time=100,
                  cursor=pg.SYSTEM_CURSOR_HAND,
-                 click_sound=UI_CLICK,
+                 click_sound=BUTTON_CLICK,
                  action=lambda: None):
 
         super().__init__(cursor, sound_player, click_sound, action)
@@ -65,7 +65,7 @@ class ScalingButton(Button):
     def set_alpha(self, default_alpha=None):
         self.surface.set_alpha(self.alpha if default_alpha is None else default_alpha)
 
-    def reset(self, *args, **kwargs):
+    def reset(self, state):
         self.alpha = self.ALPHA_MIN
         self.scale = self.SCALE_MIN
         self.sound_lock = False
@@ -79,6 +79,9 @@ class ScalingButton(Button):
     def decrease(self, dt):
         self.alpha = max(self.ALPHA_MIN, self.alpha - self.ALPHA_DELTA * dt)
         self.scale = max(self.SCALE_MIN, self.scale - self.SCALE_DELTA * dt)
+
+    def update_click_animation(self, dt):
+        self.update_size(dt, True, default_alpha=255)
 
     def update_size(self, dt, increasing, default_alpha=None):
         old_scale = self.scale
@@ -110,7 +113,7 @@ class ScalingButton(Button):
         else:
             self.update_close(time_elapsed, dt)
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         screen.blit(self.scaled_surface, (self.x - self.scaled_surface.get_width() // 2,
                                           self.y - self.scaled_surface.get_height() // 2))
 

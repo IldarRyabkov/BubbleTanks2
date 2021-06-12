@@ -1,12 +1,11 @@
-from gui.widgets.popup_window import PopupWindow
-from gui.widgets.status_bar import StatusBar
-from gui.widgets.text_widget import TextWidget
+from .popup_window import PopupWindow
+from .status_bar import StatusBar
+from .text_widget import TextWidget
 
-from data.paths import HEALTH_WINDOW_BG, CALIBRI_BOLD
-from languages.texts import TEXTS
-
-from constants import SCR_H, SCR_W2, WHITE
-from utils import HF, H
+from assets.paths import *
+from data.languages.texts import TEXTS
+from data.constants import *
+from components.utils import *
 
 
 class HealthWindow(PopupWindow):

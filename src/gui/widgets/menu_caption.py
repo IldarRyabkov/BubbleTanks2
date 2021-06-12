@@ -1,5 +1,5 @@
 from gui.widgets.text_widget import TextWidget
-from constants import *
+from data.constants import *
 
 
 class MenuCaption(TextWidget):

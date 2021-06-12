@@ -1,15 +1,15 @@
 import pygame as pg
 
-from data.paths import *
+from assets.paths import *
 from gui.buttons.button import Button
-from constants import *
-from utils import *
+from data.constants import *
+from components.utils import *
 
 
 class ExitButton(Button):
     """Button that is used to exit pause menu. """
     def __init__(self, menu, xo, sound_player, action):
-        super().__init__(pg.SYSTEM_CURSOR_HAND, sound_player, UI_CLICK, action)
+        super().__init__(pg.SYSTEM_CURSOR_HAND, sound_player, BUTTON_CLICK, action)
         self.menu = menu
         self.x = xo + H(15)
         self.y = H(840)
@@ -41,7 +41,7 @@ class ExitButton(Button):
             self.set_alpha(round(255 - 255 * time_elapsed))
         self.current_image = self.cursor_on_button
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         screen.blit(self.images[self.current_image], (self.x, self.y))
 
 

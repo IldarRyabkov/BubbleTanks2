@@ -1,4 +1,3 @@
-import sys
 import pygame as pg
 
 from menus.menu import Menu
@@ -14,11 +13,11 @@ from gui.widgets.tank_body_smooth import TankBodySmooth
 from gui.widgets.mask import Mask
 from gui.widgets.menu_caption import MenuCaption
 
-from data.paths import *
-from constants import *
-from states import PauseMenuStates as St
-from languages.texts import TEXTS
-from utils import *
+from assets.paths import *
+from data.constants import *
+from data.states import PauseMenuStates as St
+from data.languages.texts import TEXTS
+from components.utils import *
 
 
 class PauseMenu(Menu):
@@ -39,15 +38,17 @@ class PauseMenu(Menu):
         sp = game.sound_player
 
         # buttons
-        self.map_button = Map(self, xo)
+        self.map_button = Map(self, xo, self.game.mob_generator.mobs_dict)
 
         self.music_slider = SliderButton(SCR_W2, H(400),
                                          TEXTS["music volume text"],
-                                         CALIBRI_BOLD, H(48), sp, "music")
+                                         CALIBRI_BOLD, H(48), sp, "music",
+                                         alpha=210)
 
         self.sound_slider = SliderButton(SCR_W2, H(470),
                                          TEXTS["sound volume text"],
-                                         CALIBRI_BOLD, H(48), sp, "sound")
+                                         CALIBRI_BOLD, H(48), sp, "sound",
+                                         alpha=210)
 
         self.to_menu_button = TextButton(SCR_W2, H(540),
                                          TEXTS["exit to menu text"],
@@ -61,12 +62,12 @@ class PauseMenu(Menu):
 
         self.yes_button = TextButton(SCR_W2 - H(140), H(600),
                                      TEXTS["yes button text"],
-                                     CALIBRI_BOLD, H(54), 210, sp,
+                                     CALIBRI_BOLD, H(57), 220, sp,
                                      self.yes, H(200))
 
         self.no_button = TextButton(SCR_W2 + H(140), H(600),
                                     TEXTS["no button text"],
-                                    CALIBRI_BOLD, H(54), 210, sp,
+                                    CALIBRI_BOLD, H(57), 220, sp,
                                     self.no, H(200))
 
         self.exit_button = ExitButton(self, xo, sp, self.close)
@@ -90,13 +91,13 @@ class PauseMenu(Menu):
         }
 
         # widgets
-        self.tank_body = TankBodySmooth(self, xo + H(940), H(370))
-        self.mask = Mask(self, self.create_mask_surface(), (0, 0))
+        self.tank_body = TankBodySmooth(xo + H(940), H(370))
+        self.mask = Mask(self, self.create_mask_surface())
 
         self.stats_widgets = (
             TextWidget(xo + H(150), H(268), CALIBRI_BOLD, H(47), WHITE, 0),
-            TextWidget(xo + H(150), H(565), CALIBRI, H(42), WHITE, 0, H(480)),
-            TextWidget(xo + H(656), H(565), CALIBRI, H(42), WHITE, 0, H(480)),
+            TextWidget(xo + H(150), H(565), CALIBRI, H(40), WHITE, 0),
+            TextWidget(xo + H(656), H(565), CALIBRI, H(40), WHITE, 0),
             TextWidget(xo + H(150), H(334), CALIBRI, H(35), WHITE, 0, H(630)),
             TextWidget(xo + H(150), H(628), CALIBRI, H(32), WHITE, 0, H(470)),
             TextWidget(xo + H(656), H(628), CALIBRI, H(32), WHITE, 0, H(470)),
@@ -112,7 +113,6 @@ class PauseMenu(Menu):
             TextWidget(xo + H(530), H(856), CALIBRI, H(42), WHITE)
         )
         self.caption = MenuCaption(self, SCR_W2, H(50), FONT_1, H(56), WHITE, 1)
-
         self.window_caption = TextWidget(SCR_W2, H(176), CALIBRI_BOLD, H(58), WHITE, 1)
 
         # widgets dictionary
@@ -141,7 +141,7 @@ class PauseMenu(Menu):
         text = TEXTS["pause menu window captions"][self.game.language][state]
         self.window_caption.set_text(text)
         if self.state in (St.DIALOG_MENU, St.DIALOG_DESKTOP):
-            self.window_caption.y = H(400)
+            self.window_caption.y = H(360)
         else:
             self.window_caption.y = H(176)
 
@@ -184,10 +184,10 @@ class PauseMenu(Menu):
         self.click_animation(self.yes_button)
         self.animation(CLOSE)
         if self.state == St.DIALOG_MENU:
+            self.game.update_save_data()
             self.running = self.game.running = False
         elif self.state == St.DIALOG_DESKTOP:
-            pg.quit()
-            sys.exit()
+            self.game.quit()
 
     def no(self):
         """Action of 'no' button. """
@@ -222,23 +222,27 @@ class PauseMenu(Menu):
         for button in self.side_buttons:
             button.set_language(language)
 
-    def reset_data(self):
-        """Method is called when a new game is started.
-        Resets all pause menu data.
-        """
+    def set_data(self, data):
         self.state = St.STATS
         self.update_tank_description()
-        self.map_button.reset_all_data()
+        self.map_button.set_data(data)
         self.select_side_button(St.STATS)
         self.set_widgets_state(St.STATS)
-        self.music_slider.reset()
-        self.sound_slider.reset()
-        for counter in self.stats_counters:
-            counter.set_text("0")
+        self.stats_counters[0].set_text(data["enemies killed"])
+        self.stats_counters[1].set_text(data["bubbles collected"])
 
     @property
     def animation_time(self):
         return 200
+
+    def handle_events_animation(self):
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                self.game.quit()
+            elif event.type in [pg.KEYDOWN, pg.KEYUP]:
+                self.game.player.handle(event.type, event.key)
+            elif event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP]:
+                self.game.player.handle(event.type, event.button)
 
     def handle_event(self, event):
         super().handle_event(event)

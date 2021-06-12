@@ -13,8 +13,8 @@ import os
 from math import hypot, cos, sin, pi, sqrt
 
 from constants import *
-from data.paths import *
-from languages.texts import TEXTS
+from assets.paths import *
+from data.languages.texts import TEXTS
 
 
 def save_image(surface, filename):
@@ -133,6 +133,14 @@ def cooldown_window() -> pg.Surface:
 
 def health_window() -> pg.Surface:
     return popup_window(1710, 198)
+
+
+def save_button_bg() -> pg.Surface:
+    return popup_window(600, 800, color=(*BLACK, 70))
+
+
+def save_button_pressed_bg() -> pg.Surface:
+    return popup_window(600, 800, color=(*BLACK, 110))
 
 
 def credits_bg_1() -> pg.Surface:
@@ -516,4 +524,5 @@ def menu_mask() -> pg.Surface:
     return surface
 
 
-#save_image(side_button(), 'side_button')
+save_image(save_button_bg(), 'save_button_bg')
+save_image(save_button_pressed_bg(), 'save_button_pressed_bg')

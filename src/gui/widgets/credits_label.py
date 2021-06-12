@@ -1,9 +1,9 @@
 import pygame as pg
 
 from gui.widgets.text_widget import TextWidget
-from utils import H
-from constants import *
-from data.paths import FONT_1
+from components.utils import H
+from data.constants import *
+from assets.paths import FONT_1
 
 
 class CreditsLabel(TextWidget):
@@ -19,10 +19,12 @@ class CreditsLabel(TextWidget):
             self.image.set_alpha(round(255 * time_elapsed))
         elif animation_state == CLOSE:
             self.image.set_alpha(round(255 - 255 * time_elapsed))
+        else:
+            self.image.set_alpha(255)
 
-    def draw(self, screen, dx=0, dy=0):
+    def draw(self, screen, animation_state=WAIT, dx=0, dy=0):
         screen.blit(self.image, self.image_pos)
-        super().draw(screen, dx, dy)
+        super().draw(screen)
 
 
 __all__ = ["CreditsLabel"]

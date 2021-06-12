@@ -2,14 +2,14 @@ import pygame as pg
 
 from gui.widgets.text_widget import TextWidget
 from gui.buttons.scaling_button import ScalingButton
-from constants import *
-from utils import H
+from data.constants import *
+from components.utils import H
 
 
 class SliderButton(ScalingButton):
-    def __init__(self, x, y, label_texts, font, font_size, sound_player, volume_type):
+    def __init__(self, x, y, label_texts, font, font_size, sound_player, volume_type, alpha=220):
 
-        super().__init__(x, y, H(940), H(50), 0.92, 200,
+        super().__init__(x, y, H(940), H(50), 0.92, alpha,
                          label_texts, sound_player,
                          cursor=pg.SYSTEM_CURSOR_SIZEWE)
         self.value = 1
@@ -35,7 +35,6 @@ class SliderButton(ScalingButton):
 
         self.text_widget = TextWidget(self.w // 2 - H(40), 0, font, font_size, WHITE, 2)
 
-        self.reset()
 
     @property
     def cursor_on_button(self):
@@ -55,8 +54,8 @@ class SliderButton(ScalingButton):
         self.slider.centerx = self.w // 2 + H(40) + value * self.line_w
         self.filled_line.w = value * self.line_w
 
-    def reset(self):
-        super().reset()
+    def reset(self, state):
+        super().reset(state)
         if self.volume_type == "music":
             self.set_value(self.sound_player.music_volume)
         elif self.volume_type == "sound":

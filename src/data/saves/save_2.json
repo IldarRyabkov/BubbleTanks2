@@ -1,0 +1,10 @@
+{
+	"tank": [4, 4],
+	"health": 30,
+	"enemies killed": 10,
+	"bubbles collected": 30,
+	"visited rooms": {"0 0": [[1, 0]]},
+	"enemies": {"0 0": {}, "1 0": {}},
+	"current room": [1, 0],
+	"boss killed": false
+}

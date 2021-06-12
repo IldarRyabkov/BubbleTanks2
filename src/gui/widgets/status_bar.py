@@ -1,12 +1,12 @@
 import pygame as pg
 
-from constants import WHITE, STATUS_BAR_BG
-from utils import H
-from gui.widgets.widget import Widget
+from data.constants import *
+from components.utils import H
+from .widget import Widget
 
 
 class StatusBar(Widget):
-    """ The status bar is used in the cooldown window to show the cooldown
+    """Status bar is used in the cooldown window to show the cooldown
     of the player's weapon and superpower, and in the health window to show
     how many bubbles are left to collect to upgrade the tank.
     """
@@ -43,13 +43,13 @@ class StatusBar(Widget):
         self.x = x
         self.y = y
 
-    def draw(self, surface):
+    def draw(self, screen, animation_state=WAIT):
         topleft = round(self.x), round(self.y)
         self.boundary_rect.topleft = topleft
         self.value_rect.topleft = topleft
         self.value_rect.w = round(self.scaled_w)
-        pg.draw.rect(surface, WHITE, self.boundary_rect, H(1))
-        pg.draw.rect(surface, STATUS_BAR_BG, self.value_rect)
+        pg.draw.rect(screen, WHITE, self.boundary_rect, H(1))
+        pg.draw.rect(screen, STATUS_BAR_BG, self.value_rect)
 
 
 __all__ = ["StatusBar"]

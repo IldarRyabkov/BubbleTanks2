@@ -1,25 +1,35 @@
-from constants import *
+import pygame as pg
+
+from .widget import Widget
+from data.constants import WAIT
 
 
-class Mask:
-    def __init__(self, menu, surface, pos=(0, 0)):
+class Mask(Widget):
+    def __init__(self, menu, surface):
+        super().__init__()
         self.menu = menu
-        self.surface = surface
-        self.pos = pos
+        self.size = 10
+        self.index = -1
+        self.surfaces = self.create_surfaces(surface)
 
-    def set_alpha(self, alpha):
-        self.surface.set_alpha(alpha)
+    def create_surfaces(self, origin: pg.Surface):
+        surfaces = []
+        for i in range(self.size + 1):
+            alpha = round(255 * i / self.size)
+            origin.set_alpha(alpha)
+            surface = pg.Surface(origin.get_size(), pg.SRCALPHA)
+            surface.blit(origin, (0, 0))
+            surfaces.append(surface)
+        return surfaces
 
-    def update(self, dt, animation_state, time_elapsed):
-        if animation_state == OPEN and self.menu.is_opening:
-            self.set_alpha(round(255 * time_elapsed))
-        elif animation_state == CLOSE and self.menu.is_closing:
-            self.set_alpha(round(255 - 255 * time_elapsed))
-        else:
-            self.set_alpha(255)
+    def update(self, dt, animation_state=WAIT, time_elapsed=0):
+        if self.menu.is_opening:
+            self.index = round(self.size * time_elapsed)
+        elif self.menu.is_closing:
+            self.index = round(self.size * (1 - time_elapsed))
 
-    def draw(self, screen):
-        screen.blit(self.surface, self.pos)
+    def draw(self, screen, animation_state=WAIT):
+        screen.blit(self.surfaces[self.index], (0, 0))
 
 
 _all__ = ["Mask"]

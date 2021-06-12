@@ -1,10 +1,10 @@
 import pygame as pg
 from collections import defaultdict
 
-from constants import *
-from utils import H
+from data.constants import *
+from components.utils import H
 from gui.buttons.button import Button
-from data.paths import ROOM_AIM, BOSS_AIM
+from assets.paths import ROOM_AIM, BOSS_AIM
 
 
 class RoomAim:
@@ -53,11 +53,14 @@ class Map(Button):
     w = H(992)  # width of map
     h = H(616)  # height of map
     d = H(50)  # distance between rooms on map
+    circle_width = H(2)
+    circle_radius = H(16)
 
-    def __init__(self, menu, xo):
+    def __init__(self, menu, xo, mobs_dict):
         super().__init__(pg.SYSTEM_CURSOR_SIZEALL)
 
         self.menu = menu
+        self.mobs_dict = mobs_dict
 
         # surface on which all elements of the map will be drawn
         self.surface = pg.Surface((self.w, self.h))
@@ -72,8 +75,8 @@ class Map(Button):
 
         # Graph of visited rooms, which is used to draw the map of visited rooms.
         # It stores all visited rooms and neighbours of each visited room.
-        self.graph = defaultdict(list)
-        self.graph[self.cur_pos] = []
+        self.graph = defaultdict(set)
+        self.graph[self.cur_pos] = set()
 
         # the positions of the top-left and bottom-right corner of the rectangle
         # that delimits all rooms in the graph
@@ -92,6 +95,9 @@ class Map(Button):
         # the map is no longer moving and static_offset becomes equal to moving_offset.
         self.static_offset = [0, 0]
 
+        self.xo = self.w/2
+        self.yo = self.h/2
+
     @property
     def pressed(self):
         self.static_offset = self.moving_offset.copy()
@@ -103,21 +109,29 @@ class Map(Button):
             self.is_pressed = False
             return False
 
-    def reset_all_data(self):
+    def set_data(self, data):
         """Method is called when a new game is started.
-        Resets all information about the map.
+        Sets all map data.
         """
-        self.cur_pos = self.topleft = self.bottomright = (0, 0)
-        self.graph = defaultdict(list)
-        self.graph[self.cur_pos] = []
-        self.boss_aim.pos = None
-        self.moving_x = self.moving_y = False
-        self.reset()
+        self.graph.clear()
+        for room, neighbours in data["visited rooms"].items():
+            room = tuple(map(int, room.split()))
+            neighbours = {tuple(neighbour) for neighbour in neighbours}
+            self.graph[room] = neighbours
+        self.cur_pos = tuple(data["current room"])
+        top = min(self.graph, key=lambda k: k[1])[1]
+        left = min(self.graph, key=lambda k: k[0])[0]
+        bottom = max(self.graph, key=lambda k: k[1])[1]
+        right = max(self.graph, key=lambda k: k[0])[0]
+        self.topleft = (left, top)
+        self.bottomright = (right, bottom)
+        if data["boss position"] is None:
+            self.boss_aim.pos = None
+        else:
+            self.boss_aim.pos = tuple(data["boss position"])
+        self.check_movement()
 
-    def reset(self):
-        """Method is called when player goes to the map menu or when a new game is started.
-        It resets parameters that track movement of the map by the player's mouse.
-        """
+    def reset(self, state):
         self.static_offset = [0, 0]
         self.moving_offset = [0, 0]
         self.is_pressed = False
@@ -129,9 +143,16 @@ class Map(Button):
         if boss_state == BOSS_IN_CURRENT_ROOM:
             self.boss_aim.pos = room_pos
 
+    def check_movement(self):
+        """Checks if current map size is big enough to move it by mouse"""
+        map_size_x = (self.bottomright[0] - self.topleft[0]) * self.d
+        map_size_y = (self.bottomright[1] - self.topleft[1]) * self.d
+        self.moving_x = map_size_x > self.w / 2
+        self.moving_y = map_size_y > self.h / 2
+
     def add_visited_room(self, room_pos: tuple):
         """Adds new room position to the graph and updates map parameters. """
-        self.graph[room_pos].append(self.cur_pos)
+        self.graph[room_pos].add(self.cur_pos)
         self.cur_pos = room_pos
         self.topleft = (
             min(self.topleft[0], room_pos[0]),
@@ -141,17 +162,15 @@ class Map(Button):
             max(self.bottomright[0], room_pos[0]),
             max(self.bottomright[1], room_pos[1])
         )
-        # check if current map size is big enough to move it by mouse
-        map_size_x = (self.bottomright[0] - self.topleft[0]) * self.d
-        map_size_y = (self.bottomright[1] - self.topleft[1]) * self.d
-        self.moving_x = map_size_x > self.w / 2
-        self.moving_y = map_size_y > self.h / 2
+        self.check_movement()
 
-    def room_coords(self, room_pos) -> tuple:
+    def update_center(self):
+        self.xo = self.w / 2 + self.moving_offset[0] - self.cur_pos[0] * self.d
+        self.yo = self.h / 2 + self.moving_offset[1] - self.cur_pos[1] * self.d
+
+    def room_coords(self, room_pos):
         """Returns coordinates of the room by given room pos in graph. """
-        x = self.w / 2 + self.moving_offset[0] + (room_pos[0] - self.cur_pos[0]) * self.d
-        y = self.h / 2 + self.moving_offset[1] + (room_pos[1] - self.cur_pos[1]) * self.d
-        return x, y
+        return self.xo + room_pos[0] * self.d, self.yo + room_pos[1] * self.d
 
     def update_moving_offset(self):
         pos = pg.mouse.get_pos()
@@ -160,6 +179,7 @@ class Map(Button):
         if self.moving_y:
             self.moving_offset[1] = self.static_offset[1] + pos[1] - self.movement_start_pos[1]
 
+        self.update_center()
         # if the moving offset became too large, correct it
         left_x, top_y = self.room_coords(self.topleft)
         right_x, bottom_y = self.room_coords(self.bottomright)
@@ -167,12 +187,16 @@ class Map(Button):
 
         if right_x < self.w / 2:
             self.moving_offset[0] = current_x - right_x
+            self.update_center()
         elif left_x > self.w / 2:
             self.moving_offset[0] = current_x - left_x
+            self.update_center()
         if bottom_y < self.h / 2:
             self.moving_offset[1] = current_y - bottom_y
+            self.update_center()
         elif top_y > self.h / 2:
             self.moving_offset[1] = current_y - top_y
+            self.update_center()
 
     def update_look(self, dt, animation_state=WAIT, time_elapsed=0):
         self.room_aim.update(dt)
@@ -180,6 +204,7 @@ class Map(Button):
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
         """updates map objects that change over time and the map offset. """
+        self.update_center()
         if self.is_pressed:
             self.update_moving_offset()
 
@@ -191,21 +216,36 @@ class Map(Button):
             alpha = 255
         self.transparent_surface.set_alpha(alpha)
 
-    def draw_line(self, screen, room_pos_1, room_pos_2):
+    def draw_line(self, screen, pos_1, pos_2):
         """Draws a line between two neighbour rooms. """
-        coords_1 = self.room_coords(room_pos_1)
-        coords_2 = self.room_coords(room_pos_2)
-        pg.draw.line(screen, WHITE, coords_1, coords_2, H(2))
+        x1, y1 = self.room_coords(pos_1)
+        x2, y2 = self.room_coords(pos_2)
+        if x1 < x2:
+            dx, dy = self.circle_radius, 0
+        elif x1 > x2:
+            dx, dy = -self.circle_radius, 0
+        elif y1 > y2:
+            dx, dy = 0, -self.circle_radius,
+        else:
+            dx, dy = 0, self.circle_radius,
+        pg.draw.line(screen, WHITE, (x1 + dx, y1 + dy), (x2 - dx, y2 - dy), self.circle_width)
 
     def draw_visited_room(self, screen, room_pos):
         """Draws the visited room on the map. """
         coords = self.room_coords(room_pos)
-        pg.draw.circle(screen, WHITE, coords, H(8))
-        pg.draw.circle(screen, WHITE, coords, H(17), H(2))
-        if room_pos == (0, 0) and self.cur_pos != (0, 0):
-            pg.draw.circle(screen, WHITE, coords, H(26), H(2))
+        if room_pos == self.cur_pos or room_pos == (0, 0):
+            pg.draw.circle(screen, WHITE, coords, H(7))
+        elif room_pos == self.boss_aim.pos:
+            pg.draw.circle(screen, DARK_RED, coords, self.circle_radius - self.circle_width)
+        elif self.mobs_dict[room_pos]:
+            pg.draw.circle(screen, BUBBLE_COLOR, coords, self.circle_radius - self.circle_width)
 
-    def draw(self, screen):
+        pg.draw.circle(screen, WHITE, coords, self.circle_radius, self.circle_width)
+
+        if room_pos == (0, 0) and self.cur_pos != (0, 0):
+            pg.draw.circle(screen, WHITE, coords, H(26), self.circle_width)
+
+    def draw(self, screen, animation_state=WAIT):
         """Draws all map objects: visited rooms, traversed paths between rooms etc. """
         if self.menu.is_opening or self.menu.is_closing:
             surface = self.transparent_surface

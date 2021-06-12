@@ -1,6 +1,7 @@
 import pygame as pg
 import platform
-from constants import SCR_SIZE
+
+from data.constants import SCR_SIZE
 
 
 def main():
@@ -19,7 +20,7 @@ def main():
 
     screen = pg.display.set_mode(SCR_SIZE, flags=pg.NOFRAME)
 
-    from game import Game
+    from components.game import Game
     Game(screen).run()
 
 

@@ -1,10 +1,10 @@
 from gui.buttons.text_button import TextButton
-from constants import *
-from data.paths import CALIBRI_BOLD
+from data.constants import *
+from data.states import MainMenuStates as St
+from data.languages.texts import TEXTS
 from data.scripts import save_language
-from utils import *
-from states import MainMenuStates as St
-from languages.texts import TEXTS
+from assets.paths import CALIBRI_BOLD
+from components.utils import *
 
 
 class LanguageButton(TextButton):

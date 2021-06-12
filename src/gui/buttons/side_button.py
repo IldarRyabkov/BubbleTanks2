@@ -1,9 +1,9 @@
 import pygame as pg
 
-from constants import *
-from data.paths import *
+from data.constants import *
+from assets.paths import *
 from gui.buttons.button import Button
-from utils import H
+from components.utils import H
 
 
 class SideButton(Button):
@@ -12,7 +12,7 @@ class SideButton(Button):
     """
     def __init__(self, menu, x, y, texts, sound_player, action, selected=False):
         """(x, y) is topleft of the button. """
-        super().__init__(pg.SYSTEM_CURSOR_HAND, sound_player, UI_CLICK, action)
+        super().__init__(pg.SYSTEM_CURSOR_HAND, sound_player, BUTTON_CLICK, action)
         self.menu = menu
 
         self.x = x
@@ -49,7 +49,7 @@ class SideButton(Button):
         elif self.menu.is_closing:
             self.set_alpha(round(255 - 255 * time_elapsed))
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         if self.selected:
             screen.blit(self.bg_surface, (self.x, self.y))
         screen.blit(self.text_surface, self.text_pos)

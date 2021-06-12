@@ -1,11 +1,11 @@
 import pygame as pg
 
-from constants import *
+from data.constants import *
+from data.languages.texts import TEXTS
 from gui.widgets.text_widget import TextWidget
 from gui.widgets.animated_widget import AnimatedWidget
-from data.paths import *
-from utils import H, HF
-from languages.texts import TEXTS
+from assets.paths import *
+from components.utils import H, HF
 
 
 class UpgradeMenuCaption(AnimatedWidget):
@@ -42,8 +42,8 @@ class UpgradeMenuCaption(AnimatedWidget):
         else:
             self.y = self.Y1
 
-    def draw(self, surface):
-        surface.blit(self.bg_surface, (round(self.x), round(self.y)))
+    def draw(self, screen, animation_state=WAIT):
+        screen.blit(self.bg_surface, (round(self.x), round(self.y)))
 
 
 __all__ = ["UpgradeMenuCaption"]

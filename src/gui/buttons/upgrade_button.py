@@ -1,13 +1,29 @@
 import pygame as pg
 
-from data.paths import *
-from constants import *
-from languages.texts import TEXTS
+from assets.paths import *
+from data.constants import *
+from data.languages.texts import TEXTS
+from data.states import UpgradeButtonType as Bt
 from gui.widgets.text_widget import TextWidget
 from gui.buttons.button import Button
 from gui.widgets.tank_body import TankBody
-from utils import H, HF
-from states import UpgradeButtonType as Bt
+from components.utils import H, HF
+
+
+def init_bg_images():
+    size = (H(352), H(770))
+    bg_narrow = UPGRADE_BUTTON_BG, UPGRADE_BUTTON_PRESSED_BG
+    bg_narrow = [pg.image.load(image).convert_alpha() for image in bg_narrow]
+    bg_narrow = [pg.transform.scale(image, size) for image in bg_narrow]
+
+    size = (H(480), H(770))
+    bg_wide = UPGRADE_BUTTON_WIDE_BG, UPGRADE_BUTTON_WIDE_PRESSED_BG
+    bg_wide = [pg.image.load(image).convert_alpha() for image in bg_wide]
+    bg_wide = [pg.transform.scale(image, size) for image in bg_wide]
+    return bg_narrow, bg_wide
+
+
+bg_narrow, bg_wide = init_bg_images()
 
 
 class UpgradeButton(Button):
@@ -18,14 +34,14 @@ class UpgradeButton(Button):
     def __init__(self, menu, button_type, tank):
         super().__init__(pg.SYSTEM_CURSOR_HAND,
                          menu.game.sound_player,
-                         UI_CLICK,
+                         BUTTON_CLICK,
                          self.choose_upgrade)
         self.menu = menu
         self.is_chosen = False
         self.tank = tank
 
-        self.w = HF(480) if button_type in (Bt.WIDE_LEFT, Bt.WIDE_RIGHT) else HF(352)
-        self.h = HF(770)
+        self.w = H(480) if button_type in (Bt.WIDE_LEFT, Bt.WIDE_RIGHT) else H(352)
+        self.h = H(770)
 
         if button_type == Bt.LEFT:
             self.X0, self.Y0 = -self.w, HF(160)
@@ -53,16 +69,6 @@ class UpgradeButton(Button):
         self.tank_body = TankBody(self.x + self.w//2, self.y + H(211))
         self.tank_body.set_body(tank)
 
-        # Now we set button background surfaces.
-        # First we load background images of button.
-        size = round(self.w), round(self.h)
-        if button_type in (Bt.WIDE_LEFT, Bt.WIDE_RIGHT):
-            bg_images = UPGRADE_BUTTON_WIDE_BG, UPGRADE_BUTTON_WIDE_PRESSED_BG
-        else:
-            bg_images = UPGRADE_BUTTON_BG, UPGRADE_BUTTON_PRESSED_BG
-        self.bg = [pg.image.load(image).convert_alpha() for image in bg_images]
-        self.bg = [pg.transform.scale(image, size) for image in self.bg]
-
         # Then we create text widget to be blitted on background surfaces of button
         width = self.w - HF(30)
         text_widgets = (
@@ -78,10 +84,24 @@ class UpgradeButton(Button):
         for widget, text in zip(text_widgets, texts):
             widget.set_text(text)
 
-        # And finally we blit text widgets on background surfaces of button
-        for bg in self.bg:
+        # Then we create background images
+        if button_type in (Bt.WIDE_LEFT, Bt.WIDE_RIGHT):
+            self.bg = {
+                False: pg.image.load(UPGRADE_BUTTON_WIDE_BG).convert_alpha(),
+                True: pg.image.load(UPGRADE_BUTTON_WIDE_PRESSED_BG).convert_alpha()
+            }
+        else:
+            self.bg = {
+                False: pg.image.load(UPGRADE_BUTTON_BG).convert_alpha(),
+                True: pg.image.load(UPGRADE_BUTTON_PRESSED_BG).convert_alpha()
+            }
+        for key in self.bg:
+            self.bg[key] = pg.transform.smoothscale(self.bg[key], (self.w, self.h))
+
+        # And finally we blit text widgets on background images of button
+        for image in self.bg.values():
             for widget in text_widgets:
-                widget.draw(bg)
+                widget.draw(image)
 
     def choose_upgrade(self):
         self.menu.chosen_tank = self.tank
@@ -103,7 +123,7 @@ class UpgradeButton(Button):
         self.tank_body.set_pos(self.x + self.w//2, self.y + H(211))
         self.tank_body.update(dt, animation_state, time_elapsed)
 
-    def draw(self, screen):
+    def draw(self, screen, animation_state=WAIT):
         screen.blit(self.bg[self.is_chosen], (round(self.x), round(self.y)))
         self.tank_body.draw(screen)
 

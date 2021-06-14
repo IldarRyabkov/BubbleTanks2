@@ -33,7 +33,7 @@ def _validate_config():
 
     def write_default_data():
         with open(_CONFIG_FILE, "w", encoding='utf-8') as f:
-            data = {"language": LANGUAGES[0], "resolution": [1024, 768], "save": None}
+            data = {"language": LANGUAGES[0], "resolution": [1024, 768], "save": "empty"}
             json.dump(data, f)
 
     try:

@@ -15,7 +15,8 @@ class ResolutionButton(TextButton):
         self.set_text(texts)
 
     def set_new_resolution(self):
-        update_config_file(resolution=self.texts)
+        resolution = list(map(int, self.texts.split(' x ')))
+        update_config_file(resolution=resolution)
         self.menu.to_resolutions_button.set_value(self.texts)
         self.menu.set_state(St.SETTINGS, self)
 

@@ -24,12 +24,24 @@ class MainMenuCaption(AnimatedWidget):
         if state == St.MAIN_PAGE:
             self.text.y = H(150)
             self.text.set_font_size(H(96))
-        elif state in (St.EXIT, St.OVERRIDE_SAVE, St.DELETE_SAVE):
-            self.text.y = H(320)
+        elif state in (St.OVERRIDE_SAVE, St.DELETE_SAVE):
+            self.text.y = H(330)
+            self.text.set_font_size(H(60))
+        elif state == St.EXIT:
+            self.text.y = H(330)
             self.text.set_font_size(H(70))
-        else:
+        elif state == St.SETTINGS:
+            self.text.y = H(120)
+            self.text.set_font_size(H(70))
+        elif state == St.CREDITS:
+            self.text.y = H(70)
+            self.text.set_font_size(H(70))
+        elif state == St.RESOLUTIONS:
             self.text.y = H(60)
-            self.text.set_font_size(H(80))
+            self.text.set_font_size(H(62))
+        else:
+            self.text.y = H(90)
+            self.text.set_font_size(H(70))
 
         self.text.set_text(TEXTS["main menu captions"][self.game.language][state])
         if state == St.MAIN_PAGE:

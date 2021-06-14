@@ -234,6 +234,7 @@
 		"Enemies Killed:",
 		"Bubbles Collected:"
 	],
+	"escape hint": "ESC ~Back",
 	"resume game button text": "Resume Game",
 	"new game button text": "New Game",
 	"load game button text": "Load Game",
@@ -298,9 +299,6 @@
 		"Hero Interactive, LLC",
 		"http://www.herointeractive.com",
 		"Jared Riley - and - Eric Ottati",
-		"Special Thanks to",
-		"~~~Stephanie~Riley~~~ ~~~Adam~Schroeder~~~~",
-		"~~~~~Jim~Lester~~~~~",
 		"Calvin 'Calkutta' Winbush II",
 		"Calkutta Productions",
 		"calkutta1@gmail.com",

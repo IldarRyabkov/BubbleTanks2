@@ -36,7 +36,7 @@ class Game:
         self.screen = screen
         self.language = load_language()
         self.running = True
-        self.pause_game = False
+        self.pause = False
         self.transportation = False
 
         self.sound_player = SoundPlayer()
@@ -87,7 +87,7 @@ class Game:
         self.pause_menu.set_data(data)
         self.camera.stop_shaking()
         self.running = True
-        self.pause_game = False
+        self.pause = False
         self.transportation = False
         self.clock.tick()
         self.set_language(self.language)
@@ -110,7 +110,7 @@ class Game:
 
     def handle(self, e_type, e_key):
         if e_type == pg.KEYDOWN and e_key in [pg.K_p, pg.K_ESCAPE] and not self.transportation:
-            self.pause_game = True
+            self.pause = True
         else:
             self.player.handle(e_type, e_key)
 
@@ -366,19 +366,24 @@ class Game:
             direction = self.get_direction(player_offset)
             self.transport_player(direction)
 
-    def update(self, dt):
-        if self.pause_game:
-            self.run_pause_menu()
-            return
-        self.handle_bubble_eating()
-        self.handle_enemies_collisions()
-        self.handle_player_collisions()
-
+    def check_player_state(self):
+        """Checks if player should upgrade or downgrade.
+        If so, upgrades/downgrades player's tank state
+        """
         if self.player.has_to_upgrade:
             self.upgrade_player()
         elif self.player.has_to_downgrade:
             self.downgrade_player()
 
+    def update(self, dt):
+        if self.pause:
+            self.run_pause_menu()
+            return
+
+        self.handle_bubble_eating()
+        self.handle_enemies_collisions()
+        self.handle_player_collisions()
+        self.check_player_state()
         self.player.update(dt)
         self.camera.update(dt)
         self.room.update(dt)
@@ -402,7 +407,7 @@ class Game:
 
     def draw_foreground(self):
         """Foreground includes player, mobs, bullets,
-        bubbles, popup windows and some effects.
+        bubbles, popup windows and effects.
         """
         self.room.draw_bottom_effects(self.screen, *self.camera.offset)
         self.room.draw_bubbles(self.screen, *self.camera.offset)
@@ -437,9 +442,9 @@ class Game:
     def run_pause_menu(self):
         self.draw_background(self.pause_menu.bg_surface)
         self.pause_menu.run()
-        self.pause_game = False
+        self.pause = False
 
-    @set_cursor_grab(False)
+    @set_cursor_grab(True)
     def run_game(self):
         """ Game loop that starts when the main menu is closed. """
         self.clock.tick()

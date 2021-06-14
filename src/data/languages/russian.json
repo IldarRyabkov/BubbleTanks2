@@ -234,6 +234,7 @@
 		"Врагов убито:",
 		"Пузырей собрано:"
 	],
+	"escape hint": "ESC ~Назад",
 	"resume game button text": "Продолжить",
 	"new game button text": "Новая игра",
 	"load game button text": "Загрузить",
@@ -296,9 +297,6 @@
 		"Hero Interactive, LLC",
 		"http://www.herointeractive.com",
 		"Jared Riley - and - Eric Ottati",
-		"Special Thanks to",
-		"~~~Stephanie~Riley~~~ ~~~Adam~Schroeder~~~~",
-		"~~~~~Jim~Lester~~~~~",
 		"Calvin 'Calkutta' Winbush II",
 		"Calkutta Productions",
 		"calkutta1@gmail.com",

@@ -43,19 +43,19 @@ class PauseMenu(Menu):
         self.music_slider = SliderButton(SCR_W2, H(400),
                                          TEXTS["music volume text"],
                                          CALIBRI_BOLD, H(48), sp, "music",
-                                         alpha=210)
+                                         min_alpha=210)
 
-        self.sound_slider = SliderButton(SCR_W2, H(470),
+        self.sound_slider = SliderButton(SCR_W2, H(480),
                                          TEXTS["sound volume text"],
                                          CALIBRI_BOLD, H(48), sp, "sound",
-                                         alpha=210)
+                                         min_alpha=210)
 
-        self.to_menu_button = TextButton(SCR_W2, H(540),
+        self.to_menu_button = TextButton(SCR_W2, H(560),
                                          TEXTS["exit to menu text"],
                                          CALIBRI_BOLD, H(48), 210, sp,
                                          self.dialog_menu, H(500))
 
-        self.to_desktop_button = TextButton(SCR_W2, H(610),
+        self.to_desktop_button = TextButton(SCR_W2, H(640),
                                             TEXTS["exit to desktop text"],
                                             CALIBRI_BOLD, H(48), 210, sp,
                                             self.dialog_desktop, H(500))
@@ -252,6 +252,10 @@ class PauseMenu(Menu):
             self.game.player.handle(event.type, event.key)
         elif event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP]:
             self.game.player.handle(event.type, event.button)
+
+    def update_click_animation(self, pressed_button, dt):
+        self.game.update_scaling_objects(dt)
+        super().update_click_animation(pressed_button, dt)
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
         self.game.update_scaling_objects(dt)

@@ -37,8 +37,13 @@ class ScalingButton(Button):
 
         self.surface = pg.Surface((self.w, self.h), pg.SRCALPHA)
         self.surface.set_alpha(min_alpha)
+
         self.scaled_surface = None
         self.set_scaled_surface()
+
+        self.min_size = round(self.w * min_scale), round(self.h * min_scale)
+        self.min_surface = pg.Surface(self.min_size, pg.SRCALPHA)
+        self.set_min_surface()
 
         self.rect = pg.Rect(self.x - self.w // 2,
                             self.y - self.h // 2,
@@ -48,15 +53,26 @@ class ScalingButton(Button):
         self.texts = texts
         self.text_widget = None
 
+    def set_surface(self):
+        self.surface.fill((0, 0, 0, 0))
+        self.text_widget.draw(self.surface)
+
     def set_scaled_surface(self):
         size = (round(self.w * self.scale), round(self.h * self.scale))
         self.scaled_surface = pg.transform.smoothscale(self.surface, size)
 
+    def set_min_surface(self):
+        self.min_surface.fill((0, 0, 0, 0))
+
+        self.surface.set_alpha(self.ALPHA_MIN)
+        surface = pg.transform.smoothscale(self.surface, self.min_size)
+        self.min_surface.blit(surface, (0, 0))
+
     def render_surface(self):
-        self.surface.fill((0, 0, 0, 0))
-        self.text_widget.draw(self.surface)
+        self.set_surface()
         self.set_alpha()
         self.set_scaled_surface()
+        self.set_min_surface()
 
     def set_language(self, language):
         self.text_widget.set_text(self.texts[language])
@@ -81,9 +97,9 @@ class ScalingButton(Button):
         self.scale = max(self.SCALE_MIN, self.scale - self.SCALE_DELTA * dt)
 
     def update_click_animation(self, dt):
-        self.update_size(dt, True, default_alpha=255)
+        self.update_size(dt, True)
 
-    def update_size(self, dt, increasing, default_alpha=None):
+    def update_size(self, dt, increasing):
         old_scale = self.scale
 
         if increasing and self.scale < self.SCALE_MAX:
@@ -92,7 +108,7 @@ class ScalingButton(Button):
             self.decrease(dt)
 
         if self.scale != old_scale:
-            self.set_alpha(default_alpha)
+            self.set_alpha()
             self.set_scaled_surface()
 
     def update_wait(self, dt):
@@ -114,8 +130,12 @@ class ScalingButton(Button):
             self.update_close(time_elapsed, dt)
 
     def draw(self, screen, animation_state=WAIT):
-        screen.blit(self.scaled_surface, (self.x - self.scaled_surface.get_width() // 2,
-                                          self.y - self.scaled_surface.get_height() // 2))
+        if self.scale == self.SCALE_MIN and animation_state == WAIT:
+            surface = self.min_surface
+        else:
+            surface = self.scaled_surface
+        screen.blit(surface, (self.x - surface.get_width() // 2,
+                              self.y - surface.get_height() // 2))
 
 
 __all__ = ["ScalingButton"]

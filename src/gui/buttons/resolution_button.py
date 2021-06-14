@@ -1,6 +1,6 @@
 from gui.buttons.text_button import TextButton
 from data.constants import *
-from data.scripts import save_resolution
+from data.scripts import update_config_file
 from data.states import MainMenuStates as St
 from assets.paths import CALIBRI_BOLD
 from components.utils import *
@@ -15,7 +15,7 @@ class ResolutionButton(TextButton):
         self.set_text(texts)
 
     def set_new_resolution(self):
-        save_resolution(self.texts)
+        update_config_file(resolution=self.texts)
         self.menu.to_resolutions_button.set_value(self.texts)
         self.menu.set_state(St.SETTINGS, self)
 

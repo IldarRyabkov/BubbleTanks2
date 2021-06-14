@@ -727,7 +727,7 @@ body_53 = [    [11, 1, BLUE,   0,   0,  True,  11, True, 51,  0.77 * pi],
     [7,  1, ORANGE, 0,   0,  True,  7,  True, 99,  0.04 * pi],
     [7,  1, ORANGE, 0,   0,  True,  7,  True, 99,  -0.04 * pi],
     [16, 3, ORANGE, 0,   0,  True,  15, True, 107, pi],
-    [7,  1, ORANGE, 107, pi, False, 0,  True, 0,   0,           True, 0,           69],
+    [7,  1, ORANGE, 107, pi, False, 0,  True, 0,   0,           True, 0,           60],
     [7,  1, ORANGE, 107, pi, False, 0,  True, 0,   0,           True, -0.667 * pi, 60],
     [7,  1, ORANGE, 107, pi, False, 0,  True, 0,   0,           True, 0.667 * pi,  60]]
 

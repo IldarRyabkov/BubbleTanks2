@@ -7,11 +7,12 @@ from components.utils import H
 
 
 class SliderButton(ScalingButton):
-    def __init__(self, x, y, label_texts, font, font_size, sound_player, volume_type, alpha=220):
+    def __init__(self, x, y, label_texts, font, font_size, sound_player, volume_type, min_alpha=220):
 
-        super().__init__(x, y, H(940), H(50), 0.92, alpha,
+        super().__init__(x, y, H(940), H(50), 0.92, min_alpha,
                          label_texts, sound_player,
-                         cursor=pg.SYSTEM_CURSOR_SIZEWE)
+                         cursor=pg.SYSTEM_CURSOR_SIZEWE,
+                         scaling_time=100)
         self.value = 1
         self.volume_type = volume_type
 
@@ -40,14 +41,12 @@ class SliderButton(ScalingButton):
     def cursor_on_button(self):
         return self.slider_rect.collidepoint(pg.mouse.get_pos())
 
-    def render_surface(self):
+    def set_surface(self):
         self.surface.fill((0, 0, 0, 0))
         self.text_widget.draw(self.surface)
         pg.draw.rect(self.surface, GREY_2, self.empty_line, border_radius=H(3))
         pg.draw.rect(self.surface, WHITE, self.filled_line, border_radius=H(3))
         pg.draw.rect(self.surface, WHITE, self.slider, border_radius=H(6))
-        self.set_alpha()
-        self.set_scaled_surface()
 
     def set_value(self, value):
         self.value = value
@@ -55,12 +54,11 @@ class SliderButton(ScalingButton):
         self.filled_line.w = value * self.line_w
 
     def reset(self, state):
-        super().reset(state)
         if self.volume_type == "music":
             self.set_value(self.sound_player.music_volume)
         elif self.volume_type == "sound":
             self.set_value(self.sound_player.sound_volume)
-        self.render_surface()
+        super().reset(state)
 
     def set_volume(self):
         if self.volume_type == "music":
@@ -70,10 +68,10 @@ class SliderButton(ScalingButton):
 
     def update_wait(self, dt):
         if self.is_pressed:
-            increasing = True
+            self.update_size(dt, True)
         else:
             increasing = self.rect.collidepoint(pg.mouse.get_pos())
-        self.update_size(dt, increasing)
+            self.update_size(dt, increasing)
 
         if self.is_pressed:
             x = pg.mouse.get_pos()[0]

@@ -48,9 +48,8 @@ class MainMenuButton(ScalingButton):
         super().set_alpha(default_alpha)
         self.text_widget.set_alpha(self.text_alpha if default_alpha is None else default_alpha)
 
-    def render_surface(self):
-        self.set_alpha()
-        self.set_scaled_surface()
+    def set_surface(self):
+        pass
 
     def reset(self, state):
         self.y = self.Y_MAX

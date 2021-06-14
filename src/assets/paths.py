@@ -54,7 +54,6 @@ CREDITS_BG_1 = img_path("credits_bg_1.png")
 CREDITS_BG_2 = img_path("credits_bg_2.png")
 CREDITS_BG_3 = img_path("credits_bg_3.png")
 SAVE_BUTTON_BG = img_path("save_button_bg.png")
-SAVE_BUTTON_PRESSED_BG = img_path("save_button_pressed_bg.png")
 DELETE_BUTTON_BG = img_path("delete_button.png")
 
 
@@ -108,7 +107,6 @@ __all__ = [
     "CREDITS_BG_3",
     "DELETE_BUTTON_BG",
     "SAVE_BUTTON_BG",
-    "SAVE_BUTTON_PRESSED_BG",
     "SETTINGS_BUTTON_BG",
     "CREDITS_BUTTON_BG",
     "PLAY_BUTTON_BG",

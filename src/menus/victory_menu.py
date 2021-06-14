@@ -34,7 +34,7 @@ class VictoryMenu(Menu):
             TextWidget(SCR_W2, H(720), CALIBRI, H(45), WHITE, 1, H(960)),
         )
         # widgets dictionary
-        self.widgets = { St.MAIN_STATE: (self.mask, self.caption, self.bubbles, *self.texts)}
+        self.widgets = {St.MAIN_STATE: (self.mask, self.caption, self.bubbles, *self.texts)}
 
         # buttons
         self.exit_button = TextButton(SCR_W2, H(670),
@@ -72,6 +72,13 @@ class VictoryMenu(Menu):
     @property
     def animation_time(self):
         return 400
+
+    def handle_event(self, event):
+        super().handle_event(event)
+        if event.type in [pg.KEYDOWN, pg.KEYUP]:
+            self.game.player.handle(event.type, event.key)
+        elif event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP]:
+            self.game.player.handle(event.type, event.button)
 
     def set_language(self, language):
         self.caption.set_text(TEXTS["victory menu caption"][language])

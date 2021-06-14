@@ -7,7 +7,7 @@ from data.states import MainMenuStates as St
 
 class BackButton(TextButton):
     def __init__(self, texts, sound_player, action):
-        super().__init__(SCR_W2, H(625),
+        super().__init__(SCR_W2, H(675),
                          texts, CALIBRI_BOLD, H(56),
                          220, sound_player,
                          action=action, w=H(200))
@@ -15,7 +15,7 @@ class BackButton(TextButton):
     def reset(self, state):
         super().reset(state)
         if state == St.SETTINGS:
-            self.move_to(y=H(625))
+            self.move_to(y=H(685))
         elif state in (St.NEW_GAME, St.LOAD_GAME):
             self.move_to(y=H(850))
 

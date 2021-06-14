@@ -7,6 +7,7 @@ from gui.widgets.text_widget import TextWidget
 from gui.widgets.credits_label import CreditsLabel
 from gui.widgets.main_menu_caption import *
 from gui.widgets.background_bubbles import BackgroundBubbles
+from gui.widgets.key_hint import KeyHint
 
 from gui.buttons.text_button import *
 from gui.buttons.slider_button import SliderButton
@@ -41,34 +42,32 @@ class MainMenu(Menu):
         self.bg_surface = pg.transform.scale(self.bg_surface, SCR_SIZE)
 
         # widgets
-        self.resolution_warning = TextWidget(SCR_W2, H(890), CALIBRI_BOLD, H(34), WHITE, 1)
+        self.resolution_warning = TextWidget(SCR_W2, H(860), CALIBRI, H(36), WHITE, 1, H(500))
         self.credits_widgets = (
-            CreditsLabel(H(200), CREDITS_BG_1, H(380)),
-            CreditsLabel(H(605), CREDITS_BG_2, H(180)),
-            CreditsLabel(H(810), CREDITS_BG_3, H(140)),
-            TextWidget(SCR_W2, H(250), CALIBRI_BOLD, H(61), WHITE, 1),
-            TextWidget(SCR_W2, H(326), CALIBRI_BOLD, H(37), WHITE, 1),
-            TextWidget(SCR_W2, H(360), CALIBRI_BOLD, H(56), WHITE, 1),
-            TextWidget(SCR_W2, H(430), CALIBRI_BOLD, H(48), WHITE, 1),
-            TextWidget(SCR_W2 - H(180), H(480), CALIBRI_BOLD, H(38), WHITE, 1, H(400)),
-            TextWidget(SCR_W2 + H(180), H(480), CALIBRI_BOLD, H(38), WHITE, 1, H(400)),
-            TextWidget(SCR_W2, H(650), CALIBRI_BOLD, H(46), WHITE, 1),
-            TextWidget(SCR_W2, H(695), CALIBRI_BOLD, H(42), WHITE, 1),
-            TextWidget(SCR_W2, H(730), CALIBRI_BOLD, H(34), WHITE, 1),
-            TextWidget(SCR_W2, H(850), CALIBRI_BOLD, H(46), WHITE, 1),
-            TextWidget(SCR_W2, H(894), CALIBRI_BOLD, H(34), WHITE, 1)
+            CreditsLabel(H(210), CREDITS_BG_1, H(240)),
+            CreditsLabel(H(475), CREDITS_BG_2, H(180)),
+            CreditsLabel(H(680), CREDITS_BG_3, H(150)),
+            TextWidget(SCR_W2, H(260), CALIBRI_BOLD, H(61), WHITE, 1),
+            TextWidget(SCR_W2, H(336), CALIBRI_BOLD, H(37), WHITE, 1),
+            TextWidget(SCR_W2, H(370), CALIBRI_BOLD, H(56), WHITE, 1),
+            TextWidget(SCR_W2, H(520), CALIBRI_BOLD, H(46), WHITE, 1),
+            TextWidget(SCR_W2, H(565), CALIBRI_BOLD, H(42), WHITE, 1),
+            TextWidget(SCR_W2, H(600), CALIBRI_BOLD, H(34), WHITE, 1),
+            TextWidget(SCR_W2, H(720), CALIBRI_BOLD, H(46), WHITE, 1),
+            TextWidget(SCR_W2, H(764), CALIBRI_BOLD, H(34), WHITE, 1)
         )
         self.bubbles = BackgroundBubbles()
         self.caption = MainMenuCaption(self)
+        self.esc_hint = KeyHint(SCR_W - H(190), H(890), CALIBRI, H(35), WHITE)
 
         # widgets dictionary
         base_widgets = self.bubbles, self.caption
         self.widgets = {
-            St.MAIN_PAGE: base_widgets,
+            St.MAIN_PAGE: (self.bubbles, self.caption),
             St.SETTINGS: base_widgets,
-            St.CREDITS: (*base_widgets, *self.credits_widgets),
-            St.LANGUAGES: base_widgets,
-            St.RESOLUTIONS: (*base_widgets, self.resolution_warning),
+            St.CREDITS: (*base_widgets, *self.credits_widgets, self.esc_hint),
+            St.LANGUAGES: (*base_widgets, self.esc_hint),
+            St.RESOLUTIONS: (*base_widgets, self.resolution_warning, self.esc_hint),
             St.EXIT: base_widgets,
             St.NEW_GAME: base_widgets,
             St.LOAD_GAME: base_widgets,
@@ -79,25 +78,29 @@ class MainMenu(Menu):
         # buttons
         self.resolution_buttons = self.create_resolution_buttons()
         self.language_buttons = self.create_language_buttons()
-        self.to_languages_button = DoubleTextButton(SCR_W2, H(325),
+        self.to_languages_button = DoubleTextButton(SCR_W2, H(365),
                                                     TEXTS["language label"],
                                                     TEXTS["language"][self.game.language],
                                                     CALIBRI_BOLD, H(56), sp,
-                                                    action=self.languages)
+                                                    action=self.languages,
+                                                    min_alpha=200)
 
-        self.to_resolutions_button = DoubleTextButton(SCR_W2, H(400),
+        self.to_resolutions_button = DoubleTextButton(SCR_W2, H(445),
                                                       TEXTS["resolution label"],
                                                       pretty_resolution([SCR_W, SCR_H]),
                                                       CALIBRI_BOLD, H(56), sp,
-                                                      action=self.resolutions)
+                                                      action=self.resolutions,
+                                                      min_alpha=200)
 
-        self.music_slider = SliderButton(SCR_W2, H(475),
+        self.music_slider = SliderButton(SCR_W2, H(525),
                                          TEXTS["music volume text"],
-                                         CALIBRI_BOLD, H(52), sp, "music")
+                                         CALIBRI_BOLD, H(52), sp, "music",
+                                         min_alpha=200)
 
-        self.sound_slider = SliderButton(SCR_W2, H(550),
+        self.sound_slider = SliderButton(SCR_W2, H(605),
                                          TEXTS["sound volume text"],
-                                         CALIBRI_BOLD, H(52), sp, "sound")
+                                         CALIBRI_BOLD, H(52), sp, "sound",
+                                         min_alpha=200)
 
         self.back_button = BackButton(TEXTS["back button text"], sp, self.back)
 
@@ -113,47 +116,48 @@ class MainMenu(Menu):
 
         self.resume_button = TextButton(SCR_W2, H(400),
                                         TEXTS["resume game button text"],
-                                        CALIBRI_BOLD, H(56), 220, sp,
+                                        CALIBRI_BOLD, H(56), 200, sp,
                                         action=self.resume_game, w=H(400),
                                         click_sound=ENEMY_DEATH)
 
         self.new_game_button = TextButton(SCR_W2, H(400),
                                           TEXTS["new game button text"],
-                                          CALIBRI_BOLD, H(56), 220, sp,
+                                          CALIBRI_BOLD, H(56), 200, sp,
                                           action=self.new_game,
                                           w=H(300))
 
-        self.load_game_button = TextButton(SCR_W2, H(470),
+        self.load_game_button = TextButton(SCR_W2, H(475),
                                            TEXTS["load game button text"],
-                                           CALIBRI_BOLD, H(56), 220, sp,
+                                           CALIBRI_BOLD, H(56), 200, sp,
                                            action=self.load_game,
                                            w=H(300))
 
-        self.settings_button = TextButton(SCR_W2, H(540),
+        self.settings_button = TextButton(SCR_W2, H(550),
                                           TEXTS["settings button text"],
-                                          CALIBRI_BOLD, H(56), 220, sp,
+                                          CALIBRI_BOLD, H(56), 200, sp,
                                           action=self.settings, w=H(300))
 
-        self.credits_button = TextButton(SCR_W2, H(610),
+        self.credits_button = TextButton(SCR_W2, H(625),
                                          TEXTS["credits button text"],
-                                         CALIBRI_BOLD, H(56), 220, sp,
+                                         CALIBRI_BOLD, H(56), 200, sp,
                                          action=self.credits, w=H(300))
 
-        self.exit_button = TextButton(SCR_W2, H(680),
+        self.exit_button = TextButton(SCR_W2, H(700),
                                       TEXTS["exit to desktop button text"],
-                                      CALIBRI_BOLD, H(56), 220, sp,
+                                      CALIBRI_BOLD, H(56), 200, sp,
                                       action=self.exit, w=H(400))
 
-        self.save_1_button = SaveButton(SCR_W2 - H(340), "save_1", sp, self.save_button_action)
-        self.save_2_button = SaveButton(SCR_W2, "save_2", sp, self.save_button_action)
-        self.save_3_button = SaveButton(SCR_W2 + H(340), "save_3", sp, self.save_button_action)
+        self.save_buttons = (
+            SaveButton(SCR_W2 - H(340), "save_1", sp, self.save_button_action),
+            SaveButton(SCR_W2, "save_2", sp, self.save_button_action),
+            SaveButton(SCR_W2 + H(340), "save_3", sp, self.save_button_action)
+        )
 
-        self.delete_1_button = DeleteButton(SCR_W2 - H(340), sp,
-                                            self.save_1_button, self.delete_button_action)
-        self.delete_2_button = DeleteButton(SCR_W2, sp,
-                                            self.save_2_button, self.delete_button_action)
-        self.delete_3_button = DeleteButton(SCR_W2 + H(340), sp,
-                                            self.save_3_button, self.delete_button_action)
+        self.delete_buttons = (
+            DeleteButton(SCR_W2 - H(340), sp, self.save_buttons[0], self.delete_button_action),
+            DeleteButton(SCR_W2, sp, self.save_buttons[1], self.delete_button_action),
+            DeleteButton(SCR_W2 + H(340), sp, self.save_buttons[2], self.delete_button_action)
+        )
 
         # buttons dictionary
         self.buttons = {
@@ -162,10 +166,8 @@ class MainMenu(Menu):
             St.SETTINGS: [self.to_languages_button, self.to_resolutions_button,
                           self.music_slider, self.sound_slider, self.back_button],
             St.CREDITS: [],
-            St.NEW_GAME: [self.save_1_button, self.save_2_button, self.save_3_button,
-                          self.back_button],
-            St.LOAD_GAME: [self.save_1_button, self.save_2_button, self.save_3_button,
-                           self.back_button],
+            St.NEW_GAME: [*self.save_buttons, self.back_button],
+            St.LOAD_GAME: [*self.save_buttons, self.back_button],
             St.LANGUAGES: self.language_buttons,
             St.RESOLUTIONS: self.resolution_buttons,
             St.EXIT: [self.yes_button, self.no_button],
@@ -178,19 +180,19 @@ class MainMenu(Menu):
 
     def add_resume_button(self):
         for button in self.buttons[St.MAIN_PAGE]:
-            button.move(dy=HF(70))
+            button.move(dy=HF(75))
         self.buttons[St.MAIN_PAGE].append(self.resume_button)
 
     def remove_resume_button(self):
         self.buttons[St.MAIN_PAGE].remove(self.resume_button)
         for button in self.buttons[St.MAIN_PAGE]:
-            button.move(dy=-HF(70))
+            button.move(dy=-HF(75))
 
     def create_resolution_buttons(self) -> list:
         resolutions = list(map(pretty_resolution, SUPPORTED_RESOLUTIONS))
         buttons = []
         for i, text in enumerate(resolutions):
-            buttons.append(ResolutionButton(self, H(240 + i * 671/len(resolutions)), text))
+            buttons.append(ResolutionButton(self, H(200 + i * 671/len(resolutions)), text))
         return buttons
 
     def create_language_buttons(self) -> list:
@@ -201,9 +203,7 @@ class MainMenu(Menu):
         return buttons
 
     def set_delete_buttons(self):
-        delete_buttons = self.delete_1_button, self.delete_2_button, self.delete_3_button
-        save_buttons = self.save_1_button, self.save_2_button, self.save_3_button
-        for db, sb in zip(delete_buttons, save_buttons):
+        for db, sb in zip(self.delete_buttons, self.save_buttons):
             if sb.save_data is not None and db not in self.buttons[St.NEW_GAME]:
                 self.buttons[St.NEW_GAME].append(db)
                 self.buttons[St.LOAD_GAME].append(db)
@@ -213,12 +213,12 @@ class MainMenu(Menu):
 
     def resume_game(self):
         """Action of the 'play' button. """
-        save_data = load_save_data(self.current_save)
+        save_data = load_save_file(self.current_save)
         self.init_save(self.resume_button, save_data)
 
     def init_save(self, button, save_data):
         if isinstance(button, SaveButton):
-            save_current_save_name(button.save_name)
+            update_config_file(save=button.save_name)
             self.current_save = button.save_name
         self.game.set_data(save_data)
         self.game.sound_player.fade_out(500)
@@ -233,13 +233,15 @@ class MainMenu(Menu):
         self.clicked_save_button = button
 
         if self.state == St.LOAD_GAME and button.save_data is not None:
+            self.game.sound_player.play_sound(ENEMY_DEATH)
             self.click_animation(button)
             self.init_save(button, button.save_data)
 
         elif self.state == St.NEW_GAME:
+            self.game.sound_player.play_sound(ENEMY_DEATH)
             if button.save_data is None:
                 create_save_file(button.save_name)
-                save_data = load_save_data(button.save_name)
+                save_data = load_save_file(button.save_name)
                 self.click_animation(button)
                 self.init_save(button, save_data)
             else:
@@ -288,7 +290,7 @@ class MainMenu(Menu):
 
         elif self.state == St.OVERRIDE_SAVE:
             create_save_file(self.clicked_save_button.save_name)
-            save_data = load_save_data(self.clicked_save_button.save_name)
+            save_data = load_save_file(self.clicked_save_button.save_name)
             self.init_save(self.yes_button, save_data)
 
         elif self.state == St.DELETE_SAVE:
@@ -309,7 +311,7 @@ class MainMenu(Menu):
         file_name = save_button.save_name
         delete_save_file(file_name)
         if self.current_save == file_name:
-            save_current_save_name(None)
+            update_config_file(save="empty")
             self.set_current_save()
         save_button.load_save_data()
         self.set_delete_buttons()
@@ -319,12 +321,12 @@ class MainMenu(Menu):
                        self.music_slider, self.sound_slider, self.back_button,
                        self.yes_button, self.no_button, self.resume_button,
                        self.new_game_button, self.load_game_button, self.exit_button,
-                       self.settings_button, self.credits_button,
-                       self.save_1_button, self.save_2_button, self.save_3_button):
+                       self.settings_button, self.credits_button, *self.save_buttons):
             button.set_language(language)
 
         self.caption.set_state(self.state)
         self.resolution_warning.set_text(TEXTS["resolution warning"][language])
+        self.esc_hint.set_text(TEXTS["escape hint"][language])
         for i, widget in enumerate(self.credits_widgets):
             widget.set_text(TEXTS["credits widgets"][language][i])
 
@@ -334,7 +336,7 @@ class MainMenu(Menu):
             return 1000
         if self.is_opening:
             return 600
-        return 300
+        return 200
 
     def set_widgets_state(self, state):
         self.caption.set_state(state)
@@ -392,7 +394,7 @@ class MainMenu(Menu):
 
     def set_current_save(self):
         self.current_save = load_current_save()
-        if self.current_save is not None:
+        if self.current_save != "empty":
             if self.resume_button not in self.buttons[St.MAIN_PAGE]:
                 self.add_resume_button()
         elif self.resume_button in self.buttons[St.MAIN_PAGE]:
@@ -402,9 +404,8 @@ class MainMenu(Menu):
         self.state = St.MAIN_PAGE
         self.caption.set_state(self.state)
         self.bubbles.reset()
-        self.save_1_button.load_save_data()
-        self.save_2_button.load_save_data()
-        self.save_3_button.load_save_data()
+        for button in self.save_buttons:
+            button.load_save_data()
         self.set_current_save()
         self.set_delete_buttons()
         self.game_music_played = False

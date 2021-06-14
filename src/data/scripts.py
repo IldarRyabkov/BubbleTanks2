@@ -13,15 +13,6 @@ from datetime import datetime
 from .languages.texts import TEXTS
 
 
-def load_save_data(save_name: str):
-    file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
-    try:
-        file = open(file_path, 'r')
-    except (IOError, FileNotFoundError):
-        return None
-    return json.load(file)
-
-
 def _max_available_resolution():
     """Returns maximum screen resolution suggested by pygame.
     This resolution is supposed to be the screen size of the monitor.
@@ -36,7 +27,7 @@ def _validate_config():
     """
     def is_valid(data) -> bool:
         return (type(data) == dict and
-                "save" in data and data["save"] in (None, "save_1", "save_2", "save_3") and
+                "save" in data and data["save"] in ("empty", "save_1", "save_2", "save_3") and
                 "language" in data and data["language"] in LANGUAGES and
                 "resolution" in data and data["resolution"] in SUPPORTED_RESOLUTIONS)
 
@@ -76,33 +67,16 @@ def load_current_save():
     return load_config()["save"]
 
 
-def save_resolution(text_resolution: str):
-    """Saves new game resolution to 'config.json'."""
+def update_config_file(resolution=None, language=None, save=None):
     _validate_config()
     with open(_CONFIG_FILE, 'r+', encoding='utf-8') as file:
         data = json.load(file)
-        data["resolution"] = list(map(int, text_resolution.split(' x ')))
-        file.seek(0)
-        file.truncate(0)
-        json.dump(data, file, ensure_ascii=False, indent=4)
-
-
-def save_language(language: int):
-    """Saves new game language to 'config.json'."""
-    _validate_config()
-    with open(_CONFIG_FILE, 'r+', encoding='utf-8') as file:
-        data = json.load(file)
-        data["language"] = language
-        file.seek(0)
-        file.truncate(0)
-        json.dump(data, file, ensure_ascii=False, indent=4)
-
-
-def save_current_save_name(save_name):
-    _validate_config()
-    with open(_CONFIG_FILE, 'r+', encoding='utf-8') as file:
-        data = json.load(file)
-        data["save"] = save_name
+        if resolution is not None:
+            data["resolution"] = resolution
+        if language is not None:
+            data["language"] = language
+        if save is not None:
+            data["save"] = save
         file.seek(0)
         file.truncate(0)
         json.dump(data, file, ensure_ascii=False, indent=4)
@@ -114,6 +88,7 @@ def update_save_file(save_name,
                      visited_rooms, enemies_dict, current_room,
                      boss_generated, boss_disposition, boss_position,
                      hints_history):
+    """Update data of save file with given name. """
     if save_name is None:
         return
     data = {
@@ -137,7 +112,10 @@ def update_save_file(save_name,
         json.dump(data, file)
 
 
-def create_save_file(name):
+def create_save_file(save_name):
+    """Created new save file with given name and
+    default data in user directory.
+    """
     data = {
         "tank": [0, 0],
         "tanks history": [[0, 0]],
@@ -154,14 +132,24 @@ def create_save_file(name):
         "hints history": {"0 0": 0},
         "time": datetime.today().isoformat(sep=' ', timespec='minutes')
     }
-    file_path = os.path.join(_USER_DIR, "%s.json" % name)
+    file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
     with open(file_path, 'w') as file:
         json.dump(data, file)
 
 
 def delete_save_file(name):
+    """Deletes save file with given name from user directory. """
     file_path = os.path.join(_USER_DIR, "%s.json" % name)
     os.remove(file_path)
+
+
+def load_save_file(save_name: str):
+    file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
+    try:
+        file = open(file_path, 'r')
+    except (IOError, FileNotFoundError):
+        return None
+    return json.load(file)
 
 
 # Make sure that the directory for config file exists
@@ -197,12 +185,10 @@ __all__ = [
     "load_resolution",
     "load_language",
     "load_current_save",
-    "load_save_data",
-    "save_resolution",
-    "save_language",
-    "save_current_save_name",
+    "load_save_file",
     "create_save_file",
     "update_save_file",
-    "delete_save_file"
+    "delete_save_file",
+    "update_config_file"
 
 ]

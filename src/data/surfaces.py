@@ -136,15 +136,11 @@ def health_window() -> pg.Surface:
 
 
 def save_button_bg() -> pg.Surface:
-    return popup_window(600, 800, color=(*BLACK, 70))
-
-
-def save_button_pressed_bg() -> pg.Surface:
-    return popup_window(600, 800, color=(*BLACK, 110))
+    return popup_window(600, 800, color=(*BLACK, 100))
 
 
 def credits_bg_1() -> pg.Surface:
-    return popup_window(960, 380, color=(125, 199, 240, 120))
+    return popup_window(960, 280, color=(125, 199, 240, 120))
 
 
 def credits_bg_2() -> pg.Surface:
@@ -524,5 +520,4 @@ def menu_mask() -> pg.Surface:
     return surface
 
 
-save_image(save_button_bg(), 'save_button_bg')
-save_image(save_button_pressed_bg(), 'save_button_pressed_bg')
+save_image(credits_bg_1(), 'credits_bg_1')

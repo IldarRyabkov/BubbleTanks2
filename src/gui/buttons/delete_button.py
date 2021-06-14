@@ -7,7 +7,7 @@ from components.utils import H
 
 class DeleteButton(ScalingButton):
     def __init__(self, x, sound_player, save_button, delete_button_action):
-        super().__init__(x, H(720), H(55), H(55), 0.85, 180, None, sound_player,
+        super().__init__(x, H(740), H(55), H(55), 0.85, 180, None, sound_player,
                          action=lambda: delete_button_action(self))
 
         self.save_button = save_button
@@ -17,9 +17,8 @@ class DeleteButton(ScalingButton):
     def set_language(self, language):
         pass
 
-    def render_surface(self):
-        self.set_alpha()
-        self.set_scaled_surface()
+    def set_surface(self):
+        pass
 
 
 __all__ = ["DeleteButton"]

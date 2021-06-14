@@ -3,6 +3,9 @@ from data.constants import *
 from components.utils import *
 
 
+_max_healths = [75, 125, 200, 400, 500, 1]
+
+
 frozen_body = [
 
     [24, 1, VIOLET, 0, 0, False, 0,  True, 36,  0.8 * pi],
@@ -110,7 +113,7 @@ HEALTH_STATES_00 = (
 )
 
 params_00 = {
-    "max_health": 75,
+    "max_health": _max_healths[0],
     "health_states": HEALTH_STATES_00,
     "radius": HF(64),
     "body": scaled_body(BODY_00),
@@ -216,7 +219,7 @@ HEALTH_STATES_10 = (
 )
 
 params_10 = {
-    "max_health": 125,
+    "max_health": _max_healths[1],
     "health_states": HEALTH_STATES_10,
     "radius": HF(93),
     "body": scaled_body(BODY_10),
@@ -348,7 +351,7 @@ HEALTH_STATES_11 = (
 )
 
 params_11 = {
-    "max_health": 125,
+    "max_health": _max_healths[1],
     "health_states": HEALTH_STATES_11,
     "radius": HF(116),
     "body": scaled_body(BODY_11),
@@ -480,9 +483,9 @@ HEALTH_STATES_12 = (
     (97, (0, 1), (2, 45), (47, 49), (50, 70), (86, 98)),
     (91, (0, 1), (2, 16), (22, 45), (51, 64), (70, 98)),
     (86, (0, 1), (2, 16), (22, 45), (52, 58), (64, 98)),
-    (81, (0, 1), (4, 16), (22, 45), (58, 97)),
-    (75, (0, 1), (2, 16), (28, 45), (52, 97)),
-    (70, (0, 1), (2, 16), (28, 45), (50, 97)),
+    (81, (0, 1), (4, 16), (22, 45), (58, 98)),
+    (75, (0, 1), (2, 16), (28, 45), (52, 98)),
+    (70, (0, 1), (2, 16), (28, 45), (50, 98)),
     (65, (0, 1), (2, 16), (28, 32), (34, 47), (50, 98)),
     (61, (0, 1), (2, 16), (28, 32), (34, 38), (40, 44), (45, 98)),
     (55, (0, 1), (2, 16), (28, 32), (34, 38), (40, 43), (44, 98)),
@@ -502,7 +505,7 @@ HEALTH_STATES_12 = (
 )
 
 params_12 = {
-    "max_health": 125,
+    "max_health": _max_healths[1],
     "health_states": HEALTH_STATES_12,
     "radius": HF(95),
     "body": scaled_body(BODY_12),
@@ -650,7 +653,7 @@ HEALTH_STATES_20 = (
 )
 
 params_20 = {
-    "max_health": 200,
+    "max_health": _max_healths[2],
     "health_states": HEALTH_STATES_20,
     "radius": HF(71),
     "body": scaled_body(BODY_20),
@@ -771,7 +774,7 @@ HEALTH_STATES_21 = (
 )
 
 params_21 = {
-    "max_health": 200,
+    "max_health": _max_healths[2],
     "health_states": HEALTH_STATES_21,
     "radius": HF(98),
     "body": scaled_body(BODY_21),
@@ -915,7 +918,7 @@ HEALTH_STATES_22 = (
 )
 
 params_22 = {
-    "max_health": 200,
+    "max_health": _max_healths[2],
     "health_states": HEALTH_STATES_22,
     "radius": HF(98),
     "body": scaled_body(BODY_22),
@@ -1079,7 +1082,7 @@ HEALTH_STATES_23 = (
 )
 
 params_23 = {
-    "max_health": 200,
+    "max_health": _max_healths[2],
     "health_states": HEALTH_STATES_23,
     "radius": HF(120),
     "body": scaled_body(BODY_23),
@@ -1258,7 +1261,7 @@ HEALTH_STATES_30 = (
 )
 
 params_30 = {
-    "max_health": 400,
+    "max_health": _max_healths[3],
     "health_states": HEALTH_STATES_30,
     "radius": HF(89),
     "body": scaled_body(BODY_30),
@@ -1455,7 +1458,7 @@ HEALTH_STATES_31 = (
 )
 
 params_31 = {
-    "max_health": 400,
+    "max_health": _max_healths[3],
     "health_states": HEALTH_STATES_31,
     "radius": HF(120),
     "body": scaled_body(BODY_31),
@@ -1578,7 +1581,7 @@ HEALTH_STATES_32 = (
 )
 
 params_32 = {
-    "max_health": 400,
+    "max_health": _max_healths[3],
     "health_states": HEALTH_STATES_32,
     "radius": HF(120),
     "body": scaled_body(BODY_32),
@@ -1628,7 +1631,7 @@ BODY_33 = [
 ]
 
 params_33 = {
-    "max_health": 400,
+    "max_health": _max_healths[3],
     "health_states": ((0, ),),
     "radius": HF(120),
     "body": scaled_body(BODY_33),
@@ -1682,7 +1685,7 @@ BODY_34 = [
 ]
 
 params_34 = {
-    "max_health": 400,
+    "max_health": _max_healths[3],
     "health_states": ((0, ),),
     "radius": HF(156),
     "body": scaled_body(BODY_34),
@@ -1739,7 +1742,7 @@ BODY_35 = [
 ]
 
 params_35 = {
-    "max_health": 400,
+    "max_health": _max_healths[3],
     "health_states": ((0, ),),
     "radius": HF(135),
     "body": scaled_body(BODY_35),
@@ -1868,7 +1871,7 @@ HEALTH_STATES_40 = (
 )
 
 params_40 = {
-    "max_health": 500,
+    "max_health": _max_healths[4],
     "health_states": HEALTH_STATES_40,
     "radius": HF(85),
     "body": scaled_body(BODY_40),
@@ -1906,7 +1909,7 @@ BODY_41 = [
 ]
 
 params_41 = {
-    "max_health": 500,
+    "max_health": _max_healths[4],
     "health_states": ((0, ),),
     "radius": HF(85),
     "body": scaled_body(BODY_41),
@@ -1952,7 +1955,7 @@ BODY_42 = [
 ]
 
 params_42 = {
-    "max_health": 500,
+    "max_health": _max_healths[4],
     "health_states": ((0, ),),
     "radius": HF(110),
     "body": scaled_body(BODY_42),
@@ -2008,7 +2011,7 @@ BODY_43 = [
 ]
 
 params_43 = {
-    "max_health": 500,
+    "max_health": _max_healths[4],
     "health_states": ((0, ),),
     "radius": HF(142),
     "body": scaled_body(BODY_43),
@@ -2061,7 +2064,7 @@ BODY_44 = [
 ]
 
 params_44 = {
-    "max_health": 500,
+    "max_health": _max_healths[4],
     "health_states": ((0, ),),
     "radius": HF(137),
     "body": scaled_body(BODY_44),
@@ -2119,7 +2122,7 @@ BODY_45 = [
 ]
 
 params_45 = {
-    "max_health": 500,
+    "max_health": _max_healths[4],
     "health_states": ((0, ),),
     "radius": HF(130),
     "body": scaled_body(BODY_45),
@@ -2157,7 +2160,7 @@ BODY_50 = [
 ]
 
 params_50 = {
-    "max_health": 1,
+    "max_health": _max_healths[5],
     "health_states": ((0, ),),
     "radius": HF(85),
     "body": scaled_body(BODY_50),
@@ -2214,7 +2217,7 @@ BODY_51 = [
 ]
 
 params_51 = {
-    "max_health": 1,
+    "max_health": _max_healths[5],
     "health_states": ((0, ),),
     "radius": HF(110),
     "body": scaled_body(BODY_51),
@@ -2271,7 +2274,7 @@ BODY_52 = [
 
 
 params_52 = {
-    "max_health": 1,
+    "max_health": _max_healths[5],
     "health_states": ((0, ),),
     "radius": HF(95),
     "body": scaled_body(BODY_52),
@@ -2328,7 +2331,7 @@ BODY_53 = [
 
 
 params_53 = {
-    "max_health": 1,
+    "max_health": _max_healths[5],
     "health_states": ((0, ),),
     "radius": HF(130),
     "body": scaled_body(BODY_53),
@@ -2441,7 +2444,7 @@ BODY_54 = [
 ]
 
 params_54 = {
-    "max_health": 1,
+    "max_health": _max_healths[5],
     "health_states": ((0, ),),
     "radius": HF(190),
     "body": scaled_body(BODY_54),
@@ -2564,7 +2567,7 @@ BODY_55 = [
 
 
 params_55 = {
-    "max_health": 1,
+    "max_health": _max_healths[5],
     "health_states": ((0, ),),
     "radius": HF(230),
     "body": scaled_body(BODY_55),

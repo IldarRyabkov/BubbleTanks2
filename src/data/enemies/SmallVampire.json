@@ -1,0 +1,48 @@
+{
+	"circles": [
+		{
+			"type": "thick_blue",
+			"radius": 90.96,
+			"distance": 0,
+			"angle": 0.0
+		}
+	],
+	"circles states": {
+		"0 60": [
+			0
+		]
+	},
+	"guns": [
+		{
+			"name": "sapper_spawner",
+			"scale": 1,
+			"distance": 0,
+			"angle": 3.141592653589793,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": "spawn sapper",
+			"cooldown min": 1200,
+			"cooldown max": 1200,
+			"delay": 2000,
+			"bullet name": "enemy sapper",
+			"bullet velocity": 0.72,
+			"bullet damage": -3
+		}
+	],
+	"guns states": {
+		"0 60": [
+			0
+		]
+	},
+	"radius": 106.32,
+	"rect size": 376.32,
+	"max health": 60,
+	"velocity": 0.0,
+	"death award": {
+		"medium": 5,
+		"large": 7,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

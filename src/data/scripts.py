@@ -10,7 +10,7 @@ from json.decoder import JSONDecodeError
 from pygame import display
 from datetime import datetime
 
-from .languages.texts import TEXTS
+from data.languages import TEXTS
 
 
 def _max_available_resolution():
@@ -27,13 +27,19 @@ def _validate_config():
     """
     def is_valid(data) -> bool:
         return (type(data) == dict and
+                "screen mode" in data and data["screen mode"] in [0, 1, 2] and
                 "save" in data and data["save"] in ("empty", "save_1", "save_2", "save_3") and
                 "language" in data and data["language"] in LANGUAGES and
                 "resolution" in data and data["resolution"] in SUPPORTED_RESOLUTIONS)
 
     def write_default_data():
         with open(_CONFIG_FILE, "w", encoding='utf-8') as f:
-            data = {"language": LANGUAGES[0], "resolution": [1024, 768], "save": "empty"}
+            data = {
+                "screen mode": 1,
+                "language": LANGUAGES[0],
+                "resolution": [1024, 768],
+                "save": "empty"
+            }
             json.dump(data, f)
 
     try:
@@ -63,11 +69,15 @@ def load_language():
     return LANGUAGES.index(load_config()["language"])
 
 
+def load_screen_mode():
+    return load_config()["screen mode"]
+
+
 def load_current_save():
     return load_config()["save"]
 
 
-def update_config_file(resolution=None, language=None, save=None):
+def update_config_file(resolution=None, language=None, save=None, screen_mode=None):
     _validate_config()
     with open(_CONFIG_FILE, 'r+', encoding='utf-8') as file:
         data = json.load(file)
@@ -77,13 +87,15 @@ def update_config_file(resolution=None, language=None, save=None):
             data["language"] = language
         if save is not None:
             data["save"] = save
+        if screen_mode is not None:
+            data["screen mode"] = screen_mode
         file.seek(0)
         file.truncate(0)
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
 def update_save_file(save_name,
-                     tank, tanks_history, health,
+                     tank, tanks_history, health, max_cumulative_health,
                      enemies_killed, bubbles_collected,
                      visited_rooms, enemies_dict, current_room,
                      boss_generated, boss_disposition, boss_position,
@@ -95,6 +107,7 @@ def update_save_file(save_name,
         "tank": list(tank),
         "tanks history": [list(tank) for tank in tanks_history],
         "health": health,
+        "max cumulative health": max_cumulative_health,
         "enemies killed": enemies_killed,
         "bubbles collected": bubbles_collected,
         "visited rooms": {"%d %d" % room: [list(neighbour) for neighbour in neighbours]
@@ -120,6 +133,7 @@ def create_save_file(save_name):
         "tank": [0, 0],
         "tanks history": [[0, 0]],
         "health": 0,
+        "max cumulative health": 0,
         "enemies killed": "0",
         "bubbles collected": "0",
         "visited rooms": {"0 0": []},
@@ -144,12 +158,16 @@ def delete_save_file(name):
 
 
 def load_save_file(save_name: str):
+
     file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
     try:
         file = open(file_path, 'r')
     except (IOError, FileNotFoundError):
         return None
-    return json.load(file)
+    data = json.load(file)
+    if "max cumulative health" not in data:
+        data["max cumulative health"] = 0
+    return data
 
 
 # Make sure that the directory for config file exists
@@ -175,7 +193,7 @@ default_resolutions = [
     [1920, 1080]
 ]
 max_res = _max_available_resolution()
-SUPPORTED_RESOLUTIONS = [res for res in default_resolutions if res < max_res] + [max_res]
+SUPPORTED_RESOLUTIONS = [res for res in default_resolutions if res <= max_res]
 LANGUAGES = TEXTS["language"]
 
 
@@ -184,6 +202,7 @@ __all__ = [
     "SUPPORTED_RESOLUTIONS",
     "load_resolution",
     "load_language",
+    "load_screen_mode",
     "load_current_save",
     "load_save_file",
     "create_save_file",

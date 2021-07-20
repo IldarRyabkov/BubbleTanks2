@@ -1,0 +1,15 @@
+{
+	"radius": 10.384,
+	"size": 20.768,
+	"circles": [
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 10.422,
+			"edge factor": 0.124,
+			"distance": 0,
+			"angle": 0
+		}
+	],
+	"hit effect": "SmallHitLines"
+}

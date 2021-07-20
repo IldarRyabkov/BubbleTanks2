@@ -1,0 +1,619 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 24.413,
+			"distance": 103.561,
+			"angle": 0.7319910882864218
+		},
+		{
+			"type": "blue",
+			"radius": 24.413,
+			"distance": 103.561,
+			"angle": -0.7319910882864218
+		},
+		{
+			"type": "blue",
+			"radius": 20.207,
+			"distance": 114.834,
+			"angle": 0.46809730538487917
+		},
+		{
+			"type": "blue",
+			"radius": 20.207,
+			"distance": 114.834,
+			"angle": -0.46809730538487917
+		},
+		{
+			"type": "blue",
+			"radius": 22.494,
+			"distance": 176.219,
+			"angle": 0.7634070148223198
+		},
+		{
+			"type": "blue",
+			"radius": 22.494,
+			"distance": 176.219,
+			"angle": -0.7634070148223198
+		},
+		{
+			"type": "blue",
+			"radius": 21.541,
+			"distance": 182.991,
+			"angle": 0.562345084992573
+		},
+		{
+			"type": "blue",
+			"radius": 21.541,
+			"distance": 182.991,
+			"angle": -0.562345084992573
+		},
+		{
+			"type": "blue",
+			"radius": 29.929,
+			"distance": 144.728,
+			"angle": 0.6503096792930871
+		},
+		{
+			"type": "blue",
+			"radius": 29.929,
+			"distance": 144.728,
+			"angle": -0.6503096792930871
+		},
+		{
+			"type": "thick_blue",
+			"radius": 51.469,
+			"distance": 236.143,
+			"angle": 2.528982086139784
+		},
+		{
+			"type": "thick_blue",
+			"radius": 51.469,
+			"distance": 236.143,
+			"angle": -2.528982086139784
+		},
+		{
+			"type": "thick_blue",
+			"radius": 51.469,
+			"distance": 225.793,
+			"angle": 0.6942919764433443
+		},
+		{
+			"type": "thick_blue",
+			"radius": 51.469,
+			"distance": 225.793,
+			"angle": -0.6942919764433443
+		},
+		{
+			"type": "thick_blue",
+			"radius": 32.979,
+			"distance": 163.345,
+			"angle": 2.921681167838508
+		},
+		{
+			"type": "thick_blue",
+			"radius": 32.979,
+			"distance": 163.345,
+			"angle": -2.921681167838508
+		},
+		{
+			"type": "blue",
+			"radius": 23.542,
+			"distance": 141.975,
+			"angle": 2.657787384936965
+		},
+		{
+			"type": "blue",
+			"radius": 23.542,
+			"distance": 141.975,
+			"angle": -2.657787384936965
+		},
+		{
+			"type": "blue",
+			"radius": 25.353,
+			"distance": 200.164,
+			"angle": 2.9499555017208158
+		},
+		{
+			"type": "blue",
+			"radius": 25.353,
+			"distance": 200.164,
+			"angle": -2.9499555017208158
+		},
+		{
+			"type": "blue",
+			"radius": 30.691,
+			"distance": 179.466,
+			"angle": 2.667212162897734
+		},
+		{
+			"type": "blue",
+			"radius": 30.691,
+			"distance": 179.466,
+			"angle": -2.667212162897734
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.045454545454545459,
+			"radius": 65.099,
+			"distance": 65.195,
+			"angle": 1.624203401905923
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.045454545454545459,
+			"radius": 65.099,
+			"distance": 65.195,
+			"angle": -1.624203401905923
+		},
+		{
+			"type": "blue",
+			"radius": 23.542,
+			"distance": 34.324,
+			"angle": 1.7844246272390024
+		},
+		{
+			"type": "blue",
+			"radius": 23.542,
+			"distance": 34.324,
+			"angle": -1.7844246272390024
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 30.31,
+			"distance": 32.788,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.045454545454545459,
+			"radius": 65.004,
+			"distance": 94.837,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.045454545454545459,
+			"radius": 54.329,
+			"distance": 75.679,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 228.61,
+			"angle": 2.9436723164136366
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 228.61,
+			"angle": -2.9436723164136366
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 288.711,
+			"angle": 2.5855307539043999
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 288.711,
+			"angle": -2.5855307539043999
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 269.741,
+			"angle": 2.368760860806704
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 269.741,
+			"angle": -2.368760860806704
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 62.341,
+			"angle": 2.0608847807549046
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 62.341,
+			"angle": -2.0608847807549046
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 56.174,
+			"angle": 1.3288936924684825
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 56.174,
+			"angle": -1.3288936924684825
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 259.781,
+			"angle": 0.8325220532012952
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 259.781,
+			"angle": -0.8325220532012952
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 271.626,
+			"angle": 0.6251769380643689
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 271.626,
+			"angle": -0.6251769380643689
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 111.646,
+			"angle": 2.2556635252774717
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 111.646,
+			"angle": -2.2556635252774717
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 127.897,
+			"angle": 2.293362637120549
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 127.897,
+			"angle": -2.293362637120549
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 130.295,
+			"angle": 1.913229926036184
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 130.295,
+			"angle": -1.913229926036184
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 144.803,
+			"angle": 1.9792033717615696
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 144.803,
+			"angle": -1.9792033717615696
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 131.646,
+			"angle": 1.7530087007031048
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 131.646,
+			"angle": -1.7530087007031048
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 148.484,
+			"angle": 1.7373007374351557
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 148.484,
+			"angle": -1.7373007374351557
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 132.878,
+			"angle": 1.410575101461817
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 132.878,
+			"angle": -1.410575101461817
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 150.161,
+			"angle": 1.429424657383356
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 150.161,
+			"angle": -1.429424657383356
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 129.607,
+			"angle": 1.2534954687823275
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 129.607,
+			"angle": -1.2534954687823275
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 143.484,
+			"angle": 1.1780972450961725
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 143.484,
+			"angle": -1.1780972450961725
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 106.258,
+			"angle": 0.9204866475018093
+		},
+		{
+			"type": "orange",
+			"radius": 10.103,
+			"distance": 106.258,
+			"angle": -0.9204866475018093
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 122.24,
+			"angle": 0.8639379797371932
+		},
+		{
+			"type": "orange",
+			"radius": 13.725,
+			"distance": 122.24,
+			"angle": -0.8639379797371932
+		},
+		{
+			"type": "orange",
+			"radius": 22.113,
+			"distance": 116.69,
+			"angle": 2.067167966062084
+		},
+		{
+			"type": "orange",
+			"radius": 22.113,
+			"distance": 116.69,
+			"angle": -2.067167966062084
+		},
+		{
+			"type": "orange",
+			"radius": 22.113,
+			"distance": 128.304,
+			"angle": 1.5833626974092559
+		},
+		{
+			"type": "orange",
+			"radius": 22.113,
+			"distance": 128.304,
+			"angle": -1.5833626974092559
+		},
+		{
+			"type": "orange",
+			"radius": 22.113,
+			"distance": 114.327,
+			"angle": 1.1184069846779663
+		},
+		{
+			"type": "orange",
+			"radius": 22.113,
+			"distance": 114.327,
+			"angle": -1.1184069846779663
+		}
+	],
+	"circles states": {
+		"0 0": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			11,
+			12,
+			13,
+			14,
+			15,
+			16,
+			17,
+			18,
+			19,
+			20,
+			21,
+			22,
+			23,
+			24,
+			25,
+			26,
+			27,
+			28,
+			29,
+			30,
+			31,
+			32,
+			33,
+			34,
+			35,
+			36,
+			37,
+			38,
+			39,
+			40,
+			41,
+			42,
+			43,
+			44,
+			45,
+			46,
+			47,
+			48,
+			49,
+			50,
+			51,
+			52,
+			53,
+			54,
+			55,
+			56,
+			57,
+			58,
+			59,
+			60,
+			61,
+			62,
+			63,
+			64,
+			65,
+			66,
+			67,
+			68,
+			69,
+			70,
+			71,
+			72
+		]
+	},
+	"guns": [
+		{
+			"name": "gun_7",
+			"scale": 1,
+			"distance": 75.679,
+			"angle": 0.0,
+			"rotation type": 1,
+			"shooting type": "single",
+			"bullet name": "bullet buster",
+			"bullet velocity": 1.2,
+			"bullet damage": -1
+		},
+		{
+			"name": "gun_1",
+			"scale": 0.974,
+			"distance": 94.837,
+			"angle": 3.141592653589793,
+			"rotation type": 1,
+			"shooting type": "single",
+			"bullet name": "big light red",
+			"bullet velocity": 0.9,
+			"bullet damage": -5
+		},
+		{
+			"name": "gun_0",
+			"scale": 1,
+			"distance": 236.143,
+			"angle": 2.528982086139784,
+			"rotation type": 2,
+			"shooting type": "single",
+			"bullet name": "small light red",
+			"bullet velocity": 1.2,
+			"bullet damage": -1
+		},
+		{
+			"name": "gun_0",
+			"scale": 1,
+			"distance": 236.143,
+			"angle": -2.528982086139784,
+			"rotation type": 2,
+			"shooting type": "single",
+			"bullet name": "small light red",
+			"bullet velocity": 1.2,
+			"bullet damage": -1
+		},
+		{
+			"name": "gun_0",
+			"scale": 1,
+			"distance": 225.793,
+			"angle": 0.6942919764433443,
+			"rotation type": 2,
+			"shooting type": "single",
+			"bullet name": "small light red",
+			"bullet velocity": 1.2,
+			"bullet damage": -1
+		},
+		{
+			"name": "gun_0",
+			"scale": 1,
+			"distance": 225.793,
+			"angle": -0.6942919764433443,
+			"rotation type": 2,
+			"shooting type": "single",
+			"bullet name": "small light red",
+			"bullet velocity": 1.2,
+			"bullet damage": -1
+		}
+	],
+	"guns states": {
+		"0 0": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5
+		]
+	},
+	"rotating": true,
+	"max velocity": 0.252,
+	"max health": 1,
+	"radius": 230,
+	"background radius": 380.0,
+	"cooldown": 240,
+	"cooldown auto": 200,
+	"preview": {
+		"health state": 0,
+		"scale": 0.53,
+		"dx": 7
+	}
+}

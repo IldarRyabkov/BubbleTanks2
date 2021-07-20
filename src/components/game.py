@@ -1,6 +1,5 @@
 import pygame as pg
 import sys
-import numpy as np
 from itertools import chain
 from math import hypot
 
@@ -16,36 +15,42 @@ from menus.pause_menu import PauseMenu
 from gui.widgets.health_window import HealthWindow
 from gui.widgets.cooldown_window import CooldownWindow
 
-from .player import Player
-from .bullets import *
-from .background_environment import BackgroundEnvironment
-from .camera import Camera
-from .room import Room
-from .sound_player import SoundPlayer
-from .mob_generator import MobGenerator
-from .fps_manager import FPSManager
-from .superpowers import Ghost
-from .bubble import Bubble
-from .special_effects import *
-from .utils import *
+from components.player import Player
+from components.enemy import Enemy
+from components.bullets import *
+from components.background_environment import BackgroundEnvironment
+from components.camera import Camera
+from components.room import Room
+from components.sound_player import SoundPlayer
+from components.bubble_tanks_world import BubbleTanksWorld
+from components.fps_manager import FPSManager
+from components.superpowers import Disassemble
+from components.special_effects import *
+from components.utils import *
 
 
 class Game:
     """The main class, which is the core of the game and manages all game objects."""
     def __init__(self, screen):
         self.screen = screen
+        self.rect = pg.Rect(0, 0, SCR_W, SCR_H)
         self.language = load_language()
+
+        self.screen_mode = WINDOWED_MODE
+        self.set_screen_mode(load_screen_mode())
+
         self.running = True
         self.pause = False
         self.transportation = False
 
-        self.sound_player = SoundPlayer()
         self.fps_manager = FPSManager()
+
+        self.sound_player = SoundPlayer()
         self.clock = pg.time.Clock()
         self.bg_environment = BackgroundEnvironment(self)
-        self.mob_generator = MobGenerator(self)
+        self.camera = Camera()
         self.player = Player(self)
-        self.camera = Camera(self.player)
+        self.world = BubbleTanksWorld(self.player)
         self.room = Room(self)
 
         self.main_menu = MainMenu(self)
@@ -56,35 +61,55 @@ class Game:
         self.health_window = HealthWindow(self)
         self.cooldown_window = CooldownWindow(self)
 
+    def set_screen_mode(self, screen_mode):
+        if screen_mode == self.screen_mode:
+            return
+
+        if screen_mode == FULLSCREEN_MODE:
+            pg.display.toggle_fullscreen()
+
+        elif screen_mode == WINDOWED_MODE:
+            if self.screen_mode == FULLSCREEN_MODE:
+                pg.display.toggle_fullscreen()
+            pg.display.set_mode(SCR_SIZE, flags=0)
+
+        elif screen_mode == BORDERLESS_MODE:
+            if self.screen_mode == FULLSCREEN_MODE:
+                pg.display.toggle_fullscreen()
+            pg.display.set_mode(SCR_SIZE, flags=pg.NOFRAME)
+
+        self.screen_mode = screen_mode
+
     def update_save_data(self):
-        self.mob_generator.save_mobs(self.room.mobs)
+        self.world.save_enemies(self.room.mobs)
         tank = self.player.tank
         tank_history = self.player.tanks_history
         health = self.player.health
+        max_cumulative_health = self.player.max_cumulative_health
         enemies_killed = self.pause_menu.stats_counters[0].text
         bubbles_collected = self.pause_menu.stats_counters[1].text
         visited_rooms = self.pause_menu.map_button.graph
-        enemies = self.mob_generator.mobs_dict
-        current_room = self.mob_generator.cur_room
-        boss_generated = self.mob_generator.boss_generated
+        enemies = self.world.enemies_dict
+        current_room = self.world.cur_room
+        boss_generated = self.world.boss_generated
         boss_disposition = self.bg_environment.boss_disposition
         boss_position = self.bg_environment.boss_pos
         hints_history = self.bg_environment.hints_history
         save_name = self.main_menu.current_save
         update_save_file(save_name, tank, tank_history, health,
-                         enemies_killed, bubbles_collected,
+                         max_cumulative_health, enemies_killed, bubbles_collected,
                          visited_rooms, enemies, current_room,
                          boss_generated, boss_disposition, boss_position,
                          hints_history)
 
-    def set_data(self, data):
-        self.player.set_data(data)
-        self.mob_generator.set_data(data)
-        self.bg_environment.set_data(data)
+    def set_save_data(self, save_data: dict):
+        self.player.set_save_data(save_data)
+        self.world.load_save(save_data)
+        self.bg_environment.set_data(save_data)
         self.health_window.set_data()
         self.cooldown_window.set_data()
-        self.room.set_data(self.mob_generator.current_mobs)
-        self.pause_menu.set_data(data)
+        self.room.set_data(self.world.current_enemies)
+        self.pause_menu.set_data(save_data)
         self.camera.stop_shaking()
         self.running = True
         self.pause = False
@@ -130,7 +155,7 @@ class Game:
         eaten_bubbles = 0
         for i, bubble in enumerate(self.room.bubbles):
             if self.player.collide_bubble(bubble.x, bubble.y):
-                self.player.handle_bubble_eating(bubble.health)
+                self.player.update_health(bubble.health)
                 self.health_window.activate()
                 self.room.bubbles[i] = None
                 eaten_bubbles += 1
@@ -160,87 +185,103 @@ class Game:
         self.bg_environment.set_player_halo(self.player.bg_radius)
         self.room.set_gravity_radius(1.3 * self.player.bg_radius)
 
-    def handle_damage_to_enemy(self, enemy, bullet):
-        enemy.handle_injure(bullet.damage)
-        if enemy.health <= 0:
-            self.pause_menu.update_counter(0, 1)
-            self.sound_player.play_sound(ENEMY_DEATH)
-        else:
-            self.sound_player.play_sound(HIT, False)
+    def add_effect(self, entity):
+        add_effect(entity.hit_effect, self.room.top_effects, entity.x, entity.y)
 
-    def handle_damage_to_ally(self, ally, bullet):
-        """Handles damage to player's tank/seeker made by enemy's bullet. """
-        bullet.hit_the_target = True
-        ally.handle_injure(bullet.damage)
-        add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
+    def handle_damage_to_player(self, bullet):
+        """Handles damage to player made by enemy's bullet. """
+        if isinstance(bullet, EnemyLeecher):
+            if bullet.leeching:
+                return
+            if self.player.shield_on:
+                bullet.killed = True
+                self.add_effect(bullet)
+            else:
+                bullet.leeching = True
+                self.player.receive_damage(bullet.damage, play_sound=False)
+        elif isinstance(bullet, EnemySapper):
+            if bullet.can_attack:
+                self.player.receive_damage(bullet.damage, play_sound=False)
+                bullet.return_to_enemy()
+                add_effect("SapperAttack", self.room.top_effects)
+        else:
+            self.player.receive_damage(bullet.damage)
+            bullet.killed = True
+            self.add_effect(bullet)
 
     def handle_bullet_explosion(self, bullet):
-        """ Changes mobs' states according to their positions relative
-        to the explosion, and adds some special effects.
-        """
         x, y, radius = bullet.x, bullet.y, bullet.explosion_radius
-        for enemy in chain(self.room.mobs, self.room.seekers):
+        for enemy in chain(self.room.mobs, self.room.seekers, self.room.spawners):
             if enemy.collide_bullet(x, y, radius):
-                self.handle_damage_to_enemy(enemy, bullet)
-
-        add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
+                enemy.receive_damage(bullet.damage)
+        bullet.killed = True
+        self.add_effect(bullet)
         add_effect('Flash', self.room.top_effects)
-        if isinstance(bullet, ExplosivePierceBullet):
-            for _ in range(3):
-                add_effect('SmallHitLines', self.room.top_effects, bullet.x, bullet.y)
-            add_effect('BigHitLines', self.room.top_effects, bullet.x, bullet.y)
         self.camera.start_shaking(200)
 
-    def handle_enemy_collision(self, attacked_enemy, bullet):
+    def handle_sniper_bullet_explosion(self, bullet):
+        x, y, radius = bullet.x, bullet.y, bullet.explosion_radius
+        for enemy in chain(self.room.mobs, self.room.seekers, self.room.spawners):
+            if enemy not in bullet.attacked_mobs and enemy.collide_bullet(x, y, radius):
+                enemy.receive_damage(bullet.damage)
+                bullet.attacked_mobs.append(enemy)
+        self.add_effect(bullet)
+        for _ in range(3):
+            add_effect('SmallHitLines', self.room.top_effects, bullet.x, bullet.y)
+        add_effect('BigHitLines', self.room.top_effects, bullet.x, bullet.y)
+        add_effect('Flash', self.room.top_effects)
+        self.camera.start_shaking(200)
+
+    def handle_enemy_collision(self, enemy, bullet):
         """Handles collision between enemy and player's bullet. """
         if isinstance(bullet, ExplodingBullet):
             self.handle_bullet_explosion(bullet)
-            bullet.hit_the_target = True
-        elif isinstance(bullet, ExplosivePierceBullet):
-            if attacked_enemy not in bullet.attacked_mobs:
-                bullet.attacked_mobs.append(attacked_enemy)
-                self.handle_bullet_explosion(bullet)
+        elif isinstance(bullet, ExplosivePierceShot):
+            if enemy not in bullet.attacked_mobs:
+                self.handle_sniper_bullet_explosion(bullet)
         else:
-            self.handle_damage_to_enemy(attacked_enemy, bullet)
-            bullet.hit_the_target = True
-            add_effect(bullet.hit_effect, self.room.top_effects, bullet.x, bullet.y)
+            enemy.receive_damage(bullet.damage)
+            bullet.killed = True
+            self.add_effect(bullet)
             if isinstance(bullet, LeecherBullet):
-                bubble = Bubble(bullet.x, bullet.y, gravitation_radius=2*ROOM_RADIUS)
-                bubble.vel = 0
-                self.room.bubbles.append(bubble)
-            elif (isinstance(bullet, PlayerVirus) and
-                  not isinstance(attacked_enemy, Seeker) and
-                  not attacked_enemy.is_infected):
-                attacked_enemy.become_infected()
+                self.room.spawn_leeched_bubble(enemy.x, enemy.y)
+            elif isinstance(bullet, AllyInfector):
+                if bullet in enemy.chasing_infectors:
+                    enemy.chasing_infectors.remove(bullet)
+                if isinstance(enemy, Enemy):
+                    enemy.become_infected()
 
     def handle_enemies_collisions(self):
-        """Handles collisions between enemies player bullets. """
-        self.sound_player.unlock()
-        bullets = chain(self.player.bullets, self.player.mines,
-                        self.player.seekers, self.player.orbital_seekers)
-        for bullet in bullets:
-            if isinstance(bullet, AirBullet):
+        """Handles collisions between enemies and player's bullets. """
+        for bullet in chain(self.player.bullets, self.player.mines, self.player.seekers):
+            if isinstance(bullet, BulletBuster):
                 continue
-            for enemy in chain(self.room.mobs, self.room.seekers):
+            for enemy in chain(self.room.mobs, self.room.seekers, self.room.spawners):
                 if enemy.collide_bullet(bullet.x, bullet.y, bullet.radius):
                     self.handle_enemy_collision(enemy, bullet)
+                    if not isinstance(bullet, PierceShot):
+                        break
 
-    def handle_player_collisions(self):
+    def handle_allys_collisions(self):
         """Handles collisions between player's tank/seekers and all bullets of enemies. """
-        self.sound_player.unlock()
-        bullets = chain(self.room.bullets, self.room.mines, self.room.seekers)
-        seekers = self.player.seekers
-        allies = seekers if self.player.disassembled else seekers + [self.player]
-        for b in bullets:
-            for ally in allies:
-                if ally.collide_bullet(b.x, b.y, b.radius):
-                    self.handle_damage_to_ally(ally, b)
-                    break
+        if self.player.disassembled:
+            return
+        for bullet in chain(self.room.bullets, self.room.mines, self.room.seekers):
+            if self.player.collide_bullet(bullet.x, bullet.y, bullet.radius):
+                self.handle_damage_to_player(bullet)
+        for bullet in chain(self.room.bullets, self.room.mines):
+            for seeker in self.player.seekers:
+                if seeker.collide_bullet(bullet.x, bullet.y, bullet.radius):
+                    seeker.killed = True
+                    bullet.killed = True
+                    self.add_effect(seeker)
+                    self.add_effect(bullet)
+                    if isinstance(seeker, AllyInfector) and seeker in seeker.target.chasing_infectors:
+                        seeker.target.chasing_infectors.remove(seeker)
 
     def update_transportation(self, dt):
         """ Update all objects during transportation. """
         self.player.update(dt)
-        self.camera.update(dt)
         self.room.update(dt)
         self.health_window.update(dt)
         self.cooldown_window.update(dt)
@@ -267,8 +308,10 @@ class Game:
         self.player.draw(self.screen, *offset_old)
 
         self.room.draw_mobs(self.screen, *offset_old)
+        self.room.draw_spawners(self.screen, *offset_old)
         self.room.draw_bullets(self.screen, *offset_old)
         self.room.draw_new_mobs(self.screen, *offset_old)
+        self.room.draw_new_spawners(self.screen, *offset_old)
 
         self.bg_environment.draw_room_glares(self.screen, *offset_new)
         self.bg_environment.draw_room_glares(self.screen, *offset_old)
@@ -282,6 +325,7 @@ class Game:
         self.sound_player.play_sound(WATER_SPLASH)
         time = dt = 0
         while time < TRANSPORTATION_TIME and self.running:
+            self.sound_player.reset()
             self.handle_events()
             self.update_transportation(dt)
             self.draw_transportation(time, dx, dy)
@@ -290,52 +334,43 @@ class Game:
             self.fps_manager.update(dt)
             time += dt
 
-    def get_destination_pos(self, direction):
+    def get_destination_pos(self, dx, dy):
         """Method returns player's destination point during transportation. """
         distance = DIST_BETWEEN_ROOMS - (ROOM_RADIUS - self.player.bg_radius - H(40))
-        destination_pos = np.array([SCR_W2, SCR_H2]) + direction * distance
-        return destination_pos
+        return SCR_W2 + dx * distance, SCR_H2 + dy * distance
 
-    def transport_player(self, direction):
-        """Algorithm of transportation of the player. """
+    def manage_transportation(self, dx, dy):
         self.transportation = True
 
-        offset = -DIST_BETWEEN_ROOMS * direction
-        player_pos = np.array([self.player.x, self.player.y], dtype=float)
+        offset = -DIST_BETWEEN_ROOMS * dx, -DIST_BETWEEN_ROOMS * dy
 
-        # Save mobs from previous room and generate mobs for the next room
-        self.mob_generator.save_mobs(self.room.mobs)
-        self.mob_generator.generate_mobs(direction, self.player)
-        self.room.save_new_mobs(self.mob_generator.current_mobs)
-        self.room.move_new_mobs(*-offset)
+        self.room.move_new_mobs(-offset[0], -offset[1])
+        self.room.move_new_spawners(-offset[0], -offset[1])
 
-        # Set new boss disposition
-        self.bg_environment.set_new_boss_disposition(self.mob_generator.cur_room,
+        self.bg_environment.set_new_boss_disposition(self.world.cur_room,
                                                      self.room.new_mobs)
-        # Update map in pause menu
-        self.pause_menu.map_button.update_data(self.mob_generator.cur_room,
+        self.pause_menu.map_button.update_data(self.world.cur_room,
                                                self.bg_environment.new_boss_disposition)
-        # Set new hint text for the player
         self.bg_environment.set_next_hint()
 
-        destination_pos = self.get_destination_pos(direction)
-        distance = hypot(*(player_pos - destination_pos))
-        velocity = distance / TRANSPORTATION_TIME
-        angle = calculate_angle(*player_pos, *destination_pos)
-        self.player.set_transportation_vel(angle, velocity)
+        end_x, end_y = self.get_destination_pos(dx, dy)
+        distance = hypot(self.player.x - end_x, self.player.y - end_y)
+        angle = calculate_angle(self.player.x, self.player.y, end_x, end_y)
+        self.player.set_transportation_vel(angle, distance / TRANSPORTATION_TIME)
 
-        self.bg_environment.set_player_trace(*player_pos, distance, angle)
-        self.bg_environment.set_destination_circle(destination_pos)
+        self.bg_environment.set_player_trace(self.player.x, self.player.y, distance, angle)
+        self.bg_environment.set_destination_circle(end_x, end_y)
 
         self.run_transportation(*offset)
 
         self.player.move(*offset)
-        self.player.body.update_pos(0)
-        self.camera.update(0)
         self.room.update_screen_rect()
+        self.player.update_shape(0)
 
         self.room.move_new_mobs(*offset)
+        self.room.move_new_spawners(*offset)
         self.room.set_params_after_transportation()
+
         self.player.set_params_after_transportation()
         self.bg_environment.set_params_after_transportation()
 
@@ -344,27 +379,49 @@ class Game:
         self.transportation = False
         self.clock.tick()
 
-    def get_direction(self, offset):
-        """ This method determines the direction of transportation
-        of player so that he is transported to the nearest room.
-        """
-        if offset == 0:
-            return np.array([-1, 0])
-
-        if (self.camera.offset[0] / offset) ** 2 <= 0.5:
-            return np.array([0, -1] if self.camera.offset[1] < 0 else [0, 1])
-
-        return np.array([1, 0] if self.camera.offset[0] > 0 else [-1, 0])
-
-    def check_transportation(self):
-        """Checks if player is defeated or outside the room.
-        If yes, determines the direction of transportation
-        and transports player to the next room.
-        """
+    def get_direction(self):
         player_offset = hypot(*self.camera.offset)
-        if self.player.defeated or player_offset > ROOM_RADIUS:
-            direction = self.get_direction(player_offset)
-            self.transport_player(direction)
+        if player_offset == 0:
+            return [-1, 0]
+        if (self.camera.dx / player_offset) ** 2 <= 0.5:
+            return [0, -1] if self.camera.dy < 0 else [0, 1]
+        return [1, 0] if self.camera.dx > 0 else [-1, 0]
+
+    def eject_player(self):
+        easy_room_created = False
+        min_difficulty = 999999
+        direction = -1, 0
+        enemies = dict()
+        directions = (-1, 0), (1, 0), (0, -1), (0, 1)
+
+        for dx, dy in directions:
+            if self.world.room_exists(dx, dy):
+                difficulty = self.world.estimate_difficulty(dx=dx, dy=dy)
+            else:
+                if easy_room_created:
+                    continue
+                enemies = self.world.create_easy_enemies()
+                difficulty = self.world.estimate_difficulty(enemies=enemies)
+                easy_room_created = True
+
+            if difficulty < min_difficulty:
+                min_difficulty = difficulty
+                direction = dx, dy
+
+        if easy_room_created:
+            self.world.confirm_enemies(enemies, *direction)
+
+        self.world.move(*direction)
+        self.room.load_new_mobs(self.world.current_enemies)
+        self.manage_transportation(*direction)
+
+    def transport_player(self):
+        direction = self.get_direction()
+        self.world.save_enemies(self.room.mobs)
+        self.world.create_enemies(*direction)
+        self.world.move(*direction)
+        self.room.load_new_mobs(self.world.current_enemies)
+        self.manage_transportation(*direction)
 
     def check_player_state(self):
         """Checks if player should upgrade or downgrade.
@@ -382,10 +439,9 @@ class Game:
 
         self.handle_bubble_eating()
         self.handle_enemies_collisions()
-        self.handle_player_collisions()
+        self.handle_allys_collisions()
         self.check_player_state()
         self.player.update(dt)
-        self.camera.update(dt)
         self.room.update(dt)
 
         if self.room.boss_defeated(self.bg_environment.boss_disposition):
@@ -395,7 +451,11 @@ class Game:
 
         self.health_window.update(dt)
         self.cooldown_window.update(dt)
-        self.check_transportation()
+
+        if self.player.cumulative_health < 0:
+            self.eject_player()
+        elif self.player.is_outside:
+            self.transport_player()
 
     def draw_background(self, surface):
         """Draw all entities that should be drawn below player, mobs, bullets etc. """
@@ -414,6 +474,7 @@ class Game:
         self.room.draw_mines(self.screen, *self.camera.offset)
         self.player.draw(self.screen, *self.camera.offset)
         self.room.draw_mobs(self.screen, *self.camera.offset)
+        self.room.draw_spawners(self.screen, *self.camera.offset)
         self.room.draw_bullets(self.screen, *self.camera.offset)
         self.bg_environment.draw_room_glares(self.screen, *self.camera.offset)
         self.room.draw_top_effects(self.screen, *self.camera.offset)
@@ -425,19 +486,24 @@ class Game:
         It updates the sizes of mobs, player, bullets, etc.,
         animating them in the background in the Pause menu/Victory menu.
         """
-        if isinstance(self.player.superpower, Ghost):
+        if isinstance(self.player.superpower, Disassemble):
             self.player.superpower.update_body()
-        self.player.body.update_pos(dt)
+        self.player.update_shape(dt)
+        for enemy in self.room.mobs:
+            enemy.update_shape(dt)
 
-        for obj in chain(self.player.mines, self.player.bullets, self.room.mobs,
+        for obj in chain(self.player.mines, self.player.bullets,
+                         self.player.seekers, self.player.orbital_seekers,
+                         self.room.spawners, self.room.seekers,
                          self.room.bubbles, self.room.mines, self.room.bullets):
             obj.update_body(dt)
 
         for seeker in self.player.orbital_seekers:
-            if seeker.is_orbiting:
-                seeker.update_polar_coords(self.player.x, self.player.y, dt)
+            if seeker.orbiting:
+                seeker.update_pos(dt)
 
         self.room.update_effects(dt)
+        self.camera.update(self.player.x, self.player.y, dt)
 
     def run_pause_menu(self):
         self.draw_background(self.pause_menu.bg_surface)
@@ -450,15 +516,13 @@ class Game:
         self.clock.tick()
         dt = 0
         while self.running:
+            self.sound_player.reset()
             self.update(dt)
-
             if self.running:
                 self.draw_background(self.screen)
                 self.draw_foreground()
                 pg.display.update()
-
             self.handle_events()
-
             dt = self.clock.tick()
             self.fps_manager.update(dt)
 

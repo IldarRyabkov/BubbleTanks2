@@ -223,9 +223,10 @@
 		"Map",
 		"Options",
 		"Exit to main menu?",
-		"Exit to desktop?"
+		"Exit to desktop?",
+		"Screen mode"
 	],
-	"stats side button caption": "Statistics",
+	"stats side button caption": "Stats",
 	"map side button caption": "Map",
 	"options side button caption": "Options",
 	"stats window labels": [
@@ -248,7 +249,7 @@
 	],
 	"health window labels": [
 		"bubbles left",
-		"Maximum tank"
+		"Maxed Tank"
 	],
 	"upgrade button labels": [
 		"- Primary weapon -",
@@ -267,10 +268,12 @@
 	"continue playing text": "Continue Playing in Endless Mode!",
 	"main menu captions": [
 		"Bubble Tanks II",
+		"Bubble Tanks II",
 		"Settings",
 		"Credits",
 		"Language",
 		"Resolution",
+		"Screen Mode",
 		"Exit to desktop",
 		"New Game",
 		"Load Game",
@@ -281,8 +284,8 @@
 	"language": "English",
 	"save button text": "Empty",
 	"resolution warning": "Restart the game to apply the new resolution",
-	"exit to menu text": "Exit to Main Menu",
-	"exit to desktop text": "Exit to Desktop",
+	"exit to menu text": "Exit to main menu",
+	"exit to desktop text": "Exit to desktop",
 	"back button text": "Back",
 	"save 1 button text": "Save 1",
 	"save 2 button text": "Save 2",
@@ -290,8 +293,12 @@
 	"master volume text": "Master volume",
 	"sound volume text": "Sound volume",
 	"music volume text": "Music volume",
+	"windowed mode": "Windowed",
+	"borderless mode": "Borderless",
+	"fullscreen mode": "Fullscreen",
 	"resolution label": "Resolution",
 	"language label": "Language",
+	"screen mode label": "Screen mode",
 	"credits widgets": [
 		"Created by:",
 		"Music by:",

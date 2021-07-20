@@ -154,6 +154,7 @@ class Menu:
         dt = 0
         self.game.clock.tick()
         while self.running:
+            self.game.sound_player.reset()
             self.handle_events()
             if self.running:
                 self.update(dt)

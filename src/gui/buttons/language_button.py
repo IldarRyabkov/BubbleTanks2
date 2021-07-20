@@ -1,7 +1,7 @@
 from gui.buttons.text_button import TextButton
 from data.constants import *
 from data.states import MainMenuStates as St
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from data.scripts import update_config_file
 from assets.paths import CALIBRI_BOLD
 from components.utils import *

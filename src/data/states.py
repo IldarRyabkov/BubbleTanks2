@@ -1,14 +1,16 @@
 class MainMenuStates:
-    MAIN_PAGE = 0
-    SETTINGS = 1
-    CREDITS = 2
-    LANGUAGES = 3
-    RESOLUTIONS = 4
-    EXIT = 5
-    NEW_GAME = 6
-    LOAD_GAME = 7
-    OVERRIDE_SAVE = 8
-    DELETE_SAVE = 9
+    SPLASH_SCREEN = 0
+    MAIN_PAGE = 1
+    SETTINGS = 2
+    CREDITS = 3
+    LANGUAGES = 4
+    RESOLUTIONS = 5
+    SCREEN_MODES = 6
+    EXIT = 7
+    NEW_GAME = 8
+    LOAD_GAME = 9
+    OVERRIDE_SAVE = 10
+    DELETE_SAVE = 11
 
 
 class PauseMenuStates:
@@ -17,6 +19,7 @@ class PauseMenuStates:
     OPTIONS = 2
     DIALOG_MENU = 3
     DIALOG_DESKTOP = 4
+    SCREEN_MODES = 5
 
 
 class UpgradeMenuStates:

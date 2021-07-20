@@ -1,45 +1,50 @@
 import pygame as pg
-from math import cos, sin, pi
-from numpy import sign
+from math import cos, sin, pi, hypot
 from itertools import chain
 
 from data.constants import *
-from data.player import *
-from assets.paths import AVATAR_HIT
+from data.player_tanks import PLAYER_TANKS
+from assets.paths import PLAYER_HIT
 
-from .player_guns import *
-from .superpowers import *
-from .special_effects import add_effect
-from .body import PlayerBody
-from .bullets import *
-from .base_mob import BaseMob
-from .utils import *
+from components.utils import *
+from components.superpowers import *
+from components.base_mob import BaseMob
+from components.player_body import PlayerBody
+from components.player_weapons import PlayerWeapons
 
 
 class Player(BaseMob):
     MAX_ANGULAR_VEL = 0.0002 * pi
-    MAX_ANGULAR_ACC = 0.0000018
+    MAX_ANGULAR_ACC = 0.000004
+    MAX_ACC = HF(0.0024)
+    RESISTANCE = HF(0.00048)
 
     def __init__(self, game, tank=(0, 0)):
-        (max_health, health_states, radius, body, body_is_rotating, max_vel,
-         max_acc, gun_type, bg_radius, superpower) = PLAYER_PARAMS[tank].values()
+        tank_data = PLAYER_TANKS[tank]
 
-        body = PlayerBody(body, body_is_rotating, self)
-        gun = get_gun(gun_type, self, game)
-
-        super().__init__(SCR_W2, SCR_H2, 0, max_health, health_states, radius, body, gun)
+        super().__init__(SCR_W2, SCR_H2, 0, tank_data["max health"], tank_data["radius"],
+                         PlayerBody(self, game.rect, tank), PlayerWeapons(self, game, tank))
         self.game = game
+        self.camera = game.camera
 
-        self.bg_radius = bg_radius
-        self.max_vel = max_vel
-        self.vel_x = self.vel_y = 0
-        self.max_acc = max_acc
+        self.tank = tank
+        self.tanks_history = None
+
+        self.bg_radius = tank_data["background radius"]
+        self.max_vel = tank_data["max velocity"]
+        k = self.max_vel / HF(0.84)
+        self.max_acc = k * self.MAX_ACC
+        self.resistance = k * self.RESISTANCE
         self.acc_x = self.acc_y = 0
+        self.vel_x = self.vel_y = 0
 
         self.max_angular_vel = self.MAX_ANGULAR_VEL
-        self.max_angular_acc = self.MAX_ANGULAR_ACC
+        self.max_angular_acc = k * self.MAX_ANGULAR_ACC
         self.angular_vel = 0
         self.angular_acc = self.max_angular_acc
+
+        self.max_cumulative_health = 0
+        self.prev_cumulative_health = 0
 
         self.moving_left = False
         self.moving_right = False
@@ -47,9 +52,7 @@ class Player(BaseMob):
         self.moving_down = False
         self.shooting = False
 
-        self.superpower = get_superpower(superpower)
-        self.superpower.game = game
-        self.superpower.player = self
+        self.superpower = get_superpower(tank, game, self)
 
         self.bullets = []
         self.mines = []
@@ -57,14 +60,15 @@ class Player(BaseMob):
         self.drones = []
         self.orbital_seekers = []
 
-        self.delta_health = 0
-
-        self.tank = tank
-        self.tanks_history = None
-        self.update_body_look()
+        self.killed = False
+        self.update_component_states()
 
     @property
-    def level(self):
+    def is_outside(self):
+        return hypot(*self.camera.offset) > ROOM_RADIUS
+
+    @property
+    def level(self) -> int:
         return self.tank[0]
 
     @property
@@ -78,14 +82,10 @@ class Player(BaseMob):
     @property
     def last_tank_in_history(self) -> bool:
         """ Called when player requests tank upgrade.
-        Checks if player's current tank is last in his history of tanks.
+        Checks if player's current tank state is last in his history of tank states.
         If so, there is a need to open upgrade menu to choose a new tank.
         """
         return self.tank == self.tanks_history[-1]
-
-    @property
-    def defeated(self) -> bool:
-        return self.health < 0 and self.level == 0
 
     @property
     def shield_on(self) -> bool:
@@ -93,22 +93,76 @@ class Player(BaseMob):
 
     @property
     def disassembled(self) -> bool:
-        return isinstance(self.superpower, Ghost) and self.superpower.disassembled
+        return isinstance(self.superpower, Disassemble) and self.superpower.disassembled
 
-    def set_data(self, data):
-        tank = tuple(data["tank"])
+    @property
+    def cumulative_health(self):
+        if self.level == 0:
+            return self.health
+        if self.level == 1:
+            return 75 + self.health
+        if self.level == 2:
+            return 200 + self.health
+        if self.level == 3:
+            return 400 + self.health
+        if self.level == 4:
+            return 800 + self.health
+        return 1300 + self.health
+
+    @property
+    def health_change(self):
+        return self.prev_cumulative_health - self.cumulative_health
+
+    @property
+    def is_help_needed(self):
+        return self.cumulative_health < 0.8 * self.max_cumulative_health
+
+    def set_save_data(self, save_data: dict):
+        """Sets save data loaded from save file. """
+        tank = tuple(save_data["tank"])
         self.__init__(self.game, tank)
-        self.tanks_history = [tuple(tank) for tank in data["tanks history"]]
-        self.health = data["health"]
-        self.update_body_look()
+        self.tanks_history = [tuple(tank) for tank in save_data["tanks history"]]
+        self.set_health(save_data["health"])
+        self.max_cumulative_health = save_data["max cumulative health"]
+        self.prev_cumulative_health = self.cumulative_health
 
-    def update_body_look(self):
-        super().update_body_look()
-        self.superpower.update_params(self.health)
+    def update_component_states(self):
+        if self.level == 5:
+            state = 0
+        elif self.health > self.max_health:
+            state = self.max_health
+        elif self.health < 0:
+            state = 0
+        else:
+            state = self.health
 
-    def move(self, dx, dy):
-        self.x += dx
-        self.y += dy
+        self.body.update_state(state)
+        self.weapons.update_state(state)
+        self.superpower.update_state(state)
+
+    def decrease_speed(self):
+        k = 0.25
+        self.max_vel *= k
+        self.max_acc *= k
+        self.max_angular_vel *= k
+        self.max_angular_acc *= k
+
+    def become_sticky(self):
+        if not self.sticky:
+            self.decrease_speed()
+        super().become_sticky()
+
+    def stop_being_sticky(self):
+        k = 4
+        self.max_vel *= k
+        self.max_acc *= k
+        self.max_angular_vel *= k
+        self.max_angular_acc *= k
+        super().stop_being_sticky()
+
+    def move(self, dx, dy, dt=0):
+        super().move(dx, dy)
+        self.camera.update(self.x, self.y, dt)
 
     def stop_moving(self):
         self.moving_right = False
@@ -120,11 +174,11 @@ class Player(BaseMob):
         self.vel_x = 0
         self.vel_y = 0
         self.health = max(self.health, 0)
-        self.delta_health = 0
-        self.drones = []
-        self.seekers = []
-        self.bullets = []
-        self.mines = []
+        self.prev_cumulative_health = self.cumulative_health
+        self.drones.clear()
+        self.seekers.clear()
+        self.bullets.clear()
+        self.mines.clear()
 
     def get_mouse_pos(self):
         x, y = pg.mouse.get_pos()
@@ -132,6 +186,8 @@ class Player(BaseMob):
 
     def rotate_body(self, dt):
         """Rotates player's tank body according to its movement."""
+        if not self.body.is_rotating:
+            return
         if self.moving_left == self.moving_right:
             if self.moving_up ^ self.moving_down:
                 destination_angle = 0.5 * pi if self.moving_up else -0.5 * pi
@@ -173,34 +229,37 @@ class Player(BaseMob):
             d_angle = self.angular_vel * dt + self.angular_acc * dt*dt/2
             self.body.angle += d_angle
 
-    def update_body(self, dt):
-        if self.body.is_rotating:
-            self.rotate_body(dt)
-        self.body.update_pos(dt)
-        self.body.update_frozen_state(dt)
+    def update_shape(self, dt):
+        self.body.update_shape(dt)
+        self.weapons.update_shape(dt)
 
-    def setup(self, max_health, health_states, radius, body, body_is_rotating,
-              max_vel, max_acc, gun_type, bg_radius, superpower):
+    def set_params(self, upgrade: bool):
+        """Method is called when player is being upgraded/downgraded.
+        Sets new player's parameters according to tank state.
+        """
+        data = PLAYER_TANKS[self.tank]
 
-        self.max_vel = max_vel
-        self.max_acc = max_acc
+        self.radius = data["radius"]
+        self.bg_radius = data["background radius"]
+
+        self.max_health = data["max health"]
+        self.health = 0 if upgrade else self.max_health - 1
+
+        self.max_vel = data["max velocity"]
         self.max_angular_vel = self.MAX_ANGULAR_VEL
-        self.max_angular_acc = self.MAX_ANGULAR_ACC
+        k = self.max_vel / HF(0.84)
+        self.max_acc = k * self.MAX_ACC
+        self.resistance = k * self.RESISTANCE
+        self.max_angular_acc = k * self.MAX_ANGULAR_ACC
+        if self.sticky:
+            self.decrease_speed()
 
-        self.health = 0
-        self.max_health = max_health
-        self.health_states = health_states
+        self.body.set_params(self.tank)
+        self.weapons.set_params(self.tank)
+        self.superpower = get_superpower(self.tank, self.game, self)
+        self.update_component_states()
 
-        self.radius = radius
-        self.bg_radius = bg_radius
-
-        self.body = PlayerBody(body, body_is_rotating, self, self.body.is_frozen)
-        self.gun = get_gun(gun_type, self, self.game)
-        self.orbital_seekers = list(filter(lambda s: not s.is_orbiting, self.orbital_seekers))
-
-        self.superpower = get_superpower(superpower)
-        self.superpower.game = self.game
-        self.superpower.player = self
+        self.orbital_seekers = list(filter(lambda s: not s.orbiting, self.orbital_seekers))
 
     def handle(self, e_type, e_key):
         if e_key == pg.K_a:
@@ -223,17 +282,17 @@ class Player(BaseMob):
     def collide_bubble(self, x, y):
         return circle_collidepoint(self.x, self.y, self.radius // 2, x, y)
 
-    def handle_injure(self, damage):
-        if not self.shield_on:
-            super().handle_injure(damage)
-            self.delta_health += damage
-            self.game.sound_player.play_sound(AVATAR_HIT, False)
+    def update_health(self, delta_health: int):
+        self.health += delta_health
+        self.update_component_states()
+        self.max_cumulative_health = max(self.max_cumulative_health, self.cumulative_health)
 
-    def handle_bubble_eating(self, bubble_health):
-        self.health += bubble_health
-        self.delta_health += bubble_health
-        if self.body_look_changed:
-            self.update_body_look()
+    def receive_damage(self, damage, play_sound=True):
+        if self.shield_on:
+            return
+        super().receive_damage(damage)
+        if play_sound:
+            self.game.sound_player.play_sound(PLAYER_HIT)
 
     def set_transportation_vel(self, angle, velocity):
         self.vel_x = velocity * cos(angle)
@@ -241,67 +300,58 @@ class Player(BaseMob):
 
     def upgrade(self, tank_is_new: bool, tank=None):
         if tank_is_new:
-            self.tanks_history.append(tank)
             self.tank = tank
+            self.tanks_history.append(tank)
             self.stop_moving()
             self.shooting = False
         else:
-            self.tank = self.tanks_history[self.tank[0] + 1]
-        self.setup(*PLAYER_PARAMS[self.tank].values())
-        self.update_body_look()
+            self.tank = self.tanks_history[self.level + 1]
+        self.set_params(upgrade=True)
 
     def downgrade(self):
         self.tank = self.tanks_history[self.level - 1]
-        self.setup(*PLAYER_PARAMS[self.tank].values())
-        self.health = self.max_health - 1
-        self.update_body_look()
+        self.set_params(upgrade=False)
 
     def update_bullets(self, dt):
         for bullet in self.bullets:
-            if isinstance(bullet, FrangibleBullet):
-                bullet.update(dt, self.bullets)
-            else:
-                bullet.update(dt)
+            bullet.update(dt)
         self.bullets = list(filter(lambda b: not b.killed, self.bullets))
 
     def update_mines(self, dt):
         for mine in self.mines:
             mine.update(dt)
-        self.mines = list(filter(lambda m: not m.killed, self.mines))[-15:]
+        self.mines = list(filter(lambda m: not m.killed, self.mines))[-30:]
 
     def update_seekers(self, dt):
         if self.game.room.mobs or self.game.room.seekers:
             for seeker in self.seekers:
-                seeker.update(dt, targets=chain(self.game.room.mobs, self.game.room.seekers))
-                if seeker.killed:
-                    add_effect('RedHitCircle', self.game.room.top_effects, seeker.x, seeker.y)
+                seeker.update(dt)
             self.seekers = list(filter(lambda s: not s.killed, self.seekers))
         else:
             for seeker in self.seekers:
-                add_effect('RedHitCircle', self.game.room.top_effects, seeker.x, seeker.y)
-            self.seekers = []
+                self.game.add_effect(seeker)
+            self.seekers.clear()
 
     def update_drones(self, dt):
         for drone in self.drones:
             drone.update(dt)
-        self.drones = list(filter(lambda d: not d.is_divided, self.drones))
+        self.drones = list(filter(lambda d: not d.killed, self.drones))
 
     def update_orbital_seekers(self, dt):
-        mobs = self.game.room.mobs
         for seeker in self.orbital_seekers:
-            seeker.update(dt, self.x, self.y, mobs)
-        self.orbital_seekers = list(filter(lambda s: not s.killed, self.orbital_seekers))
+            seeker.update(dt)
+        self.orbital_seekers = list(filter(lambda s: s.orbiting, self.orbital_seekers))
 
     def update_acc(self):
         if not self.moving_right ^ self.moving_left:
-            self.acc_x = -sign(self.vel_x) * 0.2 * self.max_acc
+            self.acc_x = -sign(self.vel_x) * self.resistance
         elif self.moving_left:
             self.acc_x = -self.max_acc
         else:
             self.acc_x = self.max_acc
 
         if not self.moving_up ^ self.moving_down:
-            self.acc_y = -sign(self.vel_y) * 0.2 * self.max_acc
+            self.acc_y = -sign(self.vel_y) * self.resistance
         elif self.moving_up:
             self.acc_y = -self.max_acc
         else:
@@ -312,7 +362,7 @@ class Player(BaseMob):
         self.update_vel(dt)
         dx = self.vel_x * dt + self.acc_x * dt*dt/2
         dy = self.vel_y * dt + self.acc_y * dt*dt/2
-        self.move(dx, dy)
+        self.move(dx, dy, dt)
 
     def update_vel(self, dt):
         self.vel_x += self.acc_x * dt
@@ -328,15 +378,19 @@ class Player(BaseMob):
             self.vel_y = sign(self.vel_y) * self.max_vel
 
     def update(self, dt):
+        self.update_sticky_state(dt)
+
         if self.game.transportation:
-            self.move(self.vel_x * dt, self.vel_y * dt)
-            self.update_body(dt)
-            self.gun.update_time(dt)
+            self.move(self.vel_x * dt, self.vel_y * dt, dt)
+            self.rotate_body(dt)
+            self.update_shape(dt)
+            self.weapons.update_time(dt)
             self.superpower.update_during_transportation(dt)
         else:
             self.update_pos(dt)
-            self.update_body(dt)
-            self.gun.update(dt)
+            self.rotate_body(dt)
+            self.update_shape(dt)
+            self.weapons.update_shooting(dt)
             self.superpower.update(dt)
 
         self.update_bullets(dt)
@@ -345,8 +399,8 @@ class Player(BaseMob):
         self.update_drones(dt)
         self.update_orbital_seekers(dt)
 
-    def draw(self, screen, dx, dy):
-        for obj in chain(self.mines, (self.body,), self.bullets,
+    def draw(self, screen, dx=0, dy=0):
+        for obj in chain(self.mines, (self.body, self.weapons), self.bullets,
                          self.seekers, self.drones, self.orbital_seekers):
             obj.draw(screen, dx, dy)
 

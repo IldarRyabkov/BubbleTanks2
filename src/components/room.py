@@ -1,12 +1,13 @@
 from math import pi
-import pygame as pg
-from random import uniform
+from random import uniform, randint
 
 from data.constants import *
 
-from .bubble import Bubble
-from .utils import HF
-from .mobs import get_mob
+from components.bubble import Bubble
+from components.utils import HF
+from components.enemy import Enemy
+from components.spawner import Spawner
+from components.bullets import AllyInfector
 
 
 class Room:
@@ -34,13 +35,12 @@ class Room:
     bottom_effects = []
     top_effects = []
 
-    # new_mobs is a temporary list used to draw mobs of the new room during transportation of the player.
-    # After transportation is done, list of mobs is replaced with the list of new mobs.
     mobs = []
+    spawners = []
     new_mobs = []
+    new_spawners = []
 
     gravitation_radius = HF(1.5 * 160)  # radius of player's gravitational field
-    rect = pg.Rect(0, 0, SCR_W, SCR_H)  # rectangle within which the mobs will be drawn
 
     def __init__(self, game):
         self.game = game
@@ -54,53 +54,82 @@ class Room:
         return boss_disposition == BOSS_IN_CURRENT_ROOM and not self.mobs
 
     def set_data(self, mobs_dict):
-        for objects in (self.bubbles, self.bullets, self.mines, self.seekers,
-                        self.top_effects, self.bottom_effects,
-                        self.mobs, self.new_mobs):
-            objects.clear()
-        self.bubbles.clear()
-        self.bullets.clear()
-        self.mines.clear()
-        self.seekers.clear()
-        self.save_mobs_from_dict(self.mobs, mobs_dict)
+        for obj in (self.bubbles, self.bullets, self.mines, self.seekers,
+                    self.spawners, self.top_effects, self.bottom_effects,
+                    self.mobs, self.new_mobs):
+            obj.clear()
+        self.load_mobs_from_dict(self.mobs, mobs_dict)
+        for enemy in self.mobs:
+            self.add_spawners(self.spawners, enemy, enemy.spawners_data)
 
-    def save_mobs_from_dict(self, mobs: list, mobs_dict):
+    def load_new_mobs(self, mobs_dict):
+        self.load_mobs_from_dict(self.new_mobs, mobs_dict)
+        for enemy in self.new_mobs:
+            self.add_spawners(self.new_spawners, enemy, enemy.spawners_data)
+
+    def load_mobs_from_dict(self, mobs: list, mobs_dict):
         mobs.clear()
         for name, n in mobs_dict.items():
             for _ in range(n):
-                new_mob = get_mob(name, self.game, self.rect)
-                mobs.append(new_mob)
-
-    def save_new_mobs(self, mobs_dict):
-        self.save_mobs_from_dict(self.new_mobs, mobs_dict)
+                enemy = Enemy(self.game, name)
+                mobs.append(enemy)
 
     def move_new_mobs(self, dx, dy):
         for mob in self.new_mobs:
             mob.move(dx, dy)
 
+    def move_new_spawners(self, dx, dy):
+        for spawner in self.new_spawners:
+            spawner.move(dx, dy)
+
+    def add_spawners(self, spawners: list, enemy, spawners_data: list):
+        for data in spawners_data:
+            spawners.append(Spawner(enemy, self.game, data))
+
+    def spawn_enemy(self, name, x, y, angle=None):
+        enemy = Enemy(self.game, name)
+        enemy.set_pos(x, y)
+        if angle is not None:
+            enemy.body.angle = angle
+            enemy.set_velocity()
+        self.mobs.append(enemy)
+
+    def spawn_leeched_bubble(self, x, y):
+        bubble = Bubble(self.game.rect, x, y, gravitation_radius=2*ROOM_RADIUS)
+        bubble.vel = 0
+        self.bubbles.append(bubble)
+
     def set_params_after_transportation(self):
         self.mobs.clear()
-        for mob in self.new_mobs:
-            self.mobs.append(mob)
-        for objects in (self.bubbles, self.bullets, self.mines, self.seekers,
-                        self.top_effects, self.bottom_effects, self.new_mobs):
-            objects.clear()
+        self.spawners.clear()
+        for enemy in self.new_mobs:
+            self.mobs.append(enemy)
+        for spawner in self.new_spawners:
+            self.spawners.append(spawner)
+        for obj in (self.bubbles, self.bullets, self.mines,
+                    self.seekers, self.new_spawners, self.top_effects,
+                    self.bottom_effects, self.new_mobs):
+            obj.clear()
+        for enemy in self.mobs:
+            enemy.weapons.update_pos()
+            enemy.update_shape(0)
+        for spawner in self.spawners:
+            spawner.update_body(0)
 
     def update_bullets(self, dt):
         for bullet in self.bullets:
             bullet.update(dt)
-        self.bullets = list(filter(lambda b: not b.killed, self.bullets))[-50:]
+        self.bullets = list(filter(lambda b: not b.killed, self.bullets))
 
     def update_mines(self, dt):
         for mine in self.mines:
             mine.update(dt)
-        self.mines = list(filter(lambda m: not m.killed, self.mines))[-40:]
+        self.mines = list(filter(lambda m: not m.killed, self.mines))[-50:]
 
     def update_seekers(self, dt):
-        targets = self.game.player, *self.game.player.seekers
         for seeker in self.seekers:
-            seeker.update(dt, targets)
-        self.seekers = list(filter(lambda s: not s.killed, self.seekers))[-40:]
+            seeker.update(dt)
+        self.seekers = list(filter(lambda s: not s.killed, self.seekers))
 
     def update_bubbles(self, dt):
         x, y = self.player.x, self.player.y
@@ -110,6 +139,16 @@ class Room:
         if self.no_enemies:
             for bubble in self.bubbles:
                 bubble.maximize_gravity()
+
+    def update_spawners(self, dt):
+        for spawner in self.spawners:
+            spawner.update(dt)
+        self.spawners = list(filter(lambda s: not s.killed, self.spawners))
+
+    def update_new_spawners(self, dt):
+        """ Updates all spawners in the room player is being transported to. """
+        for spawner in self.new_spawners:
+            spawner.update(dt)
 
     def update_effects(self, dt):
         for effect in self.top_effects:
@@ -129,15 +168,23 @@ class Room:
             for bubble in self.bubbles:
                 bubble.gravitation_radius = gravitation_radius
 
+    def spawn_infectors(self, x, y):
+        for _ in range(randint(1, 3)):
+            infector = AllyInfector(self.game, self.game.rect, x, y, uniform(0, 2*pi))
+            infector.update(0)
+            self.player.seekers.append(infector)
+
     def update_mobs(self, dt):
         """Updates all mobs in the room. If some mobs are killed,
         removes them from the list and adds bubbles.
         """
-        for mob in self.mobs:
-            mob.update(dt)
-            if mob.health <= 0:
-                self.add_bubbles(mob)
-        self.mobs = list(filter(lambda m: m.health > 0, self.mobs))
+        for enemy in self.mobs:
+            enemy.update(dt)
+            if enemy.killed:
+                self.add_bubbles(enemy)
+                if enemy.infected:
+                    self.spawn_infectors(enemy.x, enemy.y)
+        self.mobs = list(filter(lambda m: not m.killed, self.mobs))
 
     def update_new_mobs(self, dt):
         """ Updates all mobs in the room player is being transported to. """
@@ -146,26 +193,28 @@ class Room:
 
     def update_screen_rect(self):
         """Sets the center of room screen-rectangle equal to the player's new pos. """
-        self.rect.center = self.player.x, self.player.y
+        self.game.rect.center = self.player.x, self.player.y
 
     def update(self, dt):
         """Updates all objects in the room and room parameters. """
         self.update_screen_rect()
         self.update_mobs(dt)
         self.update_new_mobs(dt)
+        self.update_spawners(dt)
+        self.update_new_spawners(dt)
         self.update_bubbles(dt)
         self.update_bullets(dt)
         self.update_mines(dt)
         self.update_seekers(dt)
         self.update_effects(dt)
 
-    def add_bubbles(self, obj):
+    def add_bubbles(self, enemy):
         """Method is called when an object is killed.
         Adds new bubbles to the list of bubbles.
         """
-        for bubble_name, n in obj.bubbles.items():
+        for bubble_name, n in enemy.death_award.items():
             for i in range(n):
-                bubble = Bubble(obj.x, obj.y, uniform(0, 2 * pi), self.gravitation_radius, bubble_name)
+                bubble = Bubble(self.game.rect, enemy.x, enemy.y, uniform(0, 2 * pi), self.gravitation_radius, bubble_name)
                 self.bubbles.append(bubble)
 
     def draw_bubbles(self, surface, dx, dy):
@@ -190,6 +239,14 @@ class Room:
 
         for bullet in self.seekers:
             bullet.draw(surface, dx, dy)
+
+    def draw_spawners(self, surface, dx, dy):
+        for spawner in self.spawners:
+            spawner.draw(surface, dx, dy)
+
+    def draw_new_spawners(self, surface, dx, dy):
+        for spawner in self.new_spawners:
+            spawner.draw(surface, dx, dy)
 
     def draw_top_effects(self, surface, dx, dy):
         for effect in self.top_effects:

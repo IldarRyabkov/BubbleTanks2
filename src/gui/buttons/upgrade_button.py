@@ -2,11 +2,11 @@ import pygame as pg
 
 from assets.paths import *
 from data.constants import *
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from data.states import UpgradeButtonType as Bt
 from gui.widgets.text_widget import TextWidget
 from gui.buttons.button import Button
-from gui.widgets.tank_body import TankBody
+from gui.widgets.tank_preview import TankPreview
 from components.utils import H, HF
 
 
@@ -66,8 +66,8 @@ class UpgradeButton(Button):
         self.x, self.y = self.X0, self.Y0
         self.rect = pg.Rect(self.x, self.y, self.w, self.h)
 
-        self.tank_body = TankBody(self.x + self.w//2, self.y + H(211))
-        self.tank_body.set_body(tank)
+        self.tank_body = TankPreview(menu.game.rect, self.x + self.w // 2, self.y + H(211))
+        self.tank_body.set(tank)
 
         # Then we create text widget to be blitted on background surfaces of button
         width = self.w - HF(30)

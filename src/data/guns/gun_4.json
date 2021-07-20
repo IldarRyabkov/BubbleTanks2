@@ -1,0 +1,61 @@
+{
+	"circles": [
+		{
+			"type": "orange",
+			"radius": 22.259,
+			"distance": 0,
+			"angle": 0
+		},
+		{
+			"type": "orange",
+			"radius": 11.962,
+			"distance": 25.741,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "orange",
+			"radius": 11.962,
+			"distance": 25.741,
+			"angle": 2.0074777056438779
+		},
+		{
+			"type": "orange",
+			"radius": 11.962,
+			"distance": 25.741,
+			"angle": -2.0074777056438779
+		},
+		{
+			"type": "orange",
+			"radius": 8.782,
+			"distance": 39.522,
+			"angle": 2.145707782401829
+		},
+		{
+			"type": "orange",
+			"radius": 8.782,
+			"distance": 39.522,
+			"angle": -2.145707782401829
+		},
+		{
+			"type": "orange",
+			"radius": 10.902,
+			"distance": 22.259,
+			"angle": 0
+		},
+		{
+			"type": "orange",
+			"radius": 10.902,
+			"distance": 36.038,
+			"angle": 0
+		},
+		{
+			"type": "orange",
+			"radius": 10.902,
+			"distance": 49.211,
+			"angle": 0
+		}
+	],
+	"size": 22.259,
+	"emitter offset": 49.211,
+	"bullet type": "pierce shot"
+}

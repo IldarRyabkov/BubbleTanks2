@@ -1,7 +1,13 @@
-from math import pi, hypot, cos, sin, atan2
+from math import hypot, atan2, pi
+from copy import deepcopy
 import pygame as pg
 
 from data.constants import *
+from data.languages import TEXTS
+
+
+def sign(x):
+    return 1 if x > 0 else -1 if x < 0 else 0
 
 
 def calculate_angle(x1, y1, x2, y2) -> float:
@@ -20,44 +26,6 @@ def circle_collidepoint(x0, y0, r, x, y) -> bool:
     return hypot(x - x0, y - y0) <= r
 
 
-def no_trajectory(xo, yo, angle):
-    return xo, yo
-
-
-def rose_curve_1(xo, yo, angle):
-    dist = HF(272)
-    x = dist * (cos(9/4 * angle) + 7/3) * cos(angle)
-    y = dist * (cos(9/4 * angle) + 7/3) * sin(angle)
-    return xo + x, yo + y
-
-def rose_curve_2(xo, yo, angle):
-    dist = HF(800)
-    x = dist * sin(3/4 * angle) * cos(angle)
-    y = dist * sin(3/4 * angle) * sin(angle)
-    return xo + x, yo + y
-
-
-def rose_curve_3(xo, yo, angle):
-    dist, r = HF(600), HF(30)
-    x = dist * cos(angle) + r * cos(5 * angle)
-    y = dist * sin(angle) + r * sin(5 * angle)
-    return xo + x, yo + y
-
-
-def rose_curve_4(xo, yo, angle):
-    dist = HF(400)
-    x = dist * sin(2/3 * angle) * cos(angle)
-    y = dist * sin(2/3 * angle) * sin(angle)
-    return xo + x, yo + y
-
-
-def epicycloid(xo, yo, angle):
-    dist, r = HF(400), HF(20)
-    x = dist * cos(angle) + r * cos(5 * angle)
-    y = dist * sin(angle) + r * sin(5 * angle)
-    return xo + x, yo + y
-
-
 def set_cursor_grab(grab):
     """A game scene wrapper. Sets the state of grabbing the cursor for the
     duration of the game scene, and then returns it to its original state.
@@ -72,91 +40,34 @@ def set_cursor_grab(grab):
     return decorator
 
 
-def print_pretty(ugly_body, scale=1.0):
-    body = [row.copy() for row in ugly_body]
-    max_sizes = [0] * 20
-    for j in range(len(body)):
-        for i in range(len(body[j])):
-            if i == 2:
-                if body[j][2] == ORANGE: body[j][2] = 'ORANGE'
-                elif body[j][2] == BLUE: body[j][2] = 'BLUE'
-                elif body[j][2] == VIOLET: body[j][2] = 'VIOLET'
-                elif body[j][2] == LIGHT_ORANGE: body[j][2] = 'LIGHT_ORANGE'
-                elif body[j][2] == RED: body[j][2] = 'RED'
-                elif body[j][2] == DARK_RED: body[j][2] = 'DARK_RED'
-                elif body[j][2] == PURPLE: body[j][2] = 'PURPLE'
-                elif body[j][2] == BUBBLE_COLOR_2: body[j][2] = 'BUBBLE_COLOR_2'
-                elif body[j][2] == BUBBLE_COLOR: body[j][2] = 'BUBBLE_COLOR'
-
-            elif i in (0, 3, 6, 8, 12, 14):
-                value = round(body[j][i] / scale, 1)
-                if value == int(value):
-                    value = int(value)
-                body[j][i] = str(value)
-
-            elif i in (4, 9, 11, 15):
-                sign = '' if body[j][i] > 0 else '-'
-                if body[j][i] == 0:
-                    body[j][i] = '0'
-                elif body[j][i] == pi:
-                    body[j][i] = 'pi'
-                else:
-                    body[j][i] = sign + str(round(abs(body[j][i]/pi), 3)) + ' * pi'
-
-            else:
-                body[j][i] = str(body[j][i])
-
-            if len(body[j][i]) > max_sizes[i]:
-                max_sizes[i] = len(str(body[j][i]))
-
-    for i in range(len(body)):
-        row = '    ['
-        for j in range(len(body[i])):
-            row += str(body[i][j])
-            if j != len(body[i]) - 1:
-                row += ', ' + ' '*(max_sizes[j]-len(str(body[i][j])))
-        row += '],' if i != len(body) - 1 else ']'
-        print(row)
-
-
-def scaled_body(body: list) -> list:
-    """returns copy of body scaled by screen size."""
-    scaled = [row.copy() for row in body]
-    for row in scaled:
-        for i in range(len(row)):
-            if i in (0, 1, 3, 6, 8, 12, 14):
-                row[i] = HF(row[i])
-    return scaled
-
-
 def H(v):
     """ Returns the scaled rounded value to fit the height of the screen.
-    Initially, all sizes of objects were matched to the height of 960,
-    so the scaling factor is SCR_H / 960.
+    Initially, all sizes of objects were matched to the window height of 960,
+    so the scale factor is SCR_H / 960.
     """
     return round(v * H_SCALE_FACTOR)
 
 
 def W(v):
     """ Returns the scaled integer value to fit the width of the screen.
-    Initially, all sizes of objects were matched to the width of 1280,
-    so the scaling factor is SCR_W / 1280.
+    Initially, all sizes of objects were matched to the window width of 1280,
+    so the scale factor is SCR_W / 1280.
     """
     return round(v * W_SCALE_FACTOR)
 
 
 def HF(v):
     """ Returns the scaled float value to fit the height of the screen.
-    Initially, all sizes of objects were matched to the height of 960,
-    so the scaling factor is SCR_H / 960.
+    Initially, all sizes of objects were matched to window the height of 960,
+    so the scale factor is SCR_H / 960.
     """
     return v * H_SCALE_FACTOR
 
 
-def WF(v: float):
+def WF(v):
     """ Returns the scaled float value to fit the width of the screen.
-    Initially, all sizes of objects were matched to the width of 1280,
-    so the scaling factor is SCR_W / 1280.
+    Initially, all sizes of objects were matched to the window width of 1280,
+    so the scale factor is SCR_W / 1280.
     """
     return v * W_SCALE_FACTOR
 
@@ -166,23 +77,65 @@ def pretty_resolution(resolution) -> str:
     return '%d x %d' % tuple(resolution)
 
 
+def screen_mode_texts(screen_mode: int) -> str:
+    if screen_mode == WINDOWED_MODE:
+        return TEXTS["windowed mode"]
+    if screen_mode == BORDERLESS_MODE:
+        return TEXTS["borderless mode"]
+    if screen_mode == FULLSCREEN_MODE:
+        return TEXTS["fullscreen mode"]
+
+
+def print_circle_params(dx, dy, radius, scale):
+    s = 960/4/scale
+    distance = round(hypot(dx, dy) * s, 3)
+    angle = calculate_angle(0, 0, dx, dy)
+    angle = round(angle/pi, 3)
+    angle = str(angle) + ' * pi'
+    radius = round(radius * s, 3)
+    print(radius, distance, angle)
+
+
+def dict_to_list(original_data: dict):
+    def delete_element(element):
+        for value in data.values():
+            if element in value:
+                while value.index(element) != 0:
+                    delete_element(value[0])
+                break
+        for value in data.values():
+            if element in value:
+                value.remove(element)
+        result.append(element)
+
+    result = []
+    data = deepcopy(original_data)
+    while any(value for value in data.values()):
+        for value in data.values():
+            if value:
+                delete_element(value[0])
+                break
+    return result
+
+
+def make_states_dict(data: dict, circles_list: list):
+    return {k: [circles_list.index(circle) for circle in v] for k, v in data.items()}
+
+
 __all__ = [
 
+    "sign",
     "calculate_angle",
     "circle_collidepoint",
-    "no_trajectory",
-    "rose_curve_1",
-    "rose_curve_2",
-    "rose_curve_3",
-    "rose_curve_4",
-    "epicycloid",
-    "print_pretty",
     "H",
     "W",
     "HF",
     "WF",
-    "scaled_body",
     "set_cursor_grab",
-    "pretty_resolution"
+    "pretty_resolution",
+    "screen_mode_texts",
+    "print_circle_params",
+    "make_states_dict",
+    "dict_to_list"
 
 ]

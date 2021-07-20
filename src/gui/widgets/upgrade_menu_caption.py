@@ -1,7 +1,7 @@
 import pygame as pg
 
 from data.constants import *
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from gui.widgets.text_widget import TextWidget
 from gui.widgets.animated_widget import AnimatedWidget
 from assets.paths import *

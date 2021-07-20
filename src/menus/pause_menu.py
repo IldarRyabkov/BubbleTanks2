@@ -5,18 +5,19 @@ from menus.menu import Menu
 from gui.buttons.map import Map
 from gui.buttons.side_button import SideButton
 from gui.buttons.slider_button import SliderButton
-from gui.buttons.text_button import TextButton
+from gui.buttons.text_button import *
 from gui.buttons.exit_button import ExitButton
+from gui.buttons.screen_mode_button import ScreenModeButton
 
 from gui.widgets.text_widget import TextWidget
-from gui.widgets.tank_body_smooth import TankBodySmooth
+from gui.widgets.tank_preview_smooth import TankPreviewSmooth
 from gui.widgets.mask import Mask
 from gui.widgets.menu_caption import MenuCaption
 
 from assets.paths import *
 from data.constants import *
 from data.states import PauseMenuStates as St
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from components.utils import *
 
 
@@ -38,27 +39,41 @@ class PauseMenu(Menu):
         sp = game.sound_player
 
         # buttons
-        self.map_button = Map(self, xo, self.game.mob_generator.mobs_dict)
+        self.screen_mode_buttons = self.create_screen_mode_buttons()
 
-        self.music_slider = SliderButton(SCR_W2, H(400),
+        self.map_button = Map(self, xo, self.game.world.enemies_dict)
+
+        self.music_slider = SliderButton(SCR_W2, H(400),  H(856),
                                          TEXTS["music volume text"],
                                          CALIBRI_BOLD, H(48), sp, "music",
                                          min_alpha=210)
 
-        self.sound_slider = SliderButton(SCR_W2, H(480),
+        self.sound_slider = SliderButton(SCR_W2, H(470), H(826),
                                          TEXTS["sound volume text"],
                                          CALIBRI_BOLD, H(48), sp, "sound",
                                          min_alpha=210)
 
-        self.to_menu_button = TextButton(SCR_W2, H(560),
+        self.to_screen_modes_button = DoubleTextButton(self.game,
+                                                       SCR_W2, H(540),
+                                                       TEXTS["screen mode label"],
+                                                       screen_mode_texts(game.screen_mode),
+                                                       CALIBRI_BOLD, H(48), sp,
+                                                       action=self.screen_modes,
+                                                       min_alpha=210, w=H(760))
+
+        self.to_menu_button = TextButton(SCR_W2, H(610),
                                          TEXTS["exit to menu text"],
                                          CALIBRI_BOLD, H(48), 210, sp,
                                          self.dialog_menu, H(500))
 
-        self.to_desktop_button = TextButton(SCR_W2, H(640),
+        self.to_desktop_button = TextButton(SCR_W2, H(680),
                                             TEXTS["exit to desktop text"],
                                             CALIBRI_BOLD, H(48), 210, sp,
                                             self.dialog_desktop, H(500))
+
+        self.back_button = TextButton(SCR_W2, H(800), TEXTS["back button text"],
+                                      CALIBRI_BOLD, H(48), 210, sp,
+                                      action=self.back, w=H(300))
 
         self.yes_button = TextButton(SCR_W2 - H(140), H(600),
                                      TEXTS["yes button text"],
@@ -85,13 +100,14 @@ class PauseMenu(Menu):
             St.MAP: (*base_buttons, self.map_button),
             St.OPTIONS: (*base_buttons, self.music_slider,
                          self.sound_slider,  self.to_menu_button,
-                         self.to_desktop_button),
+                         self.to_desktop_button, self.to_screen_modes_button),
             St.DIALOG_DESKTOP: (*base_buttons, self.yes_button, self.no_button),
-            St.DIALOG_MENU: (*base_buttons, self.yes_button, self.no_button)
+            St.DIALOG_MENU: (*base_buttons, self.yes_button, self.no_button),
+            St.SCREEN_MODES: (*base_buttons, *self.screen_mode_buttons, self.back_button)
         }
 
         # widgets
-        self.tank_body = TankBodySmooth(xo + H(940), H(370))
+        self.tank_body = TankPreviewSmooth(game.rect, xo + H(940), H(370))
         self.mask = Mask(self, self.create_mask_surface())
 
         self.stats_widgets = (
@@ -124,12 +140,21 @@ class PauseMenu(Menu):
             St.MAP: base_widgets,
             St.OPTIONS: base_widgets,
             St.DIALOG_MENU: base_widgets,
-            St.DIALOG_DESKTOP: base_widgets
+            St.DIALOG_DESKTOP: base_widgets,
+            St.SCREEN_MODES: base_widgets
         }
+
+    def create_screen_mode_buttons(self) -> list:
+        buttons = [
+            ScreenModeButton(self, H(440), TEXTS["windowed mode"], H(52), WINDOWED_MODE, St.OPTIONS),
+            ScreenModeButton(self, H(520), TEXTS["borderless mode"], H(52), BORDERLESS_MODE, St.OPTIONS),
+            ScreenModeButton(self, H(600), TEXTS["fullscreen mode"], H(52), FULLSCREEN_MODE, St.OPTIONS)
+        ]
+        return buttons
 
     def create_mask_surface(self):
         surface = pg.Surface(SCR_SIZE, pg.SRCALPHA)
-        surface.fill((0, 0, 0, 175))
+        surface.fill((0, 0, 0, 150))
         small_mask = pg.Surface((H(1072), H(760)), pg.SRCALPHA)
         small_mask.fill((0, 0, 0, 125))
         surface.blit(small_mask, (SCR_W2 - H(488), H(160)))
@@ -142,6 +167,8 @@ class PauseMenu(Menu):
         self.window_caption.set_text(text)
         if self.state in (St.DIALOG_MENU, St.DIALOG_DESKTOP):
             self.window_caption.y = H(360)
+        elif self.state == St.SCREEN_MODES:
+            self.window_caption.y = H(226)
         else:
             self.window_caption.y = H(176)
 
@@ -167,7 +194,7 @@ class PauseMenu(Menu):
 
     def close(self):
         super().close()
-        if self.state in (St.DIALOG_MENU, St.DIALOG_DESKTOP):
+        if self.state in (St.DIALOG_MENU, St.DIALOG_DESKTOP, St.SCREEN_MODES):
             self.set_state(St.OPTIONS, animation=False)
 
     def dialog_menu(self):
@@ -177,6 +204,14 @@ class PauseMenu(Menu):
     def dialog_desktop(self):
         """Action of 'to desktop' button. """
         self.set_state(St.DIALOG_DESKTOP, self.to_desktop_button)
+
+    def screen_modes(self):
+        """Action of 'to screen modes' button. """
+        self.set_state(St.SCREEN_MODES, self.to_screen_modes_button)
+
+    def back(self):
+        """Action of 'back' button. """
+        self.set_state(St.OPTIONS, self.back_button)
 
     def yes(self):
         """Action of 'yes' button. """
@@ -203,7 +238,7 @@ class PauseMenu(Menu):
 
     def update_tank_description(self):
         self.set_stats_texts()
-        self.tank_body.set_body(self.game.player.tank)
+        self.tank_body.set(self.game.player.tank)
 
     def update_counter(self, index, delta_value):
         new_value = int(self.stats_counters[index].text) + delta_value
@@ -213,13 +248,9 @@ class PauseMenu(Menu):
         self.caption.set_text(TEXTS["pause menu caption"][language])
         self.window_caption.set_text(TEXTS["pause menu window captions"][language][St.STATS])
         self.set_stats_texts()
-        self.to_menu_button.set_language(language)
-        self.to_desktop_button.set_language(language)
-        self.sound_slider.set_language(language)
-        self.music_slider.set_language(language)
-        self.yes_button.set_language(language)
-        self.no_button.set_language(language)
-        for button in self.side_buttons:
+        for button in (self.to_menu_button, self.to_screen_modes_button, self.to_desktop_button,
+                       self.sound_slider, self.music_slider, self.yes_button, self.no_button,
+                       *self.side_buttons, *self.screen_mode_buttons, self.back_button):
             button.set_language(language)
 
     def set_data(self, data):

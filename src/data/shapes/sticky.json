@@ -1,0 +1,50 @@
+[
+	{
+		"type": "fixed",
+		"color": "violet",
+		"edge factor": 0.05,
+		"radius": 21.328,
+		"distance": 29.437,
+		"angle": 2.510132530218245
+	},
+	{
+		"type": "fixed",
+		"color": "violet",
+		"edge factor": 0.05,
+		"radius": 9.943,
+		"distance": 28.294,
+		"angle": 1.6367697725202824
+	},
+	{
+		"type": "fixed",
+		"color": "violet",
+		"edge factor": 0.05,
+		"radius": 9.943,
+		"distance": 34.919,
+		"angle": 3.1258846903218444
+	},
+	{
+		"type": "fixed",
+		"color": "violet",
+		"edge factor": 0.05,
+		"radius": 9.943,
+		"distance": 22.448,
+		"angle": -2.871415685381071
+	},
+	{
+		"type": "fixed",
+		"color": "violet",
+		"edge factor": 0.05,
+		"radius": 9.943,
+		"distance": 36.833,
+		"angle": -1.4734069545336129
+	},
+	{
+		"type": "fixed",
+		"color": "violet",
+		"edge factor": 0.05,
+		"radius": 12.903,
+		"distance": 42.885,
+		"angle": 0.7979645340118075
+	}
+]

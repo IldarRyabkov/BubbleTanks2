@@ -7,53 +7,84 @@ class BaseMob:
                  y,
                  health,
                  max_health,
-                 health_states,
                  radius,
                  body,
-                 gun):
+                 weapons):
         self.x = x
         self.y = y
         self.health = health
         self.max_health = max_health
-        self.health_states = health_states
-        self.health_interval = None
         self.radius = radius
         self.body = body
-        self.gun = gun
+        self.weapons = weapons
 
-        self.is_infected = False
-        self.infection_time = 0
-        self.infection_cooldown_time = 170
+        self.sticky = False
+        self.sticky_time = 0
+        self.sticky_cooldown = 2200
 
-    @property
-    def body_look_changed(self):
-        left, right = self.health_interval
-        return not left < self.health <= right
+        self.stunned = False
+        self.stunned_time = 0
+        self.stunned_cooldown = 2000
 
-    def update_body_look(self):
-        for circle in self.body.circles:
-            circle.is_visible = True
-        k = 0
-        for i in range(len(self.health_states)):
-            if self.health <= self.health_states[i][0]:
-                k = i
-        if k == len(self.health_states) - 1:
-            self.health_interval = (0, self.health_states[k][0])
-        else:
-            self.health_interval = (self.health_states[k + 1][0], self.health_states[k][0])
-        self.body.set_visible_circles(self.health_states[k][1::])
-        self.gun.update_params(self.health)
+    def become_sticky(self):
+        self.sticky = True
+        self.sticky_time = 0
+
+    def stop_being_sticky(self):
+        self.sticky = False
+        self.sticky_time = 0
+
+    def become_stunned(self):
+        self.stunned = True
+        self.stunned_time = 0
+
+    def update_sticky_state(self, dt):
+        if self.sticky:
+            self.sticky_time += dt
+            if self.sticky_time >= self.sticky_cooldown:
+                self.stop_being_sticky()
+
+    def update_stunned_state(self, dt):
+        if self.stunned:
+            self.stunned_time += dt
+            if self.stunned_time >= self.stunned_cooldown:
+                self.stunned_time = 0
+                self.stunned = False
+
+    def set_health(self, new_health: int):
+        self.health = new_health
+        self.update_component_states()
+
+    def update_health(self, delta_health: int):
+        pass
+
+    def update_component_states(self):
+        """ Method is called when mob's health has changed.
+        Updates states of mobs's gun and superpower
+        according to new mob's health.
+        """
+        state = max(0, self.health)
+        self.body.update_state(state)
+        self.weapons.update_state(state)
+
+    def move(self, dx, dy):
+        self.x += dx
+        self.y += dy
 
     def collide_bullet(self, bul_x, bul_y, bul_r) -> bool:
         return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
 
-    def handle_injure(self, damage):
+    def receive_damage(self, damage, play_sound=True):
         if damage:
-            self.health += damage
-            if self.body_look_changed:
-                self.update_body_look()
+            self.update_health(delta_health=damage)
         else:
-            self.body.make_frozen()
+            self.become_sticky()
+
+    def update(self, dt):
+        pass
+
+    def draw(self, screen, dx=0, dy=0):
+        pass
 
 
 __all__ = ["BaseMob"]

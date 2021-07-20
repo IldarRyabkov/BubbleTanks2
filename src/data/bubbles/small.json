@@ -1,0 +1,8 @@
+{
+	"health": 0,
+	"circles": [
+		{
+			"type": "small bubble"
+		}
+	]
+}

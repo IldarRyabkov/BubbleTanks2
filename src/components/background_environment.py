@@ -3,14 +3,12 @@ from math import cos, sin, sqrt, ceil, pi, hypot
 
 from assets.paths import *
 from data.constants import *
-from data.languages.texts import TEXTS
-from data.mobs import BOSS_SKELETON_BODY
+from data.languages import TEXTS
 
 from gui.widgets.text_widget import TextWidget
 
-from .body import Body
-from .mob_generator import BOSS_PIECES
-from .utils import *
+from components.bubble_tanks_world import BOSS_PIECES
+from components.utils import *
 
 
 def room_bg() -> list:
@@ -166,7 +164,7 @@ class BackgroundEnvironment:
         # Normally mobs in a neighbour rooms are not being drawn cause they cannot be seen from current room.
         # but Boss Skeleton is too large, so it is stored separately as a background environment object, to be drawn
         # when the Final Boss is in the current room, or if Boss skeleton is partly visible from the neighbour room.
-        self.boss_skeleton = Body(scaled_body(BOSS_SKELETON_BODY))
+        self.boss_skeleton = None
 
         # Boss disposition ('in current room', 'in neighbour room', 'far away')
         # is used to check if we should draw Boss skeleton or not.
@@ -284,8 +282,8 @@ class BackgroundEnvironment:
     def set_player_trace(self, x, y, dist, alpha):
         self.player_trace.set_coords(x, y, 0.05 * dist, alpha)
 
-    def set_destination_circle(self, pos):
-        self.destination_circle.set_pos(*pos)
+    def set_destination_circle(self, x, y):
+        self.destination_circle.set_pos(x, y)
 
     def draw_bg(self, screen):
         screen.blit(self.bg, (0, 0))

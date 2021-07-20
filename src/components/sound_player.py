@@ -1,29 +1,29 @@
-from pygame import mixer
+import pygame as pg
 from assets.paths import *
 
 
-sounds = (COLLECT_BUBBLE, ENEMY_DEATH, HIT, SHOOT,
-          AVATAR_HIT, BUTTON_CLICK, WATER_SPLASH)
+sounds = (COLLECT_BUBBLE, ENEMY_DEATH, ENEMY_HIT, SHOOT,
+          PLAYER_HIT, BUTTON_CLICK, WATER_SPLASH)
 
 
 class SoundPlayer:
     """Manages game sounds and music. """
     def __init__(self):
-        mixer.pre_init(44100, -32, 8, 4096)
-        self.sounds = {sound: mixer.Sound(sound) for sound in sounds}
-        self._sound_lock = False
-        self.music_volume = 0.8
-        self.sound_volume = 0.8
+        self.sounds = {sound: pg.mixer.Sound(sound) for sound in sounds}
+        self.locked = {sound: False for sound in sounds}
+        self.music_volume = 0.9
+        self.sound_volume = 0.58
         self.set_music_volume(self.music_volume)
         self.set_sound_volume(self.sound_volume)
 
-    def unlock(self):
-        self._sound_lock = False
+    def reset(self):
+        for sound in self.locked:
+            self.locked[sound] = False
 
-    def play_sound(self, sound, ignore_lock=True):
-        if ignore_lock or not self._sound_lock:
+    def play_sound(self, sound):
+        if not self.locked[sound] and self.sounds[sound].get_num_channels() < 5:
             self.sounds[sound].play()
-            self._sound_lock = True
+            self.locked[sound] = True
 
     def set_sound_volume(self, volume):
         for sound in self.sounds:
@@ -31,17 +31,17 @@ class SoundPlayer:
         self.sound_volume = volume
 
     def set_music_volume(self, volume):
-        mixer.music.set_volume(volume)
+        pg.mixer.music.set_volume(volume)
         self.music_volume = volume
 
     @staticmethod
     def play_music(music):
-        mixer.music.load(music)
-        mixer.music.play(-1, 0.0, fade_ms=2000)
+        pg.mixer.music.load(music)
+        pg.mixer.music.play(-1, 0.0, fade_ms=2000)
 
     @staticmethod
     def fade_out(time):
-        mixer.music.fadeout(time)
+        pg.mixer.music.fadeout(time)
 
 
 __all__ = ["SoundPlayer"]

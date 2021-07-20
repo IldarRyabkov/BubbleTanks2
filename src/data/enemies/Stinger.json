@@ -1,0 +1,72 @@
+{
+	"circles": [
+		{
+			"type": "scaling",
+			"color": "red",
+			"edge factor": 0.064,
+			"amplitude factor": 0.141,
+			"radius": 43.137,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 16.863,
+			"distance": 8.933,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 12.325,
+			"distance": 18.345,
+			"angle": 2.098583892597982
+		},
+		{
+			"type": "blue",
+			"radius": 12.325,
+			"distance": 18.345,
+			"angle": -2.098583892597982
+		}
+	],
+	"circles states": {
+		"0 20": [
+			0,
+			1,
+			2,
+			3
+		]
+	},
+	"guns": [
+		{
+			"name": "empty",
+			"scale": 1,
+			"distance": 0,
+			"angle": 0,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": "sting",
+			"cooldown min": 400,
+			"cooldown max": 400,
+			"delay": 0,
+			"bullet name": "",
+			"bullet velocity": 0,
+			"bullet damage": -1
+		}
+	],
+	"guns states": {
+		"0 20": [
+			0
+		]
+	},
+	"radius": 40,
+	"rect size": 86.274,
+	"max health": 20,
+	"velocity": 0.36,
+	"death award": {
+		"medium": 2,
+		"large": 0,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

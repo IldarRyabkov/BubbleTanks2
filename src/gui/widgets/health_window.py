@@ -3,7 +3,7 @@ from .status_bar import StatusBar
 from .text_widget import TextWidget
 
 from assets.paths import *
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from data.constants import *
 from components.utils import *
 

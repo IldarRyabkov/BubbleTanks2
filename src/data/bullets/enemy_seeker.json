@@ -1,0 +1,31 @@
+{
+	"radius": 21.86,
+	"size": 72.178,
+	"circles": [
+		{
+			"type": "fixed",
+			"color": "red",
+			"radius": 21.86,
+			"edge factor": 0.122,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "fixed",
+			"color": "red",
+			"radius": 10.323,
+			"edge factor": 0.122,
+			"distance": 25.397,
+			"angle": 2.5038493449110654
+		},
+		{
+			"type": "fixed",
+			"color": "red",
+			"radius": 10.323,
+			"edge factor": 0.122,
+			"distance": 25.397,
+			"angle": -2.5038493449110654
+		}
+	],
+    "hit effect": "RedCircle"
+}

@@ -1,0 +1,138 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 16.785,
+			"distance": 36.434,
+			"angle": 1.6084954386379742
+		},
+		{
+			"type": "blue",
+			"radius": 16.785,
+			"distance": 36.434,
+			"angle": -1.6084954386379742
+		},
+		{
+			"type": "blue",
+			"radius": 26.878,
+			"distance": 9.722,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 20.016,
+			"distance": 81.794,
+			"angle": 2.5446900494077329
+		},
+		{
+			"type": "blue",
+			"radius": 20.016,
+			"distance": 81.794,
+			"angle": -2.5446900494077329
+		},
+		{
+			"type": "thick_blue",
+			"radius": 48.801,
+			"distance": 40.985,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 38.888,
+			"distance": 107.323,
+			"angle": 3.141592653589793
+		}
+	],
+	"circles states": {
+		"0 60": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6
+		]
+	},
+	"guns": [
+		{
+			"name": "gun_18",
+			"scale": 1,
+			"distance": 33.932,
+			"angle": 3.141592653589793,
+			"rotation type": 1,
+			"rotation angle": 0,
+			"shooting type": "machine gun",
+			"cooldown min": 100,
+			"cooldown max": 100,
+			"delay": 2000,
+			"bullet name": "small red",
+			"bullet velocity": 0.9,
+			"bullet damage": -2
+		},
+		{
+			"name": "seeker_spawner_2",
+			"scale": 1,
+			"distance": 57.417,
+			"angle": 1.6084954386379742,
+			"rotation type": 0,
+			"rotation angle": 1.5079644737231007,
+			"shooting type": "spawn orbital seeker",
+			"cooldown min": 1200,
+			"cooldown max": 1200,
+			"delay": 2000,
+			"bullet name": "enemy orbital seeker",
+			"bullet velocity": 0,
+			"bullet damage": -5
+		},
+		{
+			"name": "seeker_spawner_2",
+			"scale": 1,
+			"distance": 57.417,
+			"angle": -1.6084954386379742,
+			"rotation type": 0,
+			"rotation angle": -1.5079644737231007,
+			"shooting type": "spawn orbital seeker",
+			"cooldown min": 1800,
+			"cooldown max": 1800,
+			"delay": 2000,
+			"bullet name": "enemy orbital seeker",
+			"bullet velocity": 0,
+			"bullet damage": -5
+		},
+		{
+			"name": "leecher_spawner",
+			"scale": 1,
+			"distance": 36.975,
+			"angle": 0,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": "spawn leecher",
+			"cooldown min": 2000,
+			"cooldown max": 3000,
+			"delay": 2000,
+			"bullet name": "enemy leecher",
+			"bullet velocity": 0.54,
+			"bullet damage": -4
+		}
+	],
+	"guns states": {
+		"0 60": [
+			0,
+			1,
+			2,
+			3
+		]
+	},
+	"radius": 85.782,
+	"rect size": 292.423,
+	"max health": 60,
+	"velocity": 0.18,
+	"death award": {
+		"medium": 5,
+		"large": 5,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

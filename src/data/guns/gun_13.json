@@ -1,0 +1,115 @@
+{
+	"circles": [
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 63.262,
+			"angle": 0.6848671984825749
+		},
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 63.262,
+			"angle": -0.6848671984825749
+		},
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 74.588,
+			"angle": 0.5654866776461628
+		},
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 74.588,
+			"angle": -0.5654866776461628
+		},
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 86.684,
+			"angle": 0.4806636759992383
+		},
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 86.684,
+			"angle": -0.4806636759992383
+		},
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 48.962,
+			"angle": 0.0
+		},
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 62.917,
+			"angle": 0.0
+		},
+		{
+			"type": "orange",
+			"radius": 9.624,
+			"distance": 76.872,
+			"angle": 0.0
+		},
+		{
+			"type": "orange",
+			"radius": 6.617,
+			"distance": 88.261,
+			"angle": 0.6283185307179586
+		},
+		{
+			"type": "orange",
+			"radius": 6.617,
+			"distance": 88.261,
+			"angle": -0.6283185307179586
+		},
+		{
+			"type": "orange",
+			"radius": 29.113,
+			"distance": 33.105,
+			"angle": 0.6785840131753953
+		},
+		{
+			"type": "orange",
+			"radius": 29.113,
+			"distance": 33.105,
+			"angle": -0.6785840131753953
+		},
+		{
+			"type": "orange",
+			"radius": 13.835,
+			"distance": 50.694,
+			"angle": 1.3477432483900212
+		},
+		{
+			"type": "orange",
+			"radius": 13.835,
+			"distance": 50.694,
+			"angle": -1.3477432483900212
+		},
+		{
+			"type": "orange",
+			"radius": 33.684,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "orange",
+			"radius": 16.962,
+			"distance": 31.735,
+			"angle": 2.1771237089377268
+		},
+		{
+			"type": "orange",
+			"radius": 16.962,
+			"distance": 31.735,
+			"angle": -2.1771237089377268
+		}
+	],
+	"size": 33.684,
+	"emitter offset": 69.173,
+	"bullet type": "regular bullet"
+}

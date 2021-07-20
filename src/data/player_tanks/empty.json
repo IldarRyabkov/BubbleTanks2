@@ -1,0 +1,81 @@
+{
+	"circles": [
+		{
+			"type": "thick_blue",
+			"radius": 21,
+			"distance": 0,
+			"angle": 0
+		},
+		{
+			"type": "rotating",
+			"color": "orange",
+			"radius": 8.2,
+			"distance": 0,
+			"angle": 0,
+			"rot distance": 40,
+			"rot angle": 0.0
+		},
+		{
+			"type": "rotating",
+			"color": "orange",
+			"radius": 8.2,
+			"distance": 0,
+			"angle": 0,
+			"rot distance": 40,
+			"rot angle": 1.2566370614359173
+		},
+		{
+			"type": "rotating",
+			"color": "orange",
+			"radius": 8.2,
+			"distance": 0,
+			"angle": 0,
+			"rot distance": 40,
+			"rot angle": 2.5132741228718347
+		},
+		{
+			"type": "rotating",
+			"color": "orange",
+			"radius": 8.2,
+			"distance": 0,
+			"angle": 0,
+			"rot distance": 40,
+			"rot angle": 3.7699111843077519
+		},
+		{
+			"type": "rotating",
+			"color": "orange",
+			"radius": 8.2,
+			"distance": 0,
+			"angle": 0,
+			"rot distance": 40,
+			"rot angle": 5.026548245743669
+		}
+	],
+	"circles states": {
+		"0 0": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5
+		]
+	},
+	"guns": [],
+	"guns states": {
+		"0 0": []
+	},
+	"rotating": false,
+	"max velocity": 0,
+	"max health": 0,
+	"radius": 0,
+	"background radius": 0,
+	"cooldown": 0,
+	"cooldown auto": 0,
+	"preview": {
+		"health state": 0,
+		"scale": 1,
+		"dx": 0
+	}
+}

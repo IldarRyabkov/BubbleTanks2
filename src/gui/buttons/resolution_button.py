@@ -10,7 +10,7 @@ class ResolutionButton(TextButton):
     def __init__(self, menu, y, texts):
         super().__init__(SCR_W2, y, texts, CALIBRI_BOLD, H(56),
                          200, menu.game.sound_player,
-                         action=self.set_new_resolution, w=H(300))
+                         action=self.set_new_resolution, w=H(320))
         self.menu = menu
         self.set_text(texts)
 

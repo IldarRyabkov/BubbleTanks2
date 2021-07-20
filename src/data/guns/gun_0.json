@@ -1,0 +1,9 @@
+{
+    "circles": [
+        {"type": "orange", "radius": 22.08, "distance": 0, "angle": 0},
+        {"type": "orange", "radius": 10.56, "distance": 22.08, "angle": 0}
+    ],
+    "size": 22.08,
+    "emitter offset": 21.341,
+	"bullet type": "regular bullet"
+}

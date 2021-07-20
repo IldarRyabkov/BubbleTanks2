@@ -7,9 +7,9 @@ from components.utils import H
 
 
 class SliderButton(ScalingButton):
-    def __init__(self, x, y, label_texts, font, font_size, sound_player, volume_type, min_alpha=220):
+    def __init__(self, x, y, w, label_texts, font, font_size, sound_player, volume_type, min_alpha=220):
 
-        super().__init__(x, y, H(940), H(50), 0.92, min_alpha,
+        super().__init__(x, y, w, H(50), 0.92, min_alpha,
                          label_texts, sound_player,
                          cursor=pg.SYSTEM_CURSOR_SIZEWE,
                          scaling_time=100)
@@ -35,7 +35,6 @@ class SliderButton(ScalingButton):
                                    self.line_w, self.h)
 
         self.text_widget = TextWidget(self.w // 2 - H(40), 0, font, font_size, WHITE, 2)
-
 
     @property
     def cursor_on_button(self):

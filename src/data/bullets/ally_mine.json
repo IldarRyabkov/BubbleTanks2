@@ -1,0 +1,39 @@
+{
+	"radius": 17.239,
+	"size": 51.802,
+	"circles": [
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 15.658,
+			"edge factor": 0.122,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 7.733,
+			"edge factor": 0.122,
+			"distance": 17.239,
+			"angle": 1.5707963267948966
+		},
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 7.733,
+			"edge factor": 0.122,
+			"distance": 17.239,
+			"angle": -0.5235987755982988
+		},
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 7.733,
+			"edge factor": 0.122,
+			"distance": 17.239,
+			"angle": -2.6179938779914944
+		}
+	],
+	"hit effect": "LightRedCircle"
+}

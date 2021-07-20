@@ -3,7 +3,7 @@ import pygame as pg
 from .text_widget import TextWidget
 from .animated_widget import AnimatedWidget
 from data.constants import *
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from data.states import MainMenuStates as St
 from assets.paths import MAIN_MENU_CAPTION_BG, FONT_1
 from components.utils import H
@@ -21,7 +21,10 @@ class MainMenuCaption(AnimatedWidget):
         self.alpha = 255
 
     def set_state(self, state):
-        if state == St.MAIN_PAGE:
+        if state == St.SPLASH_SCREEN:
+            self.text.y = H(370)
+            self.text.set_font_size(H(120))
+        elif state == St.MAIN_PAGE:
             self.text.y = H(150)
             self.text.set_font_size(H(96))
         elif state in (St.OVERRIDE_SAVE, St.DELETE_SAVE):
@@ -46,6 +49,8 @@ class MainMenuCaption(AnimatedWidget):
         self.text.set_text(TEXTS["main menu captions"][self.game.language][state])
         if state == St.MAIN_PAGE:
             scaled_h = 2*self.text.h + H(60)
+        elif state == St.SPLASH_SCREEN:
+            scaled_h = 2 * self.text.h + H(60)
         else:
             scaled_h = round(1.5 * self.text.h) + H(20)
         self.surface = pg.transform.scale(self.image, (self.text.w + H(60), scaled_h))

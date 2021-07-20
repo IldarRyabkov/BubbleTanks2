@@ -6,7 +6,7 @@ from gui.widgets.animated_widget import AnimatedWidget
 
 class TextWidget(AnimatedWidget):
     """Widget that stores text on multiple lines. """
-    def __init__(self, x, y, font, font_size, color, align=0, width_limit=9001):
+    def __init__(self, x, y, font, font_size, color, align=0, width_limit=9001, max_alpha=255):
         super().__init__()
         pg.font.init()
         self.font_name = font
@@ -20,6 +20,7 @@ class TextWidget(AnimatedWidget):
         self.width_limit = width_limit
         self.lines = []   # list of text surfaces with their coords
         self.text = None
+        self.max_alpha = max_alpha
 
     def set_font_size(self, font_size):
         pg.font.init()
@@ -60,16 +61,13 @@ class TextWidget(AnimatedWidget):
         self.h = letter_height * len(self.lines)
         self.w = max(line.get_width() for line, _, _ in self.lines)
 
+    def set_max_alpha(self, max_alpha):
+        self.max_alpha = max_alpha
+
     def set_alpha(self, alpha):
         """Sets alpha-value for all text surfaces. """
         for surface, _, _ in self.lines:
             surface.set_alpha(alpha)
-
-    def update_alpha(self, animation_state, time_elapsed):
-        if animation_state == OPEN:
-            self.set_alpha(round(255 * time_elapsed))
-        elif animation_state == CLOSE:
-            self.set_alpha(round(255 - 255 * time_elapsed))
 
     def move(self, dx, dy):
         self.x += dx
@@ -81,11 +79,11 @@ class TextWidget(AnimatedWidget):
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         if animation_state == WAIT:
-            self.set_alpha(255)
+            self.set_alpha(self.max_alpha)
         if animation_state == OPEN:
-            self.set_alpha(round(255 * time_elapsed))
+            self.set_alpha(round(self.max_alpha * time_elapsed))
         elif animation_state == CLOSE:
-            self.set_alpha(round(255 - 255 * time_elapsed))
+            self.set_alpha(round(self.max_alpha * (1 - time_elapsed)))
 
     def draw(self, screen, dx=0, dy=0, animation_state=WAIT):
         for surface, x, y in self.lines:

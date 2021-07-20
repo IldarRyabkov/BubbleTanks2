@@ -1,9 +1,8 @@
 import pygame as pg
-from numpy import sign
 
 from data.states import PopupWindowStates as St
 from data.constants import WAIT
-from components.utils import HF
+from components.utils import HF, sign
 from .widget import Widget
 
 

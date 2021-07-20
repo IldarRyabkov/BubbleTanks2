@@ -13,13 +13,15 @@ from gui.buttons.text_button import *
 from gui.buttons.slider_button import SliderButton
 from gui.buttons.language_button import LanguageButton
 from gui.buttons.resolution_button import ResolutionButton
+from gui.buttons.screen_mode_button import ScreenModeButton
 from gui.buttons.save_button import SaveButton
 from gui.buttons.back_button import BackButton
 from gui.buttons.delete_button import DeleteButton
+from gui.buttons.start_button import StartButton
 
 from data.constants import *
 from data.states import MainMenuStates as St
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from data.scripts import *
 
 from assets.paths import *
@@ -34,6 +36,7 @@ class MainMenu(Menu):
         super().__init__(game)
         sp = self.game.sound_player
         self.game_music_played = False
+        self.splash_screen_shown = False
         self.clicked_save_button = None
         self.clicked_delete_button = None
 
@@ -56,18 +59,20 @@ class MainMenu(Menu):
             TextWidget(SCR_W2, H(720), CALIBRI_BOLD, H(46), WHITE, 1),
             TextWidget(SCR_W2, H(764), CALIBRI_BOLD, H(34), WHITE, 1)
         )
-        self.bubbles = BackgroundBubbles()
+        self.bubbles = BackgroundBubbles(game.rect)
         self.caption = MainMenuCaption(self)
         self.esc_hint = KeyHint(SCR_W - H(190), H(890), CALIBRI, H(35), WHITE)
 
         # widgets dictionary
         base_widgets = self.bubbles, self.caption
         self.widgets = {
+            St.SPLASH_SCREEN: (self.bubbles, self.caption),
             St.MAIN_PAGE: (self.bubbles, self.caption),
             St.SETTINGS: base_widgets,
             St.CREDITS: (*base_widgets, *self.credits_widgets, self.esc_hint),
             St.LANGUAGES: (*base_widgets, self.esc_hint),
             St.RESOLUTIONS: (*base_widgets, self.resolution_warning, self.esc_hint),
+            St.SCREEN_MODES: (*base_widgets, self.esc_hint),
             St.EXIT: base_widgets,
             St.NEW_GAME: base_widgets,
             St.LOAD_GAME: base_widgets,
@@ -78,29 +83,43 @@ class MainMenu(Menu):
         # buttons
         self.resolution_buttons = self.create_resolution_buttons()
         self.language_buttons = self.create_language_buttons()
-        self.to_languages_button = DoubleTextButton(SCR_W2, H(365),
+        self.screen_mode_buttons = self.create_screen_mode_buttons()
+
+        self.start_button = StartButton(SCR_W2, H(770), sp, action=self.start)
+
+        self.to_languages_button = DoubleTextButton(self.game,
+                                                    SCR_W2, H(325),
                                                     TEXTS["language label"],
                                                     TEXTS["language"][self.game.language],
                                                     CALIBRI_BOLD, H(56), sp,
                                                     action=self.languages,
                                                     min_alpha=200)
 
-        self.to_resolutions_button = DoubleTextButton(SCR_W2, H(445),
+        self.to_resolutions_button = DoubleTextButton(self.game,
+                                                      SCR_W2, H(405),
                                                       TEXTS["resolution label"],
                                                       pretty_resolution([SCR_W, SCR_H]),
                                                       CALIBRI_BOLD, H(56), sp,
                                                       action=self.resolutions,
                                                       min_alpha=200)
 
-        self.music_slider = SliderButton(SCR_W2, H(525),
+        self.music_slider = SliderButton(SCR_W2, H(485), H(996),
                                          TEXTS["music volume text"],
-                                         CALIBRI_BOLD, H(52), sp, "music",
+                                         CALIBRI_BOLD, H(56), sp, "music",
                                          min_alpha=200)
 
-        self.sound_slider = SliderButton(SCR_W2, H(605),
+        self.sound_slider = SliderButton(SCR_W2, H(565), H(946),
                                          TEXTS["sound volume text"],
-                                         CALIBRI_BOLD, H(52), sp, "sound",
+                                         CALIBRI_BOLD, H(56), sp, "sound",
                                          min_alpha=200)
+
+        self.to_screen_modes_button = DoubleTextButton(self.game,
+                                                       SCR_W2, H(645),
+                                                       TEXTS["screen mode label"],
+                                                       screen_mode_texts(game.screen_mode),
+                                                       CALIBRI_BOLD, H(56), sp,
+                                                       action=self.screen_modes,
+                                                       min_alpha=200, w=H(780))
 
         self.back_button = BackButton(TEXTS["back button text"], sp, self.back)
 
@@ -148,9 +167,9 @@ class MainMenu(Menu):
                                       action=self.exit, w=H(400))
 
         self.save_buttons = (
-            SaveButton(SCR_W2 - H(340), "save_1", sp, self.save_button_action),
-            SaveButton(SCR_W2, "save_2", sp, self.save_button_action),
-            SaveButton(SCR_W2 + H(340), "save_3", sp, self.save_button_action)
+            SaveButton(game.rect, SCR_W2 - H(340), "save_1", sp, self.save_button_action),
+            SaveButton(game.rect, SCR_W2, "save_2", sp, self.save_button_action),
+            SaveButton(game.rect, SCR_W2 + H(340), "save_3", sp, self.save_button_action)
         )
 
         self.delete_buttons = (
@@ -161,15 +180,18 @@ class MainMenu(Menu):
 
         # buttons dictionary
         self.buttons = {
+            St.SPLASH_SCREEN: [self.start_button],
             St.MAIN_PAGE: [self.new_game_button, self.load_game_button,
                            self.settings_button, self.credits_button, self.exit_button],
             St.SETTINGS: [self.to_languages_button, self.to_resolutions_button,
-                          self.music_slider, self.sound_slider, self.back_button],
+                          self.to_screen_modes_button, self.music_slider,
+                          self.sound_slider, self.back_button],
             St.CREDITS: [],
             St.NEW_GAME: [*self.save_buttons, self.back_button],
             St.LOAD_GAME: [*self.save_buttons, self.back_button],
             St.LANGUAGES: self.language_buttons,
             St.RESOLUTIONS: self.resolution_buttons,
+            St.SCREEN_MODES: self.screen_mode_buttons,
             St.EXIT: [self.yes_button, self.no_button],
             St.OVERRIDE_SAVE: [self.yes_button, self.no_button],
             St.DELETE_SAVE: [self.yes_button, self.no_button],
@@ -202,6 +224,14 @@ class MainMenu(Menu):
             buttons.append(LanguageButton(self, H(440 + i * 120*i), text))
         return buttons
 
+    def create_screen_mode_buttons(self) -> list:
+        buttons = [
+            ScreenModeButton(self, H(400), TEXTS["windowed mode"], H(56), WINDOWED_MODE, St.SETTINGS),
+            ScreenModeButton(self, H(500), TEXTS["borderless mode"], H(56), BORDERLESS_MODE, St.SETTINGS),
+            ScreenModeButton(self, H(600), TEXTS["fullscreen mode"], H(56), FULLSCREEN_MODE, St.SETTINGS)
+        ]
+        return buttons
+
     def set_delete_buttons(self):
         for db, sb in zip(self.delete_buttons, self.save_buttons):
             if sb.save_data is not None and db not in self.buttons[St.NEW_GAME]:
@@ -220,7 +250,7 @@ class MainMenu(Menu):
         if isinstance(button, SaveButton):
             update_config_file(save=button.save_name)
             self.current_save = button.save_name
-        self.game.set_data(save_data)
+        self.game.set_save_data(save_data)
         self.game.sound_player.fade_out(500)
         self.click_animation(button)
         self.close()
@@ -247,6 +277,9 @@ class MainMenu(Menu):
             else:
                 self.set_state(St.OVERRIDE_SAVE, button)
 
+    def start(self):
+        self.set_state(St.MAIN_PAGE, self.start_button)
+
     def load_game(self):
         """Action of the 'load game' button. """
         self.set_state(St.LOAD_GAME, self.load_game_button)
@@ -270,6 +303,10 @@ class MainMenu(Menu):
     def resolutions(self):
         """Action of the 'to resolutions' button. """
         self.set_state(St.RESOLUTIONS, self.to_resolutions_button)
+
+    def screen_modes(self):
+        """Action of the 'to screen modes' button. """
+        self.set_state(St.SCREEN_MODES, self.to_screen_modes_button)
 
     def back(self):
         """Action of the 'back' button. """
@@ -317,9 +354,11 @@ class MainMenu(Menu):
         self.set_delete_buttons()
 
     def set_language(self, language):
+        self.game.language = language
         for button in (self.to_languages_button, self.to_resolutions_button,
-                       self.music_slider, self.sound_slider, self.back_button,
-                       self.yes_button, self.no_button, self.resume_button,
+                       self.to_screen_modes_button, self.start_button, self.music_slider,
+                       self.sound_slider, self.back_button, self.yes_button,
+                       self.no_button, self.resume_button, *self.screen_mode_buttons,
                        self.new_game_button, self.load_game_button, self.exit_button,
                        self.settings_button, self.credits_button, *self.save_buttons):
             button.set_language(language)
@@ -335,8 +374,12 @@ class MainMenu(Menu):
         if self.is_closing:
             return 1000
         if self.is_opening:
-            return 600
-        return 200
+            if self.state == St.SPLASH_SCREEN:
+                return 1300
+            return 800
+        if self.state == St.SPLASH_SCREEN:
+            return 500
+        return 260
 
     def set_widgets_state(self, state):
         self.caption.set_state(state)
@@ -401,7 +444,11 @@ class MainMenu(Menu):
             self.remove_resume_button()
 
     def open(self):
-        self.state = St.MAIN_PAGE
+        if self.splash_screen_shown:
+            self.state = St.MAIN_PAGE
+        else:
+            self.state = St.SPLASH_SCREEN
+            self.splash_screen_shown = True
         self.caption.set_state(self.state)
         self.bubbles.reset()
         for button in self.save_buttons:

@@ -1,0 +1,153 @@
+{
+	"circles": [
+		{
+			"type": "thick_blue",
+			"radius": 54.135,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": 2.827433388230814
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": -0.3141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": 0.9424777960769379
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": -2.199114857512855
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": 1.5707963267948966
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": -1.5707963267948966
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": 2.199114857512855
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": -0.9424777960769379
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": 0.3141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 16.842,
+			"distance": 55.69,
+			"angle": -2.827433388230814
+		}
+	],
+	"circles states": {
+		"0 3": [
+			0
+		],
+		"4 6": [
+			1,
+			2,
+			0
+		],
+		"7 10": [
+			3,
+			1,
+			2,
+			4,
+			0
+		],
+		"11 15": [
+			3,
+			5,
+			1,
+			2,
+			6,
+			4,
+			0
+		],
+		"16 20": [
+			3,
+			5,
+			7,
+			1,
+			2,
+			8,
+			6,
+			4,
+			0
+		],
+		"21 25": [
+			9,
+			3,
+			5,
+			7,
+			1,
+			2,
+			8,
+			6,
+			4,
+			10,
+			0
+		]
+	},
+	"guns": [
+		{
+			"name": "spreader",
+			"scale": 1,
+			"distance": 0,
+			"angle": 0,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": "10 spread",
+			"cooldown min": 1200,
+			"cooldown max": 1600,
+			"delay": 2000,
+			"bullet name": "small red",
+			"bullet velocity": 0.36,
+			"bullet damage": -4
+		}
+	],
+	"guns states": {
+		"0 25": [
+			0
+		]
+	},
+	"radius": 54.135,
+	"rect size": 143.398,
+	"max health": 25,
+	"velocity": 0.06,
+	"death award": {
+		"medium": 22,
+		"large": 0,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

@@ -1,0 +1,384 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 27.832,
+			"distance": 118.596,
+			"angle": 1.548805178219768
+		},
+		{
+			"type": "blue",
+			"radius": 27.832,
+			"distance": 118.596,
+			"angle": -1.548805178219768
+		},
+		{
+			"type": "thick_blue",
+			"radius": 54.234,
+			"distance": 138.995,
+			"angle": 1.046150353645401
+		},
+		{
+			"type": "thick_blue",
+			"radius": 54.234,
+			"distance": 138.995,
+			"angle": -1.046150353645401
+		},
+		{
+			"type": "blue",
+			"radius": 35.075,
+			"distance": 200.923,
+			"angle": 2.384468824074653
+		},
+		{
+			"type": "blue",
+			"radius": 35.075,
+			"distance": 200.923,
+			"angle": -2.384468824074653
+		},
+		{
+			"type": "looping",
+			"distance": 8.16,
+			"angle": 3.141592653589793,
+			"loop angle": 0
+		},
+		{
+			"type": "looping",
+			"distance": 202.556,
+			"angle": 0.18221237390820803,
+			"loop angle": 3.141592653589793
+		},
+		{
+			"type": "looping",
+			"distance": 202.556,
+			"angle": -0.18221237390820803,
+			"loop angle": 3.141592653589793
+		},
+		{
+			"type": "thick_blue",
+			"radius": 79.301,
+			"distance": 235.2,
+			"angle": 0.0
+		},
+		{
+			"type": "thick_blue",
+			"radius": 137.76,
+			"distance": 93.12,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 36.6,
+			"distance": 143.161,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 27.832,
+			"distance": 83.675,
+			"angle": 1.2377875055143786
+		},
+		{
+			"type": "blue",
+			"radius": 27.832,
+			"distance": 83.675,
+			"angle": -1.2377875055143786
+		},
+		{
+			"type": "blue",
+			"radius": 27.26,
+			"distance": 244.157,
+			"angle": 2.337344934270806
+		},
+		{
+			"type": "blue",
+			"radius": 27.26,
+			"distance": 244.157,
+			"angle": -2.337344934270806
+		},
+		{
+			"type": "blue",
+			"radius": 28.022,
+			"distance": 100.079,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 30.5,
+			"distance": 226.539,
+			"angle": 0.39584067435231398
+		},
+		{
+			"type": "blue",
+			"radius": 30.5,
+			"distance": 226.539,
+			"angle": -0.39584067435231398
+		},
+		{
+			"type": "blue",
+			"radius": 20.302,
+			"distance": 218.597,
+			"angle": 0.5529203070318035
+		},
+		{
+			"type": "blue",
+			"radius": 20.302,
+			"distance": 218.597,
+			"angle": -0.5529203070318035
+		},
+		{
+			"type": "thick_blue",
+			"radius": 91.92,
+			"distance": 235.2,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 16.775,
+			"distance": 79.543,
+			"angle": 2.792875869041326
+		},
+		{
+			"type": "blue",
+			"radius": 16.775,
+			"distance": 79.543,
+			"angle": -2.792875869041326
+		}
+	],
+	"circles states": {
+		"0 39": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			11
+		],
+		"40 79": [
+			0,
+			1,
+			12,
+			13,
+			2,
+			3,
+			4,
+			5,
+			14,
+			15,
+			6,
+			7,
+			8,
+			9,
+			10,
+			16,
+			11
+		],
+		"80 119": [
+			0,
+			1,
+			12,
+			13,
+			2,
+			3,
+			17,
+			18,
+			19,
+			20,
+			4,
+			5,
+			14,
+			15,
+			6,
+			7,
+			8,
+			21,
+			10,
+			16,
+			11
+		],
+		"120 200": [
+			0,
+			1,
+			12,
+			13,
+			2,
+			3,
+			17,
+			18,
+			19,
+			20,
+			4,
+			5,
+			14,
+			15,
+			6,
+			7,
+			8,
+			21,
+			10,
+			16,
+			11,
+			22,
+			23
+		]
+	},
+	"guns": [
+		{
+			"name": "sapper_spawner",
+			"scale": 1,
+			"distance": 238.366,
+			"angle": 2.6734953482049139,
+			"rotation type": 0,
+			"rotation angle": 2.368760860806704,
+			"shooting type": "spawn sapper",
+			"cooldown min": 1200,
+			"cooldown max": 1200,
+			"delay": 2000,
+			"bullet name": "enemy sapper",
+			"bullet velocity": 0.72,
+			"bullet damage": -3
+		},
+		{
+			"name": "sapper_spawner",
+			"scale": 1,
+			"distance": 238.366,
+			"angle": -2.6734953482049139,
+			"rotation type": 0,
+			"rotation angle": -2.368760860806704,
+			"shooting type": "spawn sapper",
+			"cooldown min": 1200,
+			"cooldown max": 1200,
+			"delay": 2000,
+			"bullet name": "enemy sapper",
+			"bullet velocity": 0.72,
+			"bullet damage": -3
+		},
+		{
+			"name": "sapper_spawner",
+			"scale": 1,
+			"distance": 253.931,
+			"angle": 3.141592653589793,
+			"rotation type": 0,
+			"rotation angle": 3.141592653589793,
+			"shooting type": "spawn sapper",
+			"cooldown min": 1200,
+			"cooldown max": 1200,
+			"delay": 2400,
+			"bullet name": "enemy sapper",
+			"bullet velocity": 0.72,
+			"bullet damage": -3
+		},
+		{
+			"name": "gun_3",
+			"scale": 1.029,
+			"distance": 142.392,
+			"angle": 1.002168056495144,
+			"rotation type": 1,
+			"rotation angle": 0,
+			"shooting type": "5 parallel",
+			"cooldown min": 1200,
+			"cooldown max": 1600,
+			"delay": 2000,
+			"bullet name": "small red scaling",
+			"bullet velocity": 0.72,
+			"bullet damage": -2
+		},
+		{
+			"name": "gun_3",
+			"scale": 1.029,
+			"distance": 142.392,
+			"angle": -1.002168056495144,
+			"rotation type": 1,
+			"rotation angle": 0,
+			"shooting type": "5 parallel",
+			"cooldown min": 1200,
+			"cooldown max": 1600,
+			"delay": 2000,
+			"bullet name": "small red scaling",
+			"bullet velocity": 0.72,
+			"bullet damage": -2
+		},
+		{
+			"name": "gun_6",
+			"scale": 0.979,
+			"distance": 228.946,
+			"angle": 0,
+			"rotation type": 1,
+			"rotation angle": 0,
+			"shooting type": "single",
+			"cooldown min": 1600,
+			"cooldown max": 2400,
+			"delay": 2000,
+			"bullet name": "sticky",
+			"bullet velocity": 0.72,
+			"bullet damage": 0
+		},
+		{
+			"name": "large_vampire_top_1",
+			"scale": 1,
+			"distance": 195.393,
+			"angle": 3.141592653589793,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": null,
+			"cooldown min": 999999,
+			"cooldown max": 999999,
+			"delay": 999999,
+			"bullet name": null,
+			"bullet velocity": 0,
+			"bullet damage": 0
+		},
+		{
+			"name": "large_vampire_top_2",
+			"scale": 1,
+			"distance": 195.393,
+			"angle": 3.141592653589793,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": null,
+			"cooldown min": 999999,
+			"cooldown max": 999999,
+			"delay": 999999,
+			"bullet name": null,
+			"bullet velocity": 0,
+			"bullet damage": 0
+		}
+	],
+	"guns states": {
+		"0 159": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			7
+		],
+		"160 200": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6
+		]
+	},
+	"radius": 179.8,
+	"rect size": 653.76,
+	"max health": 200,
+	"velocity": 0.06,
+	"death award": {
+		"medium": 8,
+		"large": 4,
+		"ultra": 1
+	},
+	"spawners": [],
+	"events": []
+}

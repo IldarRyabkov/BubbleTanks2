@@ -1,3 +1,1 @@
-pygame
-numpy
-pyinstaller
+pygame>=2.0.1

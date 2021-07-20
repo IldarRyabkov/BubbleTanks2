@@ -1,0 +1,190 @@
+{
+	"circles": [
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 33.684,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 11.669,
+			"distance": 36.796,
+			"angle": 0.34243359924128749
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 11.669,
+			"distance": 36.796,
+			"angle": -0.34243359924128749
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 16.842,
+			"distance": 53.293,
+			"angle": 0.0
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 9.624,
+			"distance": 37.566,
+			"angle": 2.0074777056438779
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 9.624,
+			"distance": 37.566,
+			"angle": -2.0074777056438779
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 9.624,
+			"distance": 37.414,
+			"angle": 1.5739379194484864
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 9.624,
+			"distance": 37.414,
+			"angle": -1.5739379194484864
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 16.842,
+			"distance": 54.843,
+			"angle": 1.790707812546182
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 16.842,
+			"distance": 54.843,
+			"angle": -1.790707812546182
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 10.105,
+			"distance": 63.336,
+			"angle": 2.054601595447725
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 10.105,
+			"distance": 63.336,
+			"angle": -2.054601595447725
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 10.105,
+			"distance": 63.204,
+			"angle": 1.533097214951819
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 10.105,
+			"distance": 63.204,
+			"angle": -1.533097214951819
+		},
+		{
+			"type": "displaceable",
+			"color": "blue",
+			"radius": 17.203,
+			"distance": 36.932,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "displaceable",
+			"color": "orange",
+			"radius": 21.895,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "displaceable",
+			"color": "orange",
+			"radius": 10.226,
+			"distance": 17.684,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "displaceable",
+			"color": "orange",
+			"radius": 10.226,
+			"distance": 25.263,
+			"angle": 0.0
+		},
+		{
+			"type": "displaceable",
+			"color": "orange",
+			"radius": 10.226,
+			"distance": 39.459,
+			"angle": 0.0
+		}
+	],
+	"circles states": {
+		"0 0": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			11,
+			12,
+			13,
+			14,
+			15,
+			16,
+			17,
+			18
+		]
+	},
+	"guns": [
+		{
+			"name": "gun_14",
+			"scale": 1,
+			"distance": 0,
+			"angle": 0,
+			"rotation type": 0,
+			"shooting type": "single",
+			"bullet name": "sniper bullet",
+			"bullet velocity": 1.68,
+			"bullet damage": -25
+		}
+	],
+	"guns states": {
+		"0 0": [
+			0
+		]
+	},
+	"rotating": false,
+	"max velocity": 1.176,
+	"max health": 1,
+	"radius": 85.0,
+	"background radius": 160.0,
+	"cooldown": 700,
+	"cooldown auto": 0,
+	"preview": {
+		"health state": 0,
+		"scale": 1.33,
+		"dx": 0
+	}
+}

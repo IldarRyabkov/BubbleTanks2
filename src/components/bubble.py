@@ -2,35 +2,42 @@ from random import uniform
 from math import hypot, cos, sin
 import pygame as pg
 
-from components.body import Body
-from components.utils import circle_collidepoint, calculate_angle
+from components.player_body import Body
+from components.utils import *
 from data.constants import *
-from data.bubble import *
+from data.bubbles import BUBBLES
 from assets.paths import BUBBLE_HALO
 
 
 class Bubble:
+    BUBBLE_MAX_VEL = HF(0.7)
+    BUBBLE_ACC = HF(0.0024)
+
     def __init__(self,
+                 screen_rect,
                  x,
                  y,
                  angle=0,
                  gravitation_radius=0,
-                 bubble_type="small"):
+                 bubble_type="medium"):
         self.x = x
         self.y = y
-        self.radius = BUBBLES[bubble_type]["radius"]
+
+        self.body = Body(screen_rect, BUBBLES[bubble_type]["circles"])
+        self.body.set_pos(x, y)
+        self.radius = self.body.circles[0].max_radius
         self.health = BUBBLES[bubble_type]["health"]
-        self.vel = uniform(0.7, 1.7) * BUBBLE_MAX_VEL
-        self.acc = -BUBBLE_ACC
+        self.vel = uniform(0.7, 1.7) * self.BUBBLE_MAX_VEL
+        self.acc = -self.BUBBLE_ACC
         self.gravity_vel = 0
-        self.max_gravity_vel = BUBBLE_MAX_VEL
-        self.gravity_acc = BUBBLE_ACC
+        self.max_gravity_vel = self.BUBBLE_MAX_VEL
+        self.gravity_acc = self.BUBBLE_ACC
         self.angle = angle
         self.gravity_radius = gravitation_radius
-        self.body = Body(BUBBLES[bubble_type]["body"])
+
         self.base_halo = None
         self.halo = None
-        if bubble_type == "big":
+        if bubble_type == "ultra":
             self.base_halo = pg.image.load(BUBBLE_HALO).convert_alpha()
             self.update_halo()
 
@@ -46,21 +53,21 @@ class Bubble:
                 -self.radius <= self.y - dy <= SCR_H + self.radius)
 
     def maximize_gravity(self):
-        self.max_gravity_vel = 2 * BUBBLE_MAX_VEL
-        self.gravity_acc = 5 * BUBBLE_ACC
+        self.max_gravity_vel = 2 * self.BUBBLE_MAX_VEL
+        self.gravity_acc = 5 * self.BUBBLE_ACC
         self.gravity_radius = 2 * ROOM_RADIUS
 
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
-        self.body.move(dx, dy)
+        self.body.set_pos(self.x, self.y)
 
     def update_halo(self):
         diam = round(2.9 * self.body.circles[0].radius)
         self.halo = pg.transform.scale(self.base_halo, (diam, diam))
 
     def update_body(self, dt):
-        self.body.update(self.x, self.y, dt)
+        self.body.update_shape(dt)
         if self.halo is not None:
             self.update_halo()
 
@@ -69,9 +76,9 @@ class Bubble:
         if self.vel == 0:
             self.acc = 0
         if self.in_gravity_zone(player_x, player_y):
-            self.gravity_acc = BUBBLE_ACC
+            self.gravity_acc = self.BUBBLE_ACC
         elif self.gravity_vel != 0:
-            self.gravity_acc = -BUBBLE_ACC
+            self.gravity_acc = -self.BUBBLE_ACC
         else:
             self.gravity_acc = 0
 
@@ -99,6 +106,7 @@ class Bubble:
             self.gravity_vel = max(0, self.gravity_vel + self.gravity_acc * dt)
 
         # Finally, body of the bubble is updated according to the new coordinates
+        self.body.set_pos(self.x, self.y)
         self.update_body(dt)
 
     def draw(self, surface, dx=0, dy=0):
@@ -112,4 +120,3 @@ class Bubble:
 
 
 __all__ = ["Bubble"]
-

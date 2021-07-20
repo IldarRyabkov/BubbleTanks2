@@ -1,0 +1,667 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 87.583,
+			"angle": 1.580411
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 92.178,
+			"angle": 1.253586
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 67.671,
+			"angle": 1.359455
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 78.751,
+			"angle": 0.997623
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 67.853,
+			"angle": 1.794273
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 44.71,
+			"angle": 1.630026
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 51.286,
+			"angle": 1.055724
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 58.275,
+			"angle": 0.77226
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 82.113,
+			"angle": 0.518056
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 59.956,
+			"angle": 0.326827
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 87.438,
+			"angle": 0.221952
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 33.607,
+			"angle": 0.609846
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 40.005,
+			"angle": -0.057167
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 67.888,
+			"angle": -0.033675
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 51.016,
+			"angle": -0.316531
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 79.674,
+			"angle": -0.200653
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 73.657,
+			"angle": -0.530896
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 99.299,
+			"angle": -0.385006
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 50.659,
+			"angle": -0.82739
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 75.096,
+			"angle": -0.900058
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 94.993,
+			"angle": -0.667819
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 20.405,
+			"angle": 2.201326
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 24.086,
+			"angle": 0.753607
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 5.777,
+			"angle": -1.023234
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 31.902,
+			"angle": -0.15523
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 26.685,
+			"angle": -2.955691
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 29.864,
+			"angle": -2.05246
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 29.976,
+			"angle": -1.082019
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 93.801,
+			"angle": 2.411542
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 74.414,
+			"angle": 2.143105
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 68.571,
+			"angle": 2.498092
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 48.855,
+			"angle": 2.140358
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 93.616,
+			"angle": 2.686566
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 74.332,
+			"angle": 2.874631
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 47.979,
+			"angle": 2.720568
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 45.205,
+			"angle": -1.774455
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 48.766,
+			"angle": -1.138044
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 65.948,
+			"angle": -1.481293
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 74.15,
+			"angle": -1.088283
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 69.707,
+			"angle": -1.912195
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 87.902,
+			"angle": -1.695661
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 88.852,
+			"angle": -1.378711
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 79.026,
+			"angle": -2.996466
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 49.927,
+			"angle": -2.91064
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 71.187,
+			"angle": -2.662073
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 47.739,
+			"angle": -2.382926
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 98.055,
+			"angle": -2.800054
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 96.73,
+			"angle": -2.544622
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 75.3,
+			"angle": -2.334729
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 157.159,
+			"angle": 1.471889
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 162.768,
+			"angle": 1.289959
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 138.393,
+			"angle": 1.348167
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 147.336,
+			"angle": 1.158292
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 134.984,
+			"angle": 1.560993
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 114.27,
+			"angle": 1.450489
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 120.839,
+			"angle": 1.219133
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 131.554,
+			"angle": 1.003085
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 149.562,
+			"angle": 0.83547
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 123.968,
+			"angle": 0.806672
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 145.162,
+			"angle": 0.664387
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 105.867,
+			"angle": 1.007379
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 96.807,
+			"angle": 0.778368
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 118.314,
+			"angle": 0.611975
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 133.267,
+			"angle": 0.471318
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 160.199,
+			"angle": 0.387339
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 139.371,
+			"angle": 0.284347
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 166.929,
+			"angle": 0.236414
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 111.613,
+			"angle": 0.357888
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 118.244,
+			"angle": 0.149091
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 145.903,
+			"angle": 0.120673
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 107.922,
+			"angle": 2.864977
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 118.65,
+			"angle": 3.073608
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 90.225,
+			"angle": 3.05214
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 147.829,
+			"angle": 3.087042
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 135.888,
+			"angle": -3.042276
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 108.151,
+			"angle": -3.016686
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 90.311,
+			"angle": -2.061851
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 105.03,
+			"angle": -1.846893
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 144.629,
+			"angle": -2.840097
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 116.701,
+			"angle": -2.764723
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 138.881,
+			"angle": -2.659737
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 114.382,
+			"angle": -2.543964
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 164.173,
+			"angle": -2.590994
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 104.255,
+			"angle": -0.05969026041820607
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 127.918,
+			"angle": -0.05026548245743669
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 158.564,
+			"angle": -0.04084070449666731
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 122.059,
+			"angle": -0.25761059759436308
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 149.449,
+			"angle": -0.21048670779051616
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 101.856,
+			"angle": -0.9393362034233481
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 106.116,
+			"angle": -1.1812388377497623
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 113.483,
+			"angle": -1.51738925168387
+		},
+		{
+			"type": "blue",
+			"radius": 16.902,
+			"distance": 124.639,
+			"angle": -1.7404423300887456
+		}
+	],
+	"circles states": {
+		"0 1": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			11,
+			12,
+			13,
+			14,
+			15,
+			16,
+			17,
+			18,
+			19,
+			20,
+			21,
+			22,
+			23,
+			24,
+			25,
+			26,
+			27,
+			28,
+			29,
+			30,
+			31,
+			32,
+			33,
+			34,
+			35,
+			36,
+			37,
+			38,
+			39,
+			40,
+			41,
+			42,
+			43,
+			44,
+			45,
+			46,
+			47,
+			48,
+			49,
+			50,
+			51,
+			52,
+			53,
+			54,
+			55,
+			56,
+			57,
+			58,
+			59,
+			60,
+			61,
+			62,
+			63,
+			64,
+			65,
+			66,
+			67,
+			68,
+			69,
+			70,
+			71,
+			72,
+			73,
+			74,
+			75,
+			76,
+			77,
+			78,
+			79,
+			80,
+			81,
+			82,
+			83,
+			84,
+			85,
+			86,
+			87,
+			88,
+			89,
+			90,
+			91
+		]
+	},
+	"guns": [],
+	"guns states": {
+		"0 1": []
+	},
+	"radius": 111.722,
+	"rect size": 359.642,
+	"max health": 1,
+	"velocity": 0.12,
+	"death award": {
+		"medium": 50,
+		"large": 0,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

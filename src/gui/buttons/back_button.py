@@ -15,7 +15,7 @@ class BackButton(TextButton):
     def reset(self, state):
         super().reset(state)
         if state == St.SETTINGS:
-            self.move_to(y=H(685))
+            self.move_to(y=H(725))
         elif state in (St.NEW_GAME, St.LOAD_GAME):
             self.move_to(y=H(850))
 

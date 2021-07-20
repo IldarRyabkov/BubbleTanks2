@@ -4,18 +4,18 @@ from .scaling_button import ScalingButton
 
 from data.constants import *
 from data.scripts import load_save_file
-from data.player import PLAYER_PARAMS
-from data.languages.texts import TEXTS
+from data.player_tanks import PLAYER_TANKS
+from data.languages import TEXTS
 
 from assets.paths import *
 from components.utils import *
 
-from gui.widgets.tank_body_smooth import TankBodySmooth
+from gui.widgets.tank_preview_smooth import TankPreviewSmooth
 from gui.widgets.text_widget import TextWidget
 
 
 class SaveButton(ScalingButton):
-    def __init__(self, x, save_name, sound_player, save_button_action):
+    def __init__(self, screen_rect, x, save_name, sound_player, save_button_action):
         y = H(470)
         super().__init__(x, H(490), H(330), H(420), 0.9, 180, None,
                          sound_player, click_sound=None,
@@ -23,7 +23,7 @@ class SaveButton(ScalingButton):
 
         self.save_name = save_name
         self.save_data = None
-        self.tank_body = TankBodySmooth(self.x, self.y - H(60), no_background=True)
+        self.tank_body = TankPreviewSmooth(screen_rect, self.x, self.y - H(60), no_background=True)
         self.bg = None
         self.language = None
 
@@ -49,8 +49,8 @@ class SaveButton(ScalingButton):
         if self.save_data is not None:
             tank = tuple(self.save_data["tank"])
         else:
-            tank = None
-        self.tank_body.set_body(tank)
+            tank = "empty"
+        self.tank_body.set(tank)
 
     def draw_status_bar(self):
         rect = pg.Rect(0, 0, H(270), H(17))
@@ -58,7 +58,7 @@ class SaveButton(ScalingButton):
         rect.y = H(290)
 
         health_rect = rect.copy()
-        max_health = PLAYER_PARAMS[tuple(self.save_data["tank"])]["max_health"]
+        max_health = PLAYER_TANKS[tuple(self.save_data["tank"])]["max health"]
         health = self.save_data["health"]
         tank_level = self.save_data["tank"][0]
         if health < max_health and tank_level != 5:

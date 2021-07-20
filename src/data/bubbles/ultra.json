@@ -1,0 +1,8 @@
+{
+	"health": 50,
+	"circles": [
+		{
+			"type": "ultra bubble"
+		}
+	]
+}

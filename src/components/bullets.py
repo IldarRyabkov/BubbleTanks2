@@ -1,42 +1,53 @@
 from math import cos, sin, pi, hypot
-from random import uniform, choice
+from random import uniform
 import pygame as pg
+from itertools import chain
 
+from assets.paths import ENEMY_DEATH
 from data.constants import *
-from data.bullets import *
-from .body import Body
-from .utils import *
+from data.bullets import BULLETS
+from components.player_body import Body
+from components.utils import *
+from components.special_effects import sapper_surfaces
 
 
 class Bullet:
     """ a parent class for all bullets classes """
-    def __init__(self, x, y, radius, damage, vel, angle, body, hit_effect=None):
+    def __init__(self, name, screen_rect, x, y, damage, vel, angle):
         self.x = x
         self.y = y
-        self.radius = radius
+
+        self.angle = angle
+        self.radius = BULLETS[name]["radius"]
+
+        rect_size = BULLETS[name]["size"]
+        self.rect = pg.Rect(0, 0, rect_size, rect_size)
+        self.rect.center = x, y
+        self.screen_rect = screen_rect
+
         self.VELOCITY = vel
         self.vel_x = vel * cos(angle)
         self.vel_y = -vel * sin(angle)
+
         self.damage = damage
-        self.hit_effect = self.set_hit_effect(hit_effect, damage)
-        self.body = body if isinstance(body, pg.Surface) else Body(body)
-        self.hit_the_target = False
+        self.hit_effect = BULLETS[name]["hit effect"]
+        self.killed = False
+
+        body_data = BULLETS[name]["circles"]
+        if isinstance(body_data, pg.Surface):
+            self.body = body_data
+        else:
+            self.body = Body(screen_rect, body_data)
+            self.body.set_pos(x, y)
+            self.body.update_shape(0)
 
     @property
     def is_outside(self):
         return not circle_collidepoint(SCR_W2, SCR_H2, ROOM_RADIUS, self.x, self.y)
 
     @property
-    def killed(self):
-        return self.hit_the_target or self.is_outside
-
-    @staticmethod
-    def set_hit_effect(hit_effect, damage):
-        if hit_effect is not None:
-            return hit_effect
-        if damage <= -5: return 'BigHitLines'
-        if damage: return 'SmallHitLines'
-        return 'VioletHitCircle'
+    def is_on_screen(self):
+        return self.rect.colliderect(self.screen_rect)
 
     def update_vel(self, angle):
         self.vel_x = self.VELOCITY * cos(angle)
@@ -45,25 +56,30 @@ class Bullet:
     def update_pos(self, dt):
         self.x += self.vel_x * dt
         self.y += self.vel_y * dt
+        self.rect.center = self.x, self.y
+        self.body.set_pos(self.x, self.y)
+        if self.is_outside:
+            self.killed = True
 
     def update_body(self, dt):
-        self.body.update(self.x, self.y, dt)
+        if self.is_on_screen:
+            self.body.update_shape(dt)
 
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
-        self.body.move(dx, dy)
+        self.rect.center = self.x, self.y
+        self.body.set_pos(self.x, self.y)
 
     def draw(self, surface, dx, dy):
-        self.body.draw(surface, dx, dy)
+        if self.is_on_screen:
+            self.body.draw(surface, dx, dy)
 
 
 class RegularBullet(Bullet):
     """ A bullet with uniform rectilinear motion """
-    def __init__(self, x, y, damage, vel, angle, body, hit_effect=None):
-        super().__init__(x, y, 0.8 * body[0][0], damage, vel,
-                         angle, body, hit_effect=hit_effect)
-        self.body.update(x, y, 0)
+    def __init__(self, name, screen_rect, x, y, damage, vel, angle):
+        super().__init__(name, screen_rect, x, y, damage, vel, angle)
 
     def update_color(self, dt):
         pass
@@ -79,12 +95,10 @@ class ExplodingBullet(RegularBullet):
      from contact with the enemy, damaging others.
 
     """
-    def __init__(self, x, y, angle):
-        super().__init__(x, y, -21, HF(1.1), angle,
-                         BULLET_BODIES["BigBullet_1"],
-                         hit_effect='PowerfulExplosion')
-
-        self.colors = {1: DARK_RED, -1: LIGHT_RED}
+    def __init__(self, screen_rect, x, y, angle):
+        super().__init__("big light red", screen_rect, x, y, -21, HF(1.1), angle)
+        self.hit_effect = 'DamageBurstLarge'
+        self.colors = {1: LIGHT_RED, -1: LIGHT_RED_2}
         self.color_switch = 1
         self.T = 80
         self.color_time = 0
@@ -106,37 +120,33 @@ class ExplodingBullet(RegularBullet):
 
 class Mine(Bullet):
     """Mine doesn't move and deals damage to a tank that moved too close. """
-    def __init__(self, x, y, body):
-        super().__init__(x, y, HF(18), -10, 0, 0, body, hit_effect='RedHitCircle')
+    def __init__(self, name, screen_rect, x, y, damage, vel, angle):
+        super().__init__(name, screen_rect, x, y, damage, vel, angle)
 
-        angle = uniform(0, 2 * pi)
-        for circle in self.body.circles:
-            circle.angle += angle
-        self.body.update(x, y, 0)
-
-        # bullet switches colors periodically
-        self.colors = {1: self.body.circles[0].color, -1: LIGHT_RED}
+        self.body.rotate(uniform(0, 2 * pi))
+        self.body.update_shape(0)
+        self.colors = {1: self.body.circles[0].color, -1: LIGHT_RED_2}
         self.color_switch = 1
         self.T = 240
         self.color_time = uniform(0, self.T)
 
-    def change_color(self):
-        self.color_switch *= -1
-        self.body.circles[3].color = self.colors[self.color_switch]
-
-    def update_color(self, dt):
+    def update_body(self, dt):
         self.color_time += dt
         if self.color_time >= 0.75 * self.T and self.color_switch == 1:
             self.change_color()
         elif self.color_time >= self.T and self.color_switch == -1:
             self.change_color()
-            self.color_time -= self.T
+            self.color_time = 0
+
+    def change_color(self):
+        self.color_switch *= -1
+        self.body.circles[0].color = self.colors[self.color_switch]
 
     def update(self, dt):
-        self.update_color(dt)
+        self.update_body(dt)
 
 
-class OrbitalSeeker(Bullet):
+class AllyOrbitalSeeker(Bullet):
     """
     Bullet has two states: 'orbiting', when it rotates around the player;
                            'not orbiting', when it moves as a regular bullet.
@@ -144,186 +154,302 @@ class OrbitalSeeker(Bullet):
     bullet starts moving evenly and rectilinearly to a target's position.
 
     """
-    def __init__(self, x, y):
-        super().__init__(x, y, HF(12), -7, HF(1.6), 0, BULLET_BODIES["Shuriken"])
-        self.dist = HF(128)
-        self.is_orbiting = True
-        self.angle = 0
-        self.angular_vel = -0.002 * pi
-        self.health = 1
-        self.search_area_rect = pg.Rect(x - H(150), y - H(150), H(300), H(300))
-        self.update_polar_coords(x, y)
-        self.hit_effect = 'RedHitCircle'
-
-    @property
-    def killed(self):
-        return self.hit_the_target or (not self.is_orbiting and self.is_outside)
-
-    def is_near_mob(self, mob):
-        return self.search_area_rect.colliderect(mob.body_rect)
-
-    def update_polar_coords(self, x, y, dt=0):
-        self.angle += self.angular_vel * dt
-        self.angle %= 2 * pi
-        self.x = x + self.dist * cos(self.angle)
-        self.y = y - self.dist * sin(self.angle)
-        self.search_area_rect.center = self.x, self.y
-        self.body.update(self.x, self.y, 0)
-
-    def set_vel(self, mob):
-        """
-        Method is called when a target intersected with orbital seeker searching area.
-        Sets x- and y- velocity components according to target position.
-
-        """
-
-        if mob.is_paralyzed or mob.body.is_frozen:
-            angle = calculate_angle(self.x, self.y, mob.x, mob.y)
-        else:
-            dt = hypot(self.x - mob.x, self.y - mob.y) / self.VELOCITY
-            angle = calculate_angle(self.x, self.y, *mob.shift(mob.angular_vel * dt))
-        self.update_vel(angle)
+    def __init__(self, game, screen_rect, x, y):
+        super().__init__("orbital seeker", screen_rect, x, y, -5, HF(1.68), 0)
+        self.game = game
+        self.owner = game.player
+        self.orbiting = True
+        self.orbiting_radius = HF(128)
+        self.orbiting_angle = 0
+        self.search_radius = HF(260)
 
     def update_pos(self, dt):
-        super().update_pos(dt)
-        self.search_area_rect.center = self.x, self.y
-        self.body.update(self.x, self.y, 0)
+        if self.orbiting:
+            self.orbiting_angle -= 0.006 * dt
+            self.x = self.owner.x + self.orbiting_radius * cos(self.orbiting_angle)
+            self.y = self.owner.y - self.orbiting_radius * sin(self.orbiting_angle)
+            self.rect.center = self.x, self.y
+            self.body.set_pos(self.x, self.y)
+        else:
+            super().update_pos(dt)
 
-    def check_targets(self, mobs):
-        for mob in mobs:
-            if self.is_near_mob(mob):
-                self.is_orbiting = False
-                self.set_vel(mob)
+    def check_targets(self):
+        for enemy in chain(self.game.room.mobs, self.game.room.seekers):
+            if enemy.collide_bullet(self.x, self.y, self.search_radius):
+                self.orbiting = False
+                predicted_time = hypot(self.x - enemy.x, self.y - enemy.y) / self.VELOCITY
+                x = enemy.x + enemy.vel_x * predicted_time
+                y = enemy.y + enemy.vel_y * predicted_time
+                angle = calculate_angle(self.x, self.y, x, y)
+                self.update_vel(angle)
+                self.owner.bullets.append(self)
                 break
 
-    def update(self, dt, player_x, player_y, mobs):
-        if self.is_orbiting:
-            self.update_polar_coords(player_x, player_y, dt)
-            self.check_targets(mobs)
-        else:
-            self.update_pos(dt)
+    def update(self, dt):
+        self.update_pos(dt)
+        self.update_body(dt)
+        if self.orbiting:
+            self.check_targets()
 
 
 class Seeker(Bullet):
     """ A bullet which moves with constant velocity and follows a moving target.
         Therefore, the x- and y-components of velocity are changing. """
-    def __init__(self, x, y, start_angle, maneuvering_angle, radius, damage, vel, body):
-        super().__init__(x, y, radius, damage, vel, 0, body)
-
-        self.body.update(x, y, 0)
-        self.update_vel(start_angle)
-        self.rearrangement_angle = choice((-maneuvering_angle, maneuvering_angle))
-        self.maneuvering_angle = maneuvering_angle
-        self.health = 1
-        self.hit_effect = 'RedHitCircle'
+    def __init__(self, game, name, screen_rect, x, y, start_angle, rotation_speed, damage, vel):
+        super().__init__(name, screen_rect, x, y, damage, vel, start_angle)
+        self.game = game
+        self.rotation_speed = rotation_speed
         self.target = None
-        self.is_infected = False
-
-    @property
-    def killed(self) -> bool:
-        return self.hit_the_target or self.health <= 0
-
-    @property
-    def no_target(self):
-        return self.target is None or self.target.health <= 0
 
     def collide_bullet(self, bul_x, bul_y, bul_r):
         return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
 
-    def handle_injure(self, damage):
-        self.health += damage
+    def receive_damage(self, damage):
+        self.killed = True
 
-    def set_target(self, targets):
+    def closest_target(self, targets):
         return min(targets, key=lambda t: hypot(self.x - t.x, self.y - t.y))
 
-    def update(self, dt, targets):
-        if self.no_target:
-            self.target = self.set_target(targets)
-
-        angle = calculate_angle(self.x, self.y, self.target.x, self.target.y)
-        vel_angle = calculate_angle(0, 0, self.vel_x, self.vel_y)
-        if abs(vel_angle - angle) > pi/2:
-            self.update_vel(vel_angle - self.rearrangement_angle)
-        elif vel_angle - angle > 0:
-            self.update_vel(vel_angle - self.maneuvering_angle)
+    def update_angle(self, dt):
+        if self.target is None:
+            return
+        angle_to_target = calculate_angle(self.x, self.y, self.target.x, self.target.y)
+        if abs(angle_to_target - self.angle) > pi:
+            if angle_to_target > self.angle:
+                rotation = -self.rotation_speed * dt
+            else:
+                rotation = self.rotation_speed * dt
         else:
-            self.update_vel(vel_angle + self.maneuvering_angle)
+            if angle_to_target > self.angle:
+                rotation = min(angle_to_target - self.angle, self.rotation_speed*dt)
+            else:
+                rotation = max(angle_to_target - self.angle, -self.rotation_speed*dt)
+        self.angle += rotation
+        self.angle = (self.angle + pi) % (2*pi) - pi
+        self.body.angle = self.angle
+
+    def update_target(self):
+        if self.target is None or self.target.killed:
+            if self.game.room.mobs or self.game.room.seekers:
+                self.target = self.closest_target(chain(self.game.room.mobs, self.game.room.seekers))
+
+    def update_pos(self, dt):
+        self.x += self.vel_x * dt
+        self.y += self.vel_y * dt
+        self.rect.center = self.x, self.y
+        self.body.set_pos(self.x, self.y)
+
+    def update(self, dt):
+        self.update_target()
+        self.update_angle(dt)
+        self.update_vel(self.angle)
         self.update_pos(dt)
-        self.body.update(self.x, self.y, dt, self.x + self.vel_x, self.y + self.vel_y)
+        self.update_body(dt)
 
 
-class PlayerVirus(Seeker):
-    def __init__(self, x, y, start_angle):
-        super().__init__(x, y, start_angle, 0.04, HF(18), -1, 0.6, BULLET_BODIES['PlayerVirus'])
+class EnemySeeker(Seeker):
+    def __init__(self, game, name, screen_rect, x, y, start_angle, rotation_speed, damage, vel):
+        super().__init__(game, name, screen_rect, x, y, start_angle, rotation_speed, damage, vel)
+        self.target = game.player
+        self.sticky = False
+        self.stunned = False
+        self.chasing_infectors = set()
 
     @property
     def no_target(self):
-        return super().no_target or self.target.is_infected
+        return False
 
-    def set_target(self, targets):
-        current_target = None
-        for target in targets:
-            current_target = target
-            if not target.is_infected:
-                return target
-        return current_target
+    def update_target(self):
+        pass
+
+    def receive_damage(self, damage):
+        self.killed = True
+        self.game.sound_player.play_sound(ENEMY_DEATH)
 
 
-class PlayerSeeker(Seeker):
-    def __init__(self, x, y, start_angle, body="HomingMissile_1", vel=HF(0.75)):
-        super().__init__(x, y, start_angle, 0.04, HF(10), -5, vel, BULLET_BODIES[body])
+class EnemyOrbitalSeeker(EnemySeeker):
+    def __init__(self, owner, name, screen_rect, x, y,
+                 start_angle, maneuvering_angle, damage):
+        super().__init__(owner.game, name, screen_rect, x, y, start_angle,
+                         maneuvering_angle, damage, HF(0.42))
+        self.owner = owner
+        self.orbiting = True
+        self.orbiting_radius = owner.rect.width
+        self.orbiting_angle = start_angle
+        self.action_radius = HF(160) + self.target.radius
+
+    def update(self, dt):
+        if self.owner.killed and self.orbiting:
+            self.killed = True
+            return
+        if self.orbiting:
+            self.orbiting_angle -= 0.008 * dt
+            angle = self.orbiting_angle + self.owner.body.angle
+            self.x = self.owner.x + self.orbiting_radius * cos(angle)
+            self.y = self.owner.y - self.orbiting_radius * sin(angle)
+            self.rect.center = self.x, self.y
+            self.angle = angle - 0.5 * pi
+            if hypot(self.x - self.target.x, self.y - self.target.y) <= self.action_radius:
+                self.orbiting = False
+                self.angle = calculate_angle(self.x, self.y, SCR_W2, SCR_H2)
+            self.body.set_pos(self.x, self.y)
+            self.body.angle = self.angle
+            self.update_body(dt)
+        else:
+            super().update(dt)
+
+
+class AllyInfector(Seeker):
+    def __init__(self, game, screen_rect, x, y, start_angle):
+        super().__init__(game, "ally infector", screen_rect, x, y, start_angle, 0.0072,  -1, HF(0.6))
+
+    def eval_enemy(self, enemy):
+        if not enemy.infected:
+            if not enemy.chasing_infectors:
+                return hypot(self.x - enemy.x, self.y - enemy.y)
+            return hypot(self.x - enemy.x, self.y - enemy.y) + 100000
+        return hypot(self.x - enemy.x, self.y - enemy.y) + 200000
+
+    def update_target(self):
+        if self.target is None or self.target.killed:
+            if self.game.room.mobs:
+                self.target = min(self.game.room.mobs, key=self.eval_enemy)
+                self.target.chasing_infectors.add(self)
+            elif self.game.room.seekers:
+                self.target = self.closest_target(self.game.room.seekers)
+
+
+class EnemyLeecher(EnemySeeker):
+    def __init__(self, player, name, screen_rect, x, y, start_angle, rotation_speed, damage, vel):
+        super().__init__(player.game, name, screen_rect, x, y, start_angle, rotation_speed, damage, vel)
+        self.leeching = False
+        self.leech_time = 0
+        self.leech_cooldown = 450
+
+    def update(self, dt):
+        if self.leeching:
+            self.angle = calculate_angle(self.x, self.y, self.target.x, self.target.y)
+            self.leech_time += dt
+            if self.leech_time >= self.leech_cooldown:
+                self.leech_time = 0
+                self.target.receive_damage(-1, play_sound=False)
+            self.body.angle = self.angle
+            self.update_body(dt)
+        else:
+            super().update(dt)
+
+    def draw(self, surface, dx, dy):
+        if self.leeching:
+            start_pos = (SCR_W2, SCR_H2)
+            end_pos = (round(self.x - dx), round(self.y - dy))
+            pg.draw.line(surface, PINK, start_pos, end_pos, H(10))
+            pg.draw.line(surface, RED, start_pos, end_pos, H(4))
+        super().draw(surface, dx, dy)
+
+
+class EnemySapper(EnemySeeker):
+    def __init__(self, owner, game, name, screen_rect, x, y, start_angle, rotation_speed, damage, vel):
+        super().__init__(game, name, screen_rect, x, y, start_angle, rotation_speed, damage, vel)
+        self.owner = owner
+        self.player = game.player
+        self.going_to_player = True
+        self.halo_time = 0
+        self.time_to_hold_attack = 0
+
+    def return_to_enemy(self):
+        self.going_to_player = False
+        self.target = self.owner
+
+    @property
+    def can_attack(self):
+        return self.going_to_player and self.time_to_hold_attack == 0
+
+    def update(self, dt):
+        super().update(dt)
+        if self.owner.killed:
+            self.killed = True
+        elif self.going_to_player:
+            self.time_to_hold_attack = max(0, self.time_to_hold_attack - dt)
+        elif self.owner.collide_bullet(self.x, self.y, self.radius):
+            self.owner.update_health(3)
+            self.going_to_player = True
+            self.target = self.player
+            self.time_to_hold_attack = 500
+
+    def update_body(self, dt):
+        if self.is_on_screen:
+            self.body.update_shape(dt)
+            self.halo_time = (self.halo_time + dt) % 540
+
+    def draw(self, surface, dx, dy):
+        if self.is_on_screen:
+            self.body.draw(surface, dx, dy)
+            if not self.going_to_player:
+                index = int(18 * self.halo_time / 540)
+                pos = self.body.circles[0].x - dx - H(27.5), self.body.circles[0].y - dy - H(27.5)
+                surface.blit(sapper_surfaces[index], pos)
 
 
 class LeecherBullet(Bullet):
-    def __init__(self, x, y, angle):
-        super().__init__(x, y, 18, -7, HF(1.6), angle,
-                         BULLET_BODIES['LeecherBullet'],
-                         hit_effect='RedHitCircle')
+    def __init__(self, screen_rect, x, y, damage, vel, angle):
+        super().__init__("leecher bullet", screen_rect, x, y, damage, vel, angle)
+        self.body.angle = angle
 
     def update(self, dt):
         self.update_pos(dt)
-        self.body.update(self.x, self.y, dt, self.x + self.vel_x, self.y + self.vel_y)
+        self.update_body(dt)
 
 
 class Drone(Bullet):
-    def __init__(self, x, y, angle, name, player):
-        super().__init__(x, y, 0, 0, HF(0.7), angle, BULLET_BODIES[name])
+    def __init__(self, name, screen_rect, x, y, damage, vel, angle, player):
+        super().__init__(name, screen_rect, x, y, damage, vel, angle)
         self.player = player
         self.name = name
         self.time = 0
         self.mitosis_time = 300
-        self.is_divided = False
         self.angle = angle
 
     def divide(self):
-        self.is_divided = True
-        if self.name == "TinyDrone":
-            self.player.seekers.append(Seeker(self.x, self.y, self.angle, 0.06, 0,
-                                              -7, HF(1.1), BULLET_BODIES["TinyDrone"]))
+        self.killed = True
+        if self.name == "tiny drone":
+            seeker = Seeker(self.player.game, "tiny drone", self.screen_rect,
+                            self.x, self.y, self.angle, 0.009, -7, HF(0.9))
+            seeker.update(0)
+            self.player.seekers.append(seeker)
         else:
-            if self.name == "BigDrone": child_name = "MediumDrone"
-            elif self.name == "MediumDrone": child_name = "SmallDrone"
-            else: child_name = "TinyDrone"
+            if self.name == "big drone":
+                child_name = "medium drone"
+            elif self.name == "medium drone":
+                child_name = "small drone"
+            else:
+                child_name = "tiny drone"
             for k in (-1, 1):
                 angle = self.angle + k * uniform(0.2*pi, 0.8*pi)
-                self.player.drones.append(Drone(self.x, self.y, angle, child_name, self.player))
+                drone = Drone(child_name, self.screen_rect,
+                              self.x, self.y, 0, HF(0.6), angle, self.player)
+                drone.update(0)
+                self.player.drones.append(drone)
+
+    def update_body(self, dt):
+        if self.is_on_screen:
+            self.body.update_shape(dt)
 
     def update(self, dt):
         self.update_pos(dt)
-        self.body.update(self.x, self.y, dt, self.x + self.vel_x, self.y + self.vel_y)
+        self.update_body(dt)
         self.time += dt
         if self.time >= self.mitosis_time:
             self.divide()
 
 
-class PierceBullet(Bullet):
+class PierceShot(Bullet):
     """ A bullet that can pass through many enemies. """
-    def __init__(self, x, y, damage, vel, angle, body, hit_effect=None):
-        super().__init__(x, y, HF(12), damage, vel, angle, body, hit_effect=hit_effect)
-        self.body = pg.transform.rotate(body, angle * 180 / pi)
+    def __init__(self, screen_rect, x, y, damage, vel, angle):
+        super().__init__("sniper bullet", screen_rect, x, y, damage, vel, angle)
+        self.body = pg.transform.rotate(self.body, angle * 180 / pi)
         self.x = x - self.body.get_width() / 2
         self.y = y - self.body.get_height() / 2
-        self.attacked_mobs = []  # contains mobs attacked by this bullet
+        self.attacked_mobs = []
 
     def move(self, dx, dy):
         self.x += dx
@@ -333,15 +459,21 @@ class PierceBullet(Bullet):
         pass
 
     def update(self, dt):
-        self.update_pos(dt)
+        self.x += self.vel_x * dt
+        self.y += self.vel_y * dt
+        self.rect.center = self.x, self.y
+        if self.is_outside:
+            self.killed = True
 
     def draw(self, surface, dx, dy):
-        surface.blit(self.body, (int(self.x - dx), int(self.y - dy)))
+        if self.is_on_screen:
+            surface.blit(self.body, (int(self.x - dx), int(self.y - dy)))
 
 
-class ExplosivePierceBullet(PierceBullet):
-    def __init__(self, *args):
-        super().__init__(*args, hit_effect='SmallPowerfulExplosion')
+class ExplosivePierceShot(PierceShot):
+    def __init__(self, screen_rect, x, y, damage, vel, angle):
+        super().__init__(screen_rect, x, y, damage, vel, angle)
+        self.hit_effect = 'DamageBurst'
         self.explosion_radius = H(130)
 
 
@@ -351,30 +483,52 @@ class FrangibleBullet(Bullet):
      If bullet collides with an object before fragmentation_time, it deals
      damage as a regular bullet and then disappears.
     """
-    def __init__(self, x, y, angle, body):
-        super().__init__(x, y, HF(20), -40, HF(0.8), angle, body)
-        self.body.update(x, y, 0)
+    def __init__(self, player, screen_rect, x, y, angle):
+        super().__init__("big light red", screen_rect, x, y, -20, HF(0.8), angle)
         self.time = 0
         self.fragmentation_time = 1000
+        self.player = player
 
-    def update(self, dt, bullets):
+    def update(self, dt):
         self.update_pos(dt)
-        self.body.update(self.x, self.y, dt)
+        self.update_body(dt)
         self.time = min(self.fragmentation_time, self.time + dt)
         if self.time == self.fragmentation_time:
-            self.hit_the_target = True
-            fragments = [
-                PierceBullet(self.x, self.y, -8, HF(2.1), i * pi / 180, BULLET_BODIES["SniperBullet"])
-                for i in range(0, 360, 12)
-            ]
-            bullets.extend(fragments)
+            self.killed = True
+            for i in range(0, 360, 12):
+                fragment = PierceShot(self.screen_rect, self.x, self.y, -8, HF(2.1), i * pi / 180)
+                self.player.bullets.append(fragment)
 
 
-class AirBullet(RegularBullet):
-    def __init__(self, x, y, angle):
-        super().__init__(x, y, -1, HF(1.1), angle, BULLET_BODIES["AirBullet"])
-        self.bubbles = {"small": 2}
+class BulletBuster(RegularBullet):
+    def __init__(self, screen_rect, x, y, angle):
+        super().__init__("bullet buster", screen_rect, x, y, -1, HF(0.9), angle)
         self.attacked_mobs = []
+
+
+def get_bullet_type(bullet_type: str):
+    if bullet_type == "regular bullet":
+        return RegularBullet
+    if bullet_type == "mine":
+        return Mine
+    if bullet_type == "pierce shot":
+        return PierceShot
+    if bullet_type == "explosive pierce shot":
+        return ExplosivePierceShot
+    if bullet_type == "leecher bullet":
+        return LeecherBullet
+    if bullet_type == "drone":
+        return Drone
+    if bullet_type == "seeker":
+        return Seeker
+    if bullet_type == "enemy seeker":
+        return EnemySeeker
+    if bullet_type == "enemy leecher":
+        return EnemyLeecher
+    if bullet_type == "enemy orbital seeker":
+        return EnemyOrbitalSeeker
+    if bullet_type == "enemy sapper":
+        return EnemySapper
 
 
 __all__ = [
@@ -382,15 +536,19 @@ __all__ = [
     "RegularBullet",
     "ExplodingBullet",
     "Mine",
-    "OrbitalSeeker",
+    "AllyOrbitalSeeker",
     "Seeker",
-    "PlayerSeeker",
     "LeecherBullet",
-    "PierceBullet",
-    "ExplosivePierceBullet",
+    "EnemySeeker",
+    "EnemyLeecher",
+    "EnemySapper",
+    "PierceShot",
+    "ExplosivePierceShot",
     "FrangibleBullet",
-    "AirBullet",
+    "BulletBuster",
     "Drone",
-    "PlayerVirus"
+    "EnemyOrbitalSeeker",
+    "AllyInfector",
+    "get_bullet_type"
 
 ]

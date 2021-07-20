@@ -2,33 +2,21 @@ import pygame as pg
 from random import uniform
 from math import pi, sin, cos
 
-from .circle import Circle
-from .utils import *
+from components.circle import make_circle
+from components.utils import *
 from data.constants import *
+from data.bullets import BULLETS
 from assets.paths import *
 
 
-# load all images at once, to increase game performance
+# load all images only one time, to increase game performance
 images = {
-    "drone_conversion": pg.image.load(DRONE_CONVERSION).convert_alpha(),
-    "teleportation": pg.image.load(TELEPORTATION).convert_alpha(),
-    "powerful_explosion": pg.image.load(POWERFUL_EXPLOSION).convert_alpha(),
-    "paralyzing_explosion": pg.image.load(PARALYZING_EXPLOSION).convert_alpha()
+    "conversion": pg.image.load(DRONE_CONVERSION).convert_alpha(),
+    "teleport": pg.image.load(TELEPORTATION).convert_alpha(),
+    "damage_burst": pg.image.load(DAMAGE_BURST_IMAGE).convert_alpha(),
+    "damage_burst_bg": pg.image.load(DAMAGE_BURST_BG_IMAGE).convert_alpha(),
+    "stun_burst": pg.image.load(STUN_BURST_IMAGE).convert_alpha()
 }
-
-
-def init_drone_conversion() -> list:
-    surfaces = []
-    max_diam = HF(1900)
-    n = 20
-    for i in range(n):
-        alpha = round(i/(n-1) * 255)
-        images["drone_conversion"].set_alpha(alpha)
-        diam = round(i/(n-1) * max_diam)
-        surface = pg.Surface((diam, diam), pg.SRCALPHA)
-        surface.blit(pg.transform.scale(images["drone_conversion"], surface.get_size()), (0, 0))
-        surfaces.append(surface)
-    return surfaces
 
 
 class Line:
@@ -82,7 +70,7 @@ class SpecialEffect:
 
     def update(self, dt):
         self.t = min(self.t + dt, self.duration)
-        if self.t >= self.duration:
+        if self.t == self.duration:
             self.running = False
 
     def draw(self, screen, dx, dy):
@@ -114,140 +102,45 @@ class BulletHitLines(SpecialEffect):
             line.draw(surface, dx, dy)
 
 
-class BulletHitCircle(SpecialEffect):
-    def __init__(self, x, y, color):
-        duration = HF(128)
-        super().__init__(x, y, duration)
-        self.r = HF(96)
-        self.circle = Circle(2/3*self.r, HF(7), color, 0, 0, True, 4/3*self.r, True)
-        self.circle.scaling_phase = 0.75
-        self.circle.scaling_phase_speed = 0.5 / duration
-        self.surface = pg.Surface((2 * self.r, 2 * self.r))
-        self.alpha = 255
-        self.surface.set_alpha(self.alpha)
-        self.surface.set_colorkey(BLACK)
+class LeechEffect(SpecialEffect):
+    circles_data = [
+        # radius  |  width
+        (H(4.224),  H(1)),
+        (H(13.704), H(1)),
+        (H(23.232), H(1)),
+        (H(32.664), H(1)),
+        (H(42.144), H(1.224)),
+        (H(51.48),  H(1.512)),
+        (H(60.936), H(1.776)),
+        (H(70.488), H(2.04)),
+        (H(79.944), H(2.28)),
+        (H(89.424), H(2.544))
+    ]
+    frames = {
+        0: [0],
+        1: [1],
+        2: [2, 0],
+        3: [3, 1],
+        4: [4, 2, 0],
+        5: [5, 3, 1],
+        6: [6, 4, 2],
+        7: [7, 5, 3],
+        8: [8, 6, 4],
+        9: [9, 7, 5],
+        10: [9, 8, 6],
+        11: [9, 7],
+        12: [9, 8],
+        13: [9],
+    }
 
-    def update(self, dt):
-        super().update(dt)
-
-        self.circle.update(self.r, self.r, dt)
-
-        self.alpha = max(self.alpha - 255 * dt/self.duration, 0)
-        self.surface.set_alpha(self.alpha)
-
-    def draw(self, screen, dx, dy):
-        self.surface.fill(BLACK)
-        self.circle.draw(self.surface, 0, 0)
-        screen.blit(self.surface, (self.x - self.r - dx, self.y - self.r - dy))
-
-
-class Armor(SpecialEffect):
-    def __init__(self, x, y, radius):
-        super().__init__(x + HF(5), y, duration=500)
-        self.surface = pg.Surface((2*radius, 2*radius))
-        self.surface.fill(COLOR_KEY)
-        pg.draw.circle(self.surface, WHITE, (radius, radius), radius)
-        self.surface.set_colorkey(COLOR_KEY)
-        self.surface.set_alpha(255)
-        self.is_shifted = False
-
-    def shift(self):
-        self.x -= HF(5)
-        self.is_shifted = True
-
-    def update(self, dt):
-        super().update(dt)
-        alpha = 255 * (1 - self.t / self.duration)
-        self.surface.set_alpha(alpha)
-        if self.t >= 50 and not self.is_shifted:
-            self.shift()
-
-    def draw(self, screen, dx, dy):
-        screen.blit(self.surface, (self.x, self.y))
-
-
-class ParalyzingExplosion(SpecialEffect):
-    def __init__(self, x, y, max_diam):
-        super().__init__(x, y, duration=500)
-        self.max_diam = max_diam
-        self.diam = 0
-        self.img = self.set_image("paralyzing_explosion", max_diam)
-        self.surface = None
-        self.alpha_effect_duration = 300
-
-    def update(self, dt):
-        super().update(dt)
-        if self.t <= self.duration - self.alpha_effect_duration:
-            self.diam = round(self.max_diam * self.t / (self.duration - self.alpha_effect_duration))
-            self.surface = pg.transform.scale(self.img, (self.diam, self.diam))
-        else:
-            alpha = 255 * (self.duration - self.t) / self.alpha_effect_duration
-            self.surface.set_alpha(alpha)
-
-    def draw(self, screen, dx, dy):
-        screen.blit(self.surface, (self.x - self.diam/2 - dx,
-                                   self.y - self.diam/2 - dy))
-
-
-class PowerfulExplosion(SpecialEffect):
-    def __init__(self, x, y, max_diam):
-        super().__init__(x, y, duration=350)
-        self.max_diam = max_diam
-        self.diam = 0
-        self.img = self.set_image("powerful_explosion", self.max_diam)
-        self.surface = None
-        self.alpha_effect_duration = 130
-
-    def update(self, dt):
-        super().update(dt)
-        if self.t <= self.duration:
-            self.diam = round(self.max_diam * self.t / self.duration)
-            self.surface = pg.transform.scale(self.img, (self.diam, self.diam))
-            if self.t >= self.duration - self.alpha_effect_duration:
-                alpha = 255 * (self.duration - self.t) / self.alpha_effect_duration
-                self.surface.set_alpha(alpha)
-
-    def draw(self, screen, dx, dy):
-        screen.blit(self.surface, (self.x - self.diam // 2 - dx,
-                                   self.y - self.diam // 2 - dy))
-
-
-class DroneConversion(SpecialEffect):
     def __init__(self, x, y):
-        super().__init__(x, y, duration=300)
-        self.increase_time = self.duration - 40
-        self.index = -1
-        self.n_surfaces = len(drone_conversion_surfaces)
-        drone_conversion_surfaces[-1].set_alpha(255)
-
-    def update(self, dt):
-        super().update(dt)
-        if self.t <= self.increase_time:
-            self.index = round(self.t / self.increase_time * (self.n_surfaces - 1))
-        elif self.t <= self.duration:
-            self.index = -1
-            alpha = round(255 * (self.duration - self.t) / (self.duration - self.increase_time))
-            drone_conversion_surfaces[-1].set_alpha(alpha)
+        super().__init__(x, y, duration=249)
 
     def draw(self, screen, dx, dy):
-        surf = drone_conversion_surfaces[self.index]
-        radius = surf.get_width() // 2
-        screen.blit(surf,  (self.x - radius - dx, self.y - radius - dy))
-
-
-class Flash(SpecialEffect):
-    def __init__(self):
-        super().__init__(0, 0, duration=250)
-        self.surface = pg.Surface((SCR_W, SCR_H))
-        self.surface.fill(WHITE)
-
-    def update(self, dt):
-        super().update(dt)
-        alpha = 255 * (1 - self.t/self.duration)
-        self.surface.set_alpha(alpha)
-
-    def draw(self, screen, dx, dy):
-        screen.blit(self.surface, (0, 0))
+        frame = int(13 * self.t / self.duration)
+        for index in self.frames[frame]:
+            r, w = self.circles_data[index]
+            pg.draw.circle(screen, LEECH_EFFECT_COLOR, (self.x-dx, self.y-dy), r, w)
 
 
 class StarsAroundMob(SpecialEffect):
@@ -304,42 +197,359 @@ class StarsAroundMob(SpecialEffect):
                 self.draw_small_star(screen, *pos)
 
 
-class TeleportationFlash(SpecialEffect):
-    def __init__(self, x, y):
-        super().__init__(x, y, duration=250)
-        self.diam = 0
-        self.max_diam = H(320)
-        self.img = pg.transform.scale(images["teleportation"], (self.max_diam, self.max_diam))
-        self.surface = None
+class SpriteEffect(SpecialEffect):
+    def __init__(self, x, y, surfaces, duration, fixed=False):
+        super().__init__(x, y, duration)
+        self.surfaces = surfaces
+        self.index = 0
+        self.fixed = fixed
 
     def update(self, dt):
         super().update(dt)
-        if self.t <= self.duration:
-            self.diam = int(self.max_diam * (1 - self.t/self.duration))
-            self.surface = pg.transform.scale(self.img, (self.diam, self.diam))
+        self.index = int(self.t/self.duration * len(self.surfaces))
 
     def draw(self, screen, dx, dy):
-        screen.blit(self.surface, (self.x - self.diam/2 - dx,
-                                   self.y - self.diam/2 - dy))
+        surface = self.surfaces[self.index]
+        if self.fixed:
+            dx = dy = 0
+        screen.blit(surface, (self.x - surface.get_width()/2 - dx,
+                              self.y - surface.get_height()/2 - dy))
+
+
+def _init_conversion_surfaces() -> list:
+    surfaces = []
+    start_diam = HF(75.84)
+    delta_diam = HF(97.4)
+    for i in range(19):
+        diam = round(start_diam + i * delta_diam)
+        image = pg.transform.scale(images["conversion"], (diam, diam))
+        if i >= 15:
+            alpha = round((19 - i)/5 * 255)
+            image.set_alpha(alpha)
+        surface = pg.Surface(image.get_size(), pg.SRCALPHA)
+        surface.blit(image, (0, 0))
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_flash_surfaces() -> list:
+    surfaces = []
+    n = 4
+    for i in range(n):
+        alpha = round(255 * (n - i) / n)
+        surface = pg.Surface(SCR_SIZE, pg.SRCALPHA)
+        surface.fill((255, 255, 255, alpha))
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_teleport_surfaces() -> list:
+    surfaces = []
+    alphas = [255, 254, 247, 235, 218, 197, 171, 140, 104, 64]
+    diameters = [HF(264.24), HF(261.84), HF(254.64), HF(242.88), HF(226.32),
+                 HF(204.96), HF(178.8), HF(148.08), HF(112.32), HF(72.0)]
+    for alpha, diam in zip(alphas, diameters):
+        size = (round(diam), round(diam))
+        image = pg.transform.scale(images["teleport"], size)
+        image.set_alpha(alpha)
+        surface = pg.Surface(image.get_size(), pg.SRCALPHA)
+        surface.blit(image, (0, 0))
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_stun_burst_surfaces(size) -> list:
+    scale = size / 600
+    surfaces = []
+    alphas = [207, 164, 125, 92, 64, 41, 23]
+    diameters = [HF(57.6), HF(132.24), HF(201.6), HF(265.2), HF(323.28),
+                 HF(375.84), HF(422.88), HF(464.4), HF(500.4), HF(530.88),
+                 HF(555.84), HF(575.04), HF(588.96), HF(597.36), HF(600)]
+
+    for diam in diameters:
+        diam *= scale
+        size = (round(diam), round(diam))
+        surface = pg.transform.scale(images["stun_burst"], size)
+        surfaces.append(surface)
+
+    size = surfaces[-1].get_size()
+    base_surface = pg.transform.scale(images["stun_burst"], size)
+    for alpha in alphas:
+        base_surface.set_alpha(alpha)
+        surface = pg.Surface(size, pg.SRCALPHA)
+        surface.blit(base_surface, (0, 0))
+        surfaces.append(surface)
+
+    return surfaces
+
+
+def _init_damage_burst_surfaces(size) -> list:
+    scale = size / 720
+    surfaces = []
+    bg_alphas = [255, 236, 217, 197, 177, 158, 138, 118, 98, 79, 59, 39, 20, 0]
+    alphas = [255, 255, 243, 230, 217, 204, 191, 178, 165, 152, 139, 126, 113, 100]
+    diameters = [HF(0), HF(72), HF(126), HF(180), HF(234), HF(288), HF(342),
+                 HF(396), HF(450), HF(504), HF(558), HF(612), HF(666), HF(720)]
+
+    max_diam = round(diameters[-1] * scale)
+    max_size = (max_diam, max_diam)
+    bg_image = pg.transform.scale(images["damage_burst_bg"], max_size)
+
+    for diam, alpha, bg_alpha in zip(diameters, alphas, bg_alphas):
+        diam = round(diam * scale)
+        size = (diam, diam)
+        image = pg.transform.scale(images["damage_burst"], size)
+        image.set_alpha(alpha)
+        image_pos = round((max_diam - diam) / 2), round((max_diam - diam) / 2)
+        bg_image.set_alpha(bg_alpha)
+        surface = pg.Surface(max_size, pg.SRCALPHA)
+        surface.blit(image, image_pos)
+        surface.blit(bg_image, (0, 0))
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_sticky_circle_surfaces() -> list:
+    surfaces = []
+    circle = make_circle(BULLETS["sticky"]["circles"][0], 20)
+    circle.update_pos(circle.radius, circle.radius, 0, 0)
+    circle.update_glares(0)
+    max_diam = round(circle.max_radius * 2)
+    base_surface = pg.Surface((max_diam, max_diam), pg.SRCALPHA)
+    circle.draw(base_surface)
+    diameters = [H(52.8), H(76.8), H(100.32), H(123.84), H(147.36)]
+    alphas = [255, 205, 154, 102, 51]
+    for diam, alpha in zip(diameters, alphas):
+        image = pg.transform.smoothscale(base_surface, (diam, diam))
+        image.set_alpha(alpha)
+        surface = pg.Surface(image.get_size(), pg.SRCALPHA)
+        surface.blit(image, (0, 0))
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_light_red_circle_surfaces():
+    surfaces = []
+    circle_data = {
+        "type": "fixed",
+        "color": "light red",
+        "radius": 150,
+        "edge factor": 0.087,
+        "distance": 0,
+        "angle": 0
+    }
+    circle = make_circle(circle_data)
+    circle.update_pos(circle.max_radius, circle.max_radius, 0, 0)
+    circle.update_glares(0)
+    max_diam = round(circle.max_radius * 2)
+    base_surface = pg.Surface((max_diam, max_diam), pg.SRCALPHA)
+    circle.draw(base_surface)
+    diameters = [H(20.64), H(64.32), H(103.2), H(135.36), H(161.76), H(182.4), H(196.32)]
+    alphas = [255, 196, 144, 100, 64, 36, 16]
+    for diam, alpha in zip(diameters, alphas):
+        image = pg.transform.smoothscale(base_surface, (diam, diam))
+        image.set_alpha(alpha)
+        surface = pg.Surface(image.get_size(), pg.SRCALPHA)
+        surface.blit(image, (0, 0))
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_red_circle_surfaces():
+    surfaces = []
+    circle_data = {
+        "type": "fixed",
+        "color": "red",
+        "radius": 150,
+        "edge factor": 0.086,
+        "distance": 0,
+        "angle": 0
+    }
+    circle = make_circle(circle_data)
+    circle.update_pos(circle.max_radius, circle.max_radius, 0, 0)
+    circle.update_glares(0)
+    max_diam = round(circle.max_radius * 2)
+    base_surface = pg.Surface((max_diam, max_diam), pg.SRCALPHA)
+    circle.draw(base_surface)
+    diameters = [H(20.64), H(64.32), H(103.2), H(135.36), H(161.76), H(182.4), H(196.32)]
+    alphas = [255, 196, 144, 100, 64, 36, 16]
+    for diam, alpha in zip(diameters, alphas):
+        image = pg.transform.smoothscale(base_surface, (diam, diam))
+        image.set_alpha(alpha)
+        surface = pg.Surface(image.get_size(), pg.SRCALPHA)
+        surface.blit(image, (0, 0))
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_spawner_burst_surfaces():
+    surfaces = []
+    circle_data = {
+        "type": "fixed",
+        "color": "orange",
+        "radius": 98.16,
+        "edge factor": 0.04,
+        "distance": 0,
+        "angle": 0
+    }
+    circle = make_circle(circle_data)
+    circle.update_pos(circle.max_radius, circle.max_radius, 0, 0)
+    circle.update_glares(0)
+    max_diam = round(circle.max_radius * 2)
+    base_surface = pg.Surface((max_diam, max_diam), pg.SRCALPHA)
+    circle.draw(base_surface)
+    diameters = [H(239.2), H(280.32), H(322.56), H(182.52)]
+    alphas = [205, 154, 102, 51]
+    for diam, alpha in zip(diameters, alphas):
+        image = pg.transform.smoothscale(base_surface, (diam, diam))
+        image.set_alpha(alpha)
+        surface = pg.Surface(image.get_size(), pg.SRCALPHA)
+        surface.blit(image, (0, 0))
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_shield_surfaces() -> list:
+    surfaces = []
+    radius = H(160)
+    surf_size = (2*radius, 2*radius)
+    alphas = [254, 177, 162, 146, 131, 115, 100, 85, 69, 54, 38, 23, 8]
+    for alpha in alphas:
+        surface = pg.Surface(surf_size, pg.SRCALPHA)
+        pg.draw.circle(surface, (255, 255, 255, alpha), (radius, radius), radius)
+        surfaces.append(surface)
+    return surfaces
+
+
+def _init_sapper_attack_surfaces() -> list:
+    size = (H(166), H(166))
+    surfaces = [
+        pg.transform.scale(pg.image.load(SAPPER_IMG_1).convert_alpha(), size),
+        pg.transform.scale(pg.image.load(SAPPER_IMG_2).convert_alpha(), size),
+        pg.transform.scale(pg.image.load(SAPPER_IMG_3).convert_alpha(), size),
+        pg.transform.scale(pg.image.load(SAPPER_IMG_4).convert_alpha(), size),
+        pg.transform.scale(pg.image.load(SAPPER_IMG_5).convert_alpha(), size),
+        pg.transform.scale(pg.image.load(SAPPER_IMG_6).convert_alpha(), size),
+        pg.transform.scale(pg.image.load(SAPPER_IMG_7).convert_alpha(), size),
+        pg.transform.scale(pg.image.load(SAPPER_IMG_8).convert_alpha(), size),
+    ]
+    return surfaces
+
+
+def _init_sapper_surfaces() -> list:
+    surfaces = []
+    diam = H(55)
+    radius = H(27.5)
+    surf_size = (diam, diam)
+    circle_data = {
+        "type": "fixed",
+        "color": "red",
+        "radius": 98.16,
+        "edge factor": 0.122,
+        "distance": 0,
+        "angle": 0
+    }
+    circle = make_circle(circle_data)
+    circle.update_pos(circle.max_radius, circle.max_radius, 0, 0)
+    circle.update_glares(0)
+    circle_diam = round(circle.max_radius * 2)
+    surface_1 = pg.Surface((circle_diam, circle_diam), pg.SRCALPHA)
+    circle.draw(surface_1)
+    surface_2 = pg.Surface(surf_size, pg.SRCALPHA)
+    pg.draw.circle(surface_2, WHITE, (radius, radius), radius)
+    for i in range(10):
+        alpha = round(51 + 128 * i/9)
+        d = round((0.653 + 0.347 * i/9) * HF(55))
+        scaled_surface = pg.transform.smoothscale(surface_1, (d, d))
+        surface_2.set_alpha(alpha)
+        surface = pg.Surface(surf_size, pg.SRCALPHA)
+        surface.blit(scaled_surface, (round(diam - d)/2, round(diam - d)/2))
+        surface.blit(surface_2, (0, 0))
+        surfaces.append(surface)
+    for i in range(8, -1, -1):
+        surfaces.append(surfaces[i])
+    return surfaces
+
+
+def _init_infection_surfaces() -> list:
+    surfaces = []
+    w, h = HF(120.286), HF(114.887)
+    circle_surfaces = []
+    k = 0.181
+    for surface in red_circle_surfaces:
+        diam = round(k * surface.get_width())
+        circle_surfaces.append(pg.transform.smoothscale(surface, (diam, diam)))
+    positions = [
+        (HF(44.284), 0.508 * pi),
+        (HF(39.183), 0.267 * pi),
+        (HF(40.364), 0.844 * pi),
+        (HF(4.759), 0.41 * pi),
+        (HF(12.402), -0.9 * pi),
+        (HF(42.413), 0.871 * pi),
+        (HF(42.86), -0.549 * pi),
+        (HF(35.49), -0.24 * pi),
+        (HF(48.775), 0.015 * pi)
+    ]
+    for circle_surf in circle_surfaces:
+        surface = pg.Surface((w, h), pg.SRCALPHA)
+        for distance, angle in positions:
+            x = round(w/2 + distance * cos(angle) - circle_surf.get_width()/2)
+            y = round(h/2 - distance * sin(angle) - circle_surf.get_height()/2)
+            surface.blit(circle_surf, (x, y))
+        surfaces.append(surface)
+    return surfaces
+
+
+conversion_surfaces = _init_conversion_surfaces()
+flash_surfaces = _init_flash_surfaces()
+teleport_surfaces = _init_teleport_surfaces()
+stun_burst_surfaces = _init_stun_burst_surfaces(800)
+stun_burst_large_surfaces = _init_stun_burst_surfaces(1100)
+damage_burst_surfaces = _init_damage_burst_surfaces(360)
+damage_burst_large_surfaces = _init_damage_burst_surfaces(720)
+sticky_circle_surfaces = _init_sticky_circle_surfaces()
+light_red_circle_surfaces = _init_light_red_circle_surfaces()
+red_circle_surfaces = _init_red_circle_surfaces()
+shield_surfaces = _init_shield_surfaces()
+spawner_burst_surfaces = _init_spawner_burst_surfaces()
+sapper_attack_surfaces = _init_sapper_attack_surfaces()
+sapper_surfaces = _init_sapper_surfaces()
+infection_surfaces = _init_infection_surfaces()
 
 
 def add_effect(name, effects, x=0, y=0, radius=0):
-    if name in ('SmallHitLines', 'BigHitLines'): effect = BulletHitLines(x, y, name)
-    elif name == 'RedHitCircle': effect = BulletHitCircle(x, y, RED)
-    elif name == 'VioletHitCircle': effect = BulletHitCircle(x, y, VIOLET)
-    elif name == 'Armor': effect = Armor(x, y, radius)
-    elif name == 'ParalyzingExplosion': effect = ParalyzingExplosion(x, y, H(960))
-    elif name == 'BigParalyzingExplosion': effect = ParalyzingExplosion(x, y, H(1200))
-    elif name == 'PowerfulExplosion': effect = PowerfulExplosion(x, y, H(1200))
-    elif name == 'SmallPowerfulExplosion': effect = PowerfulExplosion(x, y, H(280))
-    elif name == 'DroneConversion': effect = DroneConversion(x, y)
-    elif name == 'Flash': effect = Flash()
-    elif name == 'StarsAroundMob': effect = StarsAroundMob(x, y, radius)
-    else: effect = TeleportationFlash(x, y)
-    effects.append(effect)
+    if name in ('SmallHitLines', 'BigHitLines'):
+        effects.append(BulletHitLines(x, y, name))
+    elif name == 'LightRedCircle':
+        effects.append(SpriteEffect(x, y, light_red_circle_surfaces, 126))
+    elif name == 'RedCircle':
+        effects.append(SpriteEffect(x, y, red_circle_surfaces, 126))
+    elif name == 'StickyCircle':
+        effects.append(SpriteEffect(x, y, sticky_circle_surfaces, 108))
+    elif name == 'Shield':
+        effects.append(SpriteEffect(x, y, shield_surfaces, 452, fixed=True))
+    elif name == "StunBurst":
+        effects.append(SpriteEffect(x, y, stun_burst_surfaces, 397))
+    elif name == 'StunBurstLarge':
+        effects.append(SpriteEffect(x, y, stun_burst_large_surfaces, 397))
+    elif name == 'DamageBurst':
+        effects.append(SpriteEffect(x, y, damage_burst_surfaces, 253))
+    elif name == 'DamageBurstLarge':
+        effects.append(SpriteEffect(x, y, damage_burst_large_surfaces, 253))
+    elif name == "Conversion":
+        effects.append(SpriteEffect(x, y, conversion_surfaces, 344))
+    elif name == "Flash":
+        effects.append(SpriteEffect(SCR_W2, SCR_H2, flash_surfaces, 83, fixed=True))
+    elif name == 'StarsAroundMob':
+        effects.append(StarsAroundMob(x, y, radius))
+    elif name == "Teleport":
+        effects.append(SpriteEffect(x, y, teleport_surfaces, 193))
+    elif name == "SpawnerBurst":
+        effects.append(SpriteEffect(x, y, spawner_burst_surfaces, 108))
+    elif name == "SapperAttack":
+        effects.append(SpriteEffect(SCR_W2, SCR_H2, sapper_attack_surfaces, 144, fixed=True))
+    elif name == "LeechEffect":
+        effects.append(LeechEffect(x, y))
 
 
-drone_conversion_surfaces = init_drone_conversion()
-
-
-__all__ = ["add_effect"]
+__all__ = ["add_effect", "sapper_surfaces", "infection_surfaces"]

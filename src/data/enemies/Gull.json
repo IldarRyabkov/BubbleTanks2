@@ -1,0 +1,112 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 42.095,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 21.35,
+			"distance": 54.36,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 21.35,
+			"distance": 53.689,
+			"angle": 2.3970351946890124
+		},
+		{
+			"type": "blue",
+			"radius": 21.35,
+			"distance": 53.689,
+			"angle": -2.3970351946890124
+		},
+		{
+			"type": "blue",
+			"radius": 16.656,
+			"distance": 47.546,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 16.656,
+			"distance": 84.586,
+			"angle": 2.3624776754995246
+		},
+		{
+			"type": "blue",
+			"radius": 16.656,
+			"distance": 84.586,
+			"angle": -2.3624776754995246
+		}
+	],
+	"circles states": {
+		"0 1": [
+			0
+		],
+		"2 2": [
+			0,
+			1
+		],
+		"3 3": [
+			0,
+			2,
+			3
+		],
+		"4 4": [
+			0,
+			2,
+			3,
+			4
+		],
+		"5 5": [
+			0,
+			2,
+			3,
+			5,
+			6
+		]
+	},
+	"guns": [
+		{
+			"name": "gun_0",
+			"scale": 1.269,
+			"distance": 7.268,
+			"angle": 3.141592653589793,
+			"rotation type": 1,
+			"rotation angle": 0,
+			"shooting type": "single",
+			"cooldown min": 800,
+			"cooldown max": 1600,
+			"delay": 2000,
+			"bullet name": "small red",
+			"bullet velocity": 0.72,
+			"bullet damage": -1
+		}
+	],
+	"guns states": {
+		"0 5": [
+			0
+		]
+	},
+	"radius": 42.095,
+	"rect size": 202,
+	"max health": 5,
+	"velocity": 0.36,
+	"death award": {
+		"medium": 2,
+		"large": 0,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": [
+		{
+			"trigger value": -1,
+			"action": "event bubbles",
+			"value": 1
+		}
+	]
+}

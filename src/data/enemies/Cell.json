@@ -1,0 +1,178 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 17.086,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": 0.18535396656179779
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": 0.7565526308508511
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": 1.3277512951399045
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": 1.8989499594289577
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": 2.470148623718011
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": 3.0413472880070646
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": -0.3858446977272555
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": -0.9570433620163088
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": -1.528242026305362
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": -2.0994406905944156
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 23.59,
+			"angle": -2.670639354883469
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 17.147,
+			"angle": 0.0
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 17.147,
+			"angle": 2.4535838624536288
+		},
+		{
+			"type": "fixed",
+			"color": "blue",
+			"edge factor": 0.10666666666666668,
+			"radius": 6.692,
+			"distance": 17.147,
+			"angle": -2.4535838624536288
+		}
+	],
+	"circles states": {
+		"0 1": [
+			0,
+			12,
+			13,
+			14
+		],
+		"2 2": [
+			0,
+			2,
+			4,
+			6,
+			7,
+			10
+		],
+		"3 3": [
+			0,
+			2,
+			3,
+			4,
+			6,
+			7,
+			8,
+			10,
+			11
+		],
+		"4 4": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			11
+		]
+	},
+	"guns": [],
+	"guns states": {
+		"0 4": []
+	},
+	"radius": 15.762,
+	"rect size": 59.83,
+	"max health": 4,
+	"velocity": 0.36,
+	"death award": {
+		"medium": 3,
+		"large": 0,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

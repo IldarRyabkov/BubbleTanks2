@@ -1,0 +1,304 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 17.156,
+			"distance": 11.454,
+			"angle": 1.2503538761287379
+		},
+		{
+			"type": "blue",
+			"radius": 17.156,
+			"distance": 11.454,
+			"angle": -1.2503538761287379
+		},
+		{
+			"type": "blue",
+			"radius": 17.347,
+			"distance": 49.944,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 21.922,
+			"distance": 23.638,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 17.347,
+			"distance": 69.198,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 20.016,
+			"distance": 92.605,
+			"angle": 0.19163715186897738
+		},
+		{
+			"type": "blue",
+			"radius": 20.016,
+			"distance": 92.605,
+			"angle": -0.19163715186897738
+		},
+		{
+			"type": "orange",
+			"radius": 16.966,
+			"distance": 107.705,
+			"angle": 0.0
+		},
+		{
+			"type": "orange",
+			"radius": 10.508,
+			"distance": 128.138,
+			"angle": 0.13508848410436109
+		},
+		{
+			"type": "orange",
+			"radius": 10.508,
+			"distance": 128.138,
+			"angle": -0.13508848410436109
+		},
+		{
+			"type": "blue",
+			"radius": 17.538,
+			"distance": 68.809,
+			"angle": 2.400176787342602
+		},
+		{
+			"type": "blue",
+			"radius": 17.538,
+			"distance": 68.809,
+			"angle": -2.400176787342602
+		},
+		{
+			"type": "blue",
+			"radius": 17.538,
+			"distance": 51.347,
+			"angle": 2.1394245970946494
+		},
+		{
+			"type": "blue",
+			"radius": 17.538,
+			"distance": 51.347,
+			"angle": -2.1394245970946494
+		},
+		{
+			"type": "blue",
+			"radius": 16.775,
+			"distance": 79.906,
+			"angle": 1.5990706606772048
+		},
+		{
+			"type": "blue",
+			"radius": 16.775,
+			"distance": 79.906,
+			"angle": -1.5990706606772048
+		},
+		{
+			"type": "blue",
+			"radius": 22.303,
+			"distance": 58.453,
+			"angle": 1.3477432483900212
+		},
+		{
+			"type": "blue",
+			"radius": 22.303,
+			"distance": 58.453,
+			"angle": -1.3477432483900212
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 154.195,
+			"angle": 2.6483626069761958
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 154.195,
+			"angle": -2.6483626069761958
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 110.97,
+			"angle": 2.6452210143226058
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 110.97,
+			"angle": -2.6452210143226058
+		},
+		{
+			"type": "blue",
+			"radius": 25.163,
+			"distance": 133.336,
+			"angle": 2.4849997889895265
+		},
+		{
+			"type": "blue",
+			"radius": 25.163,
+			"distance": 133.336,
+			"angle": -2.4849997889895265
+		},
+		{
+			"type": "blue",
+			"radius": 16.775,
+			"distance": 117.175,
+			"angle": 2.2839378591597798
+		},
+		{
+			"type": "blue",
+			"radius": 16.775,
+			"distance": 117.175,
+			"angle": -2.2839378591597798
+		},
+		{
+			"type": "blue",
+			"radius": 33.932,
+			"distance": 91.052,
+			"angle": 2.0263272615654168
+		},
+		{
+			"type": "blue",
+			"radius": 33.932,
+			"distance": 91.052,
+			"angle": -2.0263272615654168
+		},
+		{
+			"type": "blue",
+			"radius": 23.638,
+			"distance": 134.665,
+			"angle": 1.97606177910798
+		},
+		{
+			"type": "blue",
+			"radius": 23.638,
+			"distance": 134.665,
+			"angle": -1.97606177910798
+		},
+		{
+			"type": "blue",
+			"radius": 17.156,
+			"distance": 160.198,
+			"angle": 2.0231856689118268
+		},
+		{
+			"type": "blue",
+			"radius": 17.156,
+			"distance": 160.198,
+			"angle": -2.0231856689118268
+		},
+		{
+			"type": "thick_blue",
+			"radius": 43.654,
+			"distance": 39.46,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "orange",
+			"radius": 25.353,
+			"distance": 131.342,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "swinging",
+			"color": "orange",
+			"radius": 8.794,
+			"distance": 131.342,
+			"angle": 3.141592653589793,
+			"swing distance": 76.438,
+			"swing angle": 2.0943951023931954
+		},
+		{
+			"type": "swinging",
+			"color": "orange",
+			"radius": 8.794,
+			"distance": 131.342,
+			"angle": 3.141592653589793,
+			"swing distance": 76.438,
+			"swing angle": -2.0943951023931954
+		},
+		{
+			"type": "swinging",
+			"color": "orange",
+			"radius": 8.794,
+			"distance": 131.342,
+			"angle": 3.141592653589793,
+			"swing distance": 76.438,
+			"swing angle": 0.0
+		}
+	],
+	"circles states": {
+		"0 0": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			11,
+			12,
+			13,
+			14,
+			15,
+			16,
+			17,
+			18,
+			19,
+			20,
+			21,
+			22,
+			23,
+			24,
+			25,
+			26,
+			27,
+			28,
+			29,
+			30,
+			31,
+			32,
+			33,
+			34,
+			35,
+			36
+		]
+	},
+	"guns": [
+		{
+			"name": "gun_16",
+			"scale": 1,
+			"distance": 0,
+			"angle": 0,
+			"rotation type": 0,
+			"shooting type": "drone",
+			"bullet name": "big drone",
+			"bullet velocity": 0.6,
+			"bullet damage": 0
+		}
+	],
+	"guns states": {
+		"0 0": [0]
+	},
+	"rotating": false,
+	"max velocity": 0.756,
+	"max health": 1,
+	"radius": 130.0,
+	"background radius": 250.0,
+	"cooldown": 1600,
+	"cooldown auto": 0,
+	"preview": {
+		"health state": 0,
+		"scale": 0.78,
+		"dx": 18
+	}
+}

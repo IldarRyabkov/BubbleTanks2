@@ -1,0 +1,31 @@
+{
+	"radius": 13.385,
+	"size": 52.931,
+	"circles": [
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 10.369,
+			"edge factor": 0.147,
+			"distance": 16.338,
+			"angle": 0
+		},
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 10.369,
+			"edge factor": 0.147,
+			"distance": 16.338,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 14.047,
+			"edge factor": 0.147,
+			"distance": 0,
+			"angle": 0
+		}
+	],
+	"hit effect": "LeechEffect"
+}

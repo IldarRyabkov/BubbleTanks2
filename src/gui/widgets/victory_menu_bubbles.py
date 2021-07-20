@@ -7,14 +7,15 @@ from gui.widgets.animated_widget import AnimatedWidget
 
 
 class VictoryMenuBubbles(AnimatedWidget):
-    def __init__(self, menu, y):
+    def __init__(self, menu, screen_rect, y):
         super().__init__()
         self.menu = menu
+        self.screen_rect = screen_rect
 
         self.bubbles = (
-            Bubble(SCR_W2 - H(192), y, 0, 0, "big"),
-            Bubble(SCR_W2 + H(192), y, 0, 0, "big"),
-            Bubble(SCR_W2, y, 0, 0, "big")
+            Bubble(self.screen_rect, SCR_W2 - H(192), y, 0, 0, "ultra"),
+            Bubble(self.screen_rect, SCR_W2 + H(192), y, 0, 0, "ultra"),
+            Bubble(self.screen_rect, SCR_W2, y, 0, 0, "ultra")
         )
         for bubble in self.bubbles:
             bubble.vel = 0

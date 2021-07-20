@@ -1,0 +1,43 @@
+{
+	"circles": [
+		{
+			"type": "orange",
+			"radius": 22.452,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "orange",
+			"radius": 12.068,
+			"distance": 27.817,
+			"angle": 2.2650883032382409
+		},
+		{
+			"type": "orange",
+			"radius": 12.068,
+			"distance": 27.817,
+			"angle": -2.2650883032382409
+		},
+		{
+			"type": "orange",
+			"radius": 12.068,
+			"distance": 25.223,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "orange",
+			"radius": 9.076,
+			"distance": 23.574,
+			"angle": 0.29530970943744058
+		},
+		{
+			"type": "orange",
+			"radius": 9.076,
+			"distance": 23.574,
+			"angle": -0.29530970943744058
+		}
+	],
+	"size": 22.452,
+	"emitter offset": 23.574,
+	"bullet type": "regular bullet"
+}

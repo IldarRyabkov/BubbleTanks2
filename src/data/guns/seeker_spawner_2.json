@@ -1,0 +1,25 @@
+{
+	"circles": [
+		{
+			"type": "orange",
+			"radius": 10.369,
+			"distance": 25.287,
+			"angle": 0.7005751617505239
+		},
+		{
+			"type": "orange",
+			"radius": 10.369,
+			"distance": 25.287,
+			"angle": -0.7005751617505239
+		},
+		{
+			"type": "orange",
+			"radius": 16.79,
+			"distance": 0,
+			"angle": 0.0
+		}
+	],
+	"size": 16.79,
+	"emitter offset": 19.352,
+	"bullet type": "enemy seeker"
+}

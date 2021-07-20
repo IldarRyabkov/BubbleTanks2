@@ -1,0 +1,79 @@
+{
+	"circles": [
+		{
+			"type": "thick_blue",
+			"radius": 139.539,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 23.638,
+			"distance": 140.683,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 113.995,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 20.397,
+			"distance": 88.261,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 34.885,
+			"distance": 27.26,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 25.544,
+			"distance": 59.857,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 14.678,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 31.659,
+			"angle": 1.5393804002589986
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 31.659,
+			"angle": -1.5393804002589986
+		},
+		{
+			"type": "blue",
+			"radius": 39.269,
+			"distance": 130.58,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 167.61,
+			"angle": 0.10995574287564278
+		},
+		{
+			"type": "blue",
+			"radius": 16.966,
+			"distance": 167.61,
+			"angle": -0.10995574287564278
+		}
+	],
+	"size": 139.539,
+	"emitter offset": 0,
+	"bullet type": null
+}

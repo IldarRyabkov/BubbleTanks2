@@ -2,7 +2,7 @@ from .status_bar import StatusBar
 from .popup_window import PopupWindow
 from .text_widget import TextWidget
 from data.constants import SCR_W, WHITE
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from assets.paths import COOLDOWN_WINDOW_BG, CALIBRI_BOLD
 from components.superpowers import *
 from components.utils import H, HF
@@ -39,7 +39,7 @@ class CooldownWindow(PopupWindow):
     def superpower_active(self) -> bool:
         return (self.player.superpower.on and
                 not isinstance(self.player.superpower,
-                               (NoneSuperPower, Ghost, OrbitalSeekers)))
+                               (NoneSuperPower, Disassemble, OrbitalSeekers)))
 
     def set_language(self, language):
         label_1, label_2 = TEXTS["cooldown window labels"][language]
@@ -54,7 +54,7 @@ class CooldownWindow(PopupWindow):
         self.label_2.move_to(self.x + H(16), int(self.y) + H(56))
 
     def set(self,):
-        self.status_bar_1.set_max_value(self.player.gun.cooldown_time)
+        self.status_bar_1.set_max_value(self.player.weapons.cooldown)
         self.status_bar_1.set_value(0)
         self.status_bar_2.set_max_value(self.player.superpower.cooldown_time)
         self.status_bar_2.set_value(0)
@@ -63,7 +63,7 @@ class CooldownWindow(PopupWindow):
         super().update(dt)
         if (self.shooting_active or self.superpower_active) and not self.game.transportation:
             self.activate()
-        self.status_bar_1.set_value(self.player.gun.time, reset=True)
+        self.status_bar_1.set_value(self.player.weapons.time, reset=True)
         self.status_bar_2.set_value(self.player.superpower.time, reset=True)
 
 

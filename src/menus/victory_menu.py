@@ -1,7 +1,7 @@
 import pygame as pg
 
 from data.constants import *
-from data.languages.texts import TEXTS
+from data.languages import TEXTS
 from data.states import VictoryMenuStates as St
 from assets.paths import *
 from menus.menu import Menu
@@ -25,7 +25,7 @@ class VictoryMenu(Menu):
         self.mask = Mask(self, mask_surface)
 
         # widgets
-        self.bubbles = VictoryMenuBubbles(self, H(335))
+        self.bubbles = VictoryMenuBubbles(self, game.rect, H(335))
         self.caption = MenuCaption(self, SCR_W2, H(50), FONT_1, H(90), WHITE, 1)
         self.texts = (
             TextWidget(SCR_W2, H(170), CALIBRI, H(45), WHITE, 1, H(960)),

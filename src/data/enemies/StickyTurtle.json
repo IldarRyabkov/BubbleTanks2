@@ -1,0 +1,230 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 78.539,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 31.644,
+			"distance": 75.443,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 31.644,
+			"distance": 74.233,
+			"angle": 2.305929007734908
+		},
+		{
+			"type": "blue",
+			"radius": 31.644,
+			"distance": 74.233,
+			"angle": -2.305929007734908
+		},
+		{
+			"type": "blue",
+			"radius": 31.644,
+			"distance": 69.007,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 31.644,
+			"distance": 70.26,
+			"angle": 0.895353906273091
+		},
+		{
+			"type": "blue",
+			"radius": 31.644,
+			"distance": 70.26,
+			"angle": -0.895353906273091
+		},
+		{
+			"type": "blue",
+			"radius": 18.681,
+			"distance": 71.676,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 22.017,
+			"distance": 79.873,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "blue",
+			"radius": 22.017,
+			"distance": 77.515,
+			"angle": 2.607521902479528
+		},
+		{
+			"type": "blue",
+			"radius": 22.017,
+			"distance": 77.515,
+			"angle": -2.607521902479528
+		},
+		{
+			"type": "blue",
+			"radius": 18.681,
+			"distance": 99.698,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 16.871,
+			"distance": 97.22,
+			"angle": 0.15393804002589987
+		},
+		{
+			"type": "blue",
+			"radius": 16.871,
+			"distance": 97.22,
+			"angle": -0.15393804002589987
+		},
+		{
+			"type": "blue",
+			"radius": 16.871,
+			"distance": 104.587,
+			"angle": 0.289026524130261
+		},
+		{
+			"type": "blue",
+			"radius": 16.871,
+			"distance": 104.587,
+			"angle": -0.289026524130261
+		}
+	],
+	"circles states": {
+		"0 2": [
+			0
+		],
+		"3 3": [
+			1,
+			0
+		],
+		"4 4": [
+			2,
+			3,
+			0
+		],
+		"5 5": [
+			2,
+			3,
+			4,
+			0
+		],
+		"6 8": [
+			5,
+			6,
+			2,
+			3,
+			7,
+			0
+		],
+		"9 11": [
+			5,
+			6,
+			2,
+			3,
+			7,
+			0,
+			8
+		],
+		"12 14": [
+			5,
+			6,
+			2,
+			3,
+			7,
+			0,
+			9,
+			10
+		],
+		"15 17": [
+			5,
+			6,
+			2,
+			3,
+			7,
+			0,
+			9,
+			10,
+			8
+		],
+		"18 18": [
+			5,
+			6,
+			2,
+			3,
+			11,
+			7,
+			0,
+			9,
+			10,
+			8
+		],
+		"19 19": [
+			5,
+			6,
+			2,
+			3,
+			7,
+			12,
+			13,
+			0,
+			9,
+			10,
+			8
+		],
+		"20 20": [
+			5,
+			6,
+			2,
+			3,
+			11,
+			7,
+			14,
+			15,
+			0,
+			9,
+			10,
+			8
+		]
+	},
+	"guns": [
+		{
+			"name": "gun_6",
+			"scale": 0.979,
+			"distance": 0,
+			"angle": 0,
+			"rotation type": 1,
+			"rotation angle": 0,
+			"shooting type": "single",
+			"cooldown min": 1600,
+			"cooldown max": 2400,
+			"delay": 2000,
+			"bullet name": "sticky",
+			"bullet velocity": 0.6,
+			"bullet damage": 0
+		}
+	],
+	"guns states": {
+		"0 20": [
+			0
+		]
+	},
+	"radius": 78.539,
+	"rect size": 237.903,
+	"max health": 20,
+	"velocity": 0.12,
+	"death award": {
+		"medium": 6,
+		"large": 0,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

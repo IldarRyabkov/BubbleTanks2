@@ -9,6 +9,8 @@ class Button:
                  sound_player=None,
                  click_sound=None,
                  action=lambda: None):
+        self.x = 0
+        self.y = 0
         self.rect = pg.Rect(0, 0, 0, 0)
         self.action = action
         self.is_pressed = False
@@ -35,6 +37,18 @@ class Button:
 
     def set_language(self, language):
         pass
+
+    def move(self, dx=0, dy=0):
+        self.x += dx
+        self.y += dy
+        self.rect.center = self.x, self.y
+
+    def move_to(self, x=None, y=None):
+        x = x or self.x
+        y = y or self.y
+        self.x = x
+        self.y = y
+        self.rect.center = x, y
 
     def update_look(self, dt, animation_state=WAIT, time_elapsed=0.0):
         pass

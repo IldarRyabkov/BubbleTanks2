@@ -1,0 +1,88 @@
+{
+	"radius": 22,
+	"size": 76.558,
+	"circles": [
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 7.59,
+			"edge factor": 0.171,
+			"distance": 22.205,
+			"angle": 1.2660618393966868
+		},
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 7.59,
+			"edge factor": 0.171,
+			"distance": 22.205,
+			"angle": -1.2660618393966868
+		},
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 7.59,
+			"edge factor": 0.171,
+			"distance": 17.889,
+			"angle": 2.6797785335120936
+		},
+		{
+			"type": "fixed",
+			"color": "light red",
+			"radius": 7.59,
+			"edge factor": 0.171,
+			"distance": 17.889,
+			"angle": -2.6797785335120936
+		},
+		{
+			"type": "swinging",
+			"color": "light red",
+			"radius": 5.693,
+			"distance": 33.722,
+			"angle": 1.2126547642856603,
+			"edge factor": 0.227,
+			"swing distance": 12.824,
+			"swing angle": -2.8902652413026099
+		},
+		{
+			"type": "swinging",
+			"color": "light red",
+			"radius": 5.693,
+			"distance": 33.722,
+			"angle": -1.2126547642856603,
+			"edge factor": 0.227,
+			"swing distance": 12.824,
+			"swing angle": 2.8902652413026099
+		},
+		{
+			"type": "swinging",
+			"color": "light red",
+			"radius": 5.693,
+			"distance": 28.787,
+			"angle": 2.57924756859722,
+			"edge factor": 0.227,
+			"swing distance": 10.824,
+			"swing angle": -1.8849555921538759
+		},
+		{
+			"type": "swinging",
+			"color": "light red",
+			"radius": 5.693,
+			"distance": 28.787,
+			"angle": -2.57924756859722,
+			"edge factor": 0.227,
+			"swing distance": 10.824,
+			"swing angle": 1.8849555921538759
+		},
+		{
+			"type": "scaling",
+			"color": "light red",
+			"radius": 18.824,
+			"edge factor": 0.121,
+			"amplitude factor": 0.347,
+			"distance": 3.795,
+			"angle": 0
+		}
+	],
+	"hit effect": "LightRedCircle"
+}

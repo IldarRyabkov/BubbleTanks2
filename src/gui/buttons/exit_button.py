@@ -39,7 +39,7 @@ class ExitButton(Button):
             self.set_alpha(round(255 * time_elapsed))
         elif animation_state == CLOSE and self.menu.is_closing:
             self.set_alpha(round(255 - 255 * time_elapsed))
-        self.current_image = self.cursor_on_button
+        self.current_image = int(self.cursor_on_button or self.is_pressed)
 
     def draw(self, screen, animation_state=WAIT):
         screen.blit(self.images[self.current_image], (self.x, self.y))

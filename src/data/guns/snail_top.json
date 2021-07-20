@@ -1,0 +1,13 @@
+{
+	"circles": [
+		{
+			"type": "thick_blue",
+			"radius": 103.645,
+			"distance": 7.797,
+			"angle": 3.141592653589793
+		}
+	],
+	"size": 103.645,
+	"emitter offset": 0,
+	"bullet type": null
+}

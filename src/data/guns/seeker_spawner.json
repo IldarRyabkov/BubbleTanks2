@@ -1,0 +1,55 @@
+{
+	"circles": [
+		{
+			"type": "orange",
+			"radius": 16.883,
+			"distance": 87.668,
+			"angle": 0.1853539665617978
+		},
+		{
+			"type": "orange",
+			"radius": 16.883,
+			"distance": 86.158,
+			"angle": 0.0
+		},
+		{
+			"type": "orange",
+			"radius": 16.883,
+			"distance": 87.668,
+			"angle": 6.097831340617788
+		},
+		{
+			"type": "orange",
+			"radius": 16.883,
+			"distance": 70.915,
+			"angle": 0.3738495257771852
+		},
+		{
+			"type": "orange",
+			"radius": 16.883,
+			"distance": 70.915,
+			"angle": 5.909335781402401
+		},
+		{
+			"type": "orange",
+			"radius": 30.36,
+			"distance": 42.141,
+			"angle": 0.6723008278682157
+		},
+		{
+			"type": "orange",
+			"radius": 30.36,
+			"distance": 42.141,
+			"angle": 5.610884479311371
+		},
+		{
+			"type": "orange",
+			"radius": 34.372,
+			"distance": 0,
+			"angle": 3.141592653589793
+		}
+	],
+	"size": 34.372,
+	"emitter offset": 62.536,
+	"bullet type": "enemy seeker"
+}

@@ -10,15 +10,33 @@ import sys
 
 def path(directory: str, filename: str):
     if directory:
-        return os.path.abspath(os.path.join(ROOT_DIR, "%s/%s" % (directory, filename)))
+        file_path = os.path.join(directory, filename)
+        return os.path.abspath(os.path.join(ROOT_DIR, "%s" % file_path))
     return os.path.abspath(os.path.join(ROOT_DIR, "%s" % filename))
 
 
-def img_path(filename: str): return path("images", filename)
-def font_path(filename: str): return path("fonts", filename)
-def music_path(filename: str):  return path("music", filename)
-def sound_path(filename: str): return path("sounds", filename)
-def language_path(filename: str): return path("sounds", filename)
+def img_path(filename: str):
+    return path("images", filename)
+
+
+def font_path(filename: str):
+    return path("fonts", filename)
+
+
+def music_path(filename: str):
+    return path("music", filename)
+
+
+def sound_path(filename: str):
+    return path("sounds", filename)
+
+
+def language_path(filename: str):
+    return path("sounds", filename)
+
+
+def sapper_attack_img_path(filename: str):
+    return img_path(os.path.join("sapper_attack", filename))
 
 
 ROOT_DIR = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
@@ -37,8 +55,9 @@ SIDE_BUTTON_BG = img_path("side_button.png")
 ROOM_GLARE_BG = img_path("room_glare.png")
 ROOM_AIM = img_path("room_aim.png")
 BOSS_AIM = img_path("boss_aim.png")
-PARALYZING_EXPLOSION = img_path("paralyzing_explosion.png")
-POWERFUL_EXPLOSION = img_path("powerful_explosion.png")
+STUN_BURST_IMAGE = img_path("stun_burst.png")
+DAMAGE_BURST_IMAGE = img_path("damage_burst.png")
+DAMAGE_BURST_BG_IMAGE = img_path("damage_burst_bg.png")
 DRONE_CONVERSION = img_path("drone_conversion.png")
 TELEPORTATION = img_path("teleportation.png")
 HEALTH_WINDOW_BG = img_path("health_window_bg.png")
@@ -55,6 +74,16 @@ CREDITS_BG_2 = img_path("credits_bg_2.png")
 CREDITS_BG_3 = img_path("credits_bg_3.png")
 SAVE_BUTTON_BG = img_path("save_button_bg.png")
 DELETE_BUTTON_BG = img_path("delete_button.png")
+STICKY_IMAGE = img_path("sticky.png")
+START_BUTTON_IMAGE = img_path("play_button.png")
+SAPPER_IMG_1 = sapper_attack_img_path("1.png")
+SAPPER_IMG_2 = sapper_attack_img_path("2.png")
+SAPPER_IMG_3 = sapper_attack_img_path("3.png")
+SAPPER_IMG_4 = sapper_attack_img_path("4.png")
+SAPPER_IMG_5 = sapper_attack_img_path("5.png")
+SAPPER_IMG_6 = sapper_attack_img_path("6.png")
+SAPPER_IMG_7 = sapper_attack_img_path("7.png")
+SAPPER_IMG_8 = sapper_attack_img_path("8.png")
 
 
 # fonts
@@ -73,9 +102,9 @@ TITLE_MUSIC = music_path('title.wav')
 # sounds
 COLLECT_BUBBLE = sound_path('collect.wav')
 ENEMY_DEATH = sound_path('enemy_death.wav')
-HIT = sound_path('hit.wav')
+ENEMY_HIT = sound_path('hit.wav')
 SHOOT = sound_path('shoot.wav')
-AVATAR_HIT = sound_path('avatar_hit.wav')
+PLAYER_HIT = sound_path('avatar_hit.wav')
 BUTTON_CLICK = sound_path('button_click.wav')
 WATER_SPLASH = sound_path('water_splash.wav')
 
@@ -95,8 +124,9 @@ __all__ = [
     "ROOM_GLARE_BG",
     "ROOM_AIM",
     "BOSS_AIM",
-    "PARALYZING_EXPLOSION",
-    "POWERFUL_EXPLOSION",
+    "STUN_BURST_IMAGE",
+    "DAMAGE_BURST_IMAGE",
+    "DAMAGE_BURST_BG_IMAGE",
     "DRONE_CONVERSION",
     "TELEPORTATION",
     "HEALTH_WINDOW_BG",
@@ -113,6 +143,16 @@ __all__ = [
     "SCROLL_BUTTON_BG",
     "EXIT_BUTTON_BG",
     "EXIT_BUTTON_PRESSED_BG",
+    "STICKY_IMAGE",
+    "START_BUTTON_IMAGE",
+    "SAPPER_IMG_1",
+    "SAPPER_IMG_2",
+    "SAPPER_IMG_3",
+    "SAPPER_IMG_4",
+    "SAPPER_IMG_5",
+    "SAPPER_IMG_6",
+    "SAPPER_IMG_7",
+    "SAPPER_IMG_8",
     "FONT_1",
     "FONT_2",
     "FONT_3",
@@ -122,8 +162,8 @@ __all__ = [
     "TITLE_MUSIC",
     "COLLECT_BUBBLE",
     "ENEMY_DEATH",
-    "AVATAR_HIT",
-    "HIT",
+    "PLAYER_HIT",
+    "ENEMY_HIT",
     "SHOOT",
     "BUTTON_CLICK",
     "WATER_SPLASH"

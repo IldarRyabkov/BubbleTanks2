@@ -1,0 +1,36 @@
+{
+	"circles": [
+		{
+			"type": "confusion",
+			"radius": 113.28,
+			"distance": 0,
+			"angle": 0.0
+		}
+	],
+	"circles states": {
+		"0 50": [
+			0
+		]
+	},
+	"guns": [],
+	"guns states": {
+		"0 50": []
+	},
+	"radius": 107.28,
+	"rect size": 226.56,
+	"max health": 50,
+	"velocity": 0.06,
+	"death award": {
+		"medium": 7,
+		"large": 4,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": [
+		{
+			"trigger value": -1,
+			"action": "change color",
+			"value": null
+		}
+	]
+}

@@ -236,7 +236,7 @@ class Map(Button):
         if room_pos == self.cur_pos or room_pos == (0, 0):
             pg.draw.circle(screen, WHITE, coords, H(7))
         elif room_pos == self.boss_aim.pos:
-            pg.draw.circle(screen, DARK_RED, coords, self.circle_radius - self.circle_width)
+            pg.draw.circle(screen, LIGHT_RED, coords, self.circle_radius - self.circle_width)
         elif self.mobs_dict[room_pos]:
             pg.draw.circle(screen, BUBBLE_COLOR, coords, self.circle_radius - self.circle_width)
 

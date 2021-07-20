@@ -1,0 +1,125 @@
+{
+	"circles": [
+		{
+			"type": "thick_blue",
+			"radius": 54.519,
+			"distance": 79.028,
+			"angle": 1.6587609210954109
+		},
+		{
+			"type": "thick_blue",
+			"radius": 54.519,
+			"distance": 79.028,
+			"angle": -1.6587609210954109
+		},
+		{
+			"type": "blue",
+			"radius": 16.68,
+			"distance": 128.438,
+			"angle": 1.3288936924684825
+		},
+		{
+			"type": "blue",
+			"radius": 16.68,
+			"distance": 128.438,
+			"angle": -1.3288936924684825
+		},
+		{
+			"type": "blue",
+			"radius": 16.68,
+			"distance": 133.674,
+			"angle": 1.9383626672649024
+		},
+		{
+			"type": "blue",
+			"radius": 16.68,
+			"distance": 133.674,
+			"angle": -1.9383626672649024
+		}
+	],
+	"circles states": {
+		"0 16": [
+			0,
+			1
+		],
+		"17 20": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5
+		]
+	},
+	"guns": [
+		{
+			"name": "mines",
+			"scale": 1,
+			"distance": 30.5,
+			"angle": 0.0,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": "mines",
+			"cooldown min": 2000,
+			"cooldown max": 2000,
+			"delay": 2000,
+			"bullet name": "enemy mine",
+			"bullet velocity": 0,
+			"bullet damage": -5
+		},
+		{
+			"name": "mortar_top_2",
+			"scale": 1,
+			"distance": 0,
+			"angle": 0,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": null,
+			"cooldown min": 999999,
+			"cooldown max": 999999,
+			"delay": 2000,
+			"bullet name": null,
+			"bullet velocity": 0,
+			"bullet damage": 0
+		},
+		{
+			"name": "mortar_top_1",
+			"scale": 1,
+			"distance": 0,
+			"angle": 0,
+			"rotation type": 0,
+			"rotation angle": 0,
+			"shooting type": null,
+			"cooldown min": 999999,
+			"cooldown max": 999999,
+			"delay": 2000,
+			"bullet name": null,
+			"bullet velocity": 0,
+			"bullet damage": 0
+		}
+	],
+	"guns states": {
+		"0 5": [
+			2
+		],
+		"6 9": [
+			0,
+			2
+		],
+		"10 20": [
+			0,
+			1
+		]
+	},
+	"radius": 75.298,
+	"rect size": 287.847,
+	"max health": 20,
+	"velocity": 0.096,
+	"death award": {
+		"medium": 10,
+		"large": 0,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

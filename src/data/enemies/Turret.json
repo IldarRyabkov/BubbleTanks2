@@ -1,0 +1,195 @@
+{
+	"circles": [
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 149.947,
+			"angle": 1.8755308141931065
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 149.947,
+			"angle": 1.2660618393966868
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 149.947,
+			"angle": -1.8755308141931065
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 149.947,
+			"angle": -1.2660618393966868
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 149.947,
+			"angle": 0.30473448739820999
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 149.947,
+			"angle": -0.30473448739820999
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 149.947,
+			"angle": 2.836858166191583
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 149.947,
+			"angle": -2.836858166191583
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 132.516,
+			"angle": 1.8001325905069515
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 132.516,
+			"angle": 1.3414600630828418
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 132.516,
+			"angle": -1.8001325905069515
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 132.516,
+			"angle": -1.3414600630828418
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 132.516,
+			"angle": 0.22933626371205488
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 132.516,
+			"angle": -0.22933626371205488
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 132.516,
+			"angle": 2.9122563898777384
+		},
+		{
+			"type": "blue",
+			"radius": 16.808,
+			"distance": 132.516,
+			"angle": -2.9122563898777384
+		},
+		{
+			"type": "blue",
+			"radius": 42.625,
+			"distance": 95.697,
+			"angle": 1.5707963267948966
+		},
+		{
+			"type": "blue",
+			"radius": 42.625,
+			"distance": 95.697,
+			"angle": -1.5707963267948966
+		},
+		{
+			"type": "blue",
+			"radius": 42.625,
+			"distance": 95.697,
+			"angle": 0.0
+		},
+		{
+			"type": "blue",
+			"radius": 42.625,
+			"distance": 95.697,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "thick_blue",
+			"radius": 96.0,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "thick_blue",
+			"radius": 39.369,
+			"distance": 0,
+			"angle": 0.0
+		}
+	],
+	"circles states": {
+		"0 55": [
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			11,
+			12,
+			13,
+			14,
+			15,
+			16,
+			17,
+			18,
+			19,
+			20,
+			21
+		]
+	},
+	"guns": [
+		{
+			"name": "turret",
+			"scale": 1,
+			"distance": 0,
+			"angle": 0,
+			"rotation type": 2,
+			"rotation angle": 0,
+			"shooting type": "machine gun 360",
+			"cooldown min": 60,
+			"cooldown max": 60,
+			"delay": 2000,
+			"bullet name": "small red",
+			"bullet velocity": 0.96,
+			"bullet damage": -2
+		}
+	],
+	"guns states": {
+		"0 55": [
+			0
+		]
+	},
+	"radius": 96.0,
+	"rect size": 321.615,
+	"max health": 55,
+	"velocity": 0.0,
+	"death award": {
+		"medium": 30,
+		"large": 0,
+		"ultra": 0
+	},
+	"spawners": [],
+	"events": []
+}

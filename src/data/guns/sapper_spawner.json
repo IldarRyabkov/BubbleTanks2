@@ -1,0 +1,76 @@
+{
+	"circles": [
+		{
+			"type": "orange",
+			"radius": 10.318,
+			"distance": 21.401,
+			"angle": 3.141592653589793
+		},
+		{
+			"type": "orange",
+			"radius": 10.318,
+			"distance": 21.838,
+			"angle": 1.2974777659325845
+		},
+		{
+			"type": "orange",
+			"radius": 10.318,
+			"distance": 21.838,
+			"angle": -1.2974777659325845
+		},
+		{
+			"type": "orange",
+			"radius": 16.815,
+			"distance": 0,
+			"angle": 0.0
+		},
+		{
+			"type": "orange",
+			"radius": 16.815,
+			"distance": 37.265,
+			"angle": 0.9613273519984766
+		},
+		{
+			"type": "orange",
+			"radius": 16.815,
+			"distance": 37.265,
+			"angle": -0.9613273519984766
+		},
+		{
+			"type": "orange",
+			"radius": 10.318,
+			"distance": 50.251,
+			"angle": 0.7382742735936013
+		},
+		{
+			"type": "orange",
+			"radius": 10.318,
+			"distance": 50.251,
+			"angle": -0.7382742735936013
+		},
+		{
+			"type": "orange",
+			"radius": 16.815,
+			"distance": 59.828,
+			"angle": 0.4461061568097506
+		},
+		{
+			"type": "orange",
+			"radius": 16.815,
+			"distance": 59.828,
+			"angle": -0.4461061568097506
+		},
+		{
+			"type": "swinging",
+			"color": "light orange",
+			"radius": 16.815,
+			"distance": 33.078,
+			"angle": 2.205398042820035,
+			"swing distance": 53.312,
+			"swing angle": -1.5707963267948966
+		}
+	],
+	"size": 16.815,
+	"emitter offset": 23.217,
+	"bullet type": "enemy sapper"
+}

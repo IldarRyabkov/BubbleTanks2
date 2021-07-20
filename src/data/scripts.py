@@ -26,11 +26,23 @@ def _validate_config():
     If not, writes valid default data to the file.
     """
     def is_valid(data) -> bool:
-        return (type(data) == dict and
-                "screen mode" in data and data["screen mode"] in [0, 1, 2] and
-                "save" in data and data["save"] in ("empty", "save_1", "save_2", "save_3") and
-                "language" in data and data["language"] in LANGUAGES and
-                "resolution" in data and data["resolution"] in SUPPORTED_RESOLUTIONS)
+        if type(data) is not dict:
+            return False
+        if "screen mode" not in data or data["screen mode"] not in [0, 1, 2]:
+            return False
+        if "save" not in data:
+            return False
+        if data["save"] in ("save_1", "save_2", "save_3"):
+            save_file = os.path.join(_USER_DIR, "%s.json" % data["save"])
+            if not os.path.isfile(save_file):
+                return False
+        if data["save"] not in ("empty", "save_1", "save_2", "save_3"):
+            return False
+        if "language" not in data or data["language"] not in LANGUAGES:
+            return False
+        if "resolution" not in data or data["resolution"] not in SUPPORTED_RESOLUTIONS:
+            return False
+        return True
 
     def write_default_data():
         with open(_CONFIG_FILE, "w", encoding='utf-8') as f:
@@ -164,13 +176,15 @@ def load_save_file(save_name: str):
         file = open(file_path, 'r')
     except (IOError, FileNotFoundError):
         return None
-    data = json.load(file)
+    try:
+        data = json.load(file)
+    except JSONDecodeError:
+        return None
     if "max cumulative health" not in data:
         data["max cumulative health"] = 0
     return data
 
 
-# Make sure that the directory for config file exists
 _USER_DIR = os.path.join(os.path.abspath(os.path.expanduser("~")), f".Underwater_Battles")
 if not os.path.exists(_USER_DIR):
     os.mkdir(_USER_DIR)

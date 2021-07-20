@@ -437,7 +437,7 @@ class MainMenu(Menu):
 
     def set_current_save(self):
         self.current_save = load_current_save()
-        if self.current_save != "empty":
+        if self.current_save != "empty" and load_save_file(self.current_save) is not None:
             if self.resume_button not in self.buttons[St.MAIN_PAGE]:
                 self.add_resume_button()
         elif self.resume_button in self.buttons[St.MAIN_PAGE]:

@@ -2,7 +2,7 @@ from random import uniform
 from math import hypot, cos, sin
 import pygame as pg
 
-from components.player_body import Body
+from components.simple_body import Body
 from components.utils import *
 from data.constants import *
 from data.bubbles import BUBBLES
@@ -23,9 +23,11 @@ class Bubble:
         self.x = x
         self.y = y
 
-        self.body = Body(screen_rect, BUBBLES[bubble_type]["circles"])
-        self.body.set_pos(x, y)
+        self.body = Body(self, screen_rect, BUBBLES[bubble_type]["circles"])
         self.radius = self.body.circles[0].max_radius
+        self.rect = pg.Rect(0, 0, round(2*self.radius), round(2*self.radius))
+        self.rect.center = x, y
+        self.screen_rect = screen_rect
         self.health = BUBBLES[bubble_type]["health"]
         self.vel = uniform(0.7, 1.7) * self.BUBBLE_MAX_VEL
         self.acc = -self.BUBBLE_ACC
@@ -45,12 +47,12 @@ class Bubble:
     def is_outside(self):
         return not circle_collidepoint(SCR_W2, SCR_H2, ROOM_RADIUS, self.x, self.y)
 
+    @property
+    def is_on_screen(self):
+        return self.rect.colliderect(self.screen_rect)
+
     def in_gravity_zone(self, player_x, player_y):
         return hypot(self.x - player_x, self.y - player_y) <= self.gravity_radius
-
-    def is_on_screen(self, dx, dy):
-        return (-self.radius <= self.x - dx <= SCR_W + self.radius and
-                -self.radius <= self.y - dy <= SCR_H + self.radius)
 
     def maximize_gravity(self):
         self.max_gravity_vel = 2 * self.BUBBLE_MAX_VEL
@@ -60,7 +62,7 @@ class Bubble:
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
-        self.body.set_pos(self.x, self.y)
+        self.rect.center = self.x, self.y
 
     def update_halo(self):
         diam = round(2.9 * self.body.circles[0].radius)
@@ -105,12 +107,11 @@ class Bubble:
         else:
             self.gravity_vel = max(0, self.gravity_vel + self.gravity_acc * dt)
 
-        # Finally, body of the bubble is updated according to the new coordinates
-        self.body.set_pos(self.x, self.y)
+        self.rect.center = self.x, self.y
         self.update_body(dt)
 
     def draw(self, surface, dx=0, dy=0):
-        if self.is_on_screen(dx, dy):
+        if self.is_on_screen:
             self.body.draw(surface, dx, dy)
             if self.halo is not None:
                 radius = self.halo.get_width() / 2

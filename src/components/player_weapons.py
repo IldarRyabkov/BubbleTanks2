@@ -179,6 +179,8 @@ class Gun:
             return self.shoot_5_spread
         if shooting_type == "drone":
             return self.shoot_drone
+        if shooting_type == "spawn seeker":
+            return self.spawn_seeker
         if shooting_type == "superpower":
             return lambda: None
 
@@ -187,6 +189,12 @@ class Gun:
         y = self.y - self.emitter_offset * sin(self.angle_to_target)
         bullet = self.make_bullet(x, y, self.angle_to_target)
         self.player.bullets.append(bullet)
+
+    def spawn_seeker(self):
+        x = self.x + self.emitter_offset * cos(self.angle_to_target)
+        y = self.y - self.emitter_offset * sin(self.angle_to_target)
+        seeker = self.make_bullet(x, y, self.angle_to_target)
+        self.player.seekers.append(seeker)
 
     def shoot_2_small_parallel(self):
         angle = self.angle_to_target

@@ -245,11 +245,10 @@ class Game:
             self.add_effect(bullet)
             if isinstance(bullet, LeecherBullet):
                 self.room.spawn_leeched_bubble(enemy.x, enemy.y)
-            elif isinstance(bullet, AllyInfector):
+            elif isinstance(bullet, AllyInfector) and isinstance(enemy, Enemy):
+                enemy.become_infected()
                 if bullet in enemy.chasing_infectors:
                     enemy.chasing_infectors.remove(bullet)
-                if isinstance(enemy, Enemy):
-                    enemy.become_infected()
 
     def handle_enemies_collisions(self):
         """Handles collisions between enemies and player's bullets. """
@@ -272,12 +271,17 @@ class Game:
         for bullet in chain(self.room.bullets, self.room.mines):
             for seeker in self.player.seekers:
                 if seeker.collide_bullet(bullet.x, bullet.y, bullet.radius):
-                    seeker.killed = True
-                    bullet.killed = True
-                    self.add_effect(seeker)
-                    self.add_effect(bullet)
-                    if isinstance(seeker, AllyInfector) and seeker in seeker.target.chasing_infectors:
-                        seeker.target.chasing_infectors.remove(seeker)
+                    if isinstance(seeker, BulletBuster):
+                        bullet.killed = True
+                        self.add_effect(bullet)
+                    else:
+                        seeker.killed = True
+                        bullet.killed = True
+                        self.add_effect(bullet)
+                        if (isinstance(seeker, AllyInfector) and
+                                isinstance(seeker.target, Enemy) and
+                                seeker in seeker.target.chasing_infectors):
+                            seeker.target.chasing_infectors.remove(seeker)
 
     def update_transportation(self, dt):
         """ Update all objects during transportation. """

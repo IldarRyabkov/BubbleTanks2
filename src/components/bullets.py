@@ -6,7 +6,8 @@ from itertools import chain
 from assets.paths import ENEMY_DEATH
 from data.constants import *
 from data.bullets import BULLETS
-from components.player_body import Body
+from components.special_effects import add_effect
+from components.simple_body import Body
 from components.utils import *
 from components.special_effects import sapper_surfaces
 
@@ -37,9 +38,7 @@ class Bullet:
         if isinstance(body_data, pg.Surface):
             self.body = body_data
         else:
-            self.body = Body(screen_rect, body_data)
-            self.body.set_pos(x, y)
-            self.body.update_shape(0)
+            self.body = Body(self, screen_rect, body_data)
 
     @property
     def is_outside(self):
@@ -57,7 +56,6 @@ class Bullet:
         self.x += self.vel_x * dt
         self.y += self.vel_y * dt
         self.rect.center = self.x, self.y
-        self.body.set_pos(self.x, self.y)
         if self.is_outside:
             self.killed = True
 
@@ -69,7 +67,6 @@ class Bullet:
         self.x += dx
         self.y += dy
         self.rect.center = self.x, self.y
-        self.body.set_pos(self.x, self.y)
 
     def draw(self, surface, dx, dy):
         if self.is_on_screen:
@@ -169,7 +166,6 @@ class AllyOrbitalSeeker(Bullet):
             self.x = self.owner.x + self.orbiting_radius * cos(self.orbiting_angle)
             self.y = self.owner.y - self.orbiting_radius * sin(self.orbiting_angle)
             self.rect.center = self.x, self.y
-            self.body.set_pos(self.x, self.y)
         else:
             super().update_pos(dt)
 
@@ -232,15 +228,19 @@ class Seeker(Bullet):
         if self.target is None or self.target.killed:
             if self.game.room.mobs or self.game.room.seekers:
                 self.target = self.closest_target(chain(self.game.room.mobs, self.game.room.seekers))
+            else:
+                self.killed = True
+                add_effect(self.hit_effect, self.game.room.top_effects, self.x, self.y)
 
     def update_pos(self, dt):
         self.x += self.vel_x * dt
         self.y += self.vel_y * dt
         self.rect.center = self.x, self.y
-        self.body.set_pos(self.x, self.y)
 
     def update(self, dt):
         self.update_target()
+        if self.killed:
+            return
         self.update_angle(dt)
         self.update_vel(self.angle)
         self.update_pos(dt)
@@ -253,7 +253,6 @@ class EnemySeeker(Seeker):
         self.target = game.player
         self.sticky = False
         self.stunned = False
-        self.chasing_infectors = set()
 
     @property
     def no_target(self):
@@ -292,7 +291,6 @@ class EnemyOrbitalSeeker(EnemySeeker):
             if hypot(self.x - self.target.x, self.y - self.target.y) <= self.action_radius:
                 self.orbiting = False
                 self.angle = calculate_angle(self.x, self.y, SCR_W2, SCR_H2)
-            self.body.set_pos(self.x, self.y)
             self.body.angle = self.angle
             self.update_body(dt)
         else:
@@ -317,6 +315,9 @@ class AllyInfector(Seeker):
                 self.target.chasing_infectors.add(self)
             elif self.game.room.seekers:
                 self.target = self.closest_target(self.game.room.seekers)
+            else:
+                self.killed = True
+                add_effect(self.hit_effect, self.game.room.top_effects, self.x, self.y)
 
 
 class EnemyLeecher(EnemySeeker):
@@ -501,9 +502,11 @@ class FrangibleBullet(Bullet):
 
 
 class BulletBuster(RegularBullet):
-    def __init__(self, screen_rect, x, y, angle):
-        super().__init__("bullet buster", screen_rect, x, y, -1, HF(0.9), angle)
-        self.attacked_mobs = []
+    def __init__(self, name, screen_rect, x, y, damage, vel, angle):
+        super().__init__(name, screen_rect, x, y, damage, vel, angle)
+
+    def collide_bullet(self, bul_x, bul_y, bul_r):
+        return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
 
 
 def get_bullet_type(bullet_type: str):
@@ -529,6 +532,8 @@ def get_bullet_type(bullet_type: str):
         return EnemyOrbitalSeeker
     if bullet_type == "enemy sapper":
         return EnemySapper
+    if bullet_type == "bullet buster":
+        return BulletBuster
 
 
 __all__ = [

@@ -1,7 +1,7 @@
 {
 	"tank descriptions": {
 		"0 0": [
-			"Basic tank",
+			"Basic Tank",
 			"Basic cannon",
 			"None",
 			"This is your starting tank.",
@@ -248,7 +248,7 @@
 		"S:"
 	],
 	"health window labels": [
-		"bubbles left",
+		"Bubbles left",
 		"Maxed Tank"
 	],
 	"upgrade button labels": [

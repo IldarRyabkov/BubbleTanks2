@@ -444,6 +444,7 @@ class MainMenu(Menu):
             self.remove_resume_button()
 
     def open(self):
+        self.game.rect.topleft = 0, 0
         if self.splash_screen_shown:
             self.state = St.MAIN_PAGE
         else:

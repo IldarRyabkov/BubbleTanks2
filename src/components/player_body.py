@@ -6,32 +6,6 @@ from components.circle import make_circles_list
 from components.utils import *
 
 
-class Body:
-    def __init__(self, screen_rect, circles_data):
-        self.circles = make_circles_list(screen_rect, circles_data)
-        self.x = 0
-        self.y = 0
-        self.angle = 0
-
-    def set_pos(self, x, y):
-        self.x = x
-        self.y = y
-
-    def rotate(self, angle):
-        for circle in self.circles:
-            circle.angle += angle
-
-    def update_shape(self, dt):
-        x, y, angle = self.x, self.y, self.angle
-        for circle in self.circles:
-            circle.update_pos(x, y, dt, angle)
-
-    def draw(self, surface, dx, dy):
-        for circle in self.circles:
-            circle.update_glares(self.angle)
-            circle.draw(surface, dx, dy)
-
-
 class PlayerBody:
     def __init__(self, owner, screen_rect, tank):
         data = PLAYER_TANKS[tank]
@@ -99,4 +73,4 @@ class PlayerBody:
             circle.draw(surface, dx, dy)
 
 
-__all__ = ["Body", "PlayerBody"]
+__all__ = ["PlayerBody"]

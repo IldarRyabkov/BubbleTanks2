@@ -533,7 +533,7 @@
 			"distance": 75.679,
 			"angle": 0.0,
 			"rotation type": 1,
-			"shooting type": "single",
+			"shooting type": "spawn seeker",
 			"bullet name": "bullet buster",
 			"bullet velocity": 1.2,
 			"bullet damage": -1

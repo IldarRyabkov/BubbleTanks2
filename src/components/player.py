@@ -8,6 +8,7 @@ from assets.paths import PLAYER_HIT
 
 from components.utils import *
 from components.superpowers import *
+from components.bullets import BulletBuster
 from components.base_mob import BaseMob
 from components.player_body import PlayerBody
 from components.player_weapons import PlayerWeapons
@@ -323,14 +324,9 @@ class Player(BaseMob):
         self.mines = list(filter(lambda m: not m.killed, self.mines))[-30:]
 
     def update_seekers(self, dt):
-        if self.game.room.mobs or self.game.room.seekers:
-            for seeker in self.seekers:
-                seeker.update(dt)
-            self.seekers = list(filter(lambda s: not s.killed, self.seekers))
-        else:
-            for seeker in self.seekers:
-                self.game.add_effect(seeker)
-            self.seekers.clear()
+        for seeker in self.seekers:
+            seeker.update(dt)
+        self.seekers = list(filter(lambda s: not s.killed, self.seekers))
 
     def update_drones(self, dt):
         for drone in self.drones:

@@ -46,7 +46,7 @@ class Circle:
         self.edge_color = edge_color
         self.color = color
 
-        k = pi if angle > 0 else -pi
+        k = pi if angle >= 0 else -pi
         b = pi if angle != 0 else 0
         self.glares = (
             Glare(GLARE_COLORS[self.color][0], b + 0.9 * k, 0.25),

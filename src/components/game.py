@@ -47,9 +47,9 @@ class Game:
 
         self.sound_player = SoundPlayer()
         self.clock = pg.time.Clock()
-        self.bg_environment = BackgroundEnvironment(self)
         self.camera = Camera()
         self.player = Player(self)
+        self.bg_environment = BackgroundEnvironment(self)
         self.world = BubbleTanksWorld(self.player)
         self.room = Room(self)
 
@@ -60,6 +60,17 @@ class Game:
 
         self.health_window = HealthWindow(self)
         self.cooldown_window = CooldownWindow(self)
+
+    @property
+    def boss_defeated(self) -> bool:
+        if self.world.boss_pos == self.world.cur_room and not self.room.mobs:
+            self.world.boss_pos = None
+            self.bg_environment.show_boss_skeleton = False
+            return True
+        return False
+
+    def update_rect(self):
+        self.rect.center = self.player.x, self.player.y
 
     def set_screen_mode(self, screen_mode):
         if screen_mode == self.screen_mode:
@@ -89,26 +100,25 @@ class Game:
         enemies_killed = self.pause_menu.stats_counters[0].text
         bubbles_collected = self.pause_menu.stats_counters[1].text
         visited_rooms = self.pause_menu.map_button.graph
-        enemies = self.world.enemies_dict
+        enemies = self.world.visited_rooms
         current_room = self.world.cur_room
         boss_generated = self.world.boss_generated
-        boss_disposition = self.bg_environment.boss_disposition
-        boss_position = self.bg_environment.boss_pos
+        boss_position = self.world.boss_pos
         hints_history = self.bg_environment.hints_history
         save_name = self.main_menu.current_save
         update_save_file(save_name, tank, tank_history, health,
                          max_cumulative_health, enemies_killed, bubbles_collected,
                          visited_rooms, enemies, current_room,
-                         boss_generated, boss_disposition, boss_position,
+                         boss_generated, boss_position,
                          hints_history)
 
     def set_save_data(self, save_data: dict):
         self.player.set_save_data(save_data)
-        self.world.load_save(save_data)
-        self.bg_environment.set_data(save_data)
+        self.world.set_save_data(save_data)
         self.health_window.set_data()
         self.cooldown_window.set_data()
-        self.room.set_data(self.world.current_enemies)
+        self.room.set_save_data(self.world.current_enemies)
+        self.bg_environment.set_data(save_data)
         self.pause_menu.set_data(save_data)
         self.camera.stop_shaking()
         self.running = True
@@ -168,8 +178,8 @@ class Game:
         self.player.downgrade()
         self.set_windows()
         self.pause_menu.update_tank_description()
-        self.bg_environment.set_player_halo(self.player.bg_radius)
-        self.room.set_gravity_radius(1.3 * self.player.bg_radius)
+        self.bg_environment.set_player_halo()
+        self.room.set_gravity_radius()
 
     def upgrade_player(self):
         if self.player.last_tank_in_history:
@@ -179,11 +189,10 @@ class Game:
             self.player.upgrade(True, self.upgrade_menu.chosen_tank)
         else:
             self.player.upgrade(False)
-
         self.set_windows()
         self.pause_menu.update_tank_description()
-        self.bg_environment.set_player_halo(self.player.bg_radius)
-        self.room.set_gravity_radius(1.3 * self.player.bg_radius)
+        self.bg_environment.set_player_halo()
+        self.room.set_gravity_radius()
 
     def add_effect(self, entity):
         add_effect(entity.hit_effect, self.room.top_effects, entity.x, entity.y)
@@ -195,10 +204,10 @@ class Game:
                 return
             if self.player.shield_on:
                 bullet.killed = True
-                self.add_effect(bullet)
             else:
                 bullet.leeching = True
                 self.player.receive_damage(bullet.damage, play_sound=False)
+                self.add_effect(bullet)
         elif isinstance(bullet, EnemySapper):
             if bullet.can_attack:
                 self.player.receive_damage(bullet.damage, play_sound=False)
@@ -286,6 +295,7 @@ class Game:
     def update_transportation(self, dt):
         """ Update all objects during transportation. """
         self.player.update(dt)
+        self.update_rect()
         self.room.update(dt)
         self.health_window.update(dt)
         self.cooldown_window.update(dt)
@@ -303,7 +313,7 @@ class Game:
         self.bg_environment.draw_destination_circle(self.screen, *offset_old)
         self.bg_environment.draw_player_trace(self.screen, *offset_old, time)
         self.bg_environment.draw_player_halo(self.screen, offset_old, offset_new)
-        self.bg_environment.draw_boss_skeleton(self.screen, *offset_new, True)
+        self.bg_environment.draw_boss_skeleton(self.screen, *offset_old)
 
         self.room.draw_bottom_effects(self.screen, *offset_old)
         self.room.draw_bubbles(self.screen, *offset_old)
@@ -311,10 +321,10 @@ class Game:
 
         self.player.draw(self.screen, *offset_old)
 
-        self.room.draw_mobs(self.screen, *offset_old)
+        self.room.draw_enemies(self.screen, *offset_old)
         self.room.draw_spawners(self.screen, *offset_old)
         self.room.draw_bullets(self.screen, *offset_old)
-        self.room.draw_new_mobs(self.screen, *offset_old)
+        self.room.draw_new_enemies(self.screen, *offset_old)
         self.room.draw_new_spawners(self.screen, *offset_old)
 
         self.bg_environment.draw_room_glares(self.screen, *offset_new)
@@ -348,14 +358,14 @@ class Game:
 
         offset = -DIST_BETWEEN_ROOMS * dx, -DIST_BETWEEN_ROOMS * dy
 
-        self.room.move_new_mobs(-offset[0], -offset[1])
+        self.room.move_new_enemies(-offset[0], -offset[1])
         self.room.move_new_spawners(-offset[0], -offset[1])
 
-        self.bg_environment.set_new_boss_disposition(self.world.cur_room,
-                                                     self.room.new_mobs)
-        self.pause_menu.map_button.update_data(self.world.cur_room,
-                                               self.bg_environment.new_boss_disposition)
+        self.bg_environment.set_boss_skeleton_transportation_pos(*offset)
         self.bg_environment.set_next_hint()
+
+        self.pause_menu.map_button.add_visited_room(self.world.cur_room)
+        self.pause_menu.map_button.set_boss_pos(self.world.boss_pos)
 
         end_x, end_y = self.get_destination_pos(dx, dy)
         distance = hypot(self.player.x - end_x, self.player.y - end_y)
@@ -368,10 +378,10 @@ class Game:
         self.run_transportation(*offset)
 
         self.player.move(*offset)
-        self.room.update_screen_rect()
+        self.update_rect()
         self.player.update_shape(0)
 
-        self.room.move_new_mobs(*offset)
+        self.room.move_new_enemies(*offset)
         self.room.move_new_spawners(*offset)
         self.room.set_params_after_transportation()
 
@@ -399,7 +409,7 @@ class Game:
         directions = (-1, 0), (1, 0), (0, -1), (0, 1)
 
         for dx, dy in directions:
-            if self.world.room_exists(dx, dy):
+            if self.world.room_visited(dx, dy):
                 difficulty = self.world.estimate_difficulty(dx=dx, dy=dy)
             else:
                 if easy_room_created:
@@ -416,7 +426,7 @@ class Game:
             self.world.confirm_enemies(enemies, *direction)
 
         self.world.move(*direction)
-        self.room.load_new_mobs(self.world.current_enemies)
+        self.room.set_new_enemies(self.world.current_enemies)
         self.manage_transportation(*direction)
 
     def transport_player(self):
@@ -424,7 +434,7 @@ class Game:
         self.world.save_enemies(self.room.mobs)
         self.world.create_enemies(*direction)
         self.world.move(*direction)
-        self.room.load_new_mobs(self.world.current_enemies)
+        self.room.set_new_enemies(self.world.current_enemies)
         self.manage_transportation(*direction)
 
     def check_player_state(self):
@@ -446,15 +456,15 @@ class Game:
         self.handle_allys_collisions()
         self.check_player_state()
         self.player.update(dt)
+        self.update_rect()
         self.room.update(dt)
+        self.health_window.update(dt)
+        self.cooldown_window.update(dt)
 
-        if self.room.boss_defeated(self.bg_environment.boss_disposition):
+        if self.boss_defeated:
             self.victory_menu.run()
         if not self.running:
             return
-
-        self.health_window.update(dt)
-        self.cooldown_window.update(dt)
 
         if self.player.cumulative_health < 0:
             self.eject_player()
@@ -477,7 +487,7 @@ class Game:
         self.room.draw_bubbles(self.screen, *self.camera.offset)
         self.room.draw_mines(self.screen, *self.camera.offset)
         self.player.draw(self.screen, *self.camera.offset)
-        self.room.draw_mobs(self.screen, *self.camera.offset)
+        self.room.draw_enemies(self.screen, *self.camera.offset)
         self.room.draw_spawners(self.screen, *self.camera.offset)
         self.room.draw_bullets(self.screen, *self.camera.offset)
         self.bg_environment.draw_room_glares(self.screen, *self.camera.offset)
@@ -514,7 +524,7 @@ class Game:
         self.pause_menu.run()
         self.pause = False
 
-    @set_cursor_grab(True)
+    @set_cursor_grab(False)
     def run_game(self):
         """ Game loop that starts when the main menu is closed. """
         self.clock.tick()

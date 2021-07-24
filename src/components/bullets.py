@@ -299,7 +299,7 @@ class EnemyOrbitalSeeker(EnemySeeker):
 
 class AllyInfector(Seeker):
     def __init__(self, game, screen_rect, x, y, start_angle):
-        super().__init__(game, "ally infector", screen_rect, x, y, start_angle, 0.0072,  -1, HF(0.6))
+        super().__init__(game, "ally infector", screen_rect, x, y, start_angle, 0.0072,  -1, HF(0.72))
 
     def eval_enemy(self, enemy):
         if not enemy.infected:
@@ -408,13 +408,13 @@ class Drone(Bullet):
         self.name = name
         self.time = 0
         self.mitosis_time = 300
-        self.angle = angle
+        self.body.angle = angle
 
     def divide(self):
         self.killed = True
         if self.name == "tiny drone":
             seeker = Seeker(self.player.game, "tiny drone", self.screen_rect,
-                            self.x, self.y, self.angle, 0.009, -7, HF(0.9))
+                            self.x, self.y, self.body.angle, 0.009, -7, HF(0.9))
             seeker.update(0)
             self.player.seekers.append(seeker)
         else:
@@ -425,11 +425,16 @@ class Drone(Bullet):
             else:
                 child_name = "tiny drone"
             for k in (-1, 1):
-                angle = self.angle + k * uniform(0.2*pi, 0.8*pi)
+                angle = self.body.angle + k * uniform(0.2*pi, 0.8*pi)
                 drone = Drone(child_name, self.screen_rect,
                               self.x, self.y, 0, HF(0.6), angle, self.player)
                 drone.update(0)
                 self.player.drones.append(drone)
+
+    def update_pos(self, dt):
+        self.x += self.vel_x * dt
+        self.y += self.vel_y * dt
+        self.rect.center = self.x, self.y
 
     def update_body(self, dt):
         if self.is_on_screen:

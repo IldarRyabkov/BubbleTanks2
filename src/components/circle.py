@@ -6,30 +6,85 @@ from data.constants import *
 from components.utils import HF
 
 
+class StaticGlare:
+    def __init__(self, color, angle, circle_radius, radius_coeff, offset_factor):
+        self.x = 0
+        self.y = 0
+        self.radius = round(circle_radius * radius_coeff)
+        self.color = color
+        self.x_offset = offset_factor * circle_radius * cos(angle)
+        self.y_offset = -offset_factor * circle_radius * sin(angle)
+
+    def move_to(self, x, y):
+        self.x = x + self.x_offset
+        self.y = y + self.y_offset
+
+    def draw(self, surface, dx, dy):
+        pg.draw.circle(surface, self.color, (round(self.x - dx), round(self.y - dy)), self.radius)
+
+
+class StaticCircle:
+    def __init__(self, screen_rect, color, radius, edge_factor, distance, angle, glares_angle):
+        self.x = 0
+        self.y = 0
+        self.distance = distance
+        self.angle = angle
+        self.screen_rect = screen_rect
+        self.rect = pg.Rect(0, 0, round(2*radius), round(2*radius))
+        self.color = color
+        self.edge_color = WHITE
+        self.radius = radius
+        self.edge = edge_factor * radius
+        inner_radius = self.radius - self.edge
+        self.glares = (
+            StaticGlare(GLARE_COLORS[self.color][0], 0.88 * pi + glares_angle, inner_radius, 0.21, 0.64),
+            StaticGlare(GLARE_COLORS[self.color][0], 0.6 * pi + glares_angle, inner_radius, 0.16, 0.63),
+            StaticGlare(GLARE_COLORS[self.color][1], -0.21 * pi + glares_angle, inner_radius, 0.21, 0.54),
+            StaticGlare(GLARE_COLORS[self.color][1], -0.5 * pi + glares_angle, inner_radius, 0.16, 0.52)
+        )
+
+    @property
+    def is_on_screen(self):
+        return self.rect.colliderect(self.screen_rect)
+
+    def move_to(self, xo, yo):
+        self.x = xo + self.distance * cos(self.angle)
+        self.y = yo - self.distance * sin(self.angle)
+        for glare in self.glares:
+            glare.move_to(self.x, self.y)
+        self.rect.center = self.x, self.y
+
+    def draw(self, screen, dx, dy):
+        pos = round(self.x - dx), round(self.y - dy)
+        pg.draw.circle(screen, self.edge_color, pos, self.radius)
+        pg.draw.circle(screen, self.color, pos, self.radius - self.edge)
+        if self.radius >= 6:
+            for glare in self.glares:
+                glare.draw(screen, dx, dy)
+
+
 class Glare:
     """Glare of a circle. Each circle has 4 glares. """
-    def __init__(self, color, angle, radius_coeff):
+    def __init__(self, color, angle, radius_coeff, offset_factor):
         self.x = 0
         self.y = 0
         self.radius = 0
         self.color = color
         self.angle = angle
         self.radius_coeff = radius_coeff
+        self.offset_factor = offset_factor
 
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
 
     def update(self, circle_x, circle_y, circle_radius, circle_angle):
-        self.x = circle_x + 0.61 * circle_radius * cos(self.angle + circle_angle)
-        self.y = circle_y - 0.61 * circle_radius * sin(self.angle + circle_angle)
+        self.x = circle_x + self.offset_factor * circle_radius * cos(self.angle + circle_angle)
+        self.y = circle_y - self.offset_factor * circle_radius * sin(self.angle + circle_angle)
         self.radius = self.radius_coeff * circle_radius
 
     def draw(self, surface, dx, dy):
-        pg.draw.circle(surface,
-                       self.color,
-                       (round(self.x - dx), round(self.y - dy)),
-                       round(self.radius))
+        pg.draw.circle(surface, self.color, (round(self.x - dx), round(self.y - dy)), self.radius)
 
 
 class Circle:
@@ -49,10 +104,10 @@ class Circle:
         k = pi if angle >= 0 else -pi
         b = pi if angle != 0 else 0
         self.glares = (
-            Glare(GLARE_COLORS[self.color][0], b + 0.9 * k, 0.25),
-            Glare(GLARE_COLORS[self.color][0], b + 0.6 * k, 0.17),
-            Glare(GLARE_COLORS[self.color][1], b - 0.25 * k, 0.25),
-            Glare(GLARE_COLORS[self.color][1], b - 0.5 * k, 0.17)
+            Glare(GLARE_COLORS[self.color][0], b + 0.88 * k, 0.23, 0.64),
+            Glare(GLARE_COLORS[self.color][0], b + 0.6 * k, 0.18, 0.63),
+            Glare(GLARE_COLORS[self.color][1], b - 0.21 * k, 0.23, 0.54),
+            Glare(GLARE_COLORS[self.color][1], b - 0.5 * k, 0.18, 0.52)
         )
 
     def become_infected(self):
@@ -84,8 +139,8 @@ class Circle:
         self.update_glares(angle_to_target)
 
     def draw(self, surface, dx=0, dy=0):
-        pos = round(self.x - dx), round(self.y - dy)
         r = round(self.radius)
+        pos = round(self.x - dx), round(self.y - dy)
         pg.draw.circle(surface, self.edge_color, pos, r)
         pg.draw.circle(surface, self.color, pos, r - self.edge)
         if self.radius >= 6:
@@ -140,7 +195,6 @@ class LoopingCircle(Circle):
             glare.update(self.x, self.y, self.radius - self.edge, self.loop_rotation)
 
     def draw(self, surface, dx=0, dy=0):
-        r = round(self.radius)
         cosa = cos(self.loop_rotation)
         sina = sin(self.loop_rotation)
         for offset in self.offsets:
@@ -149,8 +203,8 @@ class LoopingCircle(Circle):
             glare_dx = dx - loop_dx
             glare_dy = dy - loop_dy
             pos = round(self.x - dx + loop_dx), round(self.y - dy + loop_dy)
-            pg.draw.circle(surface, self.edge_color, pos, r)
-            pg.draw.circle(surface, self.color, pos, r - self.edge)
+            pg.draw.circle(surface, self.edge_color, pos, self.radius)
+            pg.draw.circle(surface, self.color, pos, self.radius - self.edge)
             for glare in self.glares:
                 glare.draw(surface, glare_dx, glare_dy)
 
@@ -168,7 +222,6 @@ class SwingingCircle(Circle):
     def update_pos(self, x, y, dt, angle_to_target):
         self.x = x + self.distance * cos(self.angle + angle_to_target)
         self.y = y - self.distance * sin(self.angle + angle_to_target)
-
         self.swing_distance += self.swing_vel * dt
         if self.swing_distance > self.swing_distance_max:
             self.swing_distance = self.swing_distance_max
@@ -271,6 +324,11 @@ def make_circle(data, scale=1, screen_rect=None):
         return ScalingCircle(screen_rect, COLORS["confusion"], HF(data["radius"]),
                              0.053, 0.177, HF(data["distance"]),
                              data["angle"], scale=scale, edge_color=CONFUSION_EDGE_COLOR)
+
+    if data["type"] == "static":
+        return StaticCircle(screen_rect, COLORS[data["color"]], HF(data["radius"]),
+                            data["edge factor"], HF(data["distance"]), data["angle"],
+                            data["glares angle"])
 
 
 def make_circles_list(screen_rect: pg.Rect, circle_data: list, scale=1) -> list:

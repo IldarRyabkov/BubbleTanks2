@@ -2,8 +2,6 @@ from random import randint, uniform
 from collections import defaultdict
 from math import sqrt
 
-from components.enemy import Enemy
-
 
 BOSS_PIECES = ['BossLeg', 'BossHandLeft', 'BossHandRight', 'BossHead']
 
@@ -41,7 +39,6 @@ def generate_test():
     enemies["InfusoriaSpawner"] = 0
     enemies["BubbleContainer"] = 0
     enemies["Sucker"] = 0
-    enemies["SmallVampire"] = 0
     enemies["Snail"] = 0
     enemies["FatSpreader"] = 0
     enemies["SmallVampire"] = 0
@@ -56,7 +53,15 @@ def generate_test():
     enemies["Predator_2"] = 0
     enemies["MixedEnemy"] = 0
     enemies["Confusion"] = 0
+    return enemies
 
+
+def generate_boss():
+    enemies = defaultdict(int)
+    enemies["BossHead"] = 1
+    enemies["BossLeg"] = 1
+    enemies["BossLeftHand"] = 1
+    enemies["BossRightHand"] = 1
     return enemies
 
 
@@ -455,7 +460,6 @@ def generate_enemies(world_distance):
         if choice <= 30:
             add("Beetle", 1, 2)
             if enemy_set_2 == 1:
-                pass
                 add("Twins", 2, 2)
                 add("Baby", 1, 2)
             elif enemy_set_2 == 2:
@@ -669,7 +673,7 @@ def generate_enemies(world_distance):
             add("Ameba", 0, 2)
         elif choice <= 60:
             add("BubbleBomber", 2, 2)
-            #add("Enemy_79", 1, 2)
+            add("SmallVampire", 1, 2)
             add("Infusoria", 0, 2)
             if enemy_set_2 == 1:
                 add("Baby", 2, 3)
@@ -693,7 +697,7 @@ def generate_enemies(world_distance):
                 add("MachineGunner", 1, 2)
         elif choice <= 100:
             #add("Enemy_46", 2, 2)
-            #add("Enemy_79", 1, 2)
+            add("SmallVampire", 1, 2)
             add("Infusoria", 0, 2)
             add("Ameba", 0, 2)
         elif choice <= 120:
@@ -768,7 +772,7 @@ def generate_enemies(world_distance):
             add("Infusoria", 0, 2)
             add("Ameba", 0, 2)
         elif choice <= 60:
-            #add("Enemy_79", 2, 3)
+            add("SmallVampire", 2, 3)
             add("Beetle", 1, 2)
             add("Infusoria", 0, 2)
             add("Ameba", 0, 2)
@@ -784,7 +788,7 @@ def generate_enemies(world_distance):
                 add("Bug", 2, 4)
         elif choice <= 100:
             add("LargeVampire", 1, 1)
-            #add("Enemy_79", 2, 2)
+            add("SmallVampire", 2, 2)
             add("Infusoria", 0, 2)
             if enemy_set_2 == 1:
                 add("Baby", 2, 3)
@@ -987,7 +991,7 @@ def generate_enemies(world_distance):
             add("Ameba", 0, 2)
         elif choice <= 45:
             add("Infusoria", 0, 2)
-            #add("Enemy_79", 0, 2)
+            add("SmallVampire", 0, 2)
             if enemy_set_2 == 1:
                 add("Twins", 2, 3)
                 add("Baby", 0, 2)
@@ -1095,40 +1099,63 @@ def generate_enemies(world_distance):
 class BubbleTanksWorld:
     def __init__(self, player):
         self.player = player
-        self.cur_room = None  # current room the player is in
-        self.enemies_dict = dict()  # stores mobs in all visited rooms
-        self.boss_generated = False  # flag to make sure boss was generated only once
+        self.cur_room = None
+        self.visited_rooms = dict()  # stores enemies in all visited rooms
+        self.boss_generated = False
+        self.boss_pos = None
 
     @property
     def current_enemies(self):
-        return self.enemies_dict[self.cur_room]
+        return self.visited_rooms[self.cur_room]
 
-    def room_exists(self, dx: int, dy: int) -> bool:
-        room = self.cur_room[0] + dx, self.cur_room[1] + dy
-        return room in self.enemies_dict
+    def room_visited(self, dx: int, dy: int) -> bool:
+        """
 
-    def load_save(self, save_data: dict):
-        self.cur_room = tuple(save_data["current room"])
-        self.enemies_dict.clear()
+        :param dx: horizontal shift of neighbour room
+        :param dy: vertical shift of neighbour room
+
+        Returns True if a neighbour room is already visited.
+        """
+        neigh_room = self.cur_room[0] + dx, self.cur_room[1] + dy
+        return neigh_room in self.visited_rooms
+
+    def set_save_data(self, save_data: dict):
+        """
+        :param save_data: dictionary that stores all save data
+
+        Sets the parameters of the world according to the save data.
+        """
+        self.visited_rooms.clear()
         for key, value in save_data["enemies"].items():
-            x, y = key.split()
-            key = (int(x), int(y))
-            self.enemies_dict[key] = value
+            self.visited_rooms[tuple(map(int, key.split()))] = value
+        self.cur_room = tuple(save_data["current room"])
         self.boss_generated = save_data["boss generated"]
+        self.boss_pos = None if save_data["boss position"] is None else tuple(save_data["boss position"])
 
-    def save_enemies(self, enemies: list[Enemy]):
-        enemies_dict = defaultdict(int)
+    def save_enemies(self, enemies: list):
+        """
+        :param enemies: list of enemies in current room
+
+        Saves data on the types and number of enemies in current room to the dictionary.
+        """
+        data = defaultdict(int)
         for enemy in enemies:
-            enemies_dict[enemy.name] += 1
-        self.enemies_dict[self.cur_room] = enemies_dict
+            data[enemy.name] += 1
+        self.visited_rooms[self.cur_room] = data
 
     def move(self, dx: int, dy: int):
+        """
+        :param dx: horizontal shift
+        :param dy: vertical shift
+
+        Shifts the coordinates of the current room in the given direction.
+        """
         self.cur_room = self.cur_room[0] + dx, self.cur_room[1] + dy
 
     def estimate_difficulty(self, enemies=None, dx=0, dy=0):
         if enemies is None:
             room = self.cur_room[0] + dx, self.cur_room[1] + dy
-            enemies = self.enemies_dict[room]
+            enemies = self.visited_rooms[room]
         difficulty = 0
         for enemy, n in enemies.items():
             if enemy in ("Infusoria", "Cell"):
@@ -1143,23 +1170,28 @@ class BubbleTanksWorld:
     def create_easy_enemies(self):
         return generate_easy(self.player.health_change)
 
-    def confirm_enemies(self, enemies: defaultdict[int], dx: int, dy: int):
+    def confirm_enemies(self, enemies: dict, dx: int, dy: int):
         room = self.cur_room[0] + dx, self.cur_room[1] + dy
-        self.enemies_dict[room] = enemies
+        self.visited_rooms[room] = enemies
 
     def create_enemies(self, dx: int, dy: int):
         room = self.cur_room[0] + dx, self.cur_room[1] + dy
-        if room in self.enemies_dict:
+        if room in self.visited_rooms:
             return
-        world_distance = round(sqrt(room[0] ** 2 + room[1] ** 2))
-        help_chance = 0
-        if self.player.is_help_needed:
-            help_chance = uniform(0, 100)
-        if help_chance > 50:
-            enemies = generate_help(world_distance)
+        if not self.boss_generated and self.player.cumulative_health > 1400:
+            enemies = generate_boss()
+            self.boss_generated = True
+            self.boss_pos = room
         else:
-            enemies = generate_enemies(world_distance)
-        self.enemies_dict[room] = enemies
+            world_distance = round(sqrt(room[0] ** 2 + room[1] ** 2))
+            help_chance = 0
+            if self.player.is_help_needed:
+                help_chance = uniform(0, 100)
+            if help_chance > 50:
+                enemies = generate_help(world_distance)
+            else:
+                enemies = generate_enemies(world_distance)
+        self.visited_rooms[room] = enemies
 
 
 __all__ = ["BubbleTanksWorld", "BOSS_PIECES"]

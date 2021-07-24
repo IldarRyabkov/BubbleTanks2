@@ -3,12 +3,12 @@ Module contains scripts used to load/save data from/to files during game.
 
 """
 
-
 import json
 import os
 from json.decoder import JSONDecodeError
 from pygame import display
 from datetime import datetime
+import hashlib
 
 from data.languages import TEXTS
 
@@ -67,6 +67,14 @@ def _validate_config():
         write_default_data()
 
 
+def _is_valid_save_data(save_data):
+    if type(save_data) is not dict or "magic number" not in save_data:
+        return False
+    raw_data = {k: v for k, v in save_data.items() if k != "magic number"}
+    magic_number = int(hashlib.sha512(json.dumps(raw_data).encode()).hexdigest(), 16)
+    return magic_number == save_data["magic number"]
+
+
 def load_config():
     _validate_config()
     with open(_CONFIG_FILE, 'r', encoding='utf-8') as file:
@@ -110,28 +118,27 @@ def update_save_file(save_name,
                      tank, tanks_history, health, max_cumulative_health,
                      enemies_killed, bubbles_collected,
                      visited_rooms, enemies_dict, current_room,
-                     boss_generated, boss_disposition, boss_position,
+                     boss_generated, boss_position,
                      hints_history):
     """Update data of save file with given name. """
-    if save_name is None:
-        return
     data = {
-        "tank": list(tank),
-        "tanks history": [list(tank) for tank in tanks_history],
+        "tank": tank,
+        "tanks history": tanks_history,
         "health": health,
         "max cumulative health": max_cumulative_health,
         "enemies killed": enemies_killed,
         "bubbles collected": bubbles_collected,
-        "visited rooms": {"%d %d" % room: [list(neighbour) for neighbour in neighbours]
+        "visited rooms": {"%d %d" % room: [neighbour for neighbour in neighbours]
                           for room, neighbours in visited_rooms.items()},
         "enemies": {"%d %d" % room: dict(enemies) for room, enemies in enemies_dict.items()},
-        "current room": list(current_room),
+        "current room": current_room,
         "boss generated": boss_generated,
-        "boss disposition": boss_disposition,
-        "boss position": None if boss_position is None else list(boss_position),
+        "boss position": None if boss_position is None else boss_position,
         "hints history": {"%d %d" % room: hint for room, hint in hints_history.items()},
         "time": datetime.today().isoformat(sep=' ', timespec='minutes')
     }
+    magic_number = int(hashlib.sha512(json.dumps(data).encode()).hexdigest(), 16)
+    data["magic number"] = magic_number
     file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
     with open(file_path, 'w') as file:
         json.dump(data, file)
@@ -142,22 +149,22 @@ def create_save_file(save_name):
     default data in user directory.
     """
     data = {
-        "tank": [0, 0],
-        "tanks history": [[0, 0]],
+        "tank": (0, 0),
+        "tanks history": ((0, 0),),
         "health": 0,
         "max cumulative health": 0,
         "enemies killed": "0",
         "bubbles collected": "0",
-        "visited rooms": {"0 0": []},
+        "visited rooms": {"0 0": ()},
         "enemies": {"0 0": {}},
-        "current room": [0, 0],
+        "current room": (0, 0),
         "boss generated": False,
-        "boss killed": False,
         "boss position": None,
-        "boss disposition": 0,
         "hints history": {"0 0": 0},
         "time": datetime.today().isoformat(sep=' ', timespec='minutes')
     }
+    magic_number = int(hashlib.sha512(json.dumps(data).encode()).hexdigest(), 16)
+    data["magic number"] = magic_number
     file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
     with open(file_path, 'w') as file:
         json.dump(data, file)
@@ -170,7 +177,6 @@ def delete_save_file(name):
 
 
 def load_save_file(save_name: str):
-
     file_path = os.path.join(_USER_DIR, "%s.json" % save_name)
     try:
         file = open(file_path, 'r')
@@ -179,6 +185,8 @@ def load_save_file(save_name: str):
     try:
         data = json.load(file)
     except JSONDecodeError:
+        return None
+    if not _is_valid_save_data(data):
         return None
     if "max cumulative health" not in data:
         data["max cumulative health"] = 0

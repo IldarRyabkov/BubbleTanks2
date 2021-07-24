@@ -3,9 +3,7 @@ Module contains paths to all files used in the game.
 
 """
 
-
 import os
-import sys
 
 
 def path(directory: str, filename: str):
@@ -39,7 +37,7 @@ def sapper_attack_img_path(filename: str):
     return img_path(os.path.join("sapper_attack", filename))
 
 
-ROOT_DIR = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 # images

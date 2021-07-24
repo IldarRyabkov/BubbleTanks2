@@ -22,11 +22,11 @@ sticky_image = pg.transform.smoothscale(sticky_image, (sticky_w, sticky_h))
 
 class Enemy(BaseMob):
     def __init__(self, game, name):
+        self.name = name
         data = ENEMIES[name]
         super().__init__(*self.start_pos(), data["max health"], data["max health"],
                          data["radius"], EnemyBody(self, game.rect, data), EnemyWeapons(self, game, data))
         self.game = game
-        self.name = name
         self.death_award = data["death award"]
         self.screen_rect = game.rect
         self.rect = pg.Rect(0, 0, data["rect size"], data["rect size"])
@@ -204,4 +204,101 @@ class Enemy(BaseMob):
                 self.draw_infected(screen, dx, dy)
 
 
-__all__ = ["Enemy"]
+class BossHead(Enemy):
+    def __init__(self, game, name):
+        super().__init__(game, name)
+        self.body.angle = -0.5 * pi
+        self.delta_angle = 0
+        self.target = game.player
+        self.rect_offset = HF(192.575)
+
+    @staticmethod
+    def start_pos():
+        return SCR_W2, -HF(480)
+
+    def collide_bullet(self, bul_x, bul_y, bul_r) -> bool:
+        return circle_collidepoint(*self.rect.center, self.radius + bul_r, bul_x, bul_y)
+
+    def move(self, dx, dy):
+        self.x += dx
+        self.y += dy
+        self.rect.centerx = self.x + self.rect_offset * cos(self.body.angle)
+        self.rect.centery = self.y - self.rect_offset * sin(self.body.angle)
+
+    def update_pos(self, dt):
+        if self.sticky or self.stunned:
+            return
+        angle = calculate_angle(self.x, self.y, self.target.x, self.target.y) + 0.5 * pi
+        if angle > pi:
+            angle = -angle + 0.5 * pi
+        if angle > self.delta_angle:
+            self.delta_angle = min(angle, self.delta_angle + 0.00072 * dt, 0.23 * pi)
+        else:
+            self.delta_angle = max(angle, self.delta_angle - 0.00072 * dt, -0.23 * pi)
+        self.body.angle = -0.5 * pi + self.delta_angle
+        self.rect.centerx = self.x + self.rect_offset * cos(self.body.angle)
+        self.rect.centery = self.y - self.rect_offset * sin(self.body.angle)
+        self.weapons.update_pos()
+
+
+class BossLeg(Enemy):
+    def __init__(self, game, name):
+        super().__init__(game, name)
+        self.body.angle = 0.5 * pi
+        self.rect_offset = HF(124.374)
+        self.rect.centerx = self.x + self.rect_offset * cos(self.body.angle)
+        self.rect.centery = self.y - self.rect_offset * sin(self.body.angle)
+        self.weapons.update_pos()
+
+    @staticmethod
+    def start_pos():
+        return SCR_W2, HF(1280)
+
+    def collide_bullet(self, bul_x, bul_y, bul_r) -> bool:
+        return circle_collidepoint(*self.rect.center, self.radius + bul_r, bul_x, bul_y)
+
+    def move(self, dx, dy):
+        self.x += dx
+        self.y += dy
+        self.rect.centerx = self.x + self.rect_offset * cos(self.body.angle)
+        self.rect.centery = self.y - self.rect_offset * sin(self.body.angle)
+        self.weapons.update_pos()
+
+    def update_pos(self, dt):
+        pass
+
+
+class BossHand(Enemy):
+    def __init__(self, game, name):
+        super().__init__(game, name)
+        if self.name == "BossLeftHand":
+            self.body.angle = -0.2 * pi
+        else:
+            self.body.angle = -0.8 * pi
+
+    def start_pos(self):
+        if self.name == "BossLeftHand":
+            return SCR_W2 - HF(600), -HF(80)
+        return SCR_W2 + HF(600), -HF(80)
+
+    def move(self, dx, dy):
+        self.x += dx
+        self.y += dy
+        self.rect.center = self.x, self.y
+        self.weapons.update_pos()
+
+    def update_pos(self, dt):
+        self.weapons.update_pos()
+
+
+def make_enemy(game, name):
+    if name == "BossHead":
+        return BossHead(game, name)
+    if name == "BossLeg":
+        return BossLeg(game, name)
+    if name in ("BossLeftHand", "BossRightHand"):
+        return BossHand(game, name)
+    return Enemy(game, name)
+
+
+__all__ = ["Enemy", "make_enemy"]

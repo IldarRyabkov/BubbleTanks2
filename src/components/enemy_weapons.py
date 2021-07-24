@@ -175,6 +175,8 @@ class Gun:
             return self.shoot_mg_360
         if shooting_type == "machine gun 360 fast":
             return self.shoot_mg_360_fast
+        if shooting_type == "machine gun 360 constant":
+            return self.shoot_mg_360_constant
         if shooting_type == "machine gun":
             return self.shoot_mg
         if shooting_type == "mines":
@@ -239,6 +241,10 @@ class Gun:
     def shoot_mg_360_fast(self):
         if not self.owner.weapons.machine_gun_on:
             return
+        self.angle_to_target -= 0.075 * pi
+        self.shoot_single()
+
+    def shoot_mg_360_constant(self):
         self.angle_to_target -= 0.075 * pi
         self.shoot_single()
 

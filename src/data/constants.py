@@ -105,6 +105,7 @@ COLORS = {
     "orange": ORANGE,
     "light orange": LIGHT_ORANGE,
     "violet": VIOLET,
+    "purple": PURPLE,
     "red": RED,
     "light red": LIGHT_RED,
     "light red 2": LIGHT_RED_2,

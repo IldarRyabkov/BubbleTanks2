@@ -294,7 +294,7 @@
 	"max health": 1,
 	"radius": 130.0,
 	"background radius": 250.0,
-	"cooldown": 1600,
+	"cooldown": 1200,
 	"cooldown auto": 0,
 	"preview": {
 		"health state": 0,

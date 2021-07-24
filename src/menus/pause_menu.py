@@ -41,7 +41,7 @@ class PauseMenu(Menu):
         # buttons
         self.screen_mode_buttons = self.create_screen_mode_buttons()
 
-        self.map_button = Map(self, xo, self.game.world.enemies_dict)
+        self.map_button = Map(self, xo, self.game.world.visited_rooms)
 
         self.music_slider = SliderButton(SCR_W2, H(400),  H(856),
                                          TEXTS["music volume text"],

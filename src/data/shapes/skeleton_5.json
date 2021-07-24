@@ -1,0 +1,134 @@
+{
+	"circles": [
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 39.937,
+			"distance": 212.213,
+			"angle": 2.3436281195779857,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 33.851,
+			"distance": 215.911,
+			"angle": 2.604380309825938,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 38.415,
+			"distance": 65.636,
+			"angle": 2.1331414117874698,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 37.655,
+			"distance": 70.051,
+			"angle": 2.927964353145687,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.039,
+			"radius": 73.978,
+			"distance": 143.61,
+			"angle": 2.4787166036823469,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 32.71,
+			"distance": 109.115,
+			"angle": 1.8723892215395167,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 22.06,
+			"distance": 107.639,
+			"angle": 1.5707963267948966,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.043,
+			"radius": 53.249,
+			"distance": 11.037,
+			"angle": -3.1070351344003055,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.043,
+			"radius": 53.629,
+			"distance": 112.368,
+			"angle": -1.7435839227423354,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.04,
+			"radius": 66.181,
+			"distance": 146.965,
+			"angle": -2.1174334485195209,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.033,
+			"radius": 112.393,
+			"distance": 93.011,
+			"angle": -0.7162831250184729,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 40.127,
+			"distance": 115.07,
+			"angle": 0.39584067435231398,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 40.127,
+			"distance": 183.353,
+			"angle": -0.20420352248333657,
+			"glares angle": -0.7853981633974483
+		},
+		{
+			"type": "static",
+			"color": "blue",
+			"edge factor": 0.107,
+			"radius": 40.127,
+			"distance": 201.711,
+			"angle": -0.7885397560510381,
+			"glares angle": -0.7853981633974483
+		}
+	],
+	"distance": 1080.118,
+	"angle": 0.7791149780902686,
+	"width": 438.922,
+	"height": 383.391
+}

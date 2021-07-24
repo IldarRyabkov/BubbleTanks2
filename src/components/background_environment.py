@@ -8,6 +8,7 @@ from data.languages import TEXTS
 from gui.widgets.text_widget import TextWidget
 
 from components.bubble_tanks_world import BOSS_PIECES
+from components.boss_skeleton import BossSkeleton
 from components.utils import *
 
 
@@ -131,7 +132,7 @@ class PlayerTrace:
     is being transported from one room to another.
     Imitates trace of bubbles that player's tank leaves on its way.
     """
-    coords = ()  # coordinates of circles that will be drawn
+    coords = ()
 
     def set_coords(self, x, y, dist, angle):
         self.coords = (
@@ -160,22 +161,8 @@ class BackgroundEnvironment:
         self.player_halo = PlayerHalo()
         self.destination_circle = DestinationCircle()
         self.player_trace = PlayerTrace()
-
-        # Normally mobs in a neighbour rooms are not being drawn cause they cannot be seen from current room.
-        # but Boss Skeleton is too large, so it is stored separately as a background environment object, to be drawn
-        # when the Final Boss is in the current room, or if Boss skeleton is partly visible from the neighbour room.
-        self.boss_skeleton = None
-
-        # Boss disposition ('in current room', 'in neighbour room', 'far away')
-        # is used to check if we should draw Boss skeleton or not.
-        self.boss_disposition = BOSS_IS_FAR_AWAY
-        self.boss_pos = None
-        self.room_pos = (0, 0)
-
-        # New boss disposition temporary stores the next boss disposition after transportation of the player.
-        # It is used to check if we should draw boss skeleton during transportation or not.
-        # When transportation is done, boss disposition is replaced with the new boss disposition.
-        self.new_boss_disposition = None
+        self.boss_skeleton = BossSkeleton(game.rect)
+        self.show_boss_skeleton = False
 
         # New hint widget is a temporary text widget used to draw hint text
         # of the new room during player's transportation.
@@ -195,70 +182,51 @@ class BackgroundEnvironment:
         self.hints_history = dict()
         self.hint_texts = None
         self.hints_count = 0
-        self.language = None
-
-    @property
-    def boss_offset(self):
-        dx = (self.boss_pos[0] - self.room_pos[0]) * DIST_BETWEEN_ROOMS
-        dy = (self.boss_pos[1] - self.room_pos[1]) * DIST_BETWEEN_ROOMS
-        return dx, dy
 
     def set_data(self, data: dict):
         self.player_halo.set_size(self.game.player.bg_radius)
-        self.boss_disposition = data["boss disposition"],
-        self.boss_pos = data["boss position"]
-        self.room_pos = tuple(data["current room"])
         self.hints_history.clear()
         for room, hint in data["hints history"].items():
             room = tuple(map(int, room.split()))
             self.hints_history[room] = hint
+        self.set_boss_skeleton_pos()
 
     def set_language(self, language):
-        self.language = language
-        self.hint_texts = TEXTS["room hints"][self.language]
-        if self.room_pos in self.hints_history:
-            text = self.hint_texts[self.hints_history[self.room_pos]]
+        self.hint_texts = TEXTS["room hints"][language]
+        room_pos = self.game.world.cur_room
+        if room_pos in self.hints_history:
+            text = self.hint_texts[self.hints_history[room_pos]]
             self.hint_widget.set_text(text)
         else:
             self.hint_widget.clear()
 
-    def boss_visible_from_neighbour_room(self, player_dy):
-        """Returns True, if Boss skeleton is partly visible from a neighbour room.
-        It happens, if the room with Final Boss is located below or above the current room,
-        and player is close enough to border of the room to see a part of Boss skeleton.
-        """
-        return (self.boss_pos[0] == self.room_pos[0] and
-                abs(self.boss_offset[1] - player_dy) <= ROOM_RADIUS + SCR_W2 + HF(360))
+    def set_boss_skeleton_transportation_pos(self, dx, dy):
+        if any(enemy.name in BOSS_PIECES for enemy in self.game.room.new_mobs):
+            self.show_boss_skeleton = True
+            self.boss_skeleton.move_to(SCR_W2 - dx, SCR_H2 - dy)
+        elif all(enemy.name not in BOSS_PIECES for enemy in self.game.room.mobs):
+            self.show_boss_skeleton = False
 
-    def set_new_boss_disposition(self, new_room_pos: tuple, new_mobs: list):
-        """Sets the new boss disposition due to transportation of the player to the next room.
-        If the new boss disposition becomes equal to "far away",
-        updates Boss skeleton position to draw it properly.
-        """
-        self.room_pos = new_room_pos
-        x, y = new_room_pos
-
-        if any(mob.name in BOSS_PIECES for mob in new_mobs):
-            self.new_boss_disposition = BOSS_IN_CURRENT_ROOM
-            self.boss_pos = new_room_pos
-
-        elif (self.boss_disposition == BOSS_IN_CURRENT_ROOM or
-              (self.boss_pos is not None and
-               hypot(x - self.boss_pos[0], y - self.boss_pos[1]) == 1)):
-            self.new_boss_disposition = BOSS_IN_NEIGHBOUR_ROOM
-
+    def set_boss_skeleton_pos(self):
+        if any(enemy.name in BOSS_PIECES for enemy in self.game.room.mobs):
+            self.show_boss_skeleton = True
+            self.boss_skeleton.move_to(SCR_W2, SCR_H2)
+        elif self.game.world.boss_pos is not None:
+            boss_pos = self.game.world.boss_pos
+            cur_room = self.game.world.cur_room
+            dx, dy = boss_pos[0] - cur_room[0], boss_pos[1] - cur_room[1]
+            if hypot(dx, dy) == 1:
+                self.show_boss_skeleton = True
+                self.boss_skeleton.move_to(SCR_W2 + dx * DIST_BETWEEN_ROOMS,
+                                           SCR_H2 + dy * DIST_BETWEEN_ROOMS)
         else:
-            self.new_boss_disposition = BOSS_IS_FAR_AWAY
-
-        if self.new_boss_disposition != BOSS_IS_FAR_AWAY:
-            dx, dy = self.boss_offset
-            self.boss_skeleton.move_to(SCR_W2 + dx, SCR_H2 + dy)
+            self.show_boss_skeleton = False
 
     def set_params_after_transportation(self):
-        """Replaces hint widget of the old room with a hint widget of the next room.
-        and old boss disposition with the new boss disposition.
+        """Replaces hint widget of the old room with a hint widget of the next room
+        and update boss skeleton position.
         """
-        self.boss_disposition = self.new_boss_disposition
+        self.set_boss_skeleton_pos()
         self.hint_widget.replace_with(self.new_hint_widget)
         self.new_hint_widget.clear()
 
@@ -266,18 +234,19 @@ class BackgroundEnvironment:
         """Method is called when player is being transported to the next room.
         Sets new hint text widget, explaining the rules of the game.
         """
-        if self.room_pos in self.hints_history:
-            text = self.hint_texts[self.hints_history[self.room_pos]]
+        room_pos = self.game.world.cur_room
+        if room_pos in self.hints_history:
+            text = self.hint_texts[self.hints_history[room_pos]]
             self.new_hint_widget.set_text(text)
         else:
             top = len(self.hints_history)
             if top <= 4 or self.game.player.level >= 2 and top == 5:
                 text = self.hint_texts[top]
                 self.new_hint_widget.set_text(text)
-                self.hints_history[self.room_pos] = top
+                self.hints_history[room_pos] = top
 
-    def set_player_halo(self, radius):
-        self.player_halo.set_size(radius)
+    def set_player_halo(self):
+        self.player_halo.set_size(self.game.player.bg_radius)
 
     def set_player_trace(self, x, y, dist, alpha):
         self.player_trace.set_coords(x, y, 0.05 * dist, alpha)
@@ -289,11 +258,11 @@ class BackgroundEnvironment:
         screen.blit(self.bg, (0, 0))
 
     def draw_room_bg(self, screen, dx, dy):
+        x = SCR_W2 - ROOM_RADIUS - dx
+        y = SCR_H2 - ROOM_RADIUS - dy
         for surface in self.room_bg:
-            pos = surface.get_offset()
-            x = SCR_W2 - ROOM_RADIUS - dx + pos[0]
-            y = SCR_H2 - ROOM_RADIUS - dy + pos[1]
-            screen.blit(surface, (x, y))
+            x_offset, y_offset = surface.get_offset()
+            screen.blit(surface, (x + x_offset, y + y_offset))
 
     def draw_hint(self, surface, dx, dy):
         self.hint_widget.draw(surface, dx, dy)
@@ -315,15 +284,8 @@ class BackgroundEnvironment:
     def draw_destination_circle(self, surface, dx, dy):
         self.destination_circle.draw(surface, dx, dy)
 
-    def draw_boss_skeleton(self, surface, dx, dy, transportation=False):
-        if transportation:
-            if (self.boss_disposition == BOSS_IN_CURRENT_ROOM or
-                    self.new_boss_disposition == BOSS_IN_CURRENT_ROOM):
-                self.boss_skeleton.draw(surface, dx, dy)
-
-        elif (self.boss_disposition == BOSS_IN_CURRENT_ROOM
-              or (self.boss_disposition == BOSS_IN_NEIGHBOUR_ROOM and
-                  self.boss_visible_from_neighbour_room(dy))):
+    def draw_boss_skeleton(self, surface, dx, dy):
+        if self.show_boss_skeleton:
             self.boss_skeleton.draw(surface, dx, dy)
 
 

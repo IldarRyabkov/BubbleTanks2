@@ -25,7 +25,7 @@ class VictoryMenu(Menu):
         self.mask = Mask(self, mask_surface)
 
         # widgets
-        self.bubbles = VictoryMenuBubbles(self, game.rect, H(335))
+        self.bubbles = VictoryMenuBubbles(self, H(335))
         self.caption = MenuCaption(self, SCR_W2, H(50), FONT_1, H(90), WHITE, 1)
         self.texts = (
             TextWidget(SCR_W2, H(170), CALIBRI, H(45), WHITE, 1, H(960)),
@@ -73,6 +73,15 @@ class VictoryMenu(Menu):
     def animation_time(self):
         return 400
 
+    def handle_events_animation(self):
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                self.game.quit()
+            elif event.type in [pg.KEYDOWN, pg.KEYUP]:
+                self.game.player.handle(event.type, event.key)
+            elif event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP]:
+                self.game.player.handle(event.type, event.button)
+
     def handle_event(self, event):
         super().handle_event(event)
         if event.type in [pg.KEYDOWN, pg.KEYUP]:
@@ -98,6 +107,7 @@ class VictoryMenu(Menu):
 
     def open(self):
         self.game.draw_background(self.bg_surface)
+        self.game.update_save_data()
         super().open()
 
     @set_cursor_grab(False)

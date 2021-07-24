@@ -1,0 +1,116 @@
+{
+	"circles": [
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 74.168,
+			"distance": 288.685,
+			"angle": -1.5707963267948966,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 84.437,
+			"distance": 192.456,
+			"angle": -1.5707963267948966,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 94.326,
+			"distance": 76.45,
+			"angle": -1.5707963267948966,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 78.732,
+			"distance": 62.007,
+			"angle": 3.122743097668254,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 78.732,
+			"distance": 62.007,
+			"angle": 0.01884955592153876,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 87.861,
+			"distance": 97.75,
+			"angle": 1.5707963267948966,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 67.512,
+			"distance": 162.176,
+			"angle": 2.3593360828459346,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 67.512,
+			"distance": 162.176,
+			"angle": 0.7822565707438585,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 121.712,
+			"distance": 225.547,
+			"angle": 1.5707963267948966,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 92.044,
+			"distance": 285.53,
+			"angle": 2.1362830044410598,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 92.044,
+			"distance": 285.53,
+			"angle": 1.0053096491487339,
+			"glares angle": 0.0
+		},
+		{
+			"type": "static",
+			"color": "purple",
+			"edge factor": 0.046,
+			"radius": 139.208,
+			"distance": 356.006,
+			"angle": 1.5707963267948966,
+			"glares angle": 0.0
+		}
+	],
+	"distance": 587.258,
+	"angle": 1.5707963267948966,
+	"width": 486.086,
+	"height": 722.466
+}

@@ -1,15 +1,14 @@
 import json
 import os
 from os import listdir
-import sys
 from collections import defaultdict
 
 
-def _init_texts() -> defaultdict[list]:
+def _init_texts():
     """Returns dictionary that stores all game text data in different languages. """
     texts = defaultdict(list)
 
-    root_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    root_dir = os.path.abspath(os.path.dirname(__file__))
     json_files = [f for f in listdir(root_dir) if f.endswith('.json')]
 
     for file_name in json_files:

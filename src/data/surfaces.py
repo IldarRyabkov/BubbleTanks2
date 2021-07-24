@@ -14,7 +14,6 @@ from math import hypot, cos, sin, pi, sqrt
 
 from constants import *
 from assets.paths import *
-from data.languages.texts import TEXTS
 
 
 def save_image(surface, filename):
@@ -520,4 +519,4 @@ def menu_mask() -> pg.Surface:
     return surface
 
 
-save_image(credits_bg_1(), 'credits_bg_1')
+#save_image(credits_bg_1(), 'credits_bg_1')

@@ -137,11 +137,8 @@ class Map(Button):
         self.is_pressed = False
         self.movement_start_pos = None
 
-    def update_data(self, room_pos, boss_state):
-        """Adds information about visited room and boss location to the map. """
-        self.add_visited_room(room_pos)
-        if boss_state == BOSS_IN_CURRENT_ROOM:
-            self.boss_aim.pos = room_pos
+    def set_boss_pos(self, boss_pos):
+        self.boss_aim.pos = boss_pos
 
     def check_movement(self):
         """Checks if current map size is big enough to move it by mouse"""

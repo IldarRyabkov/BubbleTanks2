@@ -7,8 +7,10 @@ I'm making it for 3 reasons:
 	- to be able to play this amazing game, even despite the fact that Flash Player is no longer supported
 	- this is a lot of fun! :)
 
-The game is not finished yet, still a lot of things to do.
-
 To start the game run "__main__.py"
+To build an EXE file with pyinstaller run "pyinstaller setup.spec"
 
+Required version of Python: 3.9+
+
+The game is not finished yet, still a lot of things to do.
 For any questions, suggests etc you can write to ildar.239@mail.ru

@@ -8,6 +8,7 @@ from gui.widgets.credits_label import CreditsLabel
 from gui.widgets.main_menu_caption import *
 from gui.widgets.background_bubbles import BackgroundBubbles
 from gui.widgets.key_hint import KeyHint
+from gui.widgets.background_image import BackgroundImage
 
 from gui.buttons.text_button import *
 from gui.buttons.slider_button import SliderButton
@@ -18,6 +19,7 @@ from gui.buttons.save_button import SaveButton
 from gui.buttons.back_button import BackButton
 from gui.buttons.delete_button import DeleteButton
 from gui.buttons.start_button import StartButton
+from gui.buttons.control_button import ControlButton
 
 from data.constants import *
 from data.states import MainMenuStates as St
@@ -39,6 +41,7 @@ class MainMenu(Menu):
         self.splash_screen_shown = False
         self.clicked_save_button = None
         self.clicked_delete_button = None
+        self.clicked_control_button = None
 
         # background
         self.bg_surface = pg.image.load(BG).convert()
@@ -62,22 +65,24 @@ class MainMenu(Menu):
         self.bubbles = BackgroundBubbles(game.rect)
         self.caption = MainMenuCaption(self)
         self.esc_hint = KeyHint(SCR_W - H(190), H(890), CALIBRI, H(35), WHITE)
+        self.controls_bg = BackgroundImage(SCR_W2 - H(540), H(245), H(1080), H(410), CONTROLS_BG)
 
         # widgets dictionary
         base_widgets = self.bubbles, self.caption
         self.widgets = {
             St.SPLASH_SCREEN: (self.bubbles, self.caption),
             St.MAIN_PAGE: (self.bubbles, self.caption),
-            St.SETTINGS: base_widgets,
+            St.SETTINGS: (*base_widgets, self.esc_hint),
             St.CREDITS: (*base_widgets, *self.credits_widgets, self.esc_hint),
             St.LANGUAGES: (*base_widgets, self.esc_hint),
             St.RESOLUTIONS: (*base_widgets, self.resolution_warning, self.esc_hint),
             St.SCREEN_MODES: (*base_widgets, self.esc_hint),
-            St.EXIT: base_widgets,
+            St.CONTROLS: (*base_widgets, self.esc_hint, self.controls_bg),
+            St.EXIT: (*base_widgets, self.esc_hint),
             St.NEW_GAME: base_widgets,
             St.LOAD_GAME: base_widgets,
-            St.OVERRIDE_SAVE: base_widgets,
-            St.DELETE_SAVE: base_widgets
+            St.OVERRIDE_SAVE: (*base_widgets, self.esc_hint),
+            St.DELETE_SAVE: (*base_widgets, self.esc_hint)
         }
 
         # buttons
@@ -120,6 +125,11 @@ class MainMenu(Menu):
                                                        CALIBRI_BOLD, H(56), sp,
                                                        action=self.screen_modes,
                                                        min_alpha=200, w=H(780))
+
+        self.to_controls_button = TextButton(SCR_W2, H(725),
+                                             TEXTS["controls button text"],
+                                             CALIBRI_BOLD, H(56), 200, sp,
+                                             action=self.controls, w=H(400))
 
         self.back_button = BackButton(TEXTS["back button text"], sp, self.back)
 
@@ -178,20 +188,34 @@ class MainMenu(Menu):
             DeleteButton(SCR_W2 + H(340), sp, self.save_buttons[2], self.delete_button_action)
         )
 
+        self.control_buttons = (
+            ControlButton(SCR_W2 - H(470), H(265), TEXTS["moving up label"], self.game.controls, "up", sp, self.control_button_action),
+            ControlButton(SCR_W2 - H(470), H(360), TEXTS["moving down label"], self.game.controls, "down", sp, self.control_button_action),
+            ControlButton(SCR_W2 - H(470), H(455), TEXTS["moving left label"], self.game.controls, "left", sp, self.control_button_action),
+            ControlButton(SCR_W2 - H(470), H(550), TEXTS["moving right label"], self.game.controls, "right", sp, self.control_button_action),
+            ControlButton(SCR_W2 + H(20), H(360), TEXTS["superpower label"], self.game.controls, "superpower", sp, self.control_button_action),
+            ControlButton(SCR_W2 + H(20), H(455), TEXTS["pause label"], self.game.controls, "pause", sp, self.control_button_action),
+        )
+        self.reset_key_mapping_button = TextButton(SCR_W2, H(770),
+                                                   TEXTS["reset key mapping text"],
+                                                   CALIBRI_BOLD, H(56), 200, sp,
+                                                   action=self.reset_key_mapping, w=H(600))
+
         # buttons dictionary
         self.buttons = {
             St.SPLASH_SCREEN: [self.start_button],
             St.MAIN_PAGE: [self.new_game_button, self.load_game_button,
                            self.settings_button, self.credits_button, self.exit_button],
             St.SETTINGS: [self.to_languages_button, self.to_resolutions_button,
-                          self.to_screen_modes_button, self.music_slider,
-                          self.sound_slider, self.back_button],
+                          self.to_screen_modes_button, self.to_controls_button,
+                          self.music_slider, self.sound_slider, self.back_button],
             St.CREDITS: [],
             St.NEW_GAME: [*self.save_buttons, self.back_button],
             St.LOAD_GAME: [*self.save_buttons, self.back_button],
             St.LANGUAGES: self.language_buttons,
             St.RESOLUTIONS: self.resolution_buttons,
             St.SCREEN_MODES: self.screen_mode_buttons,
+            St.CONTROLS: [*self.control_buttons, self.reset_key_mapping_button, self.back_button],
             St.EXIT: [self.yes_button, self.no_button],
             St.OVERRIDE_SAVE: [self.yes_button, self.no_button],
             St.DELETE_SAVE: [self.yes_button, self.no_button],
@@ -233,6 +257,7 @@ class MainMenu(Menu):
         return buttons
 
     def set_delete_buttons(self):
+        self.clicked_delete_button = None
         for db, sb in zip(self.delete_buttons, self.save_buttons):
             if sb.save_data is not None and db not in self.buttons[St.NEW_GAME]:
                 self.buttons[St.NEW_GAME].append(db)
@@ -277,6 +302,12 @@ class MainMenu(Menu):
             else:
                 self.set_state(St.OVERRIDE_SAVE, button)
 
+    def control_button_action(self, button):
+        if self.clicked_control_button is not None:
+            self.clicked_control_button.deactivate()
+        button.activate()
+        self.clicked_control_button = button
+
     def start(self):
         self.set_state(St.MAIN_PAGE, self.start_button)
 
@@ -308,9 +339,30 @@ class MainMenu(Menu):
         """Action of the 'to screen modes' button. """
         self.set_state(St.SCREEN_MODES, self.to_screen_modes_button)
 
+    def controls(self):
+        """Action of the 'to controls' button. """
+        if self.clicked_control_button is not None:
+            self.clicked_control_button.deactivate()
+            self.clicked_control_button = None
+        self.set_state(St.CONTROLS, self.to_controls_button)
+
+    def reset_key_mapping(self):
+        self.control_buttons[0].set_control(pg.K_w)
+        self.control_buttons[1].set_control(pg.K_s)
+        self.control_buttons[2].set_control(pg.K_a)
+        self.control_buttons[3].set_control(pg.K_d)
+        self.control_buttons[4].set_control(pg.K_SPACE)
+        self.control_buttons[5].set_control(pg.K_p)
+        if self.clicked_control_button is not None:
+            self.clicked_control_button.deactivate()
+            self.clicked_control_button = None
+
     def back(self):
         """Action of the 'back' button. """
-        self.set_state(St.MAIN_PAGE, self.back_button)
+        if self.state == St.CONTROLS:
+            self.set_state(St.SETTINGS, self.back_button)
+        else:
+            self.set_state(St.MAIN_PAGE, self.back_button)
 
     def exit(self):
         """Action of the 'exit' button. """
@@ -356,8 +408,9 @@ class MainMenu(Menu):
     def set_language(self, language):
         self.game.language = language
         for button in (self.to_languages_button, self.to_resolutions_button,
-                       self.to_screen_modes_button, self.start_button, self.music_slider,
-                       self.sound_slider, self.back_button, self.yes_button,
+                       self.to_screen_modes_button, self.to_controls_button,
+                       self.start_button,  *self.control_buttons, self.reset_key_mapping_button,
+                       self.music_slider, self.sound_slider, self.back_button, self.yes_button,
                        self.no_button, self.resume_button, *self.screen_mode_buttons,
                        self.new_game_button, self.load_game_button, self.exit_button,
                        self.settings_button, self.credits_button, *self.save_buttons):
@@ -379,7 +432,7 @@ class MainMenu(Menu):
             return 800
         if self.state == St.SPLASH_SCREEN:
             return 500
-        return 260
+        return 220
 
     def set_widgets_state(self, state):
         self.caption.set_state(state)
@@ -392,6 +445,8 @@ class MainMenu(Menu):
             self.set_state(St.EXIT)
         elif self.state == St.OVERRIDE_SAVE:
             self.set_state(St.NEW_GAME)
+        elif self.state == St.DELETE_SAVE:
+            self.set_state(self.previous_state)
         else:
             self.set_state(St.SETTINGS)
 
@@ -399,8 +454,11 @@ class MainMenu(Menu):
         super().handle_event(event)
         if event.type in (pg.KEYDOWN, pg.MOUSEBUTTONDOWN) and self.state == St.CREDITS:
             self.set_state(St.MAIN_PAGE)
-        elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-            self.handle_escape_button_press()
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                self.handle_escape_button_press()
+            elif self.state == St.CONTROLS and self.clicked_control_button is not None:
+                self.clicked_control_button.change_control(event.key)
 
     def draw_background(self, screen):
         screen.blit(self.bg_surface, (0, 0))

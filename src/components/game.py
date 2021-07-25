@@ -35,6 +35,7 @@ class Game:
         self.screen = screen
         self.rect = pg.Rect(0, 0, SCR_W, SCR_H)
         self.language = load_language()
+        self.controls = load_controls()
 
         self.screen_mode = WINDOWED_MODE
         self.set_screen_mode(load_screen_mode())
@@ -144,8 +145,9 @@ class Game:
         sys.exit()
 
     def handle(self, e_type, e_key):
-        if e_type == pg.KEYDOWN and e_key in [pg.K_p, pg.K_ESCAPE] and not self.transportation:
-            self.pause = True
+        if e_type == pg.KEYDOWN and e_key in (self.controls["pause"], pg.K_ESCAPE):
+            if not self.transportation:
+                self.pause = True
         else:
             self.player.handle(e_type, e_key)
 

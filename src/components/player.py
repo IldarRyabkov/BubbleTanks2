@@ -8,7 +8,6 @@ from assets.paths import PLAYER_HIT
 
 from components.utils import *
 from components.superpowers import *
-from components.bullets import BulletBuster
 from components.base_mob import BaseMob
 from components.player_body import PlayerBody
 from components.player_weapons import PlayerWeapons
@@ -263,17 +262,17 @@ class Player(BaseMob):
         self.orbital_seekers = list(filter(lambda s: not s.orbiting, self.orbital_seekers))
 
     def handle(self, e_type, e_key):
-        if e_key == pg.K_a:
+        if e_key == self.game.controls["left"]:
             self.moving_left = (e_type == pg.KEYDOWN)
-        elif e_key == pg.K_d:
+        elif e_key == self.game.controls["right"]:
             self.moving_right = (e_type == pg.KEYDOWN)
-        elif e_key == pg.K_w:
+        elif e_key == self.game.controls["up"]:
             self.moving_up = (e_type == pg.KEYDOWN)
-        elif e_key == pg.K_s:
+        elif e_key == self.game.controls["down"]:
             self.moving_down = (e_type == pg.KEYDOWN)
         elif e_key == pg.BUTTON_LEFT:
             self.shooting = (e_type == pg.MOUSEBUTTONDOWN)
-        elif e_key == pg.K_SPACE:
+        elif e_key == self.game.controls["superpower"]:
             self.superpower.on = (e_type == pg.KEYDOWN)
 
     def collide_bullet(self, bul_x, bul_y, r):

@@ -26,6 +26,10 @@ class TextWidget(AnimatedWidget):
         pg.font.init()
         self.font = pg.font.Font(self.font_name, font_size)
 
+    def set_color(self, color):
+        self.color = color
+        self.set_text(self.text)
+
     def replace_with(self, text_widget):
         self.lines = text_widget.lines
 

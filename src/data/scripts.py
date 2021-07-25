@@ -6,7 +6,7 @@ Module contains scripts used to load/save data from/to files during game.
 import json
 import os
 from json.decoder import JSONDecodeError
-from pygame import display
+import pygame as pg
 from datetime import datetime
 import hashlib
 
@@ -17,8 +17,8 @@ def _max_available_resolution():
     """Returns maximum screen resolution suggested by pygame.
     This resolution is supposed to be the screen size of the monitor.
     """
-    display.init()
-    return list(display.list_modes()[0])
+    pg.display.init()
+    return list(pg.display.list_modes()[0])
 
 
 def _validate_config():
@@ -42,6 +42,16 @@ def _validate_config():
             return False
         if "resolution" not in data or data["resolution"] not in SUPPORTED_RESOLUTIONS:
             return False
+        if "controls" not in data or type(data["controls"]) != dict:
+            return False
+        if not all(k in ("up", "down", "left", "right", "superpower", "pause")
+                   for k in data["controls"]):
+            return False
+        for key_name in data["controls"].values():
+            try:
+                pg.key.key_code(key_name)
+            except ValueError:
+                return False
         return True
 
     def write_default_data():
@@ -50,7 +60,15 @@ def _validate_config():
                 "screen mode": 1,
                 "language": LANGUAGES[0],
                 "resolution": [1024, 768],
-                "save": "empty"
+                "save": "empty",
+                "controls": {
+                    "up": "w",
+                    "down": "s",
+                    "left": "a",
+                    "right": "d",
+                    "superpower": "space",
+                    "pause": "p"
+                }
             }
             json.dump(data, f)
 
@@ -97,7 +115,14 @@ def load_current_save():
     return load_config()["save"]
 
 
-def update_config_file(resolution=None, language=None, save=None, screen_mode=None):
+def load_controls():
+    controls = load_config()["controls"]
+    for control, key_name in controls.items():
+        controls[control] = pg.key.key_code(key_name)
+    return controls
+
+
+def update_config_file(resolution=None, language=None, save=None, screen_mode=None, controls=None):
     _validate_config()
     with open(_CONFIG_FILE, 'r+', encoding='utf-8') as file:
         data = json.load(file)
@@ -109,6 +134,8 @@ def update_config_file(resolution=None, language=None, save=None, screen_mode=No
             data["save"] = save
         if screen_mode is not None:
             data["screen mode"] = screen_mode
+        if controls is not None:
+            data["controls"] = {k: pg.key.name(v) for k, v in controls.items()}
         file.seek(0)
         file.truncate(0)
         json.dump(data, file, ensure_ascii=False, indent=4)
@@ -226,6 +253,7 @@ __all__ = [
     "load_language",
     "load_screen_mode",
     "load_current_save",
+    "load_controls",
     "load_save_file",
     "create_save_file",
     "update_save_file",

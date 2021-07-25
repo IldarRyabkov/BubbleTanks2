@@ -70,6 +70,7 @@ EXIT_BUTTON_PRESSED_BG = img_path("exit_button_pressed.png")
 CREDITS_BG_1 = img_path("credits_bg_1.png")
 CREDITS_BG_2 = img_path("credits_bg_2.png")
 CREDITS_BG_3 = img_path("credits_bg_3.png")
+CONTROLS_BG = img_path(("controls_bg.png"))
 SAVE_BUTTON_BG = img_path("save_button_bg.png")
 DELETE_BUTTON_BG = img_path("delete_button.png")
 STICKY_IMAGE = img_path("sticky.png")
@@ -86,8 +87,6 @@ SAPPER_IMG_8 = sapper_attack_img_path("8.png")
 
 # fonts
 FONT_1 = font_path('font_1.otf')
-FONT_2 = font_path('font_2.ttf')
-FONT_3 = font_path('font_3.ttf')
 CALIBRI = font_path('calibri.ttf')
 CALIBRI_BOLD = font_path('calibri_bold.ttf')
 
@@ -133,6 +132,7 @@ __all__ = [
     "CREDITS_BG_1",
     "CREDITS_BG_2",
     "CREDITS_BG_3",
+    "CONTROLS_BG",
     "DELETE_BUTTON_BG",
     "SAVE_BUTTON_BG",
     "SETTINGS_BUTTON_BG",
@@ -152,8 +152,6 @@ __all__ = [
     "SAPPER_IMG_7",
     "SAPPER_IMG_8",
     "FONT_1",
-    "FONT_2",
-    "FONT_3",
     "CALIBRI",
     "CALIBRI_BOLD",
     "GAME_MUSIC",

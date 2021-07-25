@@ -62,8 +62,6 @@ class VictoryMenu(Menu):
 
     def continue_playing(self):
         """Action of the 'continue playing' button. """
-        self.game.bg_environment.boss_disposition = BOSS_IS_FAR_AWAY
-        self.game.bg_environment.new_boss_disposition = BOSS_IS_FAR_AWAY
         self.game.bg_environment.boss_pos = None
         self.game.pause_menu.map_button.boss_aim.pos = None
         self.click_animation(self.continue_button)

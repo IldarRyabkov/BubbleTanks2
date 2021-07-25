@@ -6,11 +6,12 @@ class MainMenuStates:
     LANGUAGES = 4
     RESOLUTIONS = 5
     SCREEN_MODES = 6
-    EXIT = 7
-    NEW_GAME = 8
-    LOAD_GAME = 9
-    OVERRIDE_SAVE = 10
-    DELETE_SAVE = 11
+    CONTROLS = 7
+    EXIT = 8
+    NEW_GAME = 9
+    LOAD_GAME = 10
+    OVERRIDE_SAVE = 11
+    DELETE_SAVE = 12
 
 
 class PauseMenuStates:

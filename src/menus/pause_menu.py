@@ -277,7 +277,7 @@ class PauseMenu(Menu):
 
     def handle_event(self, event):
         super().handle_event(event)
-        if event.type == pg.KEYDOWN and event.key in [pg.K_ESCAPE, pg.K_p]:
+        if event.type == pg.KEYDOWN and event.key in (pg.K_ESCAPE, self.game.controls["pause"]):
             self.close()
         elif event.type in [pg.KEYDOWN, pg.KEYUP]:
             self.game.player.handle(event.type, event.key)

@@ -23,5 +23,4 @@ class KeyHint(TextWidget):
         self.lines[0][0] = new_surface
 
 
-
 __all__ = ["KeyHint"]

@@ -9,20 +9,21 @@ from components.utils import H
 
 
 class ControlButton(Button):
-    def __init__(self, x, y, texts, controls, control_name, sound_player, control_button_action):
+    def __init__(self, x, y, texts, controls, control_name, sound_player, control_button_action, k=1):
         super().__init__(pg.SYSTEM_CURSOR_HAND, sound_player, BUTTON_CLICK,
                          action=lambda: control_button_action(self))
         self.active = False
-        self.rect.size = H(550), H(86)
+        self.k = k  # scale factor
+        self.rect.size = H(550 * k), H(86 * k)
         self.rect.topleft = x, y
         self.surface = pg.Surface(self.rect.size, pg.SRCALPHA)
         self.controls = controls
         self.control_name = control_name
-        self.label = TextWidget(H(224), H(21), CALIBRI_BOLD, H(44), WHITE, align=2)
+        self.label = TextWidget(H(224 * k), H(21 * k),  CALIBRI_BOLD, H(44 * k), WHITE, align=2)
         self.label_texts = texts
-        self.value_rect = pg.Rect(0, 0, 0, H(82))
-        self.click_area = pg.Rect(0, y, 0, H(82))
-        self.value = TextWidget(H(375), H(20), CALIBRI_BOLD, H(46), LIGHT_GREY, align=1)
+        self.value_rect = pg.Rect(0, 0, 0, H(82 * k))
+        self.click_area = pg.Rect(0, y, 0, H(82 * k))
+        self.value = TextWidget(H(375 * k), H(20 * k), CALIBRI_BOLD, H(46 * k), LIGHT_GREY, align=1)
         self.set_value()
 
     @property
@@ -36,11 +37,15 @@ class ControlButton(Button):
     def set_value(self):
         text = pg.key.name(self.controls[self.control_name]).upper()
         self.value.set_text(text)
-        self.value_rect.w = max(H(82), self.value.w + H(42))
+        self.value_rect.w = max(H(82 * self.k), self.value.w + H(42 * self.k))
         self.value_rect.x = self.value.x - self.value_rect.w//2
         self.click_area.x = self.rect.x + self.value_rect.x
         self.click_area.w = self.value_rect.w
         self.render_surface()
+
+    def reset(self, state):
+        super().reset(state)
+        self.set_value()
 
     def activate(self):
         self.active = True

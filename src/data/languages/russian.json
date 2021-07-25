@@ -224,7 +224,8 @@
 		"Опции",
 		"Выйти в главное меню?",
 		"Выйти из игры?",
-		"Режим экрана"
+		"Режим экрана",
+		"Управление"
 	],
 	"stats side button caption": "Статистика",
 	"map side button caption": "Карта",
@@ -293,7 +294,7 @@
 	"save 3 button text": "Save 3",
 	"sound volume text": "Громкость звуков",
 	"music volume text": "Громкость музыки",
-	"reset key mapping text": "Кнопки по Умолчанию",
+	"reset key mapping text": "Кнопки по умолчанию",
 	"windowed mode": "В окне",
 	"borderless mode": "Без границ",
 	"fullscreen mode": "Полный экран",

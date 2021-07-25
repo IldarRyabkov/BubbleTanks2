@@ -224,7 +224,8 @@
 		"Options",
 		"Exit to main menu?",
 		"Exit to desktop?",
-		"Screen mode"
+		"Screen mode",
+		"Controls"
 	],
 	"stats side button caption": "Stats",
 	"map side button caption": "Map",

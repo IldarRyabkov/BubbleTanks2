@@ -116,13 +116,12 @@ class Enemy(BaseMob):
         self.set_velocity()
 
     def update_pos(self, dt):
-        if self.stunned or self.sticky:
+        if self.stunned or self.sticky or self.velocity == 0:
+            self.rect.center = self.x, self.y
+            self.weapons.update_pos()
             return
         last_angle_pos = self.get_angle_pos()
         self.move_by_time(dt)
-        if self.velocity == 0:
-            self.weapons.update_pos()
-            return
         about_to_exit = self.about_to_exit
         if self.time_to_turn == 0 or (about_to_exit and not self.safety_turn):
             if about_to_exit:
@@ -227,6 +226,7 @@ class BossHead(Enemy):
 
     def update_pos(self, dt):
         if self.sticky or self.stunned:
+            self.weapons.update_pos()
             return
         angle = calculate_angle(self.x, self.y, self.target.x, self.target.y) + 0.5 * pi
         if angle > pi:
@@ -248,7 +248,6 @@ class BossLeg(Enemy):
         self.rect_offset = HF(124.374)
         self.rect.centerx = self.x + self.rect_offset * cos(self.body.angle)
         self.rect.centery = self.y - self.rect_offset * sin(self.body.angle)
-        self.weapons.update_pos()
 
     @staticmethod
     def start_pos():
@@ -265,7 +264,7 @@ class BossLeg(Enemy):
         self.weapons.update_pos()
 
     def update_pos(self, dt):
-        pass
+        self.weapons.update_pos()
 
 
 class BossHand(Enemy):

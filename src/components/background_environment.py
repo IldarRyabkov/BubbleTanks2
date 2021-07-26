@@ -7,7 +7,6 @@ from data.languages import TEXTS
 
 from gui.widgets.text_widget import TextWidget
 
-from components.bubble_tanks_world import BOSS_PIECES
 from components.boss_skeleton import BossSkeleton
 from components.utils import *
 
@@ -201,14 +200,14 @@ class BackgroundEnvironment:
             self.hint_widget.clear()
 
     def set_boss_skeleton_transportation_pos(self, dx, dy):
-        if any(enemy.name in BOSS_PIECES for enemy in self.game.room.new_mobs):
+        if any(enemy.name.startswith("Boss") for enemy in self.game.room.new_mobs):
             self.show_boss_skeleton = True
             self.boss_skeleton.move_to(SCR_W2 - dx, SCR_H2 - dy)
-        elif all(enemy.name not in BOSS_PIECES for enemy in self.game.room.mobs):
+        elif all(not enemy.name.startswith("Boss") for enemy in self.game.room.mobs):
             self.show_boss_skeleton = False
 
     def set_boss_skeleton_pos(self):
-        if any(enemy.name in BOSS_PIECES for enemy in self.game.room.mobs):
+        if any(enemy.name.startswith("Boss") for enemy in self.game.room.mobs):
             self.show_boss_skeleton = True
             self.boss_skeleton.move_to(SCR_W2, SCR_H2)
         elif self.game.world.boss_pos is not None:

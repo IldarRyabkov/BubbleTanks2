@@ -8,28 +8,30 @@ class Mask(Widget):
     def __init__(self, menu, surface):
         super().__init__()
         self.menu = menu
-        self.size = 10
+        self.n_frames = 11
         self.index = -1
-        self.surfaces = self.create_surfaces(surface)
+        self.frames = self.create_frames(surface)
 
-    def create_surfaces(self, origin: pg.Surface):
-        surfaces = []
-        for i in range(self.size + 1):
-            alpha = round(255 * i / self.size)
+    def create_frames(self, origin: pg.Surface):
+        frames = []
+        for i in range(self.n_frames):
+            alpha = round(255 * i / (self.n_frames - 1))
             origin.set_alpha(alpha)
             surface = pg.Surface(origin.get_size(), pg.SRCALPHA)
             surface.blit(origin, (0, 0))
-            surfaces.append(surface)
-        return surfaces
+            frames.append(surface)
+        return frames
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
         if self.menu.is_opening:
-            self.index = round(self.size * time_elapsed)
+            self.index = min(self.n_frames - 1, int(self.n_frames * time_elapsed))
         elif self.menu.is_closing:
-            self.index = round(self.size * (1 - time_elapsed))
+            self.index = min(self.n_frames - 1, int(self.n_frames * (1 - time_elapsed)))
+        else:
+            self.index = self.n_frames - 1
 
     def draw(self, screen, animation_state=WAIT):
-        screen.blit(self.surfaces[self.index], (0, 0))
+        screen.blit(self.frames[self.index], (0, 0))
 
 
 _all__ = ["Mask"]

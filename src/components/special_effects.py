@@ -137,7 +137,7 @@ class LeechEffect(SpecialEffect):
         super().__init__(x, y, duration=249)
 
     def draw(self, screen, dx, dy):
-        frame = int(13 * self.t / self.duration)
+        frame = max(13, int(14 * self.t / self.duration))
         for index in self.frames[frame]:
             r, w = self.circles_data[index]
             pg.draw.circle(screen, LEECH_EFFECT_COLOR, (self.x-dx, self.y-dy), r, w)
@@ -206,7 +206,7 @@ class SpriteEffect(SpecialEffect):
 
     def update(self, dt):
         super().update(dt)
-        self.index = int(self.t/self.duration * len(self.surfaces))
+        self.index = min(len(self.surfaces) - 1, int(self.t/self.duration * len(self.surfaces)))
 
     def draw(self, screen, dx, dy):
         surface = self.surfaces[self.index]

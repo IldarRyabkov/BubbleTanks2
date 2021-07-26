@@ -48,35 +48,35 @@ class PauseMenu(Menu):
 
         self.music_slider = SliderButton(SCR_W2, H(360),  H(856),
                                          TEXTS["music volume text"],
-                                         CALIBRI_BOLD, H(48), sp, "music",
+                                         CALIBRI_BOLD, H(50), sp, "music",
                                          min_alpha=210)
 
         self.sound_slider = SliderButton(SCR_W2, H(430), H(826),
                                          TEXTS["sound volume text"],
-                                         CALIBRI_BOLD, H(48), sp, "sound",
+                                         CALIBRI_BOLD, H(50), sp, "sound",
                                          min_alpha=210)
 
         self.to_screen_modes_button = DoubleTextButton(self.game,
                                                        SCR_W2, H(500),
                                                        TEXTS["screen mode label"],
                                                        screen_mode_texts(game.screen_mode),
-                                                       CALIBRI_BOLD, H(48), sp,
+                                                       CALIBRI_BOLD, H(50), sp,
                                                        action=self.screen_modes,
                                                        min_alpha=210, w=H(760))
 
         self.to_controls_button = TextButton(SCR_W2, H(570),
                                              TEXTS["controls button text"],
-                                             CALIBRI_BOLD, H(48), 210, sp,
+                                             CALIBRI_BOLD, H(50), 210, sp,
                                              action=self.controls, w=H(400))
 
         self.to_menu_button = TextButton(SCR_W2, H(640),
                                          TEXTS["exit to menu text"],
-                                         CALIBRI_BOLD, H(48), 210, sp,
+                                         CALIBRI_BOLD, H(50), 210, sp,
                                          self.dialog_menu, H(500))
 
         self.to_desktop_button = TextButton(SCR_W2, H(710),
                                             TEXTS["exit to desktop text"],
-                                            CALIBRI_BOLD, H(48), 210, sp,
+                                            CALIBRI_BOLD, H(50), 210, sp,
                                             self.dialog_desktop, H(500))
 
         self.back_button = TextButton(SCR_W2, H(800), TEXTS["back button text"],

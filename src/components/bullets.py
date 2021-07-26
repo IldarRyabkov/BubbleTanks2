@@ -263,6 +263,7 @@ class EnemySeeker(Seeker):
 
     def receive_damage(self, damage):
         self.killed = True
+        add_effect("RedCircle", self.game.room.top_effects, self.x, self.y)
         self.game.sound_player.play_sound(ENEMY_DEATH)
 
 

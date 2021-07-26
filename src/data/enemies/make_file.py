@@ -4,34 +4,33 @@ from math import pi
 
 from components.utils import *
 
-print_circle_params(-151 - 219.0, -0, 146 - 62, 631)
+print_circle_params(-578, -573, 336, 1995)
 
 circles_data = {
-    "0 99": [
-        {"type": "thick_blue", "radius": 135.404, "distance": 0, "angle": 0.0 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 143.372, "angle": 0.27 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 143.372, "angle": -0.27 * pi},
+    "0 39": [
+        {"type": "blue", "radius": 24.06, "distance": 50.369, "angle": 0.256 * pi},
+        {"type": "blue", "radius": 24.06, "distance": 50.369, "angle": -0.256 * pi},
+        {"type": "blue", "radius": 24.06, "distance": 51.125, "angle": 0.748 * pi},
+        {"type": "blue", "radius": 24.06, "distance": 51.125, "angle": -0.748 * pi},
+
+        {"type": "thick_blue", "radius": 39.218, "distance": 1.444, "angle": 1.0 * pi},
     ],
-    "100 199": [
-        {"type": "thick_blue", "radius": 135.404, "distance": 0, "angle": 0.0 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 143.372, "angle": 0.27 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 143.372, "angle": -0.27 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 130.46, "angle": 0.0 * pi},
-    ],
-    "200 299": [
-        {"type": "thick_blue", "radius": 135.404, "distance": 0, "angle": 0.0 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 143.372, "angle": 0.27 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 143.372, "angle": -0.27 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 130.46, "angle": 0.0 * pi},
-        {"type": "blue", "radius": 31.949, "distance": 140.729, "angle": 1.0 * pi},
-    ],
-    "300 400": [
-        {"type": "thick_blue", "radius": 135.404, "distance": 0, "angle": 0.0 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 143.372, "angle": 0.27 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 143.372, "angle": -0.27 * pi},
-        {"type": "blue", "radius": 50.206, "distance": 130.46, "angle": 0.0 * pi},
-        {"type": "blue", "radius": 31.949, "distance": 143.561, "angle": 0.767 * pi},
-        {"type": "blue", "radius": 31.949, "distance": 143.561, "angle": -0.767 * pi},
+    "40 60": [
+        {"type": "blue", "radius": 11.008, "distance": 44.439, "angle": 0.296 * pi},
+        {"type": "blue", "radius": 11.008, "distance": 44.439, "angle": -0.296 * pi},
+        {"type": "blue", "radius": 11.008, "distance": 43.475, "angle": 0.187 * pi},
+        {"type": "blue", "radius": 11.008, "distance": 43.475, "angle": -0.187 * pi},
+        {"type": "blue", "radius": 24.06, "distance": 72.216, "angle": 0.235 * pi},
+        {"type": "blue", "radius": 24.06, "distance": 72.216, "angle": -0.235 * pi},
+
+        {"type": "blue", "radius": 11.008, "distance": 45.311, "angle": 0.811 * pi},
+        {"type": "blue", "radius": 11.008, "distance": 45.311, "angle": -0.811 * pi},
+        {"type": "blue", "radius": 11.008, "distance": 45.55, "angle": 0.709 * pi},
+        {"type": "blue", "radius": 11.008, "distance": 45.55, "angle": -0.709 * pi},
+        {"type": "blue", "radius": 24.06, "distance": 73.69, "angle": 0.758 * pi},
+        {"type": "blue", "radius": 24.06, "distance": 73.69, "angle": -0.758 * pi},
+
+        {"type": "thick_blue", "radius": 39.218, "distance": 1.444, "angle": 1.0 * pi},
     ],
 }
 
@@ -42,62 +41,32 @@ data = {
     "circles states": make_states_dict(circles_data, circles_list),
     "guns": [
         {
-            "name": "gun_18",
-            "scale": 1.269,
-            "distance": 0,
-            "angle": 0,
-            "rotation type": 1,
+            "name": "turret",
+            "scale": 1,
+            "distance": 1.444,
+            "angle": pi,
+            "rotation type": 2,
             "rotation angle": 0,
-            "shooting type": "machine gun",
-            "cooldown min": 100,
-            "cooldown max": 100,
-            "delay": 1800,
+            "shooting type": "machine gun 360",
+            "cooldown min": 40,
+            "cooldown max": 40,
+            "delay": 2000,
             "bullet name": "small red",
-            "bullet velocity": 0.96,
+            "bullet velocity": 1.08,
             "bullet damage": -2
-        },
-        {
-            "name": "seeker_spawner_2",
-            "scale": 1.5,
-            "distance": 168.671,
-            "angle": 0.269 * pi,
-            "rotation type": 0,
-            "rotation angle": 0.269 * pi,
-            "shooting type": "spawn orbital seeker",
-            "cooldown min": 1800,
-            "cooldown max": 1800,
-            "delay": 2400,
-            "bullet name": "enemy orbital seeker",
-            "bullet velocity": 0.42,
-            "bullet damage": -5
-        },
-        {
-            "name": "seeker_spawner_2",
-            "scale": 1.5,
-            "distance": 168.671,
-            "angle": -0.269 * pi,
-            "rotation type": 0,
-            "rotation angle": -0.269 * pi,
-            "shooting type": "spawn orbital seeker",
-            "cooldown min": 1800,
-            "cooldown max": 1800,
-            "delay": 2400,
-            "bullet name": "enemy orbital seeker",
-            "bullet velocity": 0.42,
-            "bullet damage": -5
-        },
+        }
     ],
     "guns states": {
-        "0 400": [0, 1, 2],
+        "0 60": [0],
     },
-    "radius": 125.404,
-    "rect size": 400.105,
-    "max health": 400,
+    "radius": 46.421,
+    "rect size": 97.911 * 2,
+    "max health": 60,
     "velocity": 0.0,
     "death award": {
-        "medium": 10,
-        "large": 5,
-        "ultra": 3
+        "medium": 30,
+        "large": 0,
+        "ultra": 0
     },
     "spawners": [
     ],
@@ -114,4 +83,4 @@ def _make_enemy(name):
         json.dump(data, file)
 
 
-#_make_enemy("BossRightHand")
+#_make_enemy("SmallTurret")

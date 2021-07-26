@@ -3,9 +3,6 @@ from collections import defaultdict
 from math import sqrt
 
 
-BOSS_PIECES = ['BossLeg', 'BossHandLeft', 'BossHandRight', 'BossHead']
-
-
 def generate_test():
     enemies = defaultdict(int)
     enemies["Ameba"] = 0
@@ -607,8 +604,7 @@ def generate_enemies(world_distance):
             add("Infusoria", 0, 2)
             add("Ameba", 1, 2)
             if enemy_set_2 == 1:
-                pass
-                #add("Enemy_83", 1, 2)
+                add("SmallTurret", 1, 2)
             elif enemy_set_2 == 2:
                 add("Spreader", 1, 2)
         elif choice <= 50:
@@ -619,7 +615,7 @@ def generate_enemies(world_distance):
         elif choice <= 70:
             add("Infusoria", 1, 2)
             add("Ameba", 0, 1)
-            #add("Enemy_85", 1, 2)
+            add("Mite", 1, 2)
             add("Bug", 3, 4)
         elif choice <= 90:
             add("SeekerSpawner", 0, 2)
@@ -680,7 +676,7 @@ def generate_enemies(world_distance):
             elif enemy_set_2 == 2:
                 add("Cell", 2, 3)
         elif choice <= 70:
-            #add("Enemy_74", 1, 1)
+            add("BomberShooter", 1, 1)
             add("Spider", 0, 1)
             add("Ameba", 0, 2)
             if enemy_set_2 == 1:
@@ -688,7 +684,7 @@ def generate_enemies(world_distance):
             elif enemy_set_2 == 2:
                 add("MachineGunner", 2, 3)
         elif choice <= 80:
-            #add("Enemy_74", 1, 1)
+            add("BomberShooter", 1, 1)
             add("Spider", 1, 1)
             add("Ameba", 0, 2)
             if enemy_set_2 == 1:
@@ -696,12 +692,12 @@ def generate_enemies(world_distance):
             elif enemy_set_2 == 2:
                 add("MachineGunner", 1, 2)
         elif choice <= 100:
-            #add("Enemy_46", 2, 2)
+            add("BigSpreader", 2, 2)
             add("SmallVampire", 1, 2)
             add("Infusoria", 0, 2)
             add("Ameba", 0, 2)
         elif choice <= 120:
-            #add("Enemy_85", 2, 3)
+            add("Mite", 2, 3)
             add("SmallCarrier", 1, 2)
             add("Ameba", 0, 2)
         elif choice <= 125:
@@ -788,12 +784,13 @@ def generate_enemies(world_distance):
                 add("Bug", 2, 4)
         elif choice <= 100:
             add("LargeVampire", 1, 1)
-            add("SmallVampire", 2, 2)
             add("Infusoria", 0, 2)
             if enemy_set_2 == 1:
                 add("Baby", 2, 3)
+                add("SmallVampire", 2, 2)
             elif enemy_set_2 == 2:
                 add("Cell", 1, 2)
+                add("BigSpreader", 2, 2)
         elif choice <= 105:
             add("InfusoriaSpawner", 1, 1)
             add("Infusoria", 1, 2)
@@ -840,7 +837,7 @@ def generate_enemies(world_distance):
                 add("Bug", 1, 3)
 
     elif world_distance < 35:
-        choice = randint(1, 150)
+        choice = randint(1, 160)
         if choice <= 20:
             add("SmallPropeller", 1, 2)
             add("Ant", 2, 3)
@@ -900,7 +897,7 @@ def generate_enemies(world_distance):
             add("EnemySpawnerLarge", 1, 1)
             add("LargeMachineGunner", 1, 1)
             add("Infusoria", 0, 2)
-        else:
+        elif choice <= 150:
             add("FatSpreader", 0, 1)
             if enemy_set_2 == 1:
                 add("Spider", 1, 2)
@@ -909,6 +906,19 @@ def generate_enemies(world_distance):
             add("Sucker", 2, 2)
             add("Infusoria", 1, 2)
             add("Ameba", 0, 2)
+        elif choice <= 160:
+            if enemy_set_2 == 1:
+                add("Turret", 1, 2)
+            elif enemy_set_2 == 2:
+                add("SmallTurret", 1, 2)
+            if enemy_set_1 == 1:
+                add("Gull", 3, 4)
+            elif enemy_set_1 == 2:
+                add("Scarab", 3, 4)
+            elif enemy_set_1 == 3:
+                add("Bug", 3, 4)
+            add("Infusoria", 1, 2)
+            add("Ameba", 0, 1)
 
     elif world_distance >= 35:
         choice = randint(1, 158)
@@ -992,11 +1002,16 @@ def generate_enemies(world_distance):
         elif choice <= 45:
             add("Infusoria", 0, 2)
             add("SmallVampire", 0, 2)
+            if enemy_set_1 == 1:
+                add("Twins", 4, 4)
+            elif enemy_set_1 == 2:
+                add("MachineGunner", 3, 4)
+            elif enemy_set_1 == 3:
+                add("MachineGunner", 1, 2)
+                add("BigSpreader", 2, 3)
             if enemy_set_2 == 1:
-                add("Twins", 2, 3)
                 add("Baby", 0, 2)
             elif enemy_set_2 == 2:
-                add("MachineGunner", 2, 3)
                 add("Cell", 0, 2)
         elif choice <= 50:
             add("EnemySpawner", 1, 2)
@@ -1030,12 +1045,20 @@ def generate_enemies(world_distance):
             add("StickyTurtle", 0, 2)
             add("Infusoria", 1, 2)
         elif choice <= 79:
-            add("Turret", 1, 2)
-            add("Scarab", 3, 4)
+            if enemy_set_2 == 1:
+                add("Turret", 2, 3)
+            elif enemy_set_2 == 2:
+                add("SmallTurret", 2, 3)
+            if enemy_set_1 == 1:
+                add("Gull", 3, 4)
+            elif enemy_set_1 == 2:
+                add("Scarab", 3, 4)
+            elif enemy_set_1 == 3:
+                add("Bug", 3, 4)
             add("Infusoria", 1, 2)
             add("Ameba", 0, 1)
         elif choice <= 86:
-            #add("Enemy_85", 1, 2)
+            add("Mite", 2, 3)
             add("Bug", 3, 4)
             add("Infusoria", 1, 2)
             add("Ameba", 0, 1)
@@ -1194,4 +1217,4 @@ class BubbleTanksWorld:
         self.visited_rooms[room] = enemies
 
 
-__all__ = ["BubbleTanksWorld", "BOSS_PIECES"]
+__all__ = ["BubbleTanksWorld"]

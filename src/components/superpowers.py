@@ -13,14 +13,14 @@ from .utils import *
 
 class SuperPower:
     """Parent class for all superpowers. """
-    def __init__(self, game, player, cooldown_time):
+    def __init__(self, game, player, cooldown):
         self.game = game
         self.screen_rect = self.game.rect
         self.player = player
         self.on = False
         self.state = 0
-        self.cooldown_time = cooldown_time
-        self.time = cooldown_time
+        self.cooldown = cooldown
+        self.time = cooldown
         self.update_during_transportation = self.update_time
 
     def update_state(self, state):
@@ -36,7 +36,7 @@ class SuperPower:
 
     def update(self, dt):
         self.update_time(dt)
-        if self.time >= self.cooldown_time and self.on:
+        if self.time >= self.cooldown and self.on:
             self.time = 0
             self.activate()
 # _________________________________________________________________________________________________
@@ -248,7 +248,7 @@ class OrbitalSeekers(SuperPower):
 
     def update(self, dt):
         self.update_time(dt)
-        if self.time >= self.cooldown_time and len(self.player.orbital_seekers) < 5:
+        if self.time >= self.cooldown and len(self.player.orbital_seekers) < 5:
             self.time = 0
             seeker = AllyOrbitalSeeker(self.game, self.screen_rect, self.player.x, self.player.y)
             seeker.update(0)

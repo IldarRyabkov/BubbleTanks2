@@ -21,7 +21,7 @@ class CooldownWindow(PopupWindow):
                          HF(1.12),
                          1000,
                          COOLDOWN_WINDOW_BG)
-        self.player = self.game.player
+        self.player = game.player
         self.status_bar_1 = StatusBar(self.x + HF(56), self.y + HF(11), self.w - HF(72), H(32), 300)
         self.status_bar_2 = StatusBar(self.x + HF(56), self.y + HF(53), self.w - HF(72), H(32), 0)
         self.label_1 = TextWidget(self.x + HF(16), self.y + HF(14), CALIBRI_BOLD, H(27), WHITE)
@@ -52,12 +52,12 @@ class CooldownWindow(PopupWindow):
         self.status_bar_2.move_to(self.x + H(56), self.y + H(53))
         self.label_1.move_to(self.x + H(16), int(self.y) + H(14))
         self.label_2.move_to(self.x + H(16), int(self.y) + H(56))
-
-    def set(self,):
-        self.status_bar_1.set_max_value(self.player.weapons.cooldown)
         self.status_bar_1.set_value(0)
-        self.status_bar_2.set_max_value(self.player.superpower.cooldown_time)
         self.status_bar_2.set_value(0)
+
+    def set(self):
+        self.status_bar_1.set_max_value(self.player.weapons.cooldown)
+        self.status_bar_2.set_max_value(self.player.superpower.cooldown)
 
     def update(self, dt):
         super().update(dt)

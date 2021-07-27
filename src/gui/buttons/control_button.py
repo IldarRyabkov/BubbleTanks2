@@ -19,11 +19,11 @@ class ControlButton(Button):
         self.surface = pg.Surface(self.rect.size, pg.SRCALPHA)
         self.controls = controls
         self.control_name = control_name
-        self.label = TextWidget(H(224 * k), H(21 * k),  CALIBRI_BOLD, H(44 * k), WHITE, align=2)
+        self.label = TextWidget(H(224 * k), H(21 * k),  CALIBRI_BOLD, H(44 * k), LIGHT_GREY, align=2)
         self.label_texts = texts
         self.value_rect = pg.Rect(0, 0, 0, H(82 * k))
         self.click_area = pg.Rect(0, y, 0, H(82 * k))
-        self.value = TextWidget(H(375 * k), H(20 * k), CALIBRI_BOLD, H(46 * k), WHITE, align=1)
+        self.value = TextWidget(H(375 * k), H(20 * k), CALIBRI_BOLD, H(46 * k), LIGHT_GREY, align=1)
         self.set_value()
 
     @property
@@ -71,7 +71,7 @@ class ControlButton(Button):
             self.set_control(key_code)
 
     def render_surface(self):
-        width = H(5) if self.active else H(3)
+        width = H(5) if self.active else H(2.5)
         color = WHITE if self.active else LIGHT_GREY
         self.surface.fill((0, 0, 0, 0))
         self.label.draw(self.surface)

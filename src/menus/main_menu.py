@@ -411,7 +411,6 @@ class MainMenu(Menu):
         self.set_delete_buttons()
 
     def set_language(self, language):
-        self.game.language = language
         for button in (self.to_languages_button, self.to_resolutions_button,
                        self.to_screen_modes_button, self.to_controls_button,
                        self.start_button,  *self.control_buttons, self.reset_key_mapping_button,

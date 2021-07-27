@@ -128,13 +128,14 @@ class Game:
         self.clock.tick()
         self.set_language(self.language)
 
-    def set_language(self, lang):
-        self.main_menu.set_language(lang)
-        self.bg_environment.set_language(lang)
-        self.upgrade_menu.set_language(lang)
-        self.victory_menu.set_language(lang)
-        self.pause_menu.set_language(lang)
-        self.cooldown_window.set_language(lang)
+    def set_language(self, language):
+        self.main_menu.set_language(language)
+        self.bg_environment.set_language(language)
+        self.upgrade_menu.set_language(language)
+        self.victory_menu.set_language(language)
+        self.pause_menu.set_language(language)
+        self.cooldown_window.set_language(language)
+        self.set_windows()
 
     def set_windows(self):
         self.health_window.set()

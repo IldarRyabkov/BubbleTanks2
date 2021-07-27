@@ -182,7 +182,7 @@
 			"Doomsday Infect",
 			"This tank sucks life from enemies and can infect them with virus bubbles.",
 			"Whenever these bullets hit, they send the life taken from the enemy back to you.",
-			"Pressing the secondary fire button will launch a virus drone. It will attack, infect, then explode the enemy to death."
+			"Pressing the secondary fire button will launch a virus drone. It will attack, infect, then explode the enemy to emit new viruses."
 		],
 		"5 3": [
 			"Drone Tank",
@@ -197,16 +197,16 @@
 			"2 B. S, 6 Sm. A, 1 BB",
 			"Massive Cannon",
 			"A massive behemoth of a bubble-tank.",
-			"6 small cannons fire automatically while you control the 2 large cannons and 'bullet booster'.",
+			"6 small cannons fire automatically while you control the 2 large cannons and bullet buster.",
 			"Pressing the secondary fire button will fire the biggest bubble cannon in the game!"
 		],
 		"5 5": [
 			"BFT Carrier",
 			"1 B. S, 4 Sm. A, 1 BB",
-			"Ally Swarm",
-			"Giant tank that sends out swarms of fighters.",
-			"4 small cannons fire automatically while you control the one large cannon and 'bullet booster'.",
-			"Launch ally fighter tanks which will swarm around your mouse pointer and destroy nearby enemies."
+			"Summon missile strike",
+			"Giant tank that sends out swarms of missiles.",
+			"4 small cannons fire automatically while you control the one large cannon and bullet buster.",
+			"Summon a powerful missile strike that will destroy your enemies."
 		]
 	},
 	"room hints": [
@@ -225,7 +225,8 @@
 		"Exit to main menu?",
 		"Exit to desktop?",
 		"Screen mode",
-		"Controls"
+		"Controls",
+		"Language"
 	],
 	"stats side button caption": "Stats",
 	"map side button caption": "Map",

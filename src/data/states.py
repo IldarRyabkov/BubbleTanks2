@@ -22,6 +22,7 @@ class PauseMenuStates:
     DIALOG_DESKTOP = 4
     SCREEN_MODES = 5
     CONTROLS = 6
+    LANGUAGES = 7
 
 
 class UpgradeMenuStates:

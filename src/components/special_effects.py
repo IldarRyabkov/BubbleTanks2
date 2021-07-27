@@ -137,7 +137,7 @@ class LeechEffect(SpecialEffect):
         super().__init__(x, y, duration=249)
 
     def draw(self, screen, dx, dy):
-        frame = max(13, int(14 * self.t / self.duration))
+        frame = min(13, int(14 * self.t / self.duration))
         for index in self.frames[frame]:
             r, w = self.circles_data[index]
             pg.draw.circle(screen, LEECH_EFFECT_COLOR, (self.x-dx, self.y-dy), r, w)

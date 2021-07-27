@@ -1,7 +1,10 @@
 {
 	"circles": [
 		{
-			"type": "thick_blue",
+			"type": "scaling",
+			"color": "blue",
+			"edge factor": 0.107,
+			"amplitude factor": 0.177,
 			"radius": 21,
 			"distance": 0,
 			"angle": 0

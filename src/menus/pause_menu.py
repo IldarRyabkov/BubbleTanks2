@@ -9,6 +9,7 @@ from gui.buttons.text_button import *
 from gui.buttons.exit_button import ExitButton
 from gui.buttons.screen_mode_button import ScreenModeButton
 from gui.buttons.control_button import ControlButton
+from gui.buttons.language_button import LanguageButton
 
 from gui.widgets.text_widget import TextWidget
 from gui.widgets.tank_preview_smooth import TankPreviewSmooth
@@ -43,43 +44,52 @@ class PauseMenu(Menu):
 
         # buttons
         self.screen_mode_buttons = self.create_screen_mode_buttons()
+        self.language_buttons = self.create_language_buttons()
 
         self.map_button = Map(self, xo, self.game.world.visited_rooms)
 
-        self.music_slider = SliderButton(SCR_W2, H(360),  H(856),
+        self.to_languages_button = DoubleTextButton(self.game,
+                                                    SCR_W2, H(345),
+                                                    TEXTS["language label"],
+                                                    TEXTS["language"][self.game.language],
+                                                    CALIBRI_BOLD, H(48), sp,
+                                                    action=self.languages,
+                                                    min_alpha=210)
+
+        self.music_slider = SliderButton(SCR_W2, H(410),  H(864),
                                          TEXTS["music volume text"],
-                                         CALIBRI_BOLD, H(50), sp, "music",
+                                         CALIBRI_BOLD, H(48), sp, "music",
                                          min_alpha=210)
 
-        self.sound_slider = SliderButton(SCR_W2, H(430), H(826),
+        self.sound_slider = SliderButton(SCR_W2, H(475), H(824),
                                          TEXTS["sound volume text"],
-                                         CALIBRI_BOLD, H(50), sp, "sound",
+                                         CALIBRI_BOLD, H(48), sp, "sound",
                                          min_alpha=210)
 
         self.to_screen_modes_button = DoubleTextButton(self.game,
-                                                       SCR_W2, H(500),
+                                                       SCR_W2, H(540),
                                                        TEXTS["screen mode label"],
                                                        screen_mode_texts(game.screen_mode),
-                                                       CALIBRI_BOLD, H(50), sp,
+                                                       CALIBRI_BOLD, H(48), sp,
                                                        action=self.screen_modes,
                                                        min_alpha=210, w=H(760))
 
-        self.to_controls_button = TextButton(SCR_W2, H(570),
+        self.to_controls_button = TextButton(SCR_W2, H(605),
                                              TEXTS["controls button text"],
-                                             CALIBRI_BOLD, H(50), 210, sp,
+                                             CALIBRI_BOLD, H(48), 210, sp,
                                              action=self.controls, w=H(400))
 
-        self.to_menu_button = TextButton(SCR_W2, H(640),
+        self.to_menu_button = TextButton(SCR_W2, H(670),
                                          TEXTS["exit to menu text"],
-                                         CALIBRI_BOLD, H(50), 210, sp,
+                                         CALIBRI_BOLD, H(48), 210, sp,
                                          self.dialog_menu, H(500))
 
-        self.to_desktop_button = TextButton(SCR_W2, H(710),
+        self.to_desktop_button = TextButton(SCR_W2, H(735),
                                             TEXTS["exit to desktop text"],
-                                            CALIBRI_BOLD, H(50), 210, sp,
+                                            CALIBRI_BOLD, H(48), 210, sp,
                                             self.dialog_desktop, H(500))
 
-        self.back_button = TextButton(SCR_W2, H(800), TEXTS["back button text"],
+        self.back_button = TextButton(SCR_W2, H(830), TEXTS["back button text"],
                                       CALIBRI_BOLD, H(52), 210, sp,
                                       action=self.back, w=H(300))
 
@@ -129,21 +139,22 @@ class PauseMenu(Menu):
         self.buttons = {
             St.STATS: base_buttons,
             St.MAP: (*base_buttons, self.map_button),
-            St.OPTIONS: (*base_buttons, self.music_slider, self.sound_slider,
-                         self.to_menu_button, self.to_desktop_button,
+            St.OPTIONS: (*base_buttons, self.to_languages_button, self.music_slider,
+                         self.sound_slider, self.to_menu_button, self.to_desktop_button,
                          self.to_screen_modes_button, self.to_controls_button),
             St.DIALOG_DESKTOP: (*base_buttons, self.yes_button, self.no_button),
             St.DIALOG_MENU: (*base_buttons, self.yes_button, self.no_button),
             St.SCREEN_MODES: (*base_buttons, *self.screen_mode_buttons,
                               self.back_button),
             St.CONTROLS: (*base_buttons, *self.control_buttons,
-                          self.reset_key_mapping_button, self.back_button)
+                          self.reset_key_mapping_button, self.back_button),
+            St.LANGUAGES: (*base_buttons, *self.language_buttons, self.back_button)
         }
 
         # widgets
         self.tank_body = TankPreviewSmooth(game.rect, xo + H(940), H(370))
         self.mask = Mask(self, self.create_mask_surface())
-        self.esc_hint = KeyHint(xo + H(982), H(856), CALIBRI, H(33), WHITE)
+        self.esc_hint = KeyHint(xo + H(997), H(866), CALIBRI, H(31), WHITE)
 
         self.stats_widgets = (
             TextWidget(xo + H(150), H(268), CALIBRI_BOLD, H(47), WHITE, 0),
@@ -177,7 +188,8 @@ class PauseMenu(Menu):
             St.DIALOG_MENU: (*base_widgets, self.esc_hint),
             St.DIALOG_DESKTOP: (*base_widgets, self.esc_hint),
             St.SCREEN_MODES: (*base_widgets, self.esc_hint),
-            St.CONTROLS: (*base_widgets, self.esc_hint)
+            St.CONTROLS: (*base_widgets, self.esc_hint),
+            St.LANGUAGES: (*base_widgets, self.esc_hint),
         }
 
     def create_screen_mode_buttons(self) -> list:
@@ -186,6 +198,14 @@ class PauseMenu(Menu):
             ScreenModeButton(self, H(520), TEXTS["borderless mode"], H(52), BORDERLESS_MODE, St.OPTIONS),
             ScreenModeButton(self, H(600), TEXTS["fullscreen mode"], H(52), FULLSCREEN_MODE, St.OPTIONS)
         ]
+        return buttons
+
+    def create_language_buttons(self) -> list:
+        languages = TEXTS["language"]
+        buttons = []
+        for i, text in enumerate(languages):
+            buttons.append(LanguageButton(self, H(440 + i * 100*i), CALIBRI_BOLD,
+                                          H(54), 210, text, self.set_new_language))
         return buttons
 
     def create_mask_surface(self):
@@ -232,6 +252,10 @@ class PauseMenu(Menu):
             self.clicked_control_button.deactivate()
             self.clicked_control_button = None
 
+    def set_new_language(self, button):
+        button.set_new_language()
+        self.set_state(St.OPTIONS, button)
+
     def select_side_button(self, state):
         """Sets which side button is selected, to draw it properly. """
         for i, button in enumerate(self.side_buttons):
@@ -256,6 +280,10 @@ class PauseMenu(Menu):
         super().close()
         if self.state in (St.DIALOG_MENU, St.DIALOG_DESKTOP, St.SCREEN_MODES, St.CONTROLS):
             self.set_state(St.OPTIONS, animation=False)
+
+    def languages(self):
+        """Action of the 'to languages' button. """
+        self.set_state(St.LANGUAGES, self.to_languages_button)
 
     def dialog_menu(self):
         """Action of 'to menu' button. """
@@ -306,10 +334,11 @@ class PauseMenu(Menu):
 
     def set_language(self, language):
         self.caption.set_text(TEXTS["pause menu caption"][language])
-        self.window_caption.set_text(TEXTS["pause menu window captions"][language][St.STATS])
+        self.window_caption.set_text(TEXTS["pause menu window captions"][language][self.state])
         self.esc_hint.set_text(TEXTS["escape hint"][language])
         self.set_stats_texts()
-        for button in (self.to_menu_button, self.to_screen_modes_button, self.to_desktop_button,
+        for button in (self.to_languages_button, self.to_menu_button,
+                       self.to_screen_modes_button, self.to_desktop_button,
                        self.sound_slider, self.music_slider, self.yes_button, self.no_button,
                        *self.side_buttons, *self.screen_mode_buttons, self.back_button,
                        self.to_controls_button, *self.control_buttons, self.reset_key_mapping_button):

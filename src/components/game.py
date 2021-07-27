@@ -129,6 +129,7 @@ class Game:
         self.set_language(self.language)
 
     def set_language(self, lang):
+        self.main_menu.set_language(lang)
         self.bg_environment.set_language(lang)
         self.upgrade_menu.set_language(lang)
         self.victory_menu.set_language(lang)

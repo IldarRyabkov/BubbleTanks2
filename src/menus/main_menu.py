@@ -64,7 +64,7 @@ class MainMenu(Menu):
         )
         self.bubbles = BackgroundBubbles(game.rect)
         self.caption = MainMenuCaption(self)
-        self.esc_hint = KeyHint(SCR_W - H(190), H(890), CALIBRI, H(35), WHITE)
+        self.esc_hint = KeyHint(SCR_W - H(175), H(900), CALIBRI, H(33), WHITE)
         self.controls_bg = BackgroundImage(SCR_W2 - H(540), H(245), H(1080), H(410), CONTROLS_BG)
 
         # widgets dictionary
@@ -79,8 +79,8 @@ class MainMenu(Menu):
             St.SCREEN_MODES: (*base_widgets, self.esc_hint),
             St.CONTROLS: (*base_widgets, self.esc_hint, self.controls_bg),
             St.EXIT: (*base_widgets, self.esc_hint),
-            St.NEW_GAME: base_widgets,
-            St.LOAD_GAME: base_widgets,
+            St.NEW_GAME: (*base_widgets, self.esc_hint),
+            St.LOAD_GAME: (*base_widgets, self.esc_hint),
             St.OVERRIDE_SAVE: (*base_widgets, self.esc_hint),
             St.DELETE_SAVE: (*base_widgets, self.esc_hint)
         }
@@ -93,7 +93,7 @@ class MainMenu(Menu):
         self.start_button = StartButton(SCR_W2, H(770), sp, action=self.start)
 
         self.to_languages_button = DoubleTextButton(self.game,
-                                                    SCR_W2, H(325),
+                                                    SCR_W2, H(335),
                                                     TEXTS["language label"],
                                                     TEXTS["language"][self.game.language],
                                                     CALIBRI_BOLD, H(56), sp,
@@ -101,7 +101,7 @@ class MainMenu(Menu):
                                                     min_alpha=200)
 
         self.to_resolutions_button = DoubleTextButton(self.game,
-                                                      SCR_W2, H(405),
+                                                      SCR_W2, H(410),
                                                       TEXTS["resolution label"],
                                                       pretty_resolution([SCR_W, SCR_H]),
                                                       CALIBRI_BOLD, H(56), sp,
@@ -113,20 +113,20 @@ class MainMenu(Menu):
                                          CALIBRI_BOLD, H(56), sp, "music",
                                          min_alpha=200)
 
-        self.sound_slider = SliderButton(SCR_W2, H(565), H(946),
+        self.sound_slider = SliderButton(SCR_W2, H(560), H(946),
                                          TEXTS["sound volume text"],
                                          CALIBRI_BOLD, H(56), sp, "sound",
                                          min_alpha=200)
 
         self.to_screen_modes_button = DoubleTextButton(self.game,
-                                                       SCR_W2, H(645),
+                                                       SCR_W2, H(635),
                                                        TEXTS["screen mode label"],
                                                        screen_mode_texts(game.screen_mode),
                                                        CALIBRI_BOLD, H(56), sp,
                                                        action=self.screen_modes,
                                                        min_alpha=200, w=H(780))
 
-        self.to_controls_button = TextButton(SCR_W2, H(725),
+        self.to_controls_button = TextButton(SCR_W2, H(710),
                                              TEXTS["controls button text"],
                                              CALIBRI_BOLD, H(56), 200, sp,
                                              action=self.controls, w=H(400))
@@ -212,9 +212,9 @@ class MainMenu(Menu):
             St.CREDITS: [],
             St.NEW_GAME: [*self.save_buttons, self.back_button],
             St.LOAD_GAME: [*self.save_buttons, self.back_button],
-            St.LANGUAGES: self.language_buttons,
+            St.LANGUAGES: (*self.language_buttons, self.back_button),
             St.RESOLUTIONS: self.resolution_buttons,
-            St.SCREEN_MODES: self.screen_mode_buttons,
+            St.SCREEN_MODES: (*self.screen_mode_buttons, self.back_button),
             St.CONTROLS: [*self.control_buttons, self.reset_key_mapping_button, self.back_button],
             St.EXIT: [self.yes_button, self.no_button],
             St.OVERRIDE_SAVE: [self.yes_button, self.no_button],
@@ -245,14 +245,15 @@ class MainMenu(Menu):
         languages = TEXTS["language"]
         buttons = []
         for i, text in enumerate(languages):
-            buttons.append(LanguageButton(self, H(440 + i * 120*i), text))
+            buttons.append(LanguageButton(self, H(400 + i * 110*i), CALIBRI_BOLD,
+                                          H(66), 200, text, self.set_new_language))
         return buttons
 
     def create_screen_mode_buttons(self) -> list:
         buttons = [
-            ScreenModeButton(self, H(400), TEXTS["windowed mode"], H(56), WINDOWED_MODE, St.SETTINGS),
-            ScreenModeButton(self, H(500), TEXTS["borderless mode"], H(56), BORDERLESS_MODE, St.SETTINGS),
-            ScreenModeButton(self, H(600), TEXTS["fullscreen mode"], H(56), FULLSCREEN_MODE, St.SETTINGS)
+            ScreenModeButton(self, H(390), TEXTS["windowed mode"], H(56), WINDOWED_MODE, St.SETTINGS),
+            ScreenModeButton(self, H(480), TEXTS["borderless mode"], H(56), BORDERLESS_MODE, St.SETTINGS),
+            ScreenModeButton(self, H(570), TEXTS["fullscreen mode"], H(56), FULLSCREEN_MODE, St.SETTINGS)
         ]
         return buttons
 
@@ -270,6 +271,10 @@ class MainMenu(Menu):
         """Action of the 'play' button. """
         save_data = load_save_file(self.current_save)
         self.init_save(self.resume_button, save_data)
+
+    def set_new_language(self, button):
+        button.set_new_language()
+        self.set_state(St.SETTINGS, button)
 
     def init_save(self, button, save_data):
         if isinstance(button, SaveButton):
@@ -359,7 +364,7 @@ class MainMenu(Menu):
 
     def back(self):
         """Action of the 'back' button. """
-        if self.state == St.CONTROLS:
+        if self.state in (St.CONTROLS, St.SCREEN_MODES, St.LANGUAGES):
             self.set_state(St.SETTINGS, self.back_button)
         else:
             self.set_state(St.MAIN_PAGE, self.back_button)

@@ -7,8 +7,8 @@ from components.utils import *
 
 
 class ScreenModeButton(TextButton):
-    def __init__(self, menu, y, texts, font_size, screen_mode, next_state):
-        super().__init__(SCR_W2, y, texts, CALIBRI_BOLD, font_size,
+    def __init__(self, menu, x, y, texts, font_size, screen_mode, next_state):
+        super().__init__(x, y, texts, CALIBRI_BOLD, font_size,
                          200, menu.game.sound_player,
                          action=self.set_new_screen_mode, w=H(400))
         self.menu = menu

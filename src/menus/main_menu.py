@@ -245,15 +245,15 @@ class MainMenu(Menu):
         languages = TEXTS["language"]
         buttons = []
         for i, text in enumerate(languages):
-            buttons.append(LanguageButton(self, H(400 + i * 110*i), CALIBRI_BOLD,
+            buttons.append(LanguageButton(self, SCR_W2, H(400 + i * 110*i), CALIBRI_BOLD,
                                           H(66), 200, text, self.set_new_language))
         return buttons
 
     def create_screen_mode_buttons(self) -> list:
         buttons = [
-            ScreenModeButton(self, H(390), TEXTS["windowed mode"], H(56), WINDOWED_MODE, St.SETTINGS),
-            ScreenModeButton(self, H(480), TEXTS["borderless mode"], H(56), BORDERLESS_MODE, St.SETTINGS),
-            ScreenModeButton(self, H(570), TEXTS["fullscreen mode"], H(56), FULLSCREEN_MODE, St.SETTINGS)
+            ScreenModeButton(self, SCR_W2, H(390), TEXTS["windowed mode"], H(56), WINDOWED_MODE, St.SETTINGS),
+            ScreenModeButton(self, SCR_W2, H(480), TEXTS["borderless mode"], H(56), BORDERLESS_MODE, St.SETTINGS),
+            ScreenModeButton(self, SCR_W2, H(570), TEXTS["fullscreen mode"], H(56), FULLSCREEN_MODE, St.SETTINGS)
         ]
         return buttons
 

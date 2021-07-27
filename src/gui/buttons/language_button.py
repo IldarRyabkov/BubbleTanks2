@@ -6,8 +6,8 @@ from components.utils import *
 
 
 class LanguageButton(TextButton):
-    def __init__(self, menu, y, font, font_size, min_alpha, texts, set_new_language):
-        super().__init__(SCR_W2, y, texts, font, font_size,
+    def __init__(self, menu, x, y, font, font_size, min_alpha, texts, set_new_language):
+        super().__init__(x, y, texts, font, font_size,
                          min_alpha, menu.game.sound_player,
                          action=lambda: set_new_language(self), w=H(300))
         self.menu = menu

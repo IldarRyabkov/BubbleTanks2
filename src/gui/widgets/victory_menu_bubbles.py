@@ -26,7 +26,7 @@ class VictoryMenuBubbles(AnimatedWidget):
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0.0):
         for bubble in self.bubbles:
-            bubble.update_body(dt)
+            bubble.update_shape(dt)
         if self.menu.is_opening:
             self.surface.set_alpha(round(255 * time_elapsed))
         elif self.menu.is_closing:

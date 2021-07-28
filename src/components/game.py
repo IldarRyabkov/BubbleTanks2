@@ -253,6 +253,11 @@ class Game:
         elif isinstance(bullet, ExplosivePierceShot):
             if enemy not in bullet.attacked_mobs:
                 self.handle_sniper_bullet_explosion(bullet)
+        elif isinstance(bullet, PierceShot):
+            if enemy not in bullet.attacked_mobs:
+                enemy.receive_damage(bullet.damage)
+                bullet.attacked_mobs.append(enemy)
+                self.add_effect(bullet)
         else:
             enemy.receive_damage(bullet.damage)
             bullet.killed = True

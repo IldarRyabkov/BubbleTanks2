@@ -164,7 +164,7 @@ class Enemy(BaseMob):
         if self.killed:
             self.game.sound_player.play_sound(ENEMY_DEATH)
             self.game.pause_menu.update_counter(0, 1)
-        elif play_sound:
+        if play_sound:
             self.game.sound_player.play_sound(ENEMY_HIT)
 
     def update(self, dt):

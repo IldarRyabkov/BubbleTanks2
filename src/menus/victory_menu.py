@@ -95,7 +95,7 @@ class VictoryMenu(Menu):
         self.continue_button.set_language(language)
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
-        self.game.update_scaling_objects(dt)
+        self.game.update_animated_objects(dt)
         super().update(dt, animation_state, time_elapsed)
 
     def draw_background(self, screen):

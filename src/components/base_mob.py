@@ -1,3 +1,5 @@
+import pygame as pg
+
 from .utils import circle_collidepoint
 
 
@@ -12,6 +14,7 @@ class BaseMob:
                  weapons):
         self.x = x
         self.y = y
+        self.rect = pg.Rect(0, 0, 0, 0)
         self.health = health
         self.max_health = max_health
         self.radius = radius
@@ -70,9 +73,11 @@ class BaseMob:
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+        self.rect.center = self.x, self.y
 
-    def collide_bullet(self, bul_x, bul_y, bul_r) -> bool:
-        return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
+    def collide_bullet(self, bullet) -> bool:
+        return (self.rect.colliderect(bullet.rect) and
+                circle_collidepoint(self.x, self.y, self.radius + bullet.radius, bullet.x, bullet.y))
 
     def receive_damage(self, damage, play_sound=True):
         if damage:

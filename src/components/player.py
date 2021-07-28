@@ -37,6 +37,8 @@ class Player(BaseMob):
         self.resistance = k * self.RESISTANCE
         self.acc_x = self.acc_y = 0
         self.vel_x = self.vel_y = 0
+        rect_size = round(2 * self.radius)
+        self.rect.size = rect_size, rect_size
 
         self.max_angular_vel = self.MAX_ANGULAR_VEL
         self.max_angular_acc = k * self.MAX_ANGULAR_ACC
@@ -241,6 +243,8 @@ class Player(BaseMob):
 
         self.radius = data["radius"]
         self.bg_radius = data["background radius"]
+        rect_size = round(2 * self.radius)
+        self.rect.size = rect_size, rect_size
 
         self.max_health = data["max health"]
         self.health = 0 if upgrade else self.max_health - 1
@@ -275,12 +279,13 @@ class Player(BaseMob):
         elif e_key == self.game.controls["superpower"]:
             self.superpower.on = (e_type == pg.KEYDOWN)
 
-    def collide_bullet(self, bul_x, bul_y, r):
-        radius = self.bg_radius if self.shield_on else self.radius
-        return circle_collidepoint(self.x, self.y, radius + r, bul_x, bul_y)
+    def collide_bullet(self, bullet):
+        if self.shield_on:
+            return circle_collidepoint(self.x, self.y, self.bg_radius + bullet.radius, bullet.x, bullet.y)
+        return super().collide_bullet(bullet)
 
-    def collide_bubble(self, x, y):
-        return circle_collidepoint(self.x, self.y, self.radius // 2, x, y)
+    def collide_bubble(self, bubble):
+        return circle_collidepoint(self.x, self.y, self.radius * 0.5, bubble.x, bubble.y)
 
     def update_health(self, delta_health: int):
         self.health += delta_health

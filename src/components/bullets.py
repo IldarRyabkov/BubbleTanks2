@@ -48,6 +48,10 @@ class Bullet:
     def is_on_screen(self):
         return self.rect.colliderect(self.screen_rect)
 
+    def collide_bullet(self, bullet) -> bool:
+        return (self.rect.colliderect(bullet.rect) and
+                circle_collidepoint(self.x, self.y, self.radius + bullet.radius, bullet.x, bullet.y))
+
     def update_vel(self, angle):
         self.vel_x = self.VELOCITY * cos(angle)
         self.vel_y = -self.VELOCITY * sin(angle)
@@ -59,7 +63,7 @@ class Bullet:
         if self.is_outside:
             self.killed = True
 
-    def update_body(self, dt):
+    def update_shape(self, dt):
         if self.is_on_screen:
             self.body.update_shape(dt)
 
@@ -83,7 +87,7 @@ class RegularBullet(Bullet):
 
     def update(self, dt):
         self.update_pos(dt)
-        self.update_body(dt)
+        self.update_shape(dt)
 
 
 class ExplodingBullet(RegularBullet):
@@ -127,7 +131,7 @@ class Mine(Bullet):
         self.T = 240
         self.color_time = uniform(0, self.T)
 
-    def update_body(self, dt):
+    def update_shape(self, dt):
         self.color_time += dt
         if self.color_time >= 0.75 * self.T and self.color_switch == 1:
             self.change_color()
@@ -140,7 +144,7 @@ class Mine(Bullet):
         self.body.circles[0].color = self.colors[self.color_switch]
 
     def update(self, dt):
-        self.update_body(dt)
+        self.update_shape(dt)
 
 
 class AllyOrbitalSeeker(Bullet):
@@ -171,7 +175,7 @@ class AllyOrbitalSeeker(Bullet):
 
     def check_targets(self):
         for enemy in chain(self.game.room.mobs, self.game.room.seekers):
-            if enemy.collide_bullet(self.x, self.y, self.search_radius):
+            if circle_collidepoint(self.x, self.y, self.search_radius+enemy.radius, enemy.x, enemy.y):
                 self.orbiting = False
                 predicted_time = hypot(self.x - enemy.x, self.y - enemy.y) / self.VELOCITY
                 x = enemy.x + enemy.vel_x * predicted_time
@@ -183,7 +187,7 @@ class AllyOrbitalSeeker(Bullet):
 
     def update(self, dt):
         self.update_pos(dt)
-        self.update_body(dt)
+        self.update_shape(dt)
         if self.orbiting:
             self.check_targets()
 
@@ -196,9 +200,6 @@ class Seeker(Bullet):
         self.game = game
         self.rotation_speed = rotation_speed
         self.target = None
-
-    def collide_bullet(self, bul_x, bul_y, bul_r):
-        return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
 
     def receive_damage(self, damage):
         self.killed = True
@@ -244,7 +245,7 @@ class Seeker(Bullet):
         self.update_angle(dt)
         self.update_vel(self.angle)
         self.update_pos(dt)
-        self.update_body(dt)
+        self.update_shape(dt)
 
 
 class EnemySeeker(Seeker):
@@ -293,7 +294,7 @@ class EnemyOrbitalSeeker(EnemySeeker):
                 self.orbiting = False
                 self.angle = calculate_angle(self.x, self.y, SCR_W2, SCR_H2)
             self.body.angle = self.angle
-            self.update_body(dt)
+            self.update_shape(dt)
         else:
             super().update(dt)
 
@@ -336,16 +337,19 @@ class EnemyLeecher(EnemySeeker):
                 self.leech_time = 0
                 self.target.receive_damage(-1, play_sound=False)
             self.body.angle = self.angle
-            self.update_body(dt)
+            self.update_shape(dt)
         else:
             super().update(dt)
 
+    def draw_beam(self, surface, dx, dy):
+        start_pos = (SCR_W2, SCR_H2)
+        end_pos = (round(self.x - dx), round(self.y - dy))
+        pg.draw.line(surface, PINK, start_pos, end_pos, H(10))
+        pg.draw.line(surface, RED, start_pos, end_pos, H(4))
+
     def draw(self, surface, dx, dy):
         if self.leeching:
-            start_pos = (SCR_W2, SCR_H2)
-            end_pos = (round(self.x - dx), round(self.y - dy))
-            pg.draw.line(surface, PINK, start_pos, end_pos, H(10))
-            pg.draw.line(surface, RED, start_pos, end_pos, H(4))
+            self.draw_beam(surface, dx, dy)
         super().draw(surface, dx, dy)
 
 
@@ -372,24 +376,27 @@ class EnemySapper(EnemySeeker):
             self.killed = True
         elif self.going_to_player:
             self.time_to_hold_attack = max(0, self.time_to_hold_attack - dt)
-        elif self.owner.collide_bullet(self.x, self.y, self.radius):
+        elif self.owner.collide_bullet(self):
             self.owner.update_health(3)
             self.going_to_player = True
             self.target = self.player
             self.time_to_hold_attack = 500
 
-    def update_body(self, dt):
+    def update_shape(self, dt):
         if self.is_on_screen:
             self.body.update_shape(dt)
             self.halo_time = (self.halo_time + dt) % 540
+
+    def draw_fullness_effect(self, surface, dx, dy):
+        index = int(18 * self.halo_time / 540)
+        pos = self.body.circles[0].x - dx - H(27.5), self.body.circles[0].y - dy - H(27.5)
+        surface.blit(sapper_surfaces[index], pos)
 
     def draw(self, surface, dx, dy):
         if self.is_on_screen:
             self.body.draw(surface, dx, dy)
             if not self.going_to_player:
-                index = int(18 * self.halo_time / 540)
-                pos = self.body.circles[0].x - dx - H(27.5), self.body.circles[0].y - dy - H(27.5)
-                surface.blit(sapper_surfaces[index], pos)
+                self.draw_fullness_effect(surface, dx, dy)
 
 
 class LeecherBullet(Bullet):
@@ -399,7 +406,7 @@ class LeecherBullet(Bullet):
 
     def update(self, dt):
         self.update_pos(dt)
-        self.update_body(dt)
+        self.update_shape(dt)
 
 
 class Drone(Bullet):
@@ -437,13 +444,9 @@ class Drone(Bullet):
         self.y += self.vel_y * dt
         self.rect.center = self.x, self.y
 
-    def update_body(self, dt):
-        if self.is_on_screen:
-            self.body.update_shape(dt)
-
     def update(self, dt):
         self.update_pos(dt)
-        self.update_body(dt)
+        self.update_shape(dt)
         self.time += dt
         if self.time >= self.mitosis_time:
             self.divide()
@@ -461,8 +464,9 @@ class PierceShot(Bullet):
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+        self.rect.center = self.x, self.y
 
-    def update_body(self, dt):
+    def update_shape(self, dt):
         pass
 
     def update(self, dt):
@@ -474,7 +478,7 @@ class PierceShot(Bullet):
 
     def draw(self, surface, dx, dy):
         if self.is_on_screen:
-            surface.blit(self.body, (int(self.x - dx), int(self.y - dy)))
+            surface.blit(self.body, (round(self.x - dx), round(self.y - dy)))
 
 
 class ExplosivePierceShot(PierceShot):
@@ -498,7 +502,7 @@ class FrangibleBullet(Bullet):
 
     def update(self, dt):
         self.update_pos(dt)
-        self.update_body(dt)
+        self.update_shape(dt)
         self.time = min(self.fragmentation_time, self.time + dt)
         if self.time == self.fragmentation_time:
             self.killed = True
@@ -510,9 +514,6 @@ class FrangibleBullet(Bullet):
 class BulletBuster(RegularBullet):
     def __init__(self, name, screen_rect, x, y, damage, vel, angle):
         super().__init__(name, screen_rect, x, y, damage, vel, angle)
-
-    def collide_bullet(self, bul_x, bul_y, bul_r):
-        return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
 
 
 def get_bullet_type(bullet_type: str):

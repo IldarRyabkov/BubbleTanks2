@@ -68,7 +68,7 @@ class Bubble:
         diam = round(2.9 * self.body.circles[0].radius)
         self.halo = pg.transform.scale(self.base_halo, (diam, diam))
 
-    def update_body(self, dt):
+    def update_shape(self, dt):
         self.body.update_shape(dt)
         if self.halo is not None:
             self.update_halo()
@@ -108,16 +108,19 @@ class Bubble:
             self.gravity_vel = max(0, self.gravity_vel + self.gravity_acc * dt)
 
         self.rect.center = self.x, self.y
-        self.update_body(dt)
+        self.update_shape(dt)
+
+    def draw_halo(self, surface, dx, dy):
+        radius = self.halo.get_width() / 2
+        x = round(self.x - radius - dx)
+        y = round(self.y - radius - dy)
+        surface.blit(self.halo, (x, y))
 
     def draw(self, surface, dx=0, dy=0):
         if self.is_on_screen:
             self.body.draw(surface, dx, dy)
             if self.halo is not None:
-                radius = self.halo.get_width() / 2
-                x = round(self.x - radius - dx)
-                y = round(self.y - radius - dy)
-                surface.blit(self.halo, (x, y))
+                self.draw_halo(surface, dx, dy)
 
 
 __all__ = ["Bubble"]

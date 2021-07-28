@@ -390,11 +390,11 @@ class PauseMenu(Menu):
                 self.clicked_control_button.change_control(event.key)
 
     def update_click_animation(self, pressed_button, dt):
-        self.game.update_scaling_objects(dt)
+        self.game.update_animated_objects(dt)
         super().update_click_animation(pressed_button, dt)
 
     def update(self, dt, animation_state=WAIT, time_elapsed=0):
-        self.game.update_scaling_objects(dt)
+        self.game.update_animated_objects(dt)
         super().update(dt, animation_state, time_elapsed)
 
     def draw_background(self, screen):

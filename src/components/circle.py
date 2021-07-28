@@ -124,9 +124,10 @@ class Circle:
 
     def update_glares(self, angle_to_target):
         angle = self.angle + angle_to_target
+        radius = self.radius - self.edge
         if self.radius >= 6:
             for glare in self.glares:
-                glare.update(self.x, self.y, self.radius - self.edge, angle)
+                glare.update(self.x, self.y, radius, angle)
 
     def update_pos(self, x, y, dt, angle_to_target):
         angle = self.angle + angle_to_target

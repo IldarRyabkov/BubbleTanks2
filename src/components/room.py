@@ -105,7 +105,7 @@ class Room:
             enemy.weapons.update_pos()
             enemy.update_shape(0)
         for spawner in self.spawners:
-            spawner.update_body(0)
+            spawner.update_shape(0)
 
     def update_bullets(self, dt):
         for bullet in self.bullets:

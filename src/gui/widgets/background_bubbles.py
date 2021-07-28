@@ -26,7 +26,7 @@ class BackgroundBubbles(AnimatedWidget):
 
         for i, bubble in enumerate(self.bubbles):
             bubble.move(0, bubble.vel * dt)
-            bubble.update_body(dt)
+            bubble.update_shape(dt)
             if bubble.y < -bubble.radius:
                 self.bubbles[i] = None
         self.bubbles = list(filter(lambda b: b is not None, self.bubbles))

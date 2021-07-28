@@ -168,7 +168,7 @@ class Game:
     def handle_bubble_eating(self):
         eaten_bubbles = 0
         for i, bubble in enumerate(self.room.bubbles):
-            if self.player.collide_bubble(bubble.x, bubble.y):
+            if self.player.collide_bubble(bubble):
                 self.player.update_health(bubble.health)
                 self.health_window.activate()
                 self.room.bubbles[i] = None
@@ -225,7 +225,7 @@ class Game:
     def handle_bullet_explosion(self, bullet):
         x, y, radius = bullet.x, bullet.y, bullet.explosion_radius
         for enemy in chain(self.room.mobs, self.room.seekers, self.room.spawners):
-            if enemy.collide_bullet(x, y, radius):
+            if circle_collidepoint(x, y, radius + enemy.radius, enemy.x, enemy.y):
                 enemy.receive_damage(bullet.damage)
         bullet.killed = True
         self.add_effect(bullet)
@@ -235,7 +235,8 @@ class Game:
     def handle_sniper_bullet_explosion(self, bullet):
         x, y, radius = bullet.x, bullet.y, bullet.explosion_radius
         for enemy in chain(self.room.mobs, self.room.seekers, self.room.spawners):
-            if enemy not in bullet.attacked_mobs and enemy.collide_bullet(x, y, radius):
+            if (enemy not in bullet.attacked_mobs and
+                    circle_collidepoint(x, y, radius + enemy.radius, enemy.x, enemy.y)):
                 enemy.receive_damage(bullet.damage)
                 bullet.attacked_mobs.append(enemy)
         self.add_effect(bullet)
@@ -269,7 +270,7 @@ class Game:
             if isinstance(bullet, BulletBuster):
                 continue
             for enemy in chain(self.room.mobs, self.room.seekers, self.room.spawners):
-                if enemy.collide_bullet(bullet.x, bullet.y, bullet.radius):
+                if enemy.collide_bullet(bullet):
                     self.handle_enemy_collision(enemy, bullet)
                     if not isinstance(bullet, PierceShot):
                         break
@@ -279,11 +280,11 @@ class Game:
         if self.player.disassembled:
             return
         for bullet in chain(self.room.bullets, self.room.mines, self.room.seekers):
-            if self.player.collide_bullet(bullet.x, bullet.y, bullet.radius):
+            if self.player.collide_bullet(bullet):
                 self.handle_damage_to_player(bullet)
         for bullet in chain(self.room.bullets, self.room.mines):
             for seeker in self.player.seekers:
-                if seeker.collide_bullet(bullet.x, bullet.y, bullet.radius):
+                if seeker.collide_bullet(bullet):
                     if isinstance(seeker, BulletBuster):
                         bullet.killed = True
                         self.add_effect(bullet)
@@ -499,29 +500,26 @@ class Game:
         self.health_window.draw(self.screen)
         self.cooldown_window.draw(self.screen)
 
-    def update_scaling_objects(self, dt):
+    def update_animated_objects(self, dt):
         """Method is called when Pause menu/Victory menu is running.
-        It updates the sizes of mobs, player, bullets, etc.,
+        It updates the shapes of enemies, player, bullets, etc.,
         animating them in the background in the Pause menu/Victory menu.
         """
         if isinstance(self.player.superpower, Disassemble):
             self.player.superpower.update_body()
         self.player.update_shape(dt)
-        for enemy in self.room.mobs:
-            enemy.update_shape(dt)
 
         for obj in chain(self.player.mines, self.player.bullets,
                          self.player.seekers, self.player.orbital_seekers,
-                         self.room.spawners, self.room.seekers,
+                         self.room.mobs, self.room.spawners, self.room.seekers,
                          self.room.bubbles, self.room.mines, self.room.bullets):
-            obj.update_body(dt)
+            obj.update_shape(dt)
 
         for seeker in self.player.orbital_seekers:
             if seeker.orbiting:
                 seeker.update_pos(dt)
 
         self.room.update_effects(dt)
-        self.camera.update(self.player.x, self.player.y, dt)
 
     def run_pause_menu(self):
         self.draw_background(self.pause_menu.bg_surface)

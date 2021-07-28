@@ -1,9 +1,9 @@
 from math import cos, sin, pi
 from random import uniform
+import pygame as pg
 
 from assets.paths import ENEMY_DEATH
 from data.shapes import SHAPES
-from data.constants import *
 
 from components.bullets import EnemySeeker
 from components.circle import make_circle
@@ -15,25 +15,30 @@ class Spawner:
     def __init__(self, owner, game, data):
         self.owner = owner
         self.game = game
+        self.screen_rect = game.rect
         self.distance = data["distance"]
         self.angle = data["angle"]
         self.x = 0
         self.y = 0
         self.circle = make_circle(SHAPES["spawner"], screen_rect=game.rect)
         self.radius = self.circle.max_radius
+        rect_size = round(2 * self.radius)
+        self.rect = pg.Rect(0, 0, rect_size, rect_size)
         self.killed = False
+
+    @property
+    def is_on_screen(self):
+        return self.rect.colliderect(self.screen_rect)
 
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+        self.rect.center = self.x, self.y
         self.circle.update(self.x, self.y, 0, self.angle + self.owner.body.angle)
 
-    def is_on_screen(self, dx, dy):
-        return (-self.radius <= self.x - dx <= SCR_W + self.radius and
-                -self.radius <= self.y - dy <= SCR_H + self.radius)
-
-    def collide_bullet(self, bul_x, bul_y, bul_r) -> bool:
-        return circle_collidepoint(self.x, self.y, self.radius + bul_r, bul_x, bul_y)
+    def collide_bullet(self, bullet) -> bool:
+        return (self.rect.colliderect(bullet.rect) and
+                circle_collidepoint(*self.rect.center, self.radius + bullet.radius, bullet.x, bullet.y))
 
     def receive_damage(self, damage):
         for _ in range(8):
@@ -49,7 +54,7 @@ class Spawner:
         self.killed = True
         self.game.sound_player.play_sound(ENEMY_DEATH)
 
-    def update_body(self, dt):
+    def update_shape(self, dt):
         self.circle.update(self.x, self.y, dt, self.angle + self.owner.body.angle)
 
     def update(self, dt):
@@ -58,10 +63,11 @@ class Spawner:
         angle = self.angle + self.owner.body.angle
         self.x = self.owner.x + self.distance * cos(angle)
         self.y = self.owner.y - self.distance * sin(angle)
+        self.rect.center = self.x, self.y
         self.circle.update(self.x, self.y, dt, angle)
 
     def draw(self, screen, dx=0, dy=0):
-        if self.is_on_screen(dx, dy):
+        if self.is_on_screen:
             self.circle.draw(screen, dx, dy)
 
 

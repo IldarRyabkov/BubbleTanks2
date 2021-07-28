@@ -99,10 +99,6 @@ class Enemy(BaseMob):
         self.vel_x = self.velocity * cos(self.body.angle)
         self.vel_y = -self.velocity * sin(self.body.angle)
 
-    def move(self, dx, dy):
-        super().move(dx, dy)
-        self.rect.center = self.x, self.y
-
     def set_pos(self, x, y):
         self.x = x
         self.y = y
@@ -153,8 +149,7 @@ class Enemy(BaseMob):
         if self.is_on_screen:
             self.body.update_shape(dt)
             self.weapons.update_shape(dt)
-            self.infection_effect_time += dt
-            self.infection_effect_time %= 320
+            self.infection_effect_time = (self.infection_effect_time + dt) % 320
 
     def update_shooting(self, dt):
         if not self.stunned:
@@ -215,8 +210,9 @@ class BossHead(Enemy):
     def start_pos():
         return SCR_W2, -HF(480)
 
-    def collide_bullet(self, bul_x, bul_y, bul_r) -> bool:
-        return circle_collidepoint(*self.rect.center, self.radius + bul_r, bul_x, bul_y)
+    def collide_bullet(self, bullet) -> bool:
+        return (self.rect.colliderect(bullet.rect) and
+                circle_collidepoint(*self.rect.center, self.radius + bullet.radius, bullet.x, bullet.y))
 
     def move(self, dx, dy):
         self.x += dx
@@ -253,15 +249,15 @@ class BossLeg(Enemy):
     def start_pos():
         return SCR_W2, HF(1280)
 
-    def collide_bullet(self, bul_x, bul_y, bul_r) -> bool:
-        return circle_collidepoint(*self.rect.center, self.radius + bul_r, bul_x, bul_y)
+    def collide_bullet(self, bullet) -> bool:
+        return (self.rect.colliderect(bullet.rect) and
+                circle_collidepoint(*self.rect.center, self.radius + bullet.radius, bullet.x, bullet.y))
 
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
         self.rect.centerx = self.x + self.rect_offset * cos(self.body.angle)
         self.rect.centery = self.y - self.rect_offset * sin(self.body.angle)
-        self.weapons.update_pos()
 
     def update_pos(self, dt):
         self.weapons.update_pos()
@@ -279,12 +275,6 @@ class BossHand(Enemy):
         if self.name == "BossLeftHand":
             return SCR_W2 - HF(600), -HF(80)
         return SCR_W2 + HF(600), -HF(80)
-
-    def move(self, dx, dy):
-        self.x += dx
-        self.y += dy
-        self.rect.center = self.x, self.y
-        self.weapons.update_pos()
 
     def update_pos(self, dt):
         self.weapons.update_pos()

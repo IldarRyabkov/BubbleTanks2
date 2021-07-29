@@ -336,7 +336,7 @@ class DroneConversion(SuperPower):
 
 class MassiveCannon(SuperPower):
     def __init__(self, game, player):
-        super().__init__(game, player, 2000)
+        super().__init__(game, player, 3000)
         self.offset = HF(34.458)
 
     def activate(self):

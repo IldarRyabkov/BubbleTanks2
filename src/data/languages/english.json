@@ -212,7 +212,7 @@
 	"room hints": [
 		"~~~~~~~~~~~~~~~W~~~~~~ ~~~~~Use A S D~~ to move. Use your mouse to aim, hold to shoot. Try moving outside of this bubble...",
 		"You have jumped to a new bubblefield! Destroy enemy bubble tanks to steal their bubbles and GROW!",
-		"Receiving damage from enemy weapons will weaken your tanks. If you are hit and you have no bubbles collected, you'll be ejected to the safest adjacent bubblefield.",
+		"Receiving damage from enemy weapons will weaken your tank. If you are hit and you have no bubbles collected, you'll be ejected to the safest adjacent bubblefield.",
 		"Sometimes the best course is to simply run! ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~ press 'p' to pause. This also brings up the menu.",
 		"The farther out away from your starting bubblefield, the harder the enemies get! So be careful, and... Good Luck!",
 		"Your new state has a secondary ability! To activate this ability, press 'SPACE'. You can learn more about your abilities for each state from the pause screen."

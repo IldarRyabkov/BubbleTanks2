@@ -5,6 +5,7 @@
 
 
 This is an open source fan-made remake of Bubble Tanks 2 I'm writing fully in Python/Pygame. <br>
+[itch.io page](https://ildarryabkov.itch.io/bubble-tanks-2)
 
 ## Description
 

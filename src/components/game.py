@@ -158,9 +158,7 @@ class Game:
         during the actual game.
         """
         for event in pg.event.get():
-            print('game.handle_events event=', event)
             event = controllers.ConvertJoyEventToGameEvent(event)
-            print('converted event=', event)
             if event.type in [pg.KEYDOWN, pg.KEYUP]:
                 self.handle(event.type, event.key)
             elif event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP]:

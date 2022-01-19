@@ -8,6 +8,7 @@ import pygame as pg
 
 pg.joystick.init()
 joysticks = [pg.joystick.Joystick(i) for i in range(pg.joystick.get_count())]
+print(pg.joystick.get_count(), 'controllers detected')
 
 
 def RegisterGame(g):
@@ -46,8 +47,7 @@ def ConvertJoyEventToGameEvent(event):
                         ret.type = pg.KEYDOWN if abs(event.value) > DEAD_ZONE else pg.KEYUP
                         ret.key = game.controls[controlName]
                         return ret
-        else:
-            return event
+
 
     elif event.type in [
         pg.JOYBUTTONUP,
@@ -68,8 +68,7 @@ def ConvertJoyEventToGameEvent(event):
 
                     return ret
 
-    else:
-        return event
+    return event
 
 
 class FakeEvent:

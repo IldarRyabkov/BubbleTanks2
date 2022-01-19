@@ -284,7 +284,6 @@ class Player(BaseMob):
         self.orbital_seekers = list(filter(lambda s: not s.orbiting, self.orbital_seekers))
 
     def handle(self, e_type, e_key):
-        print('player.handle(', e_type, e_key)
         if e_key == self.game.controls["left"]:
             self.moving_left = (e_type == pg.KEYDOWN)
         elif e_key == self.game.controls["right"]:

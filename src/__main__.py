@@ -4,6 +4,7 @@ import platform
 from data.constants import SCR_SIZE
 import controllers
 
+
 def main():
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pg.mixer.pre_init(44100, -16, 2, 512)

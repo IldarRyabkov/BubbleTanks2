@@ -27,7 +27,7 @@ from components.fps_manager import FPSManager
 from components.superpowers import Disassemble
 from components.special_effects import *
 from components.utils import *
-
+import controllers
 
 class Game:
     """The main class, which is the core of the game and manages all game objects."""
@@ -158,6 +158,7 @@ class Game:
         during the actual game.
         """
         for event in pg.event.get():
+            event = controllers.ConvertJoyEventToGameEvent(event)
             if event.type in [pg.KEYDOWN, pg.KEYUP]:
                 self.handle(event.type, event.key)
             elif event.type in [pg.MOUSEBUTTONDOWN, pg.MOUSEBUTTONUP]:

@@ -30,6 +30,14 @@ class Player(BaseMob):
         self.tank = tank
         self.tanks_history = None
 
+        '''
+        Whichever device (mouse or controller) last changed, will hvae control of the player.
+        '''
+        self.use_controller = False  # used to toggle between mouse/controller
+        self.controllerVector = pg.Vector2(0, 0)  # where is the controller pointing, in reference to the player
+        self._lastX = 0  # keeps track of last mouse position, to detect changes
+        self._lastY = 0
+
         self.bg_radius = tank_data["background radius"]
         self.max_vel = tank_data["max velocity"]
         k = self.max_vel / HF(0.84)
@@ -184,12 +192,21 @@ class Player(BaseMob):
 
     def get_mouse_pos(self):
         x, y = pg.mouse.get_pos()
-        return self.x + x - SCR_W2, self.y + y - SCR_H2
+        if self._lastX != x or self._lastY != y:
+            self.use_controller = False  # switch to mouse
+            self._lastX = x
+            self._lastY = y
+
+        if self.use_controller is False:
+            return self.x + x - SCR_W2, self.y + y - SCR_H2
+        else:  # use controller
+            return (self.controllerVector * 10) + pg.Vector2((self.x, self.y))
 
     def rotate_body(self, dt):
         """Rotates player's tank body according to its movement."""
         if not self.body.is_rotating:
             return
+
         if self.moving_left == self.moving_right:
             if self.moving_up ^ self.moving_down:
                 destination_angle = 0.5 * pi if self.moving_up else -0.5 * pi
@@ -216,19 +233,20 @@ class Player(BaseMob):
             if abs(self.angular_vel) > self.max_angular_vel:
                 self.angular_vel = sign(self.angular_vel) * self.max_angular_vel
 
-            d_angle = self.angular_vel * dt + self.angular_acc * dt*dt/2
+            d_angle = self.angular_vel * dt + self.angular_acc * dt * dt / 2
             if abs(d_angle) > abs(angle):
                 d_angle = angle
                 self.angular_vel = 0
                 self.angular_acc = 0
             self.body.angle += d_angle
+
         else:
             self.angular_acc = -sign(self.angular_vel) * self.max_angular_acc * 0.2
 
             self.angular_vel += self.angular_acc * dt
             if abs(self.angular_vel) > self.max_angular_vel:
                 self.angular_vel = sign(self.angular_vel) * self.max_angular_vel
-            d_angle = self.angular_vel * dt + self.angular_acc * dt*dt/2
+            d_angle = self.angular_vel * dt + self.angular_acc * dt * dt / 2
             self.body.angle += d_angle
 
     def update_shape(self, dt):
@@ -360,8 +378,8 @@ class Player(BaseMob):
     def update_pos(self, dt):
         self.update_acc()
         self.update_vel(dt)
-        dx = self.vel_x * dt + self.acc_x * dt*dt/2
-        dy = self.vel_y * dt + self.acc_y * dt*dt/2
+        dx = self.vel_x * dt + self.acc_x * dt * dt / 2
+        dy = self.vel_y * dt + self.acc_y * dt * dt / 2
         self.move(dx, dy, dt)
 
     def update_vel(self, dt):
